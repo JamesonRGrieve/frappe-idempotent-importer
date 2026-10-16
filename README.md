@@ -103,7 +103,7 @@ bench --site <site> idempotent-import reset-cursors --connection <id>
 ```sh
 uv sync --group dev                    # the pure-layer toolchain (Frappe comes from the bench)
 git config core.hooksPath .githooks    # the pre-commit gate
-scripts/check.sh                       # lock, SPDX, ruff format + lint, mypy --strict, pytest, schema proofs
+scripts/check.sh                       # lock, SPDX, ruff, mypy --strict, pytest + coverage ratchet, schema proofs
 tests/e2e/run.sh                       # a real bench in podman, against a fake store of both sources
 ```
 

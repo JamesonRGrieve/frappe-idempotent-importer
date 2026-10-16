@@ -52,8 +52,8 @@ truth for what each source mirrors and what is a gap. Python rules:
 ## Testing
 
 `scripts/check.sh` is the pre-commit gate (lockfile, SPDX, ruff format + lint, mypy --strict, pytest over
-the recorded fixtures, `python -m tools.prove` against Shopify's schema and the transcribed WooCommerce
-OpenAPI document). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman (two WooCommerce
+the recorded fixtures with the pure layers' coverage ratchet in `.coverage-baseline`, `python -m
+tools.prove` against Shopify's schema and the transcribed WooCommerce OpenAPI document). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman (two WooCommerce
 connections bound to two Public Sites plus Shopify): first import, zero-write re-runs (content tables
 byte-identical), changes and deletions, isolation between connections, lockout pause and hold, Sync Now on
 the job queue, no mail. Every change to a writer is proven there; every pure change gets a unit test.

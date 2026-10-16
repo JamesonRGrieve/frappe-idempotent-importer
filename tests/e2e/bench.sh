@@ -5,7 +5,8 @@
 # recorded fixtures, and a bench container (the official ERPNext v16 image + HRMS, the blog app, the
 # Webshop fork, the Public Site router and this app) with one site that has every app installed.
 # Source it, then call bench_up; bench_down removes everything it created. Every name starts with
-# $E2E_PREFIX so concurrent suites never collide.
+# $E2E_PREFIX so concurrent suites never collide. The bench and the fake store both run from one copy of
+# the working trees taken when the run starts, so editing the repositories mid-run changes nothing.
 set -euo pipefail
 
 E2E_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -35,6 +36,22 @@ DB_READY_INTERVAL=1
 APPS=(erpnext hrms blog payments webshop public_site_router idempotent_importer)
 # The fake store's names: two WooCommerce stores, Shopify, and the WooCommerce stores' media host.
 FAKE_HOSTS=(woo-a-fake woo-b-fake shopify-fake woo-fake)
+
+# The suite's own podman store. Podman's default graph root follows $HOME but its run root and temporary
+# directory follow $XDG_RUNTIME_DIR, so two environments with different homes (one per agent session or
+# login) share one run root while keeping separate graph roots. Each store then rewrites the run root's
+# mount bookkeeping (overlay-layers/mountpoints.json) without the other's containers in it, and an exec
+# into a running bench intermittently fails with "unable to find user frappe: no matching entries in passwd
+# file" while another environment starts or removes a container. A graph root with a run root of its own
+# (keyed by the graph root's path) can't collide with any other store; every podman call below goes
+# through it. The base images are pulled into it once and kept.
+E2E_STORE="${E2E_STORE:-${XDG_DATA_HOME:-$HOME/.local/share}/frappe-idempotent-importer/e2e-podman}"
+E2E_RUN_ROOT="${XDG_RUNTIME_DIR:-/tmp}/frappe-idempotent-importer-e2e-$(printf '%s' "$E2E_STORE" | sha256sum | cut -c1-16)"
+E2E_STORE_ARGS=(--root "$E2E_STORE/graph" --runroot "$E2E_RUN_ROOT/run" --tmpdir "$E2E_RUN_ROOT/tmp")
+
+podman() {
+	command podman "${E2E_STORE_ARGS[@]}" "$@"
+}
 
 # Copies a repository's working tree (tracked and untracked files, nothing ignored) into a build context.
 copy_tree() {
@@ -91,7 +108,7 @@ bench_up() {
 		aliases+=(--network-alias "$host")
 	done
 	podman run -d --name "$E2E_FAKE" --network "$E2E_NETWORK" "${aliases[@]}" \
-		-v "$E2E_ROOT:/app:ro" -v "$E2E_STATE_DIR:/state" -w /app --entrypoint python3 \
+		-v "$E2E_STATE_DIR/context/idempotent_importer:/app:ro" -v "$E2E_STATE_DIR:/state" -w /app --entrypoint python3 \
 		"$E2E_IMAGE" -I tests/e2e/fake_store.py /state >/dev/null
 	podman run -d --name "$E2E_BENCH" --network "$E2E_NETWORK" -v "$E2E_SITES:/home/frappe/frappe-bench/sites" \
 		-v "$E2E_STATE_DIR:/state" "$E2E_IMAGE" sleep infinity >/dev/null

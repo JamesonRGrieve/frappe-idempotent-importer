@@ -46,54 +46,62 @@ run_all() {
 	done
 }
 
-for host in "${FAKE_HOSTS[@]}"; do
-	echo v1 > "$E2E_STATE_DIR/$host-state"
-done
-echo "== Standing up the bench (image build, site with every app, three businesses)"
-bench_up
-podman exec -d -w /home/frappe/frappe-bench "$E2E_BENCH" bench worker --queue long
+# The suite is one function, called on the last line: bash reads a script as it runs it, so editing run.sh
+# mid-run would otherwise change (or break) the rest of the run.
+suite() {
+	for host in "${FAKE_HOSTS[@]}"; do
+		echo v1 > "$E2E_STATE_DIR/$host-state"
+	done
+	echo "== Standing up the bench (image build, site with every app, three businesses)"
+	bench_up
+	podman exec -d -w /home/frappe/frappe-bench "$E2E_BENCH" bench worker --queue long
 
-echo "== First import of every connection"
-run_all full
-step assert_woocommerce woo-a v1
-step assert_woocommerce woo-b v1
-step assert_shopify v1
+	echo "== First import of every connection"
+	run_all full
+	step assert_woocommerce woo-a v1
+	step assert_woocommerce woo-b v1
+	step assert_shopify v1
+	step assert_shared_coupon_codes welcome10 woo-a woo-b
+	step assert_storeless_site_refuses_codes woo-a
 
-echo "== Unchanged sources: full and incremental re-runs must write nothing"
-step checksum v1
-run_all full
-run_all incremental
-step assert_unchanged v1
+	echo "== Unchanged sources: full and incremental re-runs must write nothing"
+	step checksum v1
+	run_all full
+	run_all incremental
+	step assert_unchanged v1
 
-store_state woo-a-fake v2
-store_state shopify-fake v2
-echo "== Changed: a price, stock, a deleted product, a renamed category, a refund, a payment, new orders,"
-echo "   an edited and a deleted page, a new post and review, a deleted coupon and redirect (woo-a);"
-echo "   a deleted product and a new order (shop-s). woo-b is unchanged."
-step run woo-a full
-step run shop-s full
-step assert_woocommerce woo-a v2
-step assert_shopify v2
-step assert_woocommerce woo-b v1
-step assert_connection_untouched v1 woo-b
+	store_state woo-a-fake v2
+	store_state shopify-fake v2
+	echo "== Changed: a price, stock, a deleted product, a renamed category, a refund, a payment, new orders,"
+	echo "   an edited and a deleted page, a new post and review, a deleted coupon and redirect (woo-a);"
+	echo "   a deleted product and a new order (shop-s). woo-b is unchanged."
+	step run woo-a full
+	step run shop-s full
+	step assert_woocommerce woo-a v2
+	step assert_shopify v2
+	step assert_woocommerce woo-b v1
+	step assert_connection_untouched v1 woo-b
 
-echo "== Changed sources re-run: nothing more to write"
-step checksum v2
-run_all full
-run_all incremental
-step assert_unchanged v2
+	echo "== Changed sources re-run: nothing more to write"
+	step checksum v2
+	run_all full
+	run_all incremental
+	step assert_unchanged v2
 
-echo "== Lockout safety"
-step assert_lockout_safety woo-a
-step assert_unchanged v2
+	echo "== Lockout safety"
+	step assert_lockout_safety woo-a
+	step assert_unchanged v2
 
-echo "== Sync Now, on the background job queue"
-step sync_now_in_background woo-b
-step assert_unchanged v2
+	echo "== Sync Now, on the background job queue"
+	step sync_now_in_background woo-b
+	step assert_unchanged v2
 
-echo "== A listed (not built) source refuses to run"
-step assert_listed_sources_refuse woo-a
-step assert_unchanged v2
+	echo "== A listed (not built) source refuses to run"
+	step assert_listed_sources_refuse woo-a
+	step assert_unchanged v2
 
-step assert_no_side_effects
-echo "E2E PASSED"
+	step assert_no_side_effects
+	echo "E2E PASSED"
+}
+
+suite; exit

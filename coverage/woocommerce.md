@@ -30,7 +30,7 @@ read in full every run (they have no such filter).
 | Brands (WooCommerce 9.6 Brands) | **Brand** (shared by name) | |
 | Published + visible products | **Website Item** on the Public Site's Webshop Store: published flag, route `<prefix>/<slug>`, short and long description, other categories as website item groups, non-variation attributes as specifications | Hidden or draft products are unpublished. |
 | Customers | **Customer** (individual, or company when there is only a company name), **Contact** (name, email, phone), **Address** per billing/shipping address | Linked to each other. |
-| Coupons: percent, fixed cart, fixed product; product or category limits; minimum spend; expiry; usage limit | **Pricing Rule** (coupon based, on the company) + **Coupon Code** | Coupon codes are global in ERPNext: a code another connection already holds is not mirrored again (reported). |
+| Coupons: percent, fixed cart, fixed product; product or category limits; minimum spend; expiry; usage limit | **Pricing Rule** (coupon based, on the company) + **Coupon Code** on the Public Site's Webshop Store | Another store can hold the same code at once; a code already held on this store (or store-less) is not mirrored (reported). |
 | Orders: processing, completed, refunded | Submitted **Sales Invoice** (lines at their prices before discounts, the coupon discount on the net total, tax, shipping and fee lines as Actual charges) + **Payment Entry** into the deposit account | The invoice must total exactly what WooCommerce charged, or it isn't kept. Never moves stock. |
 | Orders: pending, on hold | Draft **Sales Invoice**, submitted (with its payment) once paid | |
 | Orders: cancelled, failed, checkout drafts | Not mirrored (an earlier copy is cancelled) | |

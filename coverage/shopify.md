@@ -27,7 +27,7 @@ orders, pages, articles); blogs, comments and redirects are read in full.
 | Vendor, product type | **Brand**; a "Product type" specification on the Website Item | |
 | Active, published products | **Website Item** on the Public Site's Webshop Store | |
 | Customers and their addresses | **Customer**, **Contact**, **Address** (default address as billing) | |
-| Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code | |
+| Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code, on the Public Site's Webshop Store | Another store can hold the same code at once. |
 | Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. |
 | Orders awaiting payment | Draft **Sales Invoice** | Voided and cancelled orders aren't mirrored. |
 | Refunds | Credit note + refund **Payment Entry** | Shipping or other amounts refunded beyond the lines become an adjustment line. |

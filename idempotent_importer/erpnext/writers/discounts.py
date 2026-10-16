@@ -1,7 +1,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Discount codes: one coupon-based Pricing Rule per source discount, and a Coupon Code per code. Coupon
-codes are global in ERPNext, so a code another connection (or a person) already holds is Unsupported for
-this one rather than taken over."""
+"""Discount codes: one coupon-based Pricing Rule per source discount, and a Coupon Code per code, scoped to
+the connection's Webshop Store (the Webshop fork makes a code unique per store, and a store-less code
+applies on every store). Two connections on different stores can hold the same code at once; a code a
+person (or another connection) already holds on this store, or store-less, is Unsupported for this one
+rather than taken over. A connection whose Public Site has no store can't mirror codes: a store-less copy
+would apply on, and clash with, every store."""
 
 from __future__ import annotations
 
@@ -26,11 +29,19 @@ class DiscountWriter(Writer):
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
 		codes = values.strings("codes")
+		store = self.context.webshop_store
+		if codes and not store:
+			raise Unsupported(
+				"the connection's Public Site has no Webshop Store: a store-less coupon code would apply on "
+				"every store"
+			)
 		for code in codes:
-			holder = frappe.db.get_value("Coupon Code", {"coupon_code": code}, "name")
 			ours = self.links.target(Kind.COUPON, f"{desired.gid}#{code}")
-			if holder and holder != ours:
-				raise Unsupported(f"the coupon code {code} is already held by Coupon Code {holder}")
+			holder = next((name for name in self._holders(code, store) if name != ours), None)
+			if holder:
+				raise Unsupported(
+					f"the coupon code {code} is already held on this store by Coupon Code {holder}"
+				)
 		applies = values.string("applies")
 		items = [self.dependency(Kind.PRODUCT, gid) for gid in values.strings("items")]
 		groups = [self.dependency(Kind.COLLECTION, gid) for gid in values.strings("groups")]
@@ -72,6 +83,13 @@ class DiscountWriter(Writer):
 	def retire(self, link: Link) -> None:
 		frappe.db.set_value("Pricing Rule", link.target.name, "disable", 1)
 
+	@staticmethod
+	def _holders(code: str, store: str | None) -> list[str]:
+		"""The Coupon Codes that would clash with ``code`` on ``store``: the same code on the store, or
+		store-less (the database compares codes case-insensitively, as the fork's check does)."""
+		rows = frappe.get_all("Coupon Code", filters={"coupon_code": code}, fields=["name", "webshop_store"])
+		return [str(row.name) for row in rows if not row.webshop_store or row.webshop_store == store]
+
 	def _coupon(self, gid: str, code: str, rule: str, values: Values) -> None:
 		key = f"{gid}#{code}"
 		existing = self.links.target(Kind.COUPON, key)
@@ -80,6 +98,7 @@ class DiscountWriter(Writer):
 			{
 				"coupon_name": self.context.suffixed(code),
 				"coupon_code": code,
+				"webshop_store": self.context.webshop_store,
 				"coupon_type": "Promotional",
 				"pricing_rule": rule,
 				"maximum_use": values.optional_integer("max_uses") or 0,

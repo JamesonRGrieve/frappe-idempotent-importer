@@ -13,6 +13,7 @@ import json
 import time
 import traceback
 from collections.abc import Callable
+from dataclasses import replace
 from datetime import timedelta
 from decimal import Decimal
 from functools import wraps
@@ -24,8 +25,21 @@ from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
 
 from idempotent_importer import api
+from idempotent_importer.core.desired import Desired
+from idempotent_importer.core.errors import Unsupported
+from idempotent_importer.core.kind import Kind
+from idempotent_importer.core.transport import RequestsTransport
 from idempotent_importer.erpnext import engine, jobs
-from idempotent_importer.erpnext.stores import FrappeRunLock, FrappeRunStore, naive_utc, now_utc
+from idempotent_importer.erpnext.context import ConnectionContext
+from idempotent_importer.erpnext.media import Media
+from idempotent_importer.erpnext.stores import (
+	FrappeLinkStore,
+	FrappeRunLock,
+	FrappeRunStore,
+	naive_utc,
+	now_utc,
+)
+from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 
 STATE_DIR = Path("/state")
 FISCAL_YEAR_START = "2026-01-01"
@@ -297,6 +311,8 @@ def main() -> None:
 		"assert_connection_untouched": assert_connection_untouched,
 		"assert_woocommerce": assert_woocommerce,
 		"assert_shopify": assert_shopify,
+		"assert_shared_coupon_codes": assert_shared_coupon_codes,
+		"assert_storeless_site_refuses_codes": assert_storeless_site_refuses_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
 		"assert_no_side_effects": assert_no_side_effects,
@@ -645,6 +661,62 @@ def assert_shopify(state: str) -> None:
 		"the deleted bra",
 	)
 	target(connection, "order", "Order", "803")
+
+
+@check
+def assert_shared_coupon_codes(code: str, *connections: str) -> None:
+	"""Each connection holds ``code`` at once, as its own Coupon Code scoped to its Public Site's store."""
+	held = {
+		row.name: row.webshop_store
+		for row in frappe.get_all(
+			"Coupon Code", filters={"coupon_code": code}, fields=["name", "webshop_store"]
+		)
+	}
+	for connection in connections:
+		spec = frappe.db.get_value(
+			"Importer Connection", connection, ["abbreviation", "webshop_store"], as_dict=True
+		)
+		expect(held.get(f"{code} - {spec.abbreviation}"), spec.webshop_store, f"{connection}'s {code}")
+	print(f"{code}: held by {', '.join(connections)} at once, one per store")
+
+
+@check
+def assert_storeless_site_refuses_codes(connection: str) -> None:
+	"""A connection whose Public Site has no Webshop Store mirrors no coupon code: a store-less code would
+	apply on (and clash with) every store's copy. The writer refuses before writing anything."""
+	doc = frappe.get_doc("Importer Connection", connection)
+	context = replace(ConnectionContext.of(doc, "woocommerce"), webshop_store=None)
+	links = FrappeLinkStore(connection)
+	writer = DiscountWriter(context, links, Media(context, links, RequestsTransport()))
+	discount = Desired(
+		Kind.DISCOUNT,
+		f"gid://woocommerce/{connection}/Coupon/storeless",
+		{
+			"codes": ["welcome10"],
+			"description": None,
+			"discount": "percentage",
+			"applies": "transaction",
+			"value": Decimal(10),
+			"items": [],
+			"groups": [],
+			"min_amount": None,
+			"valid_from": None,
+			"valid_upto": None,
+			"max_uses": None,
+		},
+	)
+	before = frappe.db.count("Pricing Rule")
+	try:
+		writer.write(discount, None)
+	except Unsupported as e:
+		if "no Webshop Store" not in str(e):
+			raise AssertionError(f"the refusal doesn't say why: {e}") from e
+		print(f"store-less: {e}")
+	else:
+		raise AssertionError("a connection without a store mirrored a coupon code")
+	finally:
+		frappe.db.rollback()
+	expect(frappe.db.count("Pricing Rule"), before, "pricing rules after the refusal")
 
 
 def trouble(connection: str, kind: str | None) -> None:

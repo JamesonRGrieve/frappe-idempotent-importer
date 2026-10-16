@@ -300,6 +300,7 @@ def main() -> None:
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
 		"assert_no_side_effects": assert_no_side_effects,
+		"assert_listed_sources_refuse": assert_listed_sources_refuse,
 	}
 	steps[name](*arguments)
 	print(f"ok: {name} {' '.join(arguments)}".strip())
@@ -734,6 +735,35 @@ def sync_now_in_background(connection: str) -> None:
 			return
 		time.sleep(POLL_SECONDS)
 	raise AssertionError(f"the background run {run_name} didn't finish in {BACKGROUND_RUN_TIMEOUT_SECONDS}s")
+
+
+@check
+def assert_listed_sources_refuse(template: str) -> None:
+	"""A connection to a listed source (Etsy) can be saved, but its run refuses to start, says why, and
+	touches nothing."""
+	connection = "etsy-e2e"
+	if not frappe.db.exists("Importer Connection", connection):
+		doc = frappe.copy_doc(frappe.get_doc("Importer Connection", template))
+		doc.update(
+			{
+				"connection_id": connection,
+				"source": "Etsy",
+				"store_url": "https://www.etsy.com/shop/e2e",
+				"abbreviation": "ET",
+				"cursors": None,
+				"last_run": None,
+			}
+		)
+		doc.insert()
+		frappe.db.commit()
+	before = runs(connection)
+	result = engine.run_by_hand(connection, full=True, dry_run=False, kinds=None)
+	expect(result["status"], "not started", "a run of a listed source")
+	if "not built yet" not in result["reason"]:
+		raise AssertionError(f"the refusal doesn't say why: {result['reason']}")
+	expect(runs(connection), before, "runs of a listed source")
+	expect(frappe.db.count("Importer Link", {"connection": connection}), 0, "links of a listed source")
+	print(f"{connection}: {result['reason']}")
 
 
 @check

@@ -91,5 +91,9 @@ echo "== Sync Now, on the background job queue"
 step sync_now_in_background woo-b
 step assert_unchanged v2
 
+echo "== A listed (not built) source refuses to run"
+step assert_listed_sources_refuse woo-a
+step assert_unchanged v2
+
 step assert_no_side_effects
 echo "E2E PASSED"

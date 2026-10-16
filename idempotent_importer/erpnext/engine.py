@@ -46,6 +46,7 @@ from idempotent_importer.erpnext.writers.content import (
 	PageWriter,
 	RedirectWriter,
 	ReviewWriter,
+	flush_redirect_cache,
 )
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 from idempotent_importer.erpnext.writers.parties import CustomerWriter
@@ -208,7 +209,10 @@ def step(connection: str, budget_seconds: float) -> bool:
 	lines: list[str] = []
 	with logging_to(lines):
 		engine = build(connection, lines)
-		finished = engine.runner.step(budget_seconds)
+		try:
+			finished = engine.runner.step(budget_seconds)
+		finally:
+			flush_redirect_cache()
 		state = engine.store.load()
 		if state is not None:
 			engine.store.save(state)
@@ -219,7 +223,10 @@ def run_by_hand(connection: str, full: bool, dry_run: bool, kinds: list[Kind] | 
 	"""A run started by the operator: the credential hold is released (one deliberate attempt), and the
 	run is stepped in the foreground until it ends or pauses for its source."""
 	FrappeCredentialHold(connection).release()
-	state = start(connection, Mode.FULL if full else Mode.INCREMENTAL, dry_run, kinds)
+	try:
+		state = start(connection, Mode.FULL if full else Mode.INCREMENTAL, dry_run, kinds)
+	except SourceError as e:
+		return {"status": "not started", "reason": str(e)}
 	if state is None:
 		return {"status": "another run of this connection is in progress"}
 	while not step(connection, FOREGROUND_BUDGET_SECONDS):
@@ -261,9 +268,12 @@ def sync_one(connection: str, kind: Kind, gid: str) -> Outcome:
 		if not engine.sync.handles(kind):
 			raise SourceError(f"{connection} doesn't mirror {kind.value}.")
 		node = engine.reader.node(kind, gid)
-		outcome = (
-			engine.sync.retire(kind, gid, False) if node is None else engine.sync.sync(kind, node, False)
-		)
+		try:
+			outcome = (
+				engine.sync.retire(kind, gid, False) if node is None else engine.sync.sync(kind, node, False)
+			)
+		finally:
+			flush_redirect_cache()
 		for line in lines:
 			frappe.logger(LOGGER).info(line)
 		return outcome

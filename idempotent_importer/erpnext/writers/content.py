@@ -240,7 +240,16 @@ def last_rule_index() -> int:
 
 
 def clear_redirect_cache() -> None:
-	frappe.get_single(WEBSITE_SETTINGS).clear_cache()
+	"""Notes that the redirects changed: the website's caches are cleared once, when the step ends
+	(clearing them per rule would clear every cache of the site once per mirrored product)."""
+	frappe.flags.idempotent_importer_redirects_changed = True
+
+
+def flush_redirect_cache() -> None:
+	"""Clears the website's caches if this step changed any redirect (so new rules answer at once)."""
+	if frappe.flags.idempotent_importer_redirects_changed:
+		frappe.get_single(WEBSITE_SETTINGS).clear_cache()
+		frappe.flags.idempotent_importer_redirects_changed = False
 
 
 class RedirectWriter(Writer):

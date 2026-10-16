@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment CommentFields on Comment {
+  id
+  body
+  status
+  createdAt
+  updatedAt
+  publishedAt
+  ip
+  userAgent
+  author {
+    name
+    email
+  }
+  article {
+    id
+  }
+}

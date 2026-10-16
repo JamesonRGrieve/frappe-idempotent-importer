@@ -1,0 +1,48 @@
+{
+  "operation": "CollectionList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "collections": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "collections-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Collection/201",
+          "legacyResourceId": "201",
+          "handle": "bras",
+          "title": "Bras",
+          "descriptionHtml": "<p>Everyday and sport bras.</p>",
+          "sortOrder": "BEST_SELLING",
+          "templateSuffix": null,
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "image": {"url": "http://shopify-fake:8080/cdn/shop/files/bras.png?v=1", "altText": "Bras"},
+          "seo": {"title": "Bras | Fixture Boutique", "description": "Shop bras."},
+          "ruleSet": null,
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        },
+        {
+          "id": "gid://shopify/Collection/202",
+          "legacyResourceId": "202",
+          "handle": "sale",
+          "title": "Sale",
+          "descriptionHtml": "",
+          "sortOrder": "PRICE_ASC",
+          "templateSuffix": "sale",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "image": null,
+          "seo": {"title": null, "description": null},
+          "ruleSet": {
+            "appliedDisjunctively": false,
+            "rules": [
+              {"column": "IS_PRICE_REDUCED", "relation": "IS_SET", "condition": "", "conditionObject": null},
+              {"column": "PRODUCT_METAFIELD_DEFINITION", "relation": "CONTAINS", "condition": "clean", "conditionObject": {"__typename": "CollectionRuleMetafieldCondition", "metafieldDefinition": {"namespace": "custom", "key": "care"}}}
+            ]
+          },
+          "metafields": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [{"namespace": "custom", "key": "banner", "type": "single_line_text_field", "value": "Up to 50% off"}]
+          }
+        }
+      ]
+    }
+  }
+}

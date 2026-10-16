@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment DiscountItemsFields on DiscountItems {
+  __typename
+  ... on DiscountProducts {
+    products(first: 250) {
+      pageInfo {
+        ...PageInfoFields
+      }
+      nodes {
+        id
+      }
+    }
+    productVariants(first: 250) {
+      pageInfo {
+        ...PageInfoFields
+      }
+      nodes {
+        id
+      }
+    }
+  }
+  ... on DiscountCollections {
+    collections(first: 250) {
+      pageInfo {
+        ...PageInfoFields
+      }
+      nodes {
+        id
+      }
+    }
+  }
+}

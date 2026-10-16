@@ -1,0 +1,2887 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "WooCommerce, WordPress and Redirection REST APIs read by frappe-idempotent-importer",
+  "version": "2026-10-16",
+  "description": "WooCommerce publishes no OpenAPI document. This subset is transcribed from the property tables of the official WooCommerce REST API v3 documentation (https://woocommerce.github.io/woocommerce-rest-api-docs/), the WordPress REST API handbook's schema tables (https://developer.wordpress.org/rest-api/reference/pages/, posts/, categories/, users/) and the Redirection plugin's own OpenAPI document (https://redirection.me/developer/rest-api/), all fetched 2026-10-16; each schema and operation cites its section. Only the responses the WooCommerce adapter reads are included, with every documented property. Types are as documented, except where WooCommerce serialises differently from its docs: date-time values, and the properties whose description says so, are null when unset; an order line's price is a number; meta values are free-form. Objects stay open (additional properties allowed) because plugins add fields. Required properties are the identifiers and the fields the adapter cannot do without."
+ },
+ "paths": {
+  "/wp-json/wc/v3/products/categories": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-categories"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ProductCategory"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products/categories/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-product-category"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductCategory"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-products"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Product"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-product"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Product"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products/{id}/variations": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-variations"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ProductVariation"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products/reviews": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-product-reviews"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/ProductReview"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/products/reviews/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-product-review"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductReview"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/customers": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-customers"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Customer"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/customers/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-customer"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Customer"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/coupons": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-coupons"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Coupon"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/coupons/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-coupon"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Coupon"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/orders": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-orders"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Order"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/orders/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-an-order"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Order"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/orders/{id}/refunds": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-refunds"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/OrderRefund"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/orders/{id}/notes": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#list-all-order-notes"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/OrderNote"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/settings/{group}/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#retrieve-a-setting-option"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SettingOption"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/pages": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/pages/#list-pages"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WpPage"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/pages/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/pages/#retrieve-a-page"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpPage"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/posts": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/posts/#list-posts"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WpPost"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/posts/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/posts/#retrieve-a-post"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpPost"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/categories": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/categories/#list-categories"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WpCategory"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/categories/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/categories/#retrieve-a-category"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpCategory"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wp/v2/users/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/users/#retrieve-a-user"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/WpUser"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/redirection/v1/redirect": {
+   "get": {
+    "externalDocs": {
+     "url": "https://redirection.me/developer/rest-api/"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/RedirectListResponse"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "MetaData": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-meta-data-properties"
+    },
+    "required": [
+     "key"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "key": {
+      "type": "string"
+     },
+     "value": {
+      "description": "WooCommerce serialises this differently from its documented type."
+     }
+    }
+   },
+   "LineTax": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-line-items-properties"
+    },
+    "description": "A line's taxes (the \"Taxes\" table under Order refund - Line items properties; order line items have the same shape).",
+    "required": [
+     "id",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "total": {
+      "type": "string"
+     },
+     "subtotal": {
+      "type": "string"
+     }
+    }
+   },
+   "Address": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-billing-properties"
+    },
+    "required": [],
+    "properties": {
+     "first_name": {
+      "type": "string"
+     },
+     "last_name": {
+      "type": "string"
+     },
+     "company": {
+      "type": "string"
+     },
+     "address_1": {
+      "type": "string"
+     },
+     "address_2": {
+      "type": "string"
+     },
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "postcode": {
+      "type": "string"
+     },
+     "country": {
+      "type": "string"
+     },
+     "email": {
+      "type": "string"
+     },
+     "phone": {
+      "type": "string"
+     }
+    }
+   },
+   "ShippingAddress": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-shipping-properties"
+    },
+    "required": [],
+    "properties": {
+     "first_name": {
+      "type": "string"
+     },
+     "last_name": {
+      "type": "string"
+     },
+     "company": {
+      "type": "string"
+     },
+     "address_1": {
+      "type": "string"
+     },
+     "address_2": {
+      "type": "string"
+     },
+     "city": {
+      "type": "string"
+     },
+     "state": {
+      "type": "string"
+     },
+     "postcode": {
+      "type": "string"
+     },
+     "country": {
+      "type": "string"
+     }
+    }
+   },
+   "Coupon": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#coupon-properties"
+    },
+    "required": [
+     "id",
+     "code",
+     "amount",
+     "discount_type"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "code": {
+      "type": "string"
+     },
+     "amount": {
+      "type": "string"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discount_type": {
+      "type": "string"
+     },
+     "description": {
+      "type": "string"
+     },
+     "date_expires": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "date_expires_gmt": {
+      "type": [
+       "string",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "usage_count": {
+      "type": "integer"
+     },
+     "individual_use": {
+      "type": "boolean"
+     },
+     "product_ids": {
+      "type": "array"
+     },
+     "excluded_product_ids": {
+      "type": "array"
+     },
+     "usage_limit": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "usage_limit_per_user": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "limit_usage_to_x_items": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "free_shipping": {
+      "type": "boolean"
+     },
+     "product_categories": {
+      "type": "array"
+     },
+     "excluded_product_categories": {
+      "type": "array"
+     },
+     "exclude_sale_items": {
+      "type": "boolean"
+     },
+     "minimum_amount": {
+      "type": "string"
+     },
+     "maximum_amount": {
+      "type": "string"
+     },
+     "email_restrictions": {
+      "type": "array"
+     },
+     "used_by": {
+      "type": "array"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "Customer": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#customer-properties"
+    },
+    "required": [
+     "id",
+     "email",
+     "first_name",
+     "last_name"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": "string"
+     },
+     "first_name": {
+      "type": "string"
+     },
+     "last_name": {
+      "type": "string"
+     },
+     "role": {
+      "type": "string"
+     },
+     "username": {
+      "type": "string"
+     },
+     "password": {
+      "type": "string"
+     },
+     "billing": {
+      "$ref": "#/components/schemas/Address"
+     },
+     "shipping": {
+      "$ref": "#/components/schemas/ShippingAddress"
+     },
+     "is_paying_customer": {
+      "type": "boolean"
+     },
+     "avatar_url": {
+      "type": "string"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderLineItem": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-line-items-properties"
+    },
+    "required": [
+     "id",
+     "name",
+     "product_id",
+     "variation_id",
+     "quantity",
+     "subtotal",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "product_id": {
+      "type": "integer"
+     },
+     "variation_id": {
+      "type": "integer"
+     },
+     "quantity": {
+      "type": "integer"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "subtotal": {
+      "type": "string"
+     },
+     "subtotal_tax": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     },
+     "sku": {
+      "type": "string"
+     },
+     "price": {
+      "type": [
+       "string",
+       "number"
+      ],
+      "description": "WooCommerce serialises this differently from its documented type."
+     }
+    }
+   },
+   "OrderTaxLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-tax-lines-properties"
+    },
+    "required": [
+     "id",
+     "label",
+     "tax_total",
+     "shipping_tax_total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "rate_code": {
+      "type": "string"
+     },
+     "rate_id": {
+      "type": "integer"
+     },
+     "label": {
+      "type": "string"
+     },
+     "compound": {
+      "type": "boolean"
+     },
+     "tax_total": {
+      "type": "string"
+     },
+     "shipping_tax_total": {
+      "type": "string"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderShippingLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-shipping-lines-properties"
+    },
+    "required": [
+     "id",
+     "method_title",
+     "total",
+     "total_tax"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "method_title": {
+      "type": "string"
+     },
+     "method_id": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderFeeLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-fee-lines-properties"
+    },
+    "required": [
+     "id",
+     "name",
+     "total",
+     "total_tax"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "tax_status": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderCouponLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-coupon-lines-properties"
+    },
+    "required": [
+     "id",
+     "code",
+     "discount"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "code": {
+      "type": "string"
+     },
+     "discount": {
+      "type": "string"
+     },
+     "discount_tax": {
+      "type": "string"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderRefundSummary": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refunds-properties"
+    },
+    "required": [
+     "id",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "reason": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     }
+    }
+   },
+   "Order": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-properties"
+    },
+    "required": [
+     "id",
+     "status",
+     "currency",
+     "date_created_gmt",
+     "discount_total",
+     "shipping_total",
+     "total",
+     "total_tax",
+     "customer_id",
+     "line_items",
+     "tax_lines",
+     "shipping_lines",
+     "fee_lines",
+     "coupon_lines",
+     "refunds"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "parent_id": {
+      "type": "integer"
+     },
+     "number": {
+      "type": "string"
+     },
+     "order_key": {
+      "type": "string"
+     },
+     "created_via": {
+      "type": "string"
+     },
+     "version": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "currency": {
+      "type": "string"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discount_total": {
+      "type": "string"
+     },
+     "discount_tax": {
+      "type": "string"
+     },
+     "shipping_total": {
+      "type": "string"
+     },
+     "shipping_tax": {
+      "type": "string"
+     },
+     "cart_tax": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "prices_include_tax": {
+      "type": "boolean"
+     },
+     "customer_id": {
+      "type": "integer"
+     },
+     "customer_ip_address": {
+      "type": "string"
+     },
+     "customer_user_agent": {
+      "type": "string"
+     },
+     "customer_note": {
+      "type": "string"
+     },
+     "billing": {
+      "$ref": "#/components/schemas/Address"
+     },
+     "shipping": {
+      "$ref": "#/components/schemas/ShippingAddress"
+     },
+     "payment_method": {
+      "type": "string"
+     },
+     "payment_method_title": {
+      "type": "string"
+     },
+     "transaction_id": {
+      "type": "string"
+     },
+     "date_paid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_paid_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_completed": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_completed_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "cart_hash": {
+      "type": "string"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     },
+     "line_items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderLineItem"
+      }
+     },
+     "tax_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderTaxLine"
+      }
+     },
+     "shipping_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderShippingLine"
+      }
+     },
+     "fee_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderFeeLine"
+      }
+     },
+     "coupon_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderCouponLine"
+      }
+     },
+     "refunds": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderRefundSummary"
+      }
+     },
+     "set_paid": {
+      "type": "boolean"
+     }
+    }
+   },
+   "OrderNote": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-note-properties"
+    },
+    "required": [
+     "id",
+     "note",
+     "customer_note",
+     "date_created_gmt"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "author": {
+      "type": "string"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "note": {
+      "type": "string"
+     },
+     "customer_note": {
+      "type": "boolean"
+     },
+     "added_by_user": {
+      "type": "boolean"
+     }
+    }
+   },
+   "OrderRefundLineItem": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-line-items-properties"
+    },
+    "required": [
+     "id",
+     "product_id",
+     "variation_id",
+     "quantity",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "product_id": {
+      "type": "integer"
+     },
+     "variation_id": {
+      "type": "integer"
+     },
+     "quantity": {
+      "type": "integer"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "subtotal": {
+      "type": "string"
+     },
+     "subtotal_tax": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     },
+     "sku": {
+      "type": "string"
+     },
+     "price": {
+      "type": [
+       "string",
+       "number"
+      ],
+      "description": "WooCommerce serialises this differently from its documented type."
+     }
+    }
+   },
+   "OrderRefundTaxLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-tax-lines-properties"
+    },
+    "required": [
+     "id",
+     "tax_total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "rate_code": {
+      "type": "string"
+     },
+     "rate_id": {
+      "type": "integer"
+     },
+     "label": {
+      "type": "string"
+     },
+     "compound": {
+      "type": "boolean"
+     },
+     "tax_total": {
+      "type": "string"
+     },
+     "shipping_tax_total": {
+      "type": "string"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderRefundShippingLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-shipping-lines-properties"
+    },
+    "required": [
+     "id",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "method_title": {
+      "type": "string"
+     },
+     "method_id": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderRefundFeeLine": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-fee-lines-properties"
+    },
+    "required": [
+     "id",
+     "total"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "tax_status": {
+      "type": "string"
+     },
+     "total": {
+      "type": "string"
+     },
+     "total_tax": {
+      "type": "string"
+     },
+     "taxes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LineTax"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "OrderRefund": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#order-refund-properties"
+    },
+    "required": [
+     "id",
+     "date_created_gmt",
+     "amount",
+     "line_items"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "type": "string"
+     },
+     "reason": {
+      "type": "string"
+     },
+     "refunded_by": {
+      "type": "integer"
+     },
+     "refunded_payment": {
+      "type": "boolean"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     },
+     "line_items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderRefundLineItem"
+      }
+     },
+     "tax_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderRefundTaxLine"
+      }
+     },
+     "shipping_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderRefundShippingLine"
+      }
+     },
+     "fee_lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderRefundFeeLine"
+      }
+     },
+     "api_refund": {
+      "type": "boolean"
+     },
+     "api_restock": {
+      "type": "boolean"
+     },
+     "compute_totals": {
+      "type": "boolean"
+     }
+    }
+   },
+   "ProductImage": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-images-properties"
+    },
+    "required": [
+     "id",
+     "src"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "src": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "alt": {
+      "type": "string"
+     }
+    }
+   },
+   "TermRef": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-categories-properties"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     }
+    }
+   },
+   "ProductAttribute": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-attributes-properties"
+    },
+    "required": [
+     "name",
+     "options",
+     "variation"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "position": {
+      "type": "integer"
+     },
+     "visible": {
+      "type": "boolean"
+     },
+     "variation": {
+      "type": "boolean"
+     },
+     "options": {
+      "type": "array"
+     }
+    }
+   },
+   "ProductDefaultAttribute": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-default-attributes-properties"
+    },
+    "required": [
+     "name",
+     "option"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "option": {
+      "type": "string"
+     }
+    }
+   },
+   "Dimensions": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-dimensions-properties"
+    },
+    "required": [],
+    "properties": {
+     "length": {
+      "type": "string"
+     },
+     "width": {
+      "type": "string"
+     },
+     "height": {
+      "type": "string"
+     }
+    }
+   },
+   "Download": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-downloads-properties"
+    },
+    "required": [],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "file": {
+      "type": "string"
+     }
+    }
+   },
+   "Product": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-properties"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug",
+     "type",
+     "status",
+     "catalog_visibility",
+     "sku",
+     "regular_price",
+     "manage_stock",
+     "categories",
+     "images",
+     "attributes"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "permalink": {
+      "type": "string"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "featured": {
+      "type": "boolean"
+     },
+     "catalog_visibility": {
+      "type": "string"
+     },
+     "description": {
+      "type": "string"
+     },
+     "short_description": {
+      "type": "string"
+     },
+     "sku": {
+      "type": "string"
+     },
+     "global_unique_id": {
+      "type": "string"
+     },
+     "price": {
+      "type": "string"
+     },
+     "regular_price": {
+      "type": "string"
+     },
+     "sale_price": {
+      "type": "string"
+     },
+     "date_on_sale_from": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_from_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_to": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_to_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "price_html": {
+      "type": "string"
+     },
+     "on_sale": {
+      "type": "boolean"
+     },
+     "purchasable": {
+      "type": "boolean"
+     },
+     "total_sales": {
+      "type": "integer"
+     },
+     "virtual": {
+      "type": "boolean"
+     },
+     "downloadable": {
+      "type": "boolean"
+     },
+     "downloads": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Download"
+      }
+     },
+     "download_limit": {
+      "type": "integer"
+     },
+     "download_expiry": {
+      "type": "integer"
+     },
+     "external_url": {
+      "type": "string"
+     },
+     "button_text": {
+      "type": "string"
+     },
+     "tax_status": {
+      "type": "string"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "manage_stock": {
+      "type": "boolean"
+     },
+     "stock_quantity": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "stock_status": {
+      "type": "string"
+     },
+     "backorders": {
+      "type": "string"
+     },
+     "backorders_allowed": {
+      "type": "boolean"
+     },
+     "backordered": {
+      "type": "boolean"
+     },
+     "sold_individually": {
+      "type": "boolean"
+     },
+     "weight": {
+      "type": "string"
+     },
+     "dimensions": {
+      "$ref": "#/components/schemas/Dimensions"
+     },
+     "shipping_required": {
+      "type": "boolean"
+     },
+     "shipping_taxable": {
+      "type": "boolean"
+     },
+     "shipping_class": {
+      "type": "string"
+     },
+     "shipping_class_id": {
+      "type": "integer"
+     },
+     "reviews_allowed": {
+      "type": "boolean"
+     },
+     "average_rating": {
+      "type": "string"
+     },
+     "rating_count": {
+      "type": "integer"
+     },
+     "related_ids": {
+      "type": "array"
+     },
+     "upsell_ids": {
+      "type": "array"
+     },
+     "cross_sell_ids": {
+      "type": "array"
+     },
+     "parent_id": {
+      "type": "integer"
+     },
+     "purchase_note": {
+      "type": "string"
+     },
+     "categories": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/TermRef"
+      }
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/TermRef"
+      }
+     },
+     "brands": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/TermRef"
+      }
+     },
+     "images": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ProductImage"
+      }
+     },
+     "attributes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ProductAttribute"
+      }
+     },
+     "default_attributes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ProductDefaultAttribute"
+      }
+     },
+     "variations": {
+      "type": "array"
+     },
+     "grouped_products": {
+      "type": "array"
+     },
+     "menu_order": {
+      "type": "integer"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "VariationAttribute": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-variation-attributes-properties"
+    },
+    "required": [
+     "name",
+     "option"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "option": {
+      "type": "string"
+     }
+    }
+   },
+   "ProductVariation": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-variation-properties"
+    },
+    "required": [
+     "id",
+     "sku",
+     "regular_price",
+     "status",
+     "manage_stock",
+     "attributes"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": "string"
+     },
+     "permalink": {
+      "type": "string"
+     },
+     "sku": {
+      "type": "string"
+     },
+     "global_unique_id": {
+      "type": "string"
+     },
+     "price": {
+      "type": "string"
+     },
+     "regular_price": {
+      "type": "string"
+     },
+     "sale_price": {
+      "type": "string"
+     },
+     "date_on_sale_from": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_from_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_to": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_on_sale_to_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "on_sale": {
+      "type": "boolean"
+     },
+     "status": {
+      "type": "string"
+     },
+     "purchasable": {
+      "type": "boolean"
+     },
+     "virtual": {
+      "type": "boolean"
+     },
+     "downloadable": {
+      "type": "boolean"
+     },
+     "downloads": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Download"
+      }
+     },
+     "download_limit": {
+      "type": "integer"
+     },
+     "download_expiry": {
+      "type": "integer"
+     },
+     "tax_status": {
+      "type": "string"
+     },
+     "tax_class": {
+      "type": "string"
+     },
+     "manage_stock": {
+      "type": [
+       "boolean",
+       "string"
+      ]
+     },
+     "stock_quantity": {
+      "type": [
+       "integer",
+       "null"
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "stock_status": {
+      "type": "string"
+     },
+     "backorders": {
+      "type": "string"
+     },
+     "backorders_allowed": {
+      "type": "boolean"
+     },
+     "backordered": {
+      "type": "boolean"
+     },
+     "weight": {
+      "type": "string"
+     },
+     "dimensions": {
+      "$ref": "#/components/schemas/Dimensions"
+     },
+     "shipping_class": {
+      "type": "string"
+     },
+     "shipping_class_id": {
+      "type": [
+       "integer",
+       "string"
+      ],
+      "description": "WooCommerce serialises this differently from its documented type."
+     },
+     "image": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ProductImage"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "attributes": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/VariationAttribute"
+      }
+     },
+     "menu_order": {
+      "type": "integer"
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    }
+   },
+   "CategoryImage": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-category-image-properties"
+    },
+    "required": [
+     "id",
+     "src"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_created_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_modified_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "src": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "alt": {
+      "type": "string"
+     }
+    }
+   },
+   "ProductCategory": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-category-properties"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug",
+     "parent"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "parent": {
+      "type": "integer"
+     },
+     "description": {
+      "type": "string"
+     },
+     "display": {
+      "type": "string"
+     },
+     "image": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/CategoryImage"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Documented without null; WooCommerce sends null when it is unset."
+     },
+     "menu_order": {
+      "type": "integer"
+     },
+     "count": {
+      "type": "integer"
+     }
+    }
+   },
+   "ProductReview": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#product-review-properties"
+    },
+    "required": [
+     "id",
+     "product_id",
+     "status",
+     "reviewer",
+     "review",
+     "rating"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "date_created": {
+      "type": "string"
+     },
+     "date_created_gmt": {
+      "type": "string"
+     },
+     "product_id": {
+      "type": "integer"
+     },
+     "status": {
+      "type": "string"
+     },
+     "reviewer": {
+      "type": "string"
+     },
+     "reviewer_email": {
+      "type": "string"
+     },
+     "review": {
+      "type": "string"
+     },
+     "rating": {
+      "type": "integer"
+     },
+     "verified": {
+      "type": "boolean"
+     }
+    }
+   },
+   "SettingOption": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.github.io/woocommerce-rest-api-docs/#setting-option-properties"
+    },
+    "required": [
+     "id",
+     "value"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "description": {
+      "type": "string"
+     },
+     "value": {},
+     "default": {},
+     "tip": {
+      "type": "string"
+     },
+     "placeholder": {
+      "type": "string"
+     },
+     "type": {
+      "type": "string"
+     },
+     "options": {
+      "type": "object"
+     },
+     "group_id": {
+      "type": "string"
+     }
+    }
+   },
+   "WpPage": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/pages/#schema"
+    },
+    "required": [
+     "id",
+     "slug",
+     "status",
+     "title",
+     "content",
+     "modified_gmt"
+    ],
+    "properties": {
+     "date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "guid": {
+      "type": "object"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "link": {
+      "type": "string"
+     },
+     "modified": {
+      "type": "string"
+     },
+     "modified_gmt": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "type": {
+      "type": "string"
+     },
+     "password": {
+      "type": "string"
+     },
+     "permalink_template": {
+      "type": "string"
+     },
+     "generated_slug": {
+      "type": "string"
+     },
+     "parent": {
+      "type": "integer"
+     },
+     "title": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "content": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "author": {
+      "type": "integer"
+     },
+     "excerpt": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "featured_media": {
+      "type": "integer"
+     },
+     "comment_status": {
+      "type": "string"
+     },
+     "ping_status": {
+      "type": "string"
+     },
+     "menu_order": {
+      "type": "integer"
+     },
+     "meta": {
+      "type": [
+       "object",
+       "array"
+      ],
+      "description": "An empty JSON array when nothing is registered (WordPress serialises an empty PHP array)."
+     },
+     "template": {
+      "type": "string"
+     }
+    }
+   },
+   "WpPost": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/posts/#schema"
+    },
+    "required": [
+     "id",
+     "slug",
+     "status",
+     "title",
+     "content",
+     "author",
+     "categories",
+     "modified_gmt"
+    ],
+    "properties": {
+     "date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date_gmt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "guid": {
+      "type": "object"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "link": {
+      "type": "string"
+     },
+     "modified": {
+      "type": "string"
+     },
+     "modified_gmt": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     },
+     "type": {
+      "type": "string"
+     },
+     "password": {
+      "type": "string"
+     },
+     "permalink_template": {
+      "type": "string"
+     },
+     "generated_slug": {
+      "type": "string"
+     },
+     "title": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "content": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "author": {
+      "type": "integer"
+     },
+     "excerpt": {
+      "type": "object",
+      "required": [
+       "rendered"
+      ],
+      "properties": {
+       "rendered": {
+        "type": "string"
+       },
+       "protected": {
+        "type": "boolean"
+       }
+      }
+     },
+     "featured_media": {
+      "type": "integer"
+     },
+     "comment_status": {
+      "type": "string"
+     },
+     "ping_status": {
+      "type": "string"
+     },
+     "format": {
+      "type": "string"
+     },
+     "meta": {
+      "type": [
+       "object",
+       "array"
+      ],
+      "description": "An empty JSON array when nothing is registered (WordPress serialises an empty PHP array)."
+     },
+     "sticky": {
+      "type": "boolean"
+     },
+     "template": {
+      "type": "string"
+     },
+     "categories": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     }
+    }
+   },
+   "WpCategory": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/categories/#schema"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug",
+     "parent"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "count": {
+      "type": "integer"
+     },
+     "description": {
+      "type": "string"
+     },
+     "link": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "taxonomy": {
+      "type": "string"
+     },
+     "parent": {
+      "type": "integer"
+     },
+     "meta": {
+      "type": [
+       "object",
+       "array"
+      ],
+      "description": "An empty JSON array when nothing is registered (WordPress serialises an empty PHP array)."
+     }
+    }
+   },
+   "WpUser": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/users/#schema"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "username": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "first_name": {
+      "type": "string"
+     },
+     "last_name": {
+      "type": "string"
+     },
+     "email": {
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     },
+     "description": {
+      "type": "string"
+     },
+     "link": {
+      "type": "string"
+     },
+     "locale": {
+      "type": "string"
+     },
+     "nickname": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "registered_date": {
+      "type": "string"
+     },
+     "roles": {
+      "type": "array"
+     },
+     "password": {
+      "type": "string"
+     },
+     "capabilities": {
+      "type": "object"
+     },
+     "extra_capabilities": {
+      "type": "object"
+     },
+     "avatar_urls": {
+      "type": "object"
+     },
+     "meta": {
+      "type": [
+       "object",
+       "array"
+      ],
+      "description": "An empty JSON array when nothing is registered (WordPress serialises an empty PHP array)."
+     }
+    }
+   },
+   "Redirect": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "url": {
+      "type": "string"
+     },
+     "match_url": {
+      "type": "string"
+     },
+     "match_data": {
+      "type": "object",
+      "additionalProperties": true
+     },
+     "match_type": {
+      "type": "string"
+     },
+     "action_type": {
+      "type": "string"
+     },
+     "action_code": {
+      "type": "integer"
+     },
+     "action_data": {
+      "type": "object",
+      "additionalProperties": true
+     },
+     "title": {
+      "type": "string"
+     },
+     "hits": {
+      "type": "integer"
+     },
+     "regex": {
+      "type": "boolean"
+     },
+     "group_id": {
+      "type": "integer"
+     },
+     "position": {
+      "type": "integer"
+     },
+     "last_access": {
+      "type": "string"
+     },
+     "status": {
+      "type": "string"
+     }
+    },
+    "externalDocs": {
+     "url": "https://redirection.me/developer/rest-api/"
+    },
+    "required": [
+     "id",
+     "url",
+     "action_type",
+     "action_code",
+     "action_data",
+     "regex",
+     "status"
+    ]
+   },
+   "RedirectListResponse": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://redirection.me/developer/rest-api/"
+    },
+    "required": [
+     "items",
+     "total"
+    ],
+    "properties": {
+     "items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Redirect"
+      }
+     },
+     "total": {
+      "type": "integer"
+     }
+    }
+   }
+  }
+ }
+}

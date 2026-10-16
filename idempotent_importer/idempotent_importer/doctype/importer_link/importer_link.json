@@ -1,0 +1,116 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-16 12:00:00.000000",
+ "description": "One source object ↔ the record it was mirrored to, and the hash of what was written. Re-runs compare this hash, so an unchanged object is never written again.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "connection",
+  "kind",
+  "gid",
+  "column_break_link",
+  "target_doctype",
+  "target_name",
+  "hash",
+  "mapper_version",
+  "retired",
+  "synced_at"
+ ],
+ "fields": [
+  {
+   "fieldname": "connection",
+   "fieldtype": "Link",
+   "label": "Connection",
+   "options": "Importer Connection",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "kind",
+   "fieldtype": "Data",
+   "label": "Kind",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "gid",
+   "fieldtype": "Data",
+   "label": "Source Identity",
+   "reqd": 1,
+   "length": 255,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_link",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "target_doctype",
+   "fieldtype": "Link",
+   "label": "Target DocType",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Target",
+   "options": "target_doctype",
+   "reqd": 1,
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "hash",
+   "fieldtype": "Data",
+   "label": "Content Hash",
+   "length": 64
+  },
+  {
+   "fieldname": "mapper_version",
+   "fieldtype": "Int",
+   "label": "Mapper Version"
+  },
+  {
+   "fieldname": "retired",
+   "fieldtype": "Check",
+   "label": "Retired",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "synced_at",
+   "fieldtype": "Datetime",
+   "label": "Synced At"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-16 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Idempotent Importer",
+ "name": "Importer Link",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 0,
+   "export": 1,
+   "print": 0,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "naming_rule": "Random",
+ "in_create": 1
+}

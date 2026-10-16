@@ -1,0 +1,59 @@
+{
+  "operation": "DiscountNodeList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "discountNodes": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "discounts-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/DiscountCodeNode/701",
+          "discount": {
+            "__typename": "DiscountCodeBasic",
+            "title": "Fall 15",
+            "status": "ACTIVE",
+            "startsAt": "2026-09-01T00:00:00Z",
+            "endsAt": "2026-11-30T23:59:59Z",
+            "updatedAt": "2026-09-01T12:00:00Z",
+            "usageLimit": 100,
+            "appliesOncePerCustomer": true,
+            "codes": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"code": "FALL15"}, {"code": "AUTUMN15"}]},
+            "context": {"__typename": "DiscountBuyerSelectionAll"},
+            "minimumRequirement": {"__typename": "DiscountMinimumSubtotal", "greaterThanOrEqualToSubtotal": {"amount": "50.0"}},
+            "customerGets": {
+              "value": {"__typename": "DiscountPercentage", "percentage": 0.15},
+              "items": {
+                "__typename": "DiscountCollections",
+                "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"id": "gid://shopify/Collection/201"}]}
+              }
+            }
+          }
+        },
+        {
+          "id": "gid://shopify/DiscountCodeNode/702",
+          "discount": {
+            "__typename": "DiscountCodeFreeShipping",
+            "title": "Free shipping",
+            "status": "ACTIVE",
+            "startsAt": "2026-09-01T00:00:00Z",
+            "endsAt": null,
+            "updatedAt": "2026-09-01T12:00:00Z",
+            "usageLimit": null,
+            "appliesOncePerCustomer": false,
+            "codes": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"code": "SHIPFREE"}]},
+            "context": {"__typename": "DiscountBuyerSelectionAll"},
+            "minimumRequirement": null,
+            "maximumShippingPrice": null
+          }
+        },
+        {
+          "id": "gid://shopify/DiscountCodeNode/703",
+          "discount": {
+            "__typename": "DiscountCodeBxgy",
+            "title": "Buy one get one",
+            "updatedAt": "2026-09-01T12:00:00Z"
+          }
+        }
+      ]
+    }
+  }
+}

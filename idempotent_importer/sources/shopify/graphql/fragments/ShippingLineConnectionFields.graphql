@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment ShippingLineConnectionFields on ShippingLineConnection {
+  pageInfo {
+    ...PageInfoFields
+  }
+  nodes {
+    ...ShippingLineFields
+  }
+}

@@ -1,0 +1,37 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment CollectionFields on Collection {
+  id
+  legacyResourceId
+  handle
+  title
+  descriptionHtml
+  sortOrder
+  templateSuffix
+  updatedAt
+  image {
+    ...ImageFields
+  }
+  seo {
+    ...SeoFields
+  }
+  ruleSet {
+    appliedDisjunctively
+    rules {
+      column
+      relation
+      condition
+      conditionObject {
+        __typename
+        ... on CollectionRuleMetafieldCondition {
+          metafieldDefinition {
+            namespace
+            key
+          }
+        }
+      }
+    }
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

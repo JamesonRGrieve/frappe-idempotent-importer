@@ -1,0 +1,97 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment DiscountNodeFields on DiscountNode {
+  id
+  discount {
+    __typename
+    ... on DiscountCodeBasic {
+      title
+      status
+      startsAt
+      endsAt
+      updatedAt
+      usageLimit
+      appliesOncePerCustomer
+      codes(first: 250) {
+        pageInfo {
+          ...PageInfoFields
+        }
+        nodes {
+          code
+        }
+      }
+      context {
+        ...DiscountContextFields
+      }
+      minimumRequirement {
+        ...DiscountMinimumFields
+      }
+      customerGets {
+        value {
+          __typename
+          ... on DiscountPercentage {
+            percentage
+          }
+          ... on DiscountAmount {
+            amount {
+              amount
+            }
+            appliesOnEachItem
+          }
+        }
+        items {
+          ...DiscountItemsFields
+        }
+      }
+    }
+    ... on DiscountCodeFreeShipping {
+      title
+      status
+      startsAt
+      endsAt
+      updatedAt
+      usageLimit
+      appliesOncePerCustomer
+      codes(first: 250) {
+        pageInfo {
+          ...PageInfoFields
+        }
+        nodes {
+          code
+        }
+      }
+      context {
+        ...DiscountContextFields
+      }
+      minimumRequirement {
+        ...DiscountMinimumFields
+      }
+      maximumShippingPrice {
+        amount
+      }
+    }
+    ... on DiscountCodeBxgy {
+      title
+      updatedAt
+    }
+    ... on DiscountCodeApp {
+      title
+      updatedAt
+    }
+    ... on DiscountAutomaticBasic {
+      title
+      updatedAt
+    }
+    ... on DiscountAutomaticBxgy {
+      title
+      updatedAt
+    }
+    ... on DiscountAutomaticFreeShipping {
+      title
+      updatedAt
+    }
+    ... on DiscountAutomaticApp {
+      title
+      updatedAt
+    }
+  }
+}

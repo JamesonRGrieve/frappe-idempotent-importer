@@ -1,0 +1,76 @@
+{
+  "operation": "CustomerList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "customers": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "customers-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Customer/401",
+          "legacyResourceId": "401",
+          "firstName": "Avery",
+          "lastName": "Lin",
+          "note": "Prefers email.",
+          "tags": ["vip"],
+          "state": "ENABLED",
+          "locale": "en-CA",
+          "taxExempt": false,
+          "taxExemptions": [],
+          "verifiedEmail": true,
+          "createdAt": "2026-07-01T10:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "defaultEmailAddress": {"emailAddress": "Avery.Lin@example.com"},
+          "defaultPhoneNumber": {"phoneNumber": "+17805550111"},
+          "emailMarketingConsent": {"marketingState": "SUBSCRIBED", "marketingOptInLevel": "SINGLE_OPT_IN", "consentUpdatedAt": "2026-07-01T10:00:00Z"},
+          "smsMarketingConsent": null,
+          "defaultAddress": {
+            "id": "gid://shopify/MailingAddress/4011",
+            "firstName": "Avery", "lastName": "Lin", "company": null,
+            "address1": "1 Main St", "address2": "Unit 2", "city": "Edmonton", "province": "Alberta",
+            "provinceCode": "AB", "countryCodeV2": "CA", "zip": "T5J 1A1", "phone": "+17805550111"
+          },
+          "addressesV2": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {
+                "id": "gid://shopify/MailingAddress/4011",
+                "firstName": "Avery", "lastName": "Lin", "company": null,
+                "address1": "1 Main St", "address2": "Unit 2", "city": "Edmonton", "province": "Alberta",
+                "provinceCode": "AB", "countryCodeV2": "CA", "zip": "T5J 1A1", "phone": "+17805550111"
+              },
+              {
+                "id": "gid://shopify/MailingAddress/4012",
+                "firstName": "Avery", "lastName": "Lin", "company": "Lin Design",
+                "address1": "9 Office Rd", "address2": null, "city": "Calgary", "province": "Alberta",
+                "provinceCode": "AB", "countryCodeV2": "CA", "zip": "T2P 1A1", "phone": null
+              }
+            ]
+          },
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        },
+        {
+          "id": "gid://shopify/Customer/402",
+          "legacyResourceId": "402",
+          "firstName": "Sam",
+          "lastName": null,
+          "note": null,
+          "tags": [],
+          "state": "DISABLED",
+          "locale": "en",
+          "taxExempt": false,
+          "taxExemptions": [],
+          "verifiedEmail": false,
+          "createdAt": "2026-07-02T10:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "defaultEmailAddress": {"emailAddress": "sam@example.com"},
+          "defaultPhoneNumber": null,
+          "emailMarketingConsent": {"marketingState": "NOT_SUBSCRIBED", "marketingOptInLevel": null, "consentUpdatedAt": null},
+          "smsMarketingConsent": null,
+          "defaultAddress": null,
+          "addressesV2": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

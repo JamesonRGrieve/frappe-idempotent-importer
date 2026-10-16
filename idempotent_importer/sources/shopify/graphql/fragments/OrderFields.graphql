@@ -1,0 +1,134 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment OrderFields on Order {
+  id
+  legacyResourceId
+  name
+  number
+  email
+  phone
+  note
+  tags
+  test
+  sourceName
+  customerLocale
+  currencyCode
+  taxesIncluded
+  createdAt
+  updatedAt
+  processedAt
+  cancelledAt
+  cancelReason
+  closedAt
+  riskLevel
+  displayFinancialStatus
+  displayFulfillmentStatus
+  paymentGatewayNames
+  customer {
+    id
+  }
+  customAttributes {
+    key
+    value
+  }
+  billingAddress {
+    ...MailingAddressFields
+  }
+  shippingAddress {
+    ...MailingAddressFields
+  }
+  discountCodes
+  subtotalPriceSet {
+    ...MoneyBagFields
+  }
+  totalDiscountsSet {
+    ...MoneyBagFields
+  }
+  totalShippingPriceSet {
+    ...MoneyBagFields
+  }
+  totalTaxSet {
+    ...MoneyBagFields
+  }
+  totalPriceSet {
+    ...MoneyBagFields
+  }
+  totalTipReceivedSet {
+    ...MoneyBagFields
+  }
+  originalTotalDutiesSet {
+    ...MoneyBagFields
+  }
+  taxLines {
+    ...TaxLineFields
+  }
+  additionalFees {
+    name
+    price {
+      ...MoneyBagFields
+    }
+    taxLines {
+      ...TaxLineFields
+    }
+  }
+  lineItems(first: 250) {
+    ...LineItemConnectionFields
+  }
+  shippingLines(first: 250, includeRemovals: false) {
+    ...ShippingLineConnectionFields
+  }
+  refunds(first: 250) {
+    id
+    createdAt
+    note
+    totalRefundedSet {
+      ...MoneyBagFields
+    }
+    refundLineItems(first: 250) {
+      pageInfo {
+        ...PageInfoFields
+      }
+      nodes {
+        quantity
+        restockType
+        lineItem {
+          id
+        }
+        subtotalSet {
+          ...MoneyBagFields
+        }
+        totalTaxSet {
+          ...MoneyBagFields
+        }
+      }
+    }
+  }
+  fulfillments(first: 250) {
+    id
+    name
+    status
+    createdAt
+    deliveredAt
+    trackingInfo(first: 250) {
+      company
+      number
+      url
+    }
+  }
+  transactions(first: 250) {
+    id
+    kind
+    status
+    gateway
+    processedAt
+    authorizationCode
+    amountSet {
+      ...MoneyBagFields
+    }
+  }
+  events(first: 250) {
+    ...EventConnectionFields
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

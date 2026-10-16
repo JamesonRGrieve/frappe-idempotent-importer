@@ -1,0 +1,44 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/products/reviews",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "2",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 951,
+   "date_created": "2026-09-10T16:00:00",
+   "date_created_gmt": "2026-09-10T16:00:00",
+   "product_id": 101,
+   "product_name": "Wool Toque",
+   "product_permalink": "http://woo-fake:8080/product/wool-toque/",
+   "status": "approved",
+   "reviewer": "Ingrid Johansson",
+   "reviewer_email": "ingrid@example.test",
+   "review": "<p>So warm.</p>",
+   "rating": 5,
+   "verified": true,
+   "reviewer_avatar_urls": {}
+  },
+  {
+   "id": 952,
+   "date_created": "2026-09-11T16:00:00",
+   "date_created_gmt": "2026-09-11T16:00:00",
+   "product_id": 101,
+   "product_name": "Wool Toque",
+   "product_permalink": "http://woo-fake:8080/product/wool-toque/",
+   "status": "spam",
+   "reviewer": "Spammer",
+   "reviewer_email": "spam@example.test",
+   "review": "<p>Buy now</p>",
+   "rating": 1,
+   "verified": true,
+   "reviewer_avatar_urls": {}
+  }
+ ]
+}

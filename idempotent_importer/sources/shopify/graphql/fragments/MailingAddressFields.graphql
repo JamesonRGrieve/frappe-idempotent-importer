@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment MailingAddressFields on MailingAddress {
+  id
+  firstName
+  lastName
+  company
+  address1
+  address2
+  city
+  province
+  provinceCode
+  countryCodeV2
+  zip
+  phone
+}

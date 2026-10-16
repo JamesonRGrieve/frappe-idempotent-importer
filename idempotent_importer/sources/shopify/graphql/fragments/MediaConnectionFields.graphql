@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment MediaConnectionFields on MediaConnection {
+  pageInfo {
+    ...PageInfoFields
+  }
+  nodes {
+    __typename
+    id
+    alt
+    ... on MediaImage {
+      image {
+        ...ImageFields
+      }
+    }
+    ... on Video {
+      sources {
+        url
+        mimeType
+      }
+    }
+    ... on ExternalVideo {
+      originUrl
+    }
+    ... on Model3d {
+      sources {
+        url
+        mimeType
+      }
+    }
+  }
+}

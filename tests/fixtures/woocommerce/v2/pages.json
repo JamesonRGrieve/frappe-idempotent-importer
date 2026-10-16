@@ -1,0 +1,49 @@
+{
+ "request": {
+  "path": "/wp-json/wp/v2/pages",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "1",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 701,
+   "date": "2026-09-20T16:00:00",
+   "date_gmt": "2026-09-20T16:00:00",
+   "guid": {
+    "rendered": "http://woo-fake:8080/?page_id=701"
+   },
+   "modified": "2026-09-20T16:00:00",
+   "modified_gmt": "2026-09-20T16:00:00",
+   "slug": "about-us",
+   "status": "publish",
+   "type": "page",
+   "link": "http://woo-fake:8080/about-us/",
+   "title": {
+    "rendered": "About us"
+   },
+   "content": {
+    "rendered": "<p>We knit in Alberta, since 2019.</p>",
+    "protected": false
+   },
+   "excerpt": {
+    "rendered": "",
+    "protected": false
+   },
+   "author": 1,
+   "featured_media": 0,
+   "parent": 0,
+   "menu_order": 0,
+   "comment_status": "closed",
+   "ping_status": "closed",
+   "template": "",
+   "meta": {
+    "footnotes": ""
+   }
+  }
+ ]
+}

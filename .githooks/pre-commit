@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# The full gate (scripts/check.sh). Enabled by `git config core.hooksPath .githooks` (see README).
+set -euo pipefail
+exec "$(git rev-parse --show-toplevel)/scripts/check.sh"

@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment ArticleFields on Article {
+  id
+  handle
+  title
+  body
+  summary
+  tags
+  isPublished
+  publishedAt
+  templateSuffix
+  createdAt
+  updatedAt
+  author {
+    name
+  }
+  blog {
+    id
+    handle
+  }
+  image {
+    ...ImageFields
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

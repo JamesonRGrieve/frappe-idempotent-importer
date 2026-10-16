@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment EventConnectionFields on EventConnection {
+  pageInfo {
+    ...PageInfoFields
+  }
+  nodes {
+    __typename
+    id
+    createdAt
+    ... on CommentEvent {
+      rawMessage
+      author {
+        name
+      }
+    }
+  }
+}

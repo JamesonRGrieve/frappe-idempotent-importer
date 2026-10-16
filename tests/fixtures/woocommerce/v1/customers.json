@@ -1,0 +1,92 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/customers",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "2",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 201,
+   "date_created": "2026-08-05T10:00:00",
+   "date_created_gmt": "2026-08-05T16:00:00",
+   "date_modified": "2026-08-05T10:00:00",
+   "date_modified_gmt": "2026-08-05T16:00:00",
+   "email": "ingrid@example.test",
+   "first_name": "Ingrid",
+   "last_name": "Johansson",
+   "role": "customer",
+   "username": "ingrid",
+   "billing": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA",
+    "email": "ingrid@example.test",
+    "phone": "780-555-0101"
+   },
+   "shipping": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA"
+   },
+   "is_paying_customer": true,
+   "avatar_url": "https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g",
+   "meta_data": []
+  },
+  {
+   "id": 202,
+   "date_created": "2026-08-05T10:00:00",
+   "date_created_gmt": "2026-08-05T16:00:00",
+   "date_modified": "2026-08-05T10:00:00",
+   "date_modified_gmt": "2026-08-05T16:00:00",
+   "email": "tom@example.test",
+   "first_name": "Tom",
+   "last_name": "Becker",
+   "role": "customer",
+   "username": "tom",
+   "billing": {
+    "first_name": "Tom",
+    "last_name": "Becker",
+    "company": "Becker Outfitters",
+    "address_1": "5 Main St",
+    "address_2": "",
+    "city": "Bozeman",
+    "state": "MT",
+    "postcode": "59715",
+    "country": "US",
+    "email": "tom@example.test",
+    "phone": ""
+   },
+   "shipping": {
+    "first_name": "",
+    "last_name": "",
+    "company": "",
+    "address_1": "",
+    "address_2": "",
+    "city": "",
+    "state": "",
+    "postcode": "",
+    "country": ""
+   },
+   "is_paying_customer": true,
+   "avatar_url": "https://secure.gravatar.com/avatar/0?s=96&d=mm&r=g",
+   "meta_data": []
+  }
+ ]
+}

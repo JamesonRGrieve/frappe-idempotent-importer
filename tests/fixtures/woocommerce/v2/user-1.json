@@ -1,0 +1,15 @@
+{
+ "request": {
+  "path": "/wp-json/wp/v2/users/1"
+ },
+ "response": {
+  "id": 1,
+  "name": "Ingrid Admin",
+  "url": "",
+  "description": "Owner of the shop.",
+  "link": "http://woo-fake:8080/author/ingrid/",
+  "slug": "ingrid",
+  "avatar_urls": {},
+  "meta": []
+ }
+}

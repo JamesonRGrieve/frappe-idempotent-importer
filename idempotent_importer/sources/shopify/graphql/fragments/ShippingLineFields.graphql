@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment ShippingLineFields on ShippingLine {
+  title
+  code
+  source
+  originalPriceSet {
+    ...MoneyBagFields
+  }
+  discountedPriceSet {
+    ...MoneyBagFields
+  }
+  taxLines {
+    ...TaxLineFields
+  }
+}

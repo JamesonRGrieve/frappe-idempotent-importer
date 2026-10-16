@@ -1,0 +1,34 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment LineItemFields on LineItem {
+  id
+  name
+  title
+  variantTitle
+  sku
+  quantity
+  taxable
+  requiresShipping
+  isGiftCard
+  product {
+    id
+  }
+  variant {
+    id
+  }
+  originalUnitPriceSet {
+    ...MoneyBagFields
+  }
+  originalTotalSet {
+    ...MoneyBagFields
+  }
+  discountedTotalSet {
+    ...MoneyBagFields
+  }
+  taxLines {
+    ...TaxLineFields
+  }
+  customAttributes {
+    key
+    value
+  }
+}

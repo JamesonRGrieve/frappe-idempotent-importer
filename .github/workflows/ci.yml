@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.14
+      - run: scripts/check.sh
+  e2e:
+    runs-on: ubuntu-24.04
+    needs: check
+    steps:
+      - uses: actions/checkout@v4
+      - name: The apps the bench installs beside this one
+        run: |
+          git clone --branch version-16 https://github.com/JamesonRGrieve/frappe-webshop ../frappe-webshop
+          git clone https://github.com/JamesonRGrieve/frappe-public-site-router ../frappe-public-site-router
+      - run: tests/e2e/run.sh

@@ -1,0 +1,27 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/orders/501/notes"
+ },
+ "headers": {
+  "X-WP-Total": "2",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 3101,
+   "author": "WooCommerce",
+   "date_created": "2026-09-04T12:00:00",
+   "date_created_gmt": "2026-09-04T18:00:00",
+   "note": "Order status changed from Processing to Completed.",
+   "customer_note": false
+  },
+  {
+   "id": 3102,
+   "author": "Ingrid Admin",
+   "date_created": "2026-09-04T12:05:00",
+   "date_created_gmt": "2026-09-04T18:05:00",
+   "note": "Thanks for your order! Your toques are on the way.",
+   "customer_note": true
+  }
+ ]
+}

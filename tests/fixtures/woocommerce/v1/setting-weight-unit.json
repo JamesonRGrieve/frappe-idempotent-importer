@@ -1,0 +1,21 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/settings/products/woocommerce_weight_unit"
+ },
+ "response": {
+  "id": "woocommerce_weight_unit",
+  "label": "Weight unit",
+  "description": "This controls what unit you will define weights in.",
+  "type": "select",
+  "default": "kg",
+  "options": {
+   "kg": "kg",
+   "g": "g",
+   "lbs": "lbs",
+   "oz": "oz"
+  },
+  "tip": "This controls what unit you will define weights in.",
+  "value": "kg",
+  "group_id": "products"
+ }
+}

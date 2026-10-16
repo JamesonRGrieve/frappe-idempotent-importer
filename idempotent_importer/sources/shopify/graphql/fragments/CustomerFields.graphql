@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment CustomerFields on Customer {
+  id
+  legacyResourceId
+  firstName
+  lastName
+  note
+  tags
+  state
+  locale
+  taxExempt
+  taxExemptions
+  verifiedEmail
+  createdAt
+  updatedAt
+  defaultEmailAddress {
+    emailAddress
+  }
+  defaultPhoneNumber {
+    phoneNumber
+  }
+  emailMarketingConsent {
+    marketingState
+    marketingOptInLevel
+    consentUpdatedAt
+  }
+  smsMarketingConsent {
+    marketingState
+    marketingOptInLevel
+    consentUpdatedAt
+  }
+  defaultAddress {
+    ...MailingAddressFields
+  }
+  addressesV2(first: 250) {
+    ...MailingAddressConnectionFields
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

@@ -1,0 +1,44 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment ProductFields on Product {
+  id
+  legacyResourceId
+  handle
+  title
+  descriptionHtml
+  vendor
+  productType
+  status
+  tags
+  templateSuffix
+  publishedAt
+  createdAt
+  updatedAt
+  isGiftCard
+  hasOnlyDefaultVariant
+  category {
+    id
+    fullName
+  }
+  seo {
+    ...SeoFields
+  }
+  options {
+    name
+    position
+    optionValues {
+      name
+    }
+  }
+  collections(first: 250) {
+    ...CollectionIdConnectionFields
+  }
+  media(first: 250) {
+    ...MediaConnectionFields
+  }
+  variants(first: 250) {
+    ...ProductVariantConnectionFields
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "operation": "CommentList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "comments": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "comments-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Comment/1301",
+          "body": "Love these!",
+          "status": "PUBLISHED",
+          "createdAt": "2026-09-02T09:00:00Z",
+          "updatedAt": "2026-09-02T09:00:00Z",
+          "publishedAt": "2026-09-02T09:00:00Z",
+          "ip": "203.0.113.5",
+          "userAgent": "Mozilla/5.0",
+          "author": {"name": "Rae", "email": "Rae@example.com"},
+          "article": {"id": "gid://shopify/Article/1201"}
+        },
+        {
+          "id": "gid://shopify/Comment/1302",
+          "body": "Buy cheap watches",
+          "status": "SPAM",
+          "createdAt": "2026-09-02T10:00:00Z",
+          "updatedAt": "2026-09-02T10:00:00Z",
+          "publishedAt": null,
+          "ip": null,
+          "userAgent": null,
+          "author": {"name": "Spammer", "email": "spam@example.com"},
+          "article": {"id": "gid://shopify/Article/1201"}
+        }
+      ]
+    }
+  }
+}

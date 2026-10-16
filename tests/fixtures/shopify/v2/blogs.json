@@ -1,0 +1,20 @@
+{
+  "operation": "BlogList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "blogs": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "blogs-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Blog/1101",
+          "handle": "news",
+          "title": "News",
+          "commentPolicy": "MODERATED",
+          "templateSuffix": null,
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

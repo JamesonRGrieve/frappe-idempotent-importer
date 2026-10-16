@@ -1,0 +1,25 @@
+{
+ "request": {
+  "path": "/wp-json/wp/v2/categories",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "1",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 801,
+   "count": 1,
+   "description": "",
+   "link": "http://woo-fake:8080/category/news/",
+   "name": "News",
+   "slug": "news",
+   "taxonomy": "category",
+   "parent": 0,
+   "meta": []
+  }
+ ]
+}

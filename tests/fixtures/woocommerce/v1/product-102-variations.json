@@ -1,0 +1,146 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/products/102/variations",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "2",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 1021,
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-08-01T15:00:00",
+   "description": "",
+   "permalink": "http://woo-fake:8080/product/hoodie/?attribute_pa_size=s",
+   "sku": "HOOD-S",
+   "global_unique_id": "",
+   "price": "60.00",
+   "regular_price": "60.00",
+   "sale_price": "",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": false,
+   "status": "publish",
+   "purchasable": true,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": true,
+   "stock_quantity": 3,
+   "stock_status": "instock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "weight": "0.5",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "image": {
+    "id": 43,
+    "date_created": "2026-08-01T09:00:00",
+    "date_created_gmt": "2026-08-01T15:00:00",
+    "date_modified": "2026-08-01T09:00:00",
+    "date_modified_gmt": "2026-08-01T15:00:00",
+    "src": "http://woo-fake:8080/wp-content/uploads/2026/08/hoodie.png",
+    "name": "hoodie",
+    "alt": "Navy hoodie"
+   },
+   "attributes": [
+    {
+     "id": 1,
+     "name": "Size",
+     "option": "S"
+    },
+    {
+     "id": 0,
+     "name": "Colour",
+     "option": "Navy"
+    }
+   ],
+   "menu_order": 0,
+   "meta_data": []
+  },
+  {
+   "id": 1022,
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-08-01T15:00:00",
+   "description": "",
+   "permalink": "http://woo-fake:8080/product/hoodie/?attribute_pa_size=m",
+   "sku": "HOOD-M",
+   "global_unique_id": "",
+   "price": "54.00",
+   "regular_price": "60.00",
+   "sale_price": "54.00",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": true,
+   "status": "publish",
+   "purchasable": true,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": true,
+   "stock_quantity": 2,
+   "stock_status": "instock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "weight": "0.5",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "image": {
+    "id": 43,
+    "date_created": "2026-08-01T09:00:00",
+    "date_created_gmt": "2026-08-01T15:00:00",
+    "date_modified": "2026-08-01T09:00:00",
+    "date_modified_gmt": "2026-08-01T15:00:00",
+    "src": "http://woo-fake:8080/wp-content/uploads/2026/08/hoodie.png",
+    "name": "hoodie",
+    "alt": "Navy hoodie"
+   },
+   "attributes": [
+    {
+     "id": 1,
+     "name": "Size",
+     "option": "M"
+    },
+    {
+     "id": 0,
+     "name": "Colour",
+     "option": "Navy"
+    }
+   ],
+   "menu_order": 0,
+   "meta_data": []
+  }
+ ]
+}

@@ -1,0 +1,96 @@
+{
+  "operation": "ProductList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "products": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "products-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Product/301",
+          "legacyResourceId": "301",
+          "handle": "silk-scarf",
+          "title": "Silk Scarf",
+          "descriptionHtml": "<p>Hand-rolled edges.</p><img src=\"http://shopify-fake:8080/cdn/shop/files/scarf-detail.png?v=3\">",
+          "vendor": "Atelier North",
+          "productType": "Accessories",
+          "status": "ACTIVE",
+          "tags": ["silk", "gift"],
+          "templateSuffix": null,
+          "publishedAt": "2026-08-01T15:00:00Z",
+          "createdAt": "2026-07-30T15:00:00Z",
+          "updatedAt": "2026-09-10T12:00:00Z",
+          "isGiftCard": false,
+          "hasOnlyDefaultVariant": true,
+          "category": {"id": "gid://shopify/TaxonomyCategory/aa-2-26", "fullName": "Apparel & Accessories > Clothing Accessories > Scarves & Shawls"},
+          "seo": {"title": "Silk Scarf", "description": "A hand-rolled silk scarf."},
+          "options": [{"name": "Title", "position": 1, "optionValues": [{"name": "Default Title"}]}],
+          "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"id": "gid://shopify/Collection/202"}]},
+          "media": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {"__typename": "MediaImage", "id": "gid://shopify/MediaImage/601", "alt": "Scarf", "image": {"url": "http://shopify-fake:8080/cdn/shop/files/scarf.png?v=2", "altText": "Scarf"}}
+            ]
+          },
+          "variants": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {
+                "id": "gid://shopify/ProductVariant/3011",
+                "legacyResourceId": "3011",
+                "title": "Default Title",
+                "sku": "SCARF-1",
+                "barcode": "0123456789012",
+                "price": "55.00",
+                "compareAtPrice": "80.00",
+                "position": 1,
+                "taxable": true,
+                "inventoryPolicy": "DENY",
+                "inventoryQuantity": 6,
+                "selectedOptions": [{"name": "Title", "value": "Default Title"}],
+                "media": {"nodes": []},
+                "inventoryItem": {
+                  "tracked": true,
+                  "requiresShipping": true,
+                  "countryCodeOfOrigin": "IT",
+                  "provinceCodeOfOrigin": null,
+                  "harmonizedSystemCode": "621410",
+                  "unitCost": {"amount": "22.5"},
+                  "measurement": {"weight": {"unit": "GRAMS", "value": 120.0}}
+                },
+                "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+              }
+            ]
+          },
+          "metafields": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [{"namespace": "custom", "key": "care", "type": "multi_line_text_field", "value": "Dry clean only."}]
+          }
+        },
+        {
+          "id": "gid://shopify/Product/303",
+          "legacyResourceId": "303",
+          "handle": "gift-card",
+          "title": "Gift Card",
+          "descriptionHtml": "",
+          "vendor": "Fixture Boutique",
+          "productType": "Gift Card",
+          "status": "ACTIVE",
+          "tags": [],
+          "templateSuffix": null,
+          "publishedAt": "2026-08-02T15:00:00Z",
+          "createdAt": "2026-08-01T15:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "isGiftCard": true,
+          "hasOnlyDefaultVariant": false,
+          "category": null,
+          "seo": {"title": null, "description": null},
+          "options": [{"name": "Denominations", "position": 1, "optionValues": [{"name": "$25"}]}],
+          "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "media": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "variants": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

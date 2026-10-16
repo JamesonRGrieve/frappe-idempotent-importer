@@ -1,0 +1,416 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/products",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "4",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 101,
+   "name": "Wool Toque",
+   "slug": "wool-toque",
+   "permalink": "http://woo-fake:8080/product/wool-toque/",
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-09-20T12:00:00",
+   "type": "simple",
+   "status": "publish",
+   "featured": false,
+   "catalog_visibility": "visible",
+   "description": "<p>Merino wool, knitted in Alberta.</p>",
+   "short_description": "<p>A warm toque.</p>",
+   "sku": "TOQUE-1",
+   "global_unique_id": "0123456789012",
+   "price": "27.00",
+   "regular_price": "27.00",
+   "sale_price": "",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": false,
+   "purchasable": true,
+   "total_sales": 4,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "external_url": "",
+   "button_text": "",
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": true,
+   "stock_quantity": 9,
+   "stock_status": "instock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "sold_individually": false,
+   "weight": "0.12",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_required": true,
+   "shipping_taxable": true,
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "reviews_allowed": true,
+   "average_rating": "5.00",
+   "rating_count": 1,
+   "related_ids": [],
+   "upsell_ids": [],
+   "cross_sell_ids": [],
+   "parent_id": 0,
+   "purchase_note": "",
+   "categories": [
+    {
+     "id": 13,
+     "name": "Hats &amp; Accessories",
+     "slug": "accessories"
+    }
+   ],
+   "tags": [
+    {
+     "id": 21,
+     "name": "wool",
+     "slug": "wool"
+    }
+   ],
+   "brands": [
+    {
+     "id": 31,
+     "name": "Atelier North",
+     "slug": "atelier-north"
+    }
+   ],
+   "images": [
+    {
+     "id": 41,
+     "date_created": "2026-08-01T09:00:00",
+     "date_created_gmt": "2026-08-01T15:00:00",
+     "date_modified": "2026-08-01T09:00:00",
+     "date_modified_gmt": "2026-08-01T15:00:00",
+     "src": "http://woo-fake:8080/wp-content/uploads/2026/08/toque.png",
+     "name": "toque",
+     "alt": "A wool toque"
+    },
+    {
+     "id": 42,
+     "date_created": "2026-08-01T09:00:00",
+     "date_created_gmt": "2026-08-01T15:00:00",
+     "date_modified": "2026-08-01T09:00:00",
+     "date_modified_gmt": "2026-08-01T15:00:00",
+     "src": "http://woo-fake:8080/wp-content/uploads/2026/08/toque-side.png",
+     "name": "toque-side",
+     "alt": ""
+    }
+   ],
+   "attributes": [],
+   "default_attributes": [],
+   "variations": [],
+   "grouped_products": [],
+   "menu_order": 0,
+   "price_html": "",
+   "meta_data": []
+  },
+  {
+   "id": 102,
+   "name": "Hoodie",
+   "slug": "hoodie",
+   "permalink": "http://woo-fake:8080/product/hoodie/",
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-08-01T15:00:00",
+   "type": "variable",
+   "status": "publish",
+   "featured": false,
+   "catalog_visibility": "visible",
+   "description": "<p>Heavy cotton fleece.</p>",
+   "short_description": "",
+   "sku": "HOOD",
+   "global_unique_id": "",
+   "price": "54.00",
+   "regular_price": "",
+   "sale_price": "",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": false,
+   "purchasable": true,
+   "total_sales": 0,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "external_url": "",
+   "button_text": "",
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": false,
+   "stock_quantity": null,
+   "stock_status": "instock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "sold_individually": false,
+   "weight": "",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_required": true,
+   "shipping_taxable": true,
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "reviews_allowed": true,
+   "average_rating": "0",
+   "rating_count": 0,
+   "related_ids": [],
+   "upsell_ids": [],
+   "cross_sell_ids": [],
+   "parent_id": 0,
+   "purchase_note": "",
+   "categories": [
+    {
+     "id": 12,
+     "name": "Hoodies",
+     "slug": "hoodies"
+    }
+   ],
+   "tags": [],
+   "brands": [
+    {
+     "id": 31,
+     "name": "Atelier North",
+     "slug": "atelier-north"
+    }
+   ],
+   "images": [
+    {
+     "id": 43,
+     "date_created": "2026-08-01T09:00:00",
+     "date_created_gmt": "2026-08-01T15:00:00",
+     "date_modified": "2026-08-01T09:00:00",
+     "date_modified_gmt": "2026-08-01T15:00:00",
+     "src": "http://woo-fake:8080/wp-content/uploads/2026/08/hoodie.png",
+     "name": "hoodie",
+     "alt": "Navy hoodie"
+    }
+   ],
+   "attributes": [
+    {
+     "id": 1,
+     "name": "Size",
+     "slug": "pa_size",
+     "position": 0,
+     "visible": true,
+     "variation": true,
+     "options": [
+      "S",
+      "M"
+     ]
+    },
+    {
+     "id": 0,
+     "name": "Colour",
+     "slug": "colour",
+     "position": 1,
+     "visible": true,
+     "variation": true,
+     "options": [
+      "Navy"
+     ]
+    }
+   ],
+   "default_attributes": [
+    {
+     "id": 1,
+     "name": "Size",
+     "option": "S"
+    }
+   ],
+   "variations": [
+    1021,
+    1022
+   ],
+   "grouped_products": [],
+   "menu_order": 0,
+   "price_html": "",
+   "meta_data": []
+  },
+  {
+   "id": 104,
+   "name": "Winter Bundle",
+   "slug": "winter-bundle",
+   "permalink": "http://woo-fake:8080/product/winter-bundle/",
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-08-01T15:00:00",
+   "type": "grouped",
+   "status": "publish",
+   "featured": false,
+   "catalog_visibility": "visible",
+   "description": "",
+   "short_description": "",
+   "sku": "",
+   "global_unique_id": "",
+   "price": "",
+   "regular_price": "",
+   "sale_price": "",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": false,
+   "purchasable": true,
+   "total_sales": 0,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "external_url": "",
+   "button_text": "",
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": false,
+   "stock_quantity": null,
+   "stock_status": "instock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "sold_individually": false,
+   "weight": "",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_required": true,
+   "shipping_taxable": true,
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "reviews_allowed": true,
+   "average_rating": "0",
+   "rating_count": 0,
+   "related_ids": [],
+   "upsell_ids": [],
+   "cross_sell_ids": [],
+   "parent_id": 0,
+   "purchase_note": "",
+   "categories": [
+    {
+     "id": 13,
+     "name": "Hats &amp; Accessories",
+     "slug": "accessories"
+    }
+   ],
+   "tags": [],
+   "brands": [],
+   "images": [],
+   "attributes": [],
+   "default_attributes": [],
+   "variations": [],
+   "grouped_products": [
+    101,
+    102
+   ],
+   "menu_order": 0,
+   "price_html": "",
+   "meta_data": []
+  },
+  {
+   "id": 105,
+   "name": "Prototype Mitts",
+   "slug": "prototype-mitts",
+   "permalink": "http://woo-fake:8080/product/prototype-mitts/",
+   "date_created": "2026-08-01T09:00:00",
+   "date_created_gmt": "2026-08-01T15:00:00",
+   "date_modified": "2026-08-01T09:00:00",
+   "date_modified_gmt": "2026-08-01T15:00:00",
+   "type": "simple",
+   "status": "draft",
+   "featured": false,
+   "catalog_visibility": "visible",
+   "description": "",
+   "short_description": "",
+   "sku": "MITT-1",
+   "global_unique_id": "",
+   "price": "30.00",
+   "regular_price": "30.00",
+   "sale_price": "",
+   "date_on_sale_from": null,
+   "date_on_sale_from_gmt": null,
+   "date_on_sale_to": null,
+   "date_on_sale_to_gmt": null,
+   "on_sale": false,
+   "purchasable": true,
+   "total_sales": 0,
+   "virtual": false,
+   "downloadable": false,
+   "downloads": [],
+   "download_limit": -1,
+   "download_expiry": -1,
+   "external_url": "",
+   "button_text": "",
+   "tax_status": "taxable",
+   "tax_class": "",
+   "manage_stock": true,
+   "stock_quantity": 0,
+   "stock_status": "outofstock",
+   "backorders": "no",
+   "backorders_allowed": false,
+   "backordered": false,
+   "sold_individually": false,
+   "weight": "",
+   "dimensions": {
+    "length": "",
+    "width": "",
+    "height": ""
+   },
+   "shipping_required": true,
+   "shipping_taxable": true,
+   "shipping_class": "",
+   "shipping_class_id": 0,
+   "reviews_allowed": true,
+   "average_rating": "0",
+   "rating_count": 0,
+   "related_ids": [],
+   "upsell_ids": [],
+   "cross_sell_ids": [],
+   "parent_id": 0,
+   "purchase_note": "",
+   "categories": [
+    {
+     "id": 13,
+     "name": "Hats &amp; Accessories",
+     "slug": "accessories"
+    }
+   ],
+   "tags": [],
+   "brands": [],
+   "images": [],
+   "attributes": [],
+   "default_attributes": [],
+   "variations": [],
+   "grouped_products": [],
+   "menu_order": 0,
+   "price_html": "",
+   "meta_data": []
+  }
+ ]
+}

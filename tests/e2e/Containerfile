@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# The end-to-end bench: the official ERPNext v16 image plus every app the importer writes into (HRMS, the
+# blog app, the multi-store Webshop fork and the Public Site router), then this app. run.sh assembles the
+# build context: webshop/, public_site_router/ and idempotent_importer/ are copies of those repositories'
+# working trees. Frontend assets are not built: the suite drives the bench through its CLI and API only.
+ARG ERPNEXT_IMAGE
+FROM ${ERPNEXT_IMAGE}
+ARG HRMS_REF
+ARG BLOG_REF
+ARG PAYMENTS_REF
+USER frappe
+WORKDIR /home/frappe/frappe-bench
+RUN git clone --quiet https://github.com/frappe/hrms apps/hrms \
+	&& git -C apps/hrms checkout --quiet "${HRMS_REF}" \
+	&& git clone --quiet https://github.com/frappe/blog apps/blog \
+	&& git -C apps/blog checkout --quiet "${BLOG_REF}" \
+	&& git clone --quiet https://github.com/frappe/payments apps/payments \
+	&& git -C apps/payments checkout --quiet "${PAYMENTS_REF}" \
+	&& env/bin/pip install --quiet -e apps/hrms -e apps/blog -e apps/payments
+COPY --chown=frappe:frappe webshop apps/webshop
+COPY --chown=frappe:frappe public_site_router apps/public_site_router
+RUN env/bin/pip install --quiet -e apps/webshop -e apps/public_site_router
+COPY --chown=frappe:frappe idempotent_importer apps/idempotent_importer
+RUN env/bin/pip install --quiet --no-deps -e apps/idempotent_importer

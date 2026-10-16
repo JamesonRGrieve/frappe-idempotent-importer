@@ -1,0 +1,108 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/coupons",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "3",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 301,
+   "code": "welcome10",
+   "amount": "10.00",
+   "status": "publish",
+   "date_created": "2026-08-10T09:00:00",
+   "date_created_gmt": "2026-08-10T15:00:00",
+   "date_modified": "2026-08-10T09:00:00",
+   "date_modified_gmt": "2026-08-10T15:00:00",
+   "discount_type": "percent",
+   "description": "New customers",
+   "date_expires": "2026-12-31T00:00:00",
+   "date_expires_gmt": "2026-12-31T07:00:00",
+   "usage_count": 1,
+   "individual_use": true,
+   "product_ids": [],
+   "excluded_product_ids": [],
+   "usage_limit": 100,
+   "usage_limit_per_user": null,
+   "limit_usage_to_x_items": null,
+   "free_shipping": false,
+   "product_categories": [],
+   "excluded_product_categories": [],
+   "exclude_sale_items": false,
+   "minimum_amount": "50.00",
+   "maximum_amount": "0.00",
+   "email_restrictions": [],
+   "used_by": [],
+   "meta_data": []
+  },
+  {
+   "id": 303,
+   "code": "hoodie6",
+   "amount": "6.00",
+   "status": "publish",
+   "date_created": "2026-08-10T09:00:00",
+   "date_created_gmt": "2026-08-10T15:00:00",
+   "date_modified": "2026-08-10T09:00:00",
+   "date_modified_gmt": "2026-08-10T15:00:00",
+   "discount_type": "fixed_product",
+   "description": "",
+   "date_expires": null,
+   "date_expires_gmt": null,
+   "usage_count": 0,
+   "individual_use": false,
+   "product_ids": [
+    102
+   ],
+   "excluded_product_ids": [],
+   "usage_limit": null,
+   "usage_limit_per_user": null,
+   "limit_usage_to_x_items": null,
+   "free_shipping": false,
+   "product_categories": [],
+   "excluded_product_categories": [],
+   "exclude_sale_items": false,
+   "minimum_amount": "0.00",
+   "maximum_amount": "0.00",
+   "email_restrictions": [],
+   "used_by": [],
+   "meta_data": []
+  },
+  {
+   "id": 304,
+   "code": "staffonly",
+   "amount": "30.00",
+   "status": "publish",
+   "date_created": "2026-08-10T09:00:00",
+   "date_created_gmt": "2026-08-10T15:00:00",
+   "date_modified": "2026-08-10T09:00:00",
+   "date_modified_gmt": "2026-08-10T15:00:00",
+   "discount_type": "percent",
+   "description": "",
+   "date_expires": null,
+   "date_expires_gmt": null,
+   "usage_count": 0,
+   "individual_use": false,
+   "product_ids": [],
+   "excluded_product_ids": [],
+   "usage_limit": null,
+   "usage_limit_per_user": null,
+   "limit_usage_to_x_items": null,
+   "free_shipping": false,
+   "product_categories": [],
+   "excluded_product_categories": [],
+   "exclude_sale_items": false,
+   "minimum_amount": "0.00",
+   "maximum_amount": "0.00",
+   "email_restrictions": [
+    "*@atelier-north.test"
+   ],
+   "used_by": [],
+   "meta_data": []
+  }
+ ]
+}

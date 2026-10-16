@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment PageFields on Page {
+  id
+  handle
+  title
+  body
+  isPublished
+  publishedAt
+  templateSuffix
+  createdAt
+  updatedAt
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

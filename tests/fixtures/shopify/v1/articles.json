@@ -1,0 +1,28 @@
+{
+  "operation": "ArticleList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "articles": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "articles-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Article/1201",
+          "handle": "fall-arrivals",
+          "title": "Fall arrivals",
+          "body": "<p>New scarves are in.</p>",
+          "summary": "<p>New scarves.</p>",
+          "tags": ["new", "fall"],
+          "isPublished": true,
+          "publishedAt": "2026-09-01T09:00:00Z",
+          "templateSuffix": null,
+          "createdAt": "2026-08-30T09:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "author": {"name": "Jamie"},
+          "blog": {"id": "gid://shopify/Blog/1101", "handle": "news"},
+          "image": {"url": "http://shopify-fake:8080/cdn/shop/articles/fall.png?v=1", "altText": "Fall"},
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

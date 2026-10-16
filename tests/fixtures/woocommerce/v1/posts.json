@@ -1,0 +1,53 @@
+{
+ "request": {
+  "path": "/wp-json/wp/v2/posts",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "1",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 901,
+   "date": "2026-08-20T16:00:00",
+   "date_gmt": "2026-08-20T16:00:00",
+   "guid": {
+    "rendered": "http://woo-fake:8080/?p=901"
+   },
+   "modified": "2026-08-20T16:00:00",
+   "modified_gmt": "2026-08-20T16:00:00",
+   "slug": "spring-launch",
+   "status": "publish",
+   "type": "post",
+   "link": "http://woo-fake:8080/spring-launch/",
+   "title": {
+    "rendered": "Spring launch"
+   },
+   "content": {
+    "rendered": "<p>Our spring line is here.</p>",
+    "protected": false
+   },
+   "excerpt": {
+    "rendered": "<p>Our spring line.</p>",
+    "protected": false
+   },
+   "author": 1,
+   "featured_media": 0,
+   "comment_status": "open",
+   "ping_status": "open",
+   "sticky": false,
+   "template": "",
+   "format": "standard",
+   "meta": {
+    "footnotes": ""
+   },
+   "categories": [
+    801
+   ],
+   "tags": []
+  }
+ ]
+}

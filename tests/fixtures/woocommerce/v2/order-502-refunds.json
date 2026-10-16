@@ -1,0 +1,71 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/orders/502/refunds",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "1",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 601,
+   "date_created": "2026-09-06T04:00:00",
+   "date_created_gmt": "2026-09-06T10:00:00",
+   "amount": "26.25",
+   "reason": "Damaged in transit",
+   "refunded_by": 1,
+   "refunded_payment": true,
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 2101,
+     "name": "Wool Toque",
+     "product_id": 101,
+     "variation_id": 0,
+     "quantity": -1,
+     "tax_class": "",
+     "subtotal": "-25.00",
+     "subtotal_tax": "-1.25",
+     "total": "-25.00",
+     "total_tax": "-1.25",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "-1.25",
+       "subtotal": "-1.25"
+      }
+     ],
+     "meta_data": [
+      {
+       "id": 9001,
+       "key": "_refunded_item_id",
+       "value": "2001",
+       "display_key": "_refunded_item_id",
+       "display_value": "2001"
+      }
+     ],
+     "sku": "TOQUE-1",
+     "price": -25
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 2102,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "-1.25",
+     "shipping_tax_total": "0.00",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [],
+   "fee_lines": []
+  }
+ ]
+}

@@ -1,0 +1,184 @@
+{
+  "operation": "ProductList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "products": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "products-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Product/301",
+          "legacyResourceId": "301",
+          "handle": "silk-scarf",
+          "title": "Silk Scarf",
+          "descriptionHtml": "<p>Hand-rolled edges.</p><img src=\"http://shopify-fake:8080/cdn/shop/files/scarf-detail.png?v=3\">",
+          "vendor": "Atelier North",
+          "productType": "Accessories",
+          "status": "ACTIVE",
+          "tags": ["silk", "gift"],
+          "templateSuffix": null,
+          "publishedAt": "2026-08-01T15:00:00Z",
+          "createdAt": "2026-07-30T15:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "isGiftCard": false,
+          "hasOnlyDefaultVariant": true,
+          "category": {"id": "gid://shopify/TaxonomyCategory/aa-2-26", "fullName": "Apparel & Accessories > Clothing Accessories > Scarves & Shawls"},
+          "seo": {"title": "Silk Scarf", "description": "A hand-rolled silk scarf."},
+          "options": [{"name": "Title", "position": 1, "optionValues": [{"name": "Default Title"}]}],
+          "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"id": "gid://shopify/Collection/202"}]},
+          "media": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {"__typename": "MediaImage", "id": "gid://shopify/MediaImage/601", "alt": "Scarf", "image": {"url": "http://shopify-fake:8080/cdn/shop/files/scarf.png?v=2", "altText": "Scarf"}}
+            ]
+          },
+          "variants": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {
+                "id": "gid://shopify/ProductVariant/3011",
+                "legacyResourceId": "3011",
+                "title": "Default Title",
+                "sku": "SCARF-1",
+                "barcode": "0123456789012",
+                "price": "60.00",
+                "compareAtPrice": "80.00",
+                "position": 1,
+                "taxable": true,
+                "inventoryPolicy": "DENY",
+                "inventoryQuantity": 7,
+                "selectedOptions": [{"name": "Title", "value": "Default Title"}],
+                "media": {"nodes": []},
+                "inventoryItem": {
+                  "tracked": true,
+                  "requiresShipping": true,
+                  "countryCodeOfOrigin": "IT",
+                  "provinceCodeOfOrigin": null,
+                  "harmonizedSystemCode": "621410",
+                  "unitCost": {"amount": "22.5"},
+                  "measurement": {"weight": {"unit": "GRAMS", "value": 120.0}}
+                },
+                "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+              }
+            ]
+          },
+          "metafields": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [{"namespace": "custom", "key": "care", "type": "multi_line_text_field", "value": "Dry clean only."}]
+          }
+        },
+        {
+          "id": "gid://shopify/Product/302",
+          "legacyResourceId": "302",
+          "handle": "everyday-bra",
+          "title": "Everyday Bra",
+          "descriptionHtml": "<p>Soft and supportive.</p>",
+          "vendor": "Atelier North",
+          "productType": "Bras",
+          "status": "ACTIVE",
+          "tags": [],
+          "templateSuffix": null,
+          "publishedAt": "2026-08-02T15:00:00Z",
+          "createdAt": "2026-08-01T15:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "isGiftCard": false,
+          "hasOnlyDefaultVariant": false,
+          "category": null,
+          "seo": {"title": null, "description": null},
+          "options": [
+            {"name": "Size", "position": 1, "optionValues": [{"name": "34B"}, {"name": "36C"}]},
+            {"name": "Color", "position": 2, "optionValues": [{"name": "Beige"}]}
+          ],
+          "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"id": "gid://shopify/Collection/201"}]},
+          "media": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {"__typename": "MediaImage", "id": "gid://shopify/MediaImage/602", "alt": null, "image": {"url": "http://shopify-fake:8080/cdn/shop/files/bra-front.png?v=1", "altText": "Front"}},
+              {"__typename": "MediaImage", "id": "gid://shopify/MediaImage/603", "alt": null, "image": {"url": "http://shopify-fake:8080/cdn/shop/files/bra-back.png?v=1", "altText": "Back"}},
+              {"__typename": "Video", "id": "gid://shopify/Video/604", "alt": "Fit video", "sources": [{"url": "http://shopify-fake:8080/cdn/shop/videos/fit.mp4", "mimeType": "video/mp4"}]}
+            ]
+          },
+          "variants": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {
+                "id": "gid://shopify/ProductVariant/3021",
+                "legacyResourceId": "3021",
+                "title": "34B / Beige",
+                "sku": "BRA-34B-BEI",
+                "barcode": null,
+                "price": "72.00",
+                "compareAtPrice": null,
+                "position": 1,
+                "taxable": true,
+                "inventoryPolicy": "CONTINUE",
+                "inventoryQuantity": 3,
+                "selectedOptions": [{"name": "Size", "value": "34B"}, {"name": "Color", "value": "Beige"}],
+                "media": {"nodes": [{"__typename": "MediaImage", "image": {"url": "http://shopify-fake:8080/cdn/shop/files/bra-front.png?v=1", "altText": "Front"}}]},
+                "inventoryItem": {
+                  "tracked": true,
+                  "requiresShipping": true,
+                  "countryCodeOfOrigin": null,
+                  "provinceCodeOfOrigin": null,
+                  "harmonizedSystemCode": null,
+                  "unitCost": null,
+                  "measurement": {"weight": {"unit": "GRAMS", "value": 90.0}}
+                },
+                "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+              },
+              {
+                "id": "gid://shopify/ProductVariant/3022",
+                "legacyResourceId": "3022",
+                "title": "36C / Beige",
+                "sku": null,
+                "barcode": null,
+                "price": "72.00",
+                "compareAtPrice": "72.00",
+                "position": 2,
+                "taxable": true,
+                "inventoryPolicy": "DENY",
+                "inventoryQuantity": 0,
+                "selectedOptions": [{"name": "Size", "value": "36C"}, {"name": "Color", "value": "Beige"}],
+                "media": {"nodes": []},
+                "inventoryItem": {
+                  "tracked": true,
+                  "requiresShipping": true,
+                  "countryCodeOfOrigin": null,
+                  "provinceCodeOfOrigin": null,
+                  "harmonizedSystemCode": null,
+                  "unitCost": null,
+                  "measurement": {"weight": null}
+                },
+                "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+              }
+            ]
+          },
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        },
+        {
+          "id": "gid://shopify/Product/303",
+          "legacyResourceId": "303",
+          "handle": "gift-card",
+          "title": "Gift Card",
+          "descriptionHtml": "",
+          "vendor": "Fixture Boutique",
+          "productType": "Gift Card",
+          "status": "ACTIVE",
+          "tags": [],
+          "templateSuffix": null,
+          "publishedAt": "2026-08-02T15:00:00Z",
+          "createdAt": "2026-08-01T15:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "isGiftCard": true,
+          "hasOnlyDefaultVariant": false,
+          "category": null,
+          "seo": {"title": null, "description": null},
+          "options": [{"name": "Denominations", "position": 1, "optionValues": [{"name": "$25"}]}],
+          "collections": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "media": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "variants": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []},
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

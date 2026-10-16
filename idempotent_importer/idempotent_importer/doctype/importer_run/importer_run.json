@@ -1,0 +1,155 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-16 12:00:00.000000",
+ "description": "One run of a connection: persisted between steps (so it survives across background jobs and pauses) and kept as the run's log.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "connection",
+  "mode",
+  "dry_run",
+  "status",
+  "column_break_run",
+  "started_at",
+  "finished_at",
+  "resume_at",
+  "pauses",
+  "progress_section",
+  "kinds",
+  "kind_index",
+  "cursor",
+  "counts",
+  "log_section",
+  "summary",
+  "log"
+ ],
+ "fields": [
+  {
+   "fieldname": "connection",
+   "fieldtype": "Link",
+   "label": "Connection",
+   "options": "Importer Connection",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "incremental\nfull",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "dry_run",
+   "fieldtype": "Check",
+   "label": "Dry Run"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Running\nComplete\nIncomplete",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_run",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "started_at",
+   "fieldtype": "Datetime",
+   "label": "Started At (UTC)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "finished_at",
+   "fieldtype": "Datetime",
+   "label": "Finished At (UTC)"
+  },
+  {
+   "fieldname": "resume_at",
+   "fieldtype": "Datetime",
+   "label": "Paused Until (UTC)"
+  },
+  {
+   "fieldname": "pauses",
+   "fieldtype": "Int",
+   "label": "Consecutive Pauses"
+  },
+  {
+   "fieldname": "progress_section",
+   "fieldtype": "Section Break",
+   "label": "Progress"
+  },
+  {
+   "fieldname": "kinds",
+   "fieldtype": "Code",
+   "label": "Kinds",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "kind_index",
+   "fieldtype": "Int",
+   "label": "Current Kind"
+  },
+  {
+   "fieldname": "cursor",
+   "fieldtype": "Small Text",
+   "label": "Cursor"
+  },
+  {
+   "fieldname": "counts",
+   "fieldtype": "Code",
+   "label": "Counts",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "log_section",
+   "fieldtype": "Section Break",
+   "label": "Log"
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Small Text",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "log",
+   "fieldtype": "Long Text",
+   "label": "Log"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-16 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Idempotent Importer",
+ "name": "Importer Run",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 0,
+   "export": 1,
+   "print": 0,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "naming_rule": "Random",
+ "in_create": 1
+}

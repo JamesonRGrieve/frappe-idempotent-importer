@@ -1,0 +1,39 @@
+{
+ "request": {
+  "path": "/wp-json/redirection/v1/redirect",
+  "query": {
+   "page": 0
+  }
+ },
+ "response": {
+  "items": [
+   {
+    "id": 961,
+    "url": "/old-shop",
+    "match_url": "/old-shop",
+    "match_data": {
+     "source": {
+      "flag_query": "exact",
+      "flag_case": false,
+      "flag_trailing": false,
+      "flag_regex": false
+     }
+    },
+    "match_type": "url",
+    "action_type": "url",
+    "action_code": 301,
+    "action_data": {
+     "url": "/shop/"
+    },
+    "title": "",
+    "hits": 3,
+    "regex": false,
+    "group_id": 1,
+    "position": 0,
+    "last_access": "-",
+    "status": "enabled"
+   }
+  ],
+  "total": 1
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/products/categories",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "3",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 11,
+   "name": "Clothing",
+   "slug": "clothing",
+   "parent": 0,
+   "description": "<p>Warm things.</p>",
+   "display": "default",
+   "image": null,
+   "menu_order": 0,
+   "count": 0
+  },
+  {
+   "id": 12,
+   "name": "Hoodies",
+   "slug": "hoodies",
+   "parent": 11,
+   "description": "",
+   "display": "default",
+   "image": null,
+   "menu_order": 1,
+   "count": 1
+  },
+  {
+   "id": 13,
+   "name": "Hats &amp; Accessories",
+   "slug": "accessories",
+   "parent": 0,
+   "description": "<p>Hats, gloves and more.</p>",
+   "display": "products",
+   "image": {
+    "id": 40,
+    "date_created": "2026-08-01T09:00:00",
+    "date_created_gmt": "2026-08-01T15:00:00",
+    "date_modified": "2026-08-01T09:00:00",
+    "date_modified_gmt": "2026-08-01T15:00:00",
+    "src": "http://woo-fake:8080/wp-content/uploads/2026/08/accessories.png",
+    "name": "accessories",
+    "alt": ""
+   },
+   "menu_order": 2,
+   "count": 4
+  }
+ ]
+}

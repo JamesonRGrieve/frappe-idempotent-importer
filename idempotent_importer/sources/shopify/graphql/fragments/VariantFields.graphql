@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment VariantFields on ProductVariant {
+  id
+  legacyResourceId
+  title
+  sku
+  barcode
+  price
+  compareAtPrice
+  position
+  taxable
+  inventoryPolicy
+  inventoryQuantity
+  selectedOptions {
+    name
+    value
+  }
+  media(first: 1) {
+    nodes {
+      __typename
+      ... on MediaImage {
+        image {
+          ...ImageFields
+        }
+      }
+    }
+  }
+  inventoryItem {
+    tracked
+    requiresShipping
+    countryCodeOfOrigin
+    provinceCodeOfOrigin
+    harmonizedSystemCode
+    unitCost {
+      amount
+    }
+    measurement {
+      weight {
+        unit
+        value
+      }
+    }
+  }
+  metafields(first: 250) {
+    ...MetafieldConnectionFields
+  }
+}

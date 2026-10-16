@@ -1,0 +1,671 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/orders",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "5",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 501,
+   "parent_id": 0,
+   "status": "completed",
+   "currency": "CAD",
+   "version": "10.2.1",
+   "prices_include_tax": false,
+   "date_created": "2026-09-02T16:00:00",
+   "date_modified": "2026-09-02T16:00:00",
+   "discount_total": "11.00",
+   "discount_tax": "0.55",
+   "shipping_total": "10.00",
+   "shipping_tax": "0.50",
+   "cart_tax": "4.95",
+   "total": "114.45",
+   "total_tax": "5.45",
+   "customer_id": 201,
+   "order_key": "wc_order_501abc",
+   "billing": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA",
+    "email": "ingrid@example.test",
+    "phone": "780-555-0101"
+   },
+   "shipping": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA"
+   },
+   "payment_method": "stripe",
+   "payment_method_title": "Credit card",
+   "transaction_id": "ch_501",
+   "customer_ip_address": "203.0.113.7",
+   "customer_user_agent": "Mozilla/5.0",
+   "created_via": "checkout",
+   "customer_note": "Please gift wrap.",
+   "date_completed": "2026-09-04T12:00:00",
+   "date_paid": "2026-09-02T16:01:00",
+   "cart_hash": "",
+   "number": "501",
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 1001,
+     "name": "Wool Toque",
+     "product_id": 101,
+     "variation_id": 0,
+     "quantity": 2,
+     "tax_class": "",
+     "subtotal": "50.00",
+     "subtotal_tax": "2.25",
+     "total": "45.00",
+     "total_tax": "2.25",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "2.25",
+       "subtotal": "2.25"
+      }
+     ],
+     "meta_data": [],
+     "sku": "TOQUE-1",
+     "price": 25,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    },
+    {
+     "id": 1002,
+     "name": "Hoodie - S, Navy",
+     "product_id": 102,
+     "variation_id": 1021,
+     "quantity": 1,
+     "tax_class": "",
+     "subtotal": "60.00",
+     "subtotal_tax": "2.70",
+     "total": "54.00",
+     "total_tax": "2.70",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "2.70",
+       "subtotal": "2.70"
+      }
+     ],
+     "meta_data": [],
+     "sku": "HOOD-S",
+     "price": 60,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 1004,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "4.95",
+     "shipping_tax_total": "0.50",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [
+    {
+     "id": 1003,
+     "method_title": "Flat rate",
+     "method_id": "flat_rate",
+     "instance_id": "1",
+     "total": "10.00",
+     "total_tax": "0.50",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "0.50",
+       "subtotal": ""
+      }
+     ],
+     "tax_status": "taxable",
+     "meta_data": []
+    }
+   ],
+   "fee_lines": [],
+   "coupon_lines": [
+    {
+     "id": 1005,
+     "code": "welcome10",
+     "discount": "11.00",
+     "discount_tax": "0.55",
+     "meta_data": []
+    }
+   ],
+   "refunds": [],
+   "payment_url": "http://woo-fake:8080/checkout/order-pay/501/",
+   "is_editable": false,
+   "needs_payment": false,
+   "needs_processing": true,
+   "date_created_gmt": "2026-09-02T16:00:00",
+   "date_modified_gmt": "2026-09-02T16:00:00",
+   "date_completed_gmt": "2026-09-04T18:00:00",
+   "date_paid_gmt": "2026-09-02T16:01:00",
+   "currency_symbol": "$"
+  },
+  {
+   "id": 502,
+   "parent_id": 0,
+   "status": "refunded",
+   "currency": "CAD",
+   "version": "10.2.1",
+   "prices_include_tax": false,
+   "date_created": "2026-09-05T17:00:00",
+   "date_modified": "2026-09-05T17:00:00",
+   "discount_total": "0.00",
+   "discount_tax": "0.00",
+   "shipping_total": "0.00",
+   "shipping_tax": "0.00",
+   "cart_tax": "1.25",
+   "total": "26.25",
+   "total_tax": "1.25",
+   "customer_id": 0,
+   "order_key": "wc_order_502abc",
+   "billing": {
+    "first_name": "Ana",
+    "last_name": "Silva",
+    "company": "",
+    "address_1": "1 Stephen Ave",
+    "address_2": "",
+    "city": "Calgary",
+    "state": "AB",
+    "postcode": "T2P 1J9",
+    "country": "CA",
+    "email": "ana@example.test",
+    "phone": "403-555-0199"
+   },
+   "shipping": {
+    "first_name": "Ana",
+    "last_name": "Silva",
+    "company": "",
+    "address_1": "1 Stephen Ave",
+    "address_2": "",
+    "city": "Calgary",
+    "state": "AB",
+    "postcode": "T2P 1J9",
+    "country": "CA"
+   },
+   "payment_method": "stripe",
+   "payment_method_title": "Credit card",
+   "transaction_id": "ch_502",
+   "customer_ip_address": "203.0.113.7",
+   "customer_user_agent": "Mozilla/5.0",
+   "created_via": "checkout",
+   "customer_note": "",
+   "date_completed": null,
+   "date_paid": "2026-09-05T17:02:00",
+   "cart_hash": "",
+   "number": "502",
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 2001,
+     "name": "Wool Toque",
+     "product_id": 101,
+     "variation_id": 0,
+     "quantity": 1,
+     "tax_class": "",
+     "subtotal": "25.00",
+     "subtotal_tax": "1.25",
+     "total": "25.00",
+     "total_tax": "1.25",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "1.25",
+       "subtotal": "1.25"
+      }
+     ],
+     "meta_data": [],
+     "sku": "TOQUE-1",
+     "price": 25,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 2003,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "1.25",
+     "shipping_tax_total": "0.00",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [
+    {
+     "id": 2002,
+     "method_title": "Free shipping",
+     "method_id": "free_shipping",
+     "instance_id": "1",
+     "total": "0.00",
+     "total_tax": "0.00",
+     "taxes": [],
+     "tax_status": "taxable",
+     "meta_data": []
+    }
+   ],
+   "fee_lines": [],
+   "coupon_lines": [],
+   "refunds": [
+    {
+     "id": 601,
+     "reason": "Damaged in transit",
+     "total": "-26.25"
+    }
+   ],
+   "payment_url": "http://woo-fake:8080/checkout/order-pay/502/",
+   "is_editable": false,
+   "needs_payment": false,
+   "needs_processing": true,
+   "date_created_gmt": "2026-09-05T17:00:00",
+   "date_modified_gmt": "2026-09-06T10:00:00",
+   "date_completed_gmt": null,
+   "date_paid_gmt": "2026-09-05T17:02:00",
+   "currency_symbol": "$"
+  },
+  {
+   "id": 503,
+   "parent_id": 0,
+   "status": "processing",
+   "currency": "CAD",
+   "version": "10.2.1",
+   "prices_include_tax": false,
+   "date_created": "2026-09-07T15:00:00",
+   "date_modified": "2026-09-07T15:00:00",
+   "discount_total": "0.00",
+   "discount_tax": "0.00",
+   "shipping_total": "10.00",
+   "shipping_tax": "0.50",
+   "cart_tax": "1.25",
+   "total": "36.75",
+   "total_tax": "1.75",
+   "customer_id": 202,
+   "order_key": "wc_order_503abc",
+   "billing": {
+    "first_name": "Tom",
+    "last_name": "Becker",
+    "company": "Becker Outfitters",
+    "address_1": "5 Main St",
+    "address_2": "",
+    "city": "Bozeman",
+    "state": "MT",
+    "postcode": "59715",
+    "country": "US",
+    "email": "tom@example.test",
+    "phone": ""
+   },
+   "shipping": {
+    "first_name": "",
+    "last_name": "",
+    "company": "",
+    "address_1": "",
+    "address_2": "",
+    "city": "",
+    "state": "",
+    "postcode": "",
+    "country": ""
+   },
+   "payment_method": "bacs",
+   "payment_method_title": "Direct bank transfer",
+   "transaction_id": "",
+   "customer_ip_address": "203.0.113.7",
+   "customer_user_agent": "Mozilla/5.0",
+   "created_via": "checkout",
+   "customer_note": "",
+   "date_completed": null,
+   "date_paid": "2026-09-09T09:00:00",
+   "cart_hash": "",
+   "number": "503",
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 3001,
+     "name": "Wool Toque",
+     "product_id": 101,
+     "variation_id": 0,
+     "quantity": 1,
+     "tax_class": "",
+     "subtotal": "25.00",
+     "subtotal_tax": "1.25",
+     "total": "25.00",
+     "total_tax": "1.25",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "1.25",
+       "subtotal": "1.25"
+      }
+     ],
+     "meta_data": [],
+     "sku": "TOQUE-1",
+     "price": 25,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 3003,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "1.25",
+     "shipping_tax_total": "0.50",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [
+    {
+     "id": 3002,
+     "method_title": "Flat rate",
+     "method_id": "flat_rate",
+     "instance_id": "1",
+     "total": "10.00",
+     "total_tax": "0.50",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "0.50",
+       "subtotal": ""
+      }
+     ],
+     "tax_status": "taxable",
+     "meta_data": []
+    }
+   ],
+   "fee_lines": [],
+   "coupon_lines": [],
+   "refunds": [],
+   "payment_url": "http://woo-fake:8080/checkout/order-pay/503/",
+   "is_editable": false,
+   "needs_payment": false,
+   "needs_processing": true,
+   "date_created_gmt": "2026-09-07T15:00:00",
+   "date_modified_gmt": "2026-09-07T15:00:00",
+   "date_completed_gmt": null,
+   "date_paid_gmt": "2026-09-09T15:00:00",
+   "currency_symbol": "$"
+  },
+  {
+   "id": 504,
+   "parent_id": 0,
+   "status": "cancelled",
+   "currency": "CAD",
+   "version": "10.2.1",
+   "prices_include_tax": false,
+   "date_created": "2026-09-08T15:00:00",
+   "date_modified": "2026-09-08T15:00:00",
+   "discount_total": "0.00",
+   "discount_tax": "0.00",
+   "shipping_total": "0.00",
+   "shipping_tax": "0.00",
+   "cart_tax": "2.70",
+   "total": "56.70",
+   "total_tax": "2.70",
+   "customer_id": 201,
+   "order_key": "wc_order_504abc",
+   "billing": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA",
+    "email": "ingrid@example.test",
+    "phone": "780-555-0101"
+   },
+   "shipping": {
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "company": "",
+    "address_1": "10 Jasper Ave",
+    "address_2": "",
+    "city": "Edmonton",
+    "state": "AB",
+    "postcode": "T5J 0A1",
+    "country": "CA"
+   },
+   "payment_method": "bacs",
+   "payment_method_title": "Direct bank transfer",
+   "transaction_id": "",
+   "customer_ip_address": "203.0.113.7",
+   "customer_user_agent": "Mozilla/5.0",
+   "created_via": "checkout",
+   "customer_note": "",
+   "date_completed": null,
+   "date_paid": null,
+   "cart_hash": "",
+   "number": "504",
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 4001,
+     "name": "Hoodie - M, Navy",
+     "product_id": 102,
+     "variation_id": 1022,
+     "quantity": 1,
+     "tax_class": "",
+     "subtotal": "54.00",
+     "subtotal_tax": "2.70",
+     "total": "54.00",
+     "total_tax": "2.70",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "2.70",
+       "subtotal": "2.70"
+      }
+     ],
+     "meta_data": [],
+     "sku": "HOOD-M",
+     "price": 54,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 4002,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "2.70",
+     "shipping_tax_total": "0.00",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [],
+   "fee_lines": [],
+   "coupon_lines": [],
+   "refunds": [],
+   "payment_url": "http://woo-fake:8080/checkout/order-pay/504/",
+   "is_editable": false,
+   "needs_payment": true,
+   "needs_processing": true,
+   "date_created_gmt": "2026-09-08T15:00:00",
+   "date_modified_gmt": "2026-09-08T15:00:00",
+   "date_completed_gmt": null,
+   "date_paid_gmt": null,
+   "currency_symbol": "$"
+  },
+  {
+   "id": 505,
+   "parent_id": 0,
+   "status": "completed",
+   "currency": "CAD",
+   "version": "10.2.1",
+   "prices_include_tax": false,
+   "date_created": "2026-09-21T16:00:00",
+   "date_modified": "2026-09-21T16:00:00",
+   "discount_total": "0.00",
+   "discount_tax": "0.00",
+   "shipping_total": "10.00",
+   "shipping_tax": "0.50",
+   "cart_tax": "2.70",
+   "total": "67.20",
+   "total_tax": "3.20",
+   "customer_id": 203,
+   "order_key": "wc_order_505abc",
+   "billing": {
+    "first_name": "Maya",
+    "last_name": "Okafor",
+    "company": "",
+    "address_1": "7 River Rd",
+    "address_2": "",
+    "city": "Red Deer",
+    "state": "AB",
+    "postcode": "T4N 1A1",
+    "country": "CA",
+    "email": "maya@example.test",
+    "phone": "587-555-0123"
+   },
+   "shipping": {
+    "first_name": "",
+    "last_name": "",
+    "company": "",
+    "address_1": "",
+    "address_2": "",
+    "city": "",
+    "state": "",
+    "postcode": "",
+    "country": ""
+   },
+   "payment_method": "stripe",
+   "payment_method_title": "Credit card",
+   "transaction_id": "ch_505",
+   "customer_ip_address": "203.0.113.7",
+   "customer_user_agent": "Mozilla/5.0",
+   "created_via": "checkout",
+   "customer_note": "",
+   "date_completed": null,
+   "date_paid": "2026-09-21T16:01:00",
+   "cart_hash": "",
+   "number": "505",
+   "meta_data": [],
+   "line_items": [
+    {
+     "id": 5001,
+     "name": "Hoodie - M, Navy",
+     "product_id": 102,
+     "variation_id": 1022,
+     "quantity": 1,
+     "tax_class": "",
+     "subtotal": "54.00",
+     "subtotal_tax": "2.70",
+     "total": "54.00",
+     "total_tax": "2.70",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "2.70",
+       "subtotal": "2.70"
+      }
+     ],
+     "meta_data": [],
+     "sku": "HOOD-M",
+     "price": 54,
+     "image": {
+      "id": "",
+      "src": ""
+     },
+     "parent_name": null
+    }
+   ],
+   "tax_lines": [
+    {
+     "id": 5003,
+     "rate_code": "CA-AB-GST-1",
+     "rate_id": 1,
+     "label": "GST",
+     "compound": false,
+     "tax_total": "2.70",
+     "shipping_tax_total": "0.50",
+     "rate_percent": 5,
+     "meta_data": []
+    }
+   ],
+   "shipping_lines": [
+    {
+     "id": 5002,
+     "method_title": "Flat rate",
+     "method_id": "flat_rate",
+     "instance_id": "1",
+     "total": "10.00",
+     "total_tax": "0.50",
+     "taxes": [
+      {
+       "id": 1,
+       "total": "0.50",
+       "subtotal": ""
+      }
+     ],
+     "tax_status": "taxable",
+     "meta_data": []
+    }
+   ],
+   "fee_lines": [],
+   "coupon_lines": [],
+   "refunds": [],
+   "payment_url": "http://woo-fake:8080/checkout/order-pay/505/",
+   "is_editable": false,
+   "needs_payment": false,
+   "needs_processing": true,
+   "date_created_gmt": "2026-09-21T16:00:00",
+   "date_modified_gmt": "2026-09-21T16:00:00",
+   "date_completed_gmt": null,
+   "date_paid_gmt": "2026-09-21T16:01:00",
+   "currency_symbol": "$"
+  }
+ ]
+}

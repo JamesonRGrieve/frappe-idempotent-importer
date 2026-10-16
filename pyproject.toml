@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+[project]
+name = "idempotent_importer"
+authors = [
+    { name = "Zephyrex Technologies Limited", email = "jameson@zephyrex.ca" }
+]
+description = "Mirror other stores and business systems into ERPNext, one way and idempotently, until cutover"
+requires-python = ">=3.14,<3.15"
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+dynamic = ["version"]
+dependencies = [
+    # "frappe~=16.0.0" # Installed and managed by bench (brings requests).
+]
+
+# The pure-layer test, lint and type-check toolchain (scripts/check.sh). Frappe and ERPNext are not here:
+# the bench provides them, and the bench-side code is proven end to end (tests/e2e).
+[dependency-groups]
+dev = [
+    "click>=8.3,<9",
+    "graphql-core>=3.2,<3.3",
+    "jsonschema>=4.25,<5",
+    "mypy>=1.19,<2",
+    "pytest>=9.0,<10",
+    "requests>=2.32,<3",
+    "ruff>=0.17,<0.18",
+    "types-jsonschema>=4.25,<5",
+    "types-requests>=2.32,<3",
+]
+
+[project.urls]
+Repository = "https://github.com/JamesonRGrieve/frappe-idempotent-importer"
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=16.0.0,<17.0.0"
+erpnext = ">=16.0.0,<17.0.0"
+
+[tool.ruff]
+line-length = 110
+target-version = "py314"
+extend-exclude = [".cache"]
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "SIM", "RUF", "PL", "N", "S", "BLE", "RET", "PTH"]
+# E101/W191: tabs are the Frappe convention. E501: the formatter owns line length. PLR091x: constructors
+# take their dependencies explicitly, and mappers branch once per source enum. N818: the exception names
+# are the engine's vocabulary, shared with wp-woo-idempotent-importer (RetryLater, Unsupported, …).
+ignore = ["E101", "W191", "E501", "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR0917", "N818"]
+
+[tool.ruff.lint.per-file-ignores]
+# bench imports every app's commands module on every invocation: the engine is imported only when a
+# command of this app runs.
+"idempotent_importer/commands.py" = ["PLC0415"]
+# Tests assert with `assert`, and use fake credentials.
+"tests/**" = ["S101", "S105", "S106", "PLR2004"]
+"idempotent_importer/tests/**" = ["S101", "S105", "S106", "PLR2004"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+warn_unreachable = true
+files = ["idempotent_importer", "tests", "tools"]
+exclude = ["\\.cache/"]
+
+# Frappe, ERPNext and the apps beside them ship no type information and are only installed on a bench.
+[[tool.mypy.overrides]]
+module = ["frappe", "frappe.*", "erpnext", "erpnext.*"]
+ignore_missing_imports = true
+
+# The bench side subclasses Frappe's untyped Document and decorates with its untyped whitelist and CLI
+# helpers; only those three checks are off there, and only because Frappe has no types to check against.
+[[tool.mypy.overrides]]
+module = [
+    "idempotent_importer.api",
+    "idempotent_importer.commands",
+    "idempotent_importer.erpnext.*",
+    "idempotent_importer.idempotent_importer.*",
+    "idempotent_importer.tests.*",
+]
+disallow_subclassing_any = false
+disallow_untyped_decorators = false
+warn_return_any = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider"

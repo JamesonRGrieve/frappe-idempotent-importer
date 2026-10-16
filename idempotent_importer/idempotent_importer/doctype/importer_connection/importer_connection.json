@@ -1,0 +1,435 @@
+{
+ "actions": [],
+ "autoname": "field:connection_id",
+ "creation": "2026-10-16 12:00:00.000000",
+ "description": "One source store or system mirrored into this site, one way and idempotently: what is new at the source is created, what changed is updated, what was deleted is retired, and what didn't change isn't touched.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "connection_id",
+  "enabled",
+  "source",
+  "column_break_source",
+  "store_url",
+  "auth_method",
+  "api_user",
+  "api_secret",
+  "target_section",
+  "public_site",
+  "company",
+  "route_prefix",
+  "webshop_store",
+  "abbreviation",
+  "column_break_target",
+  "item_group",
+  "price_list",
+  "warehouse",
+  "customer_group",
+  "territory",
+  "guest_customer",
+  "fallback_item",
+  "accounts_section",
+  "mode_of_payment",
+  "deposit_account",
+  "cost_center",
+  "column_break_accounts",
+  "tax_account",
+  "shipping_account",
+  "fee_account",
+  "kinds_section",
+  "import_collections",
+  "import_products",
+  "import_customers",
+  "import_discounts",
+  "import_orders",
+  "import_pages",
+  "column_break_kinds",
+  "import_blogs",
+  "import_articles",
+  "import_comments",
+  "import_reviews",
+  "import_redirects",
+  "filters",
+  "status_section",
+  "last_run",
+  "credential_hold",
+  "credential_hold_since",
+  "column_break_status",
+  "lock_run",
+  "lock_expires",
+  "cursors"
+ ],
+ "fields": [
+  {
+   "fieldname": "connection_id",
+   "fieldtype": "Data",
+   "label": "Connection ID",
+   "reqd": 1,
+   "unique": 1,
+   "set_only_once": 1,
+   "in_list_view": 1,
+   "description": "A short, permanent id (lowercase letters, digits and dashes), e.g. omg-woo. It is part of every identity this connection mints, so it can never change."
+  },
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": "1",
+   "in_list_view": 1,
+   "description": "Run on the schedule (hourly incremental, daily full). A disabled connection can still be run by hand."
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Source",
+   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Finance & Operations\nDynamics 365 Sales\nPeopleSoft\nAgendrix\nNetSuite\nSAP Business One\nQuickBooks Online\nXero\nSage\nZoho\nAcumatica",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_source",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "store_url",
+   "fieldtype": "Data",
+   "label": "Store URL",
+   "reqd": 1,
+   "description": "WooCommerce: the site's https:// address. Shopify: the store's <name>.myshopify.com domain."
+  },
+  {
+   "fieldname": "auth_method",
+   "fieldtype": "Select",
+   "label": "WooCommerce Credentials",
+   "options": "\nApplication Password\nConsumer Key",
+   "depends_on": "eval:doc.source==\"WooCommerce\"",
+   "mandatory_depends_on": "eval:doc.source==\"WooCommerce\"",
+   "description": "An Application Password (Users → Profile) reads everything, drafts and redirects included. A REST API consumer key (WooCommerce → Settings → Advanced) reads the store, and published WordPress content only."
+  },
+  {
+   "fieldname": "api_user",
+   "fieldtype": "Data",
+   "label": "User or Key",
+   "description": "WooCommerce: the WordPress user name, or the consumer key."
+  },
+  {
+   "fieldname": "api_secret",
+   "fieldtype": "Password",
+   "label": "Secret",
+   "description": "The Application Password, consumer secret or Shopify Admin API access token. Never shown again or logged."
+  },
+  {
+   "fieldname": "target_section",
+   "fieldtype": "Section Break",
+   "label": "Where It Lands"
+  },
+  {
+   "fieldname": "public_site",
+   "fieldtype": "Link",
+   "label": "Public Site",
+   "options": "Public Site",
+   "reqd": 1,
+   "description": "The site these records belong to: its company keeps the books, its route prefix holds the pages, and its webshop store sells the items."
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "public_site.company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "route_prefix",
+   "fieldtype": "Data",
+   "label": "Route Prefix",
+   "fetch_from": "public_site.route_prefix",
+   "read_only": 1
+  },
+  {
+   "fieldname": "webshop_store",
+   "fieldtype": "Link",
+   "label": "Webshop Store",
+   "options": "Webshop Store",
+   "fetch_from": "public_site.webshop_store",
+   "read_only": 1
+  },
+  {
+   "fieldname": "abbreviation",
+   "fieldtype": "Data",
+   "label": "Abbreviation",
+   "reqd": 1,
+   "unique": 1,
+   "description": "Suffix and prefix for records ERPNext names globally (item codes, item groups, blog categories, coupon names), so two connections never collide, e.g. OMG."
+  },
+  {
+   "fieldname": "column_break_target",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group",
+   "reqd": 1,
+   "description": "Parent of the mirrored categories, and the group of items that have none."
+  },
+  {
+   "fieldname": "price_list",
+   "fieldtype": "Link",
+   "label": "Price List",
+   "options": "Price List",
+   "reqd": 1,
+   "description": "Selling price list that holds the mirrored prices; its currency must be the source's."
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse",
+   "reqd": 1,
+   "description": "Warehouse whose stock mirrors the source's stock levels."
+  },
+  {
+   "fieldname": "customer_group",
+   "fieldtype": "Link",
+   "label": "Customer Group",
+   "options": "Customer Group",
+   "reqd": 1
+  },
+  {
+   "fieldname": "territory",
+   "fieldtype": "Link",
+   "label": "Territory",
+   "options": "Territory",
+   "reqd": 1
+  },
+  {
+   "fieldname": "guest_customer",
+   "fieldtype": "Link",
+   "label": "Guest Customer",
+   "options": "Customer",
+   "reqd": 1,
+   "description": "Customer of orders placed without an account."
+  },
+  {
+   "fieldname": "fallback_item",
+   "fieldtype": "Link",
+   "label": "Fallback Item",
+   "options": "Item",
+   "reqd": 1,
+   "description": "A non-stock item for order lines whose product no longer exists at the source, and for refunded amounts beyond the refunded lines."
+  },
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Accounts"
+  },
+  {
+   "fieldname": "mode_of_payment",
+   "fieldtype": "Link",
+   "label": "Mode of Payment",
+   "options": "Mode of Payment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "deposit_account",
+   "fieldtype": "Link",
+   "label": "Deposit Account",
+   "options": "Account",
+   "reqd": 1,
+   "description": "Where the source's payments land (and refunds leave), e.g. a payment-processor clearing account."
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
+  },
+  {
+   "fieldname": "column_break_accounts",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tax_account",
+   "fieldtype": "Link",
+   "label": "Tax Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "shipping_account",
+   "fieldtype": "Link",
+   "label": "Shipping Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fee_account",
+   "fieldtype": "Link",
+   "label": "Fee Account",
+   "options": "Account",
+   "description": "Order fees and tips. Orders with fees are not mirrored without one."
+  },
+  {
+   "fieldname": "kinds_section",
+   "fieldtype": "Section Break",
+   "label": "What to Mirror"
+  },
+  {
+   "fieldname": "import_collections",
+   "fieldtype": "Check",
+   "label": "Collections → Item Groups",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_products",
+   "fieldtype": "Check",
+   "label": "Products → Items, prices, stock, Website Items",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_customers",
+   "fieldtype": "Check",
+   "label": "Customers → Customers, Contacts, Addresses",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_discounts",
+   "fieldtype": "Check",
+   "label": "Discounts → Pricing Rules + Coupon Codes",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_orders",
+   "fieldtype": "Check",
+   "label": "Orders → Sales Invoices, Payment Entries, credit notes",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_pages",
+   "fieldtype": "Check",
+   "label": "Pages → Web Pages",
+   "default": "1"
+  },
+  {
+   "fieldname": "column_break_kinds",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "import_blogs",
+   "fieldtype": "Check",
+   "label": "Blogs → Blog Categories",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_articles",
+   "fieldtype": "Check",
+   "label": "Articles → Blog Posts",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_comments",
+   "fieldtype": "Check",
+   "label": "Comments → Blog Post comments",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_reviews",
+   "fieldtype": "Check",
+   "label": "Reviews → Item Reviews",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_redirects",
+   "fieldtype": "Check",
+   "label": "Redirects → Website Route Redirects",
+   "default": "1"
+  },
+  {
+   "fieldname": "filters",
+   "fieldtype": "Code",
+   "label": "Filters",
+   "options": "JSON",
+   "description": "Per-kind source filters, e.g. {\"product\": \"status:active\"} (Shopify search syntax). A filtered kind never retires anything."
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "fieldname": "last_run",
+   "fieldtype": "Link",
+   "label": "Last Run",
+   "options": "Importer Run",
+   "read_only": 1
+  },
+  {
+   "fieldname": "credential_hold",
+   "fieldtype": "Small Text",
+   "label": "Credential Hold",
+   "read_only": 1,
+   "description": "Set when the source rejected the credentials: scheduled runs are held until this connection is saved or a run is started by hand."
+  },
+  {
+   "fieldname": "credential_hold_since",
+   "fieldtype": "Datetime",
+   "label": "Held Since",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lock_run",
+   "fieldtype": "Data",
+   "label": "Lock Holder",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "lock_expires",
+   "fieldtype": "Datetime",
+   "label": "Lock Expires",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "cursors",
+   "fieldtype": "Code",
+   "label": "Cursors",
+   "options": "JSON",
+   "read_only": 1,
+   "hidden": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-16 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Idempotent Importer",
+ "name": "Importer Connection",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 0,
+   "export": 1,
+   "print": 0,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 0,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "naming_rule": "By fieldname",
+ "track_changes": 1
+}

@@ -1,0 +1,13 @@
+{
+  "operation": "UrlRedirectList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "urlRedirects": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "redirects-1"},
+      "nodes": [
+        {"id": "gid://shopify/UrlRedirect/1501", "path": "/old-scarf", "target": "/products/silk-scarf"},
+        {"id": "gid://shopify/UrlRedirect/1502", "path": "/instagram", "target": "https://instagram.com/fixtureboutique"}
+      ]
+    }
+  }
+}

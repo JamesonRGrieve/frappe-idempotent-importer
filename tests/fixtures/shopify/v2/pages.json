@@ -1,0 +1,41 @@
+{
+  "operation": "PageList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "pages": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "pages-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/Page/1001",
+          "handle": "about-us",
+          "title": "About us",
+          "body": "<p>Family run since 2010.</p><p><img src=\"http://shopify-fake:8080/cdn/shop/files/storefront.png?v=1\" alt=\"Shop\"></p>",
+          "isPublished": true,
+          "publishedAt": "2026-07-01T10:00:00Z",
+          "templateSuffix": null,
+          "createdAt": "2026-07-01T10:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "metafields": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {"namespace": "global", "key": "title_tag", "type": "single_line_text_field", "value": "About Fixture Boutique"},
+              {"namespace": "global", "key": "description_tag", "type": "single_line_text_field", "value": "Our story."}
+            ]
+          }
+        },
+        {
+          "id": "gid://shopify/Page/1002",
+          "handle": "size-guide",
+          "title": "Size guide",
+          "body": "<p>Coming soon.</p>",
+          "isPublished": false,
+          "publishedAt": null,
+          "templateSuffix": "guide",
+          "createdAt": "2026-07-02T10:00:00Z",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

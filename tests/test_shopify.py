@@ -12,12 +12,12 @@ from decimal import Decimal
 
 import pytest
 
-from idempotent_importer.core.desired import Desired
+from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import CredentialsRejected, RetryLater, SourceError, Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.http import HttpResponse
 from idempotent_importer.core.kind import Kind
-from idempotent_importer.core.node import JsonObject, Node
+from idempotent_importer.core.node import JsonObject, JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.shopify.client import Connection, GraphQlClient, bucket_shortfall
@@ -288,6 +288,118 @@ class TestMappers:
 		}
 
 
+def basic_discount(**discount: JsonValue) -> Node:
+	base: JsonObject = {
+		"__typename": "DiscountCodeBasic",
+		"title": "Ten",
+		"status": "ACTIVE",
+		"startsAt": "2026-09-01T00:00:00Z",
+		"endsAt": None,
+		"usageLimit": None,
+		"appliesOncePerCustomer": False,
+		"codes": {"nodes": [{"code": "TEN"}]},
+		"context": {"__typename": "DiscountBuyerSelectionAll"},
+		"minimumRequirement": None,
+		"customerGets": {
+			"value": {"__typename": "DiscountPercentage", "percentage": 0.1},
+			"items": {"__typename": "AllDiscountItems"},
+		},
+	}
+	return Node({"id": "gid://shopify/shop-s/DiscountCodeNode/9", "discount": {**base, **discount}})
+
+
+class TestDiscounts:
+	MAPPER = {m.kind: m for m in ADAPTER.mappers(ConnectionConfig("shopify", "shop-s", "x.myshopify.com"))}[
+		Kind.DISCOUNT
+	]
+
+	def test_a_percentage_off_everything(self) -> None:
+		desired = self.MAPPER.map(basic_discount())
+		assert desired is not None
+		ten = desired.values()
+		assert (ten.string("discount"), ten.string("applies"), ten.decimal("value")) == (
+			"percentage",
+			"transaction",
+			Decimal("10.0"),
+		)
+		assert (ten.strings("codes"), ten.optional_string("valid_from")) == (["TEN"], "2026-09-01")
+
+	def test_an_amount_off_each_item_of_some_products(self) -> None:
+		gets: JsonObject = {
+			"value": {"__typename": "DiscountAmount", "amount": {"amount": "5.0"}, "appliesOnEachItem": True},
+			"items": {
+				"__typename": "DiscountProducts",
+				"products": {"nodes": [{"id": "gid://shopify/shop-s/Product/1"}]},
+				"productVariants": {"nodes": []},
+			},
+		}
+		desired = self.MAPPER.map(basic_discount(customerGets=gets))
+		assert desired is not None
+		assert desired.values().strings("items") == ["gid://shopify/shop-s/Product/1"]
+
+	@pytest.mark.parametrize(
+		("change", "reason"),
+		[
+			({"status": "EXPIRED"}, None),
+			({"context": {"__typename": "DiscountCustomers"}}, "selected customers"),
+			({"minimumRequirement": {"__typename": "DiscountMinimumQuantity"}}, "minimum quantity"),
+			(
+				{
+					"customerGets": {
+						"value": {
+							"__typename": "DiscountAmount",
+							"amount": {"amount": "5"},
+							"appliesOnEachItem": False,
+						},
+						"items": {"__typename": "AllDiscountItems"},
+					}
+				},
+				"spread across the order",
+			),
+		],
+	)
+	def test_what_coupons_cannot_hold(self, change: JsonObject, reason: str | None) -> None:
+		if reason is None:
+			assert self.MAPPER.map(basic_discount(**change)) is None
+			return
+		with pytest.raises(Unsupported, match=reason):
+			self.MAPPER.map(basic_discount(**change))
+
+
+class TestOrderStates:
+	def order(self, shopify_config: ConnectionConfig, **change: JsonValue) -> Node:
+		return nodes(shopify_config, Kind.ORDER)["801"].with_fields(**change)
+
+	def mapper(self, shopify_config: ConnectionConfig) -> Mapper:
+		return {m.kind: m for m in ADAPTER.mappers(shopify_config)}[Kind.ORDER]
+
+	def test_awaiting_payment_is_a_draft(self, shopify_config: ConnectionConfig) -> None:
+		desired = self.mapper(shopify_config).map(
+			self.order(shopify_config, displayFinancialStatus="PENDING")
+		)
+		assert desired is not None
+		assert not desired.values().flag("submitted")
+		assert desired.values().records("refunds") == []
+
+	def test_tax_inclusive_prices_and_duties_are_unsupported(self, shopify_config: ConnectionConfig) -> None:
+		with pytest.raises(Unsupported, match="tax-inclusive"):
+			self.mapper(shopify_config).map(self.order(shopify_config, taxesIncluded=True))
+		duties: JsonObject = {"shopMoney": {"amount": "3.0", "currencyCode": "CAD"}}
+		with pytest.raises(Unsupported, match="duties"):
+			self.mapper(shopify_config).map(self.order(shopify_config, originalTotalDutiesSet=duties))
+
+	def test_tips_are_a_fee(self, shopify_config: ConnectionConfig) -> None:
+		tip: JsonObject = {"shopMoney": {"amount": "2.0", "currencyCode": "CAD"}}
+		desired = self.mapper(shopify_config).map(self.order(shopify_config, totalTipReceivedSet=tip))
+		assert desired is not None
+		assert desired.values().records("charges")[-1].all() == {
+			"kind": "fee",
+			"description": "Tip",
+			"amount": Decimal("2.0"),
+		}
+
+
 def test_the_adapter(shopify_config: ConnectionConfig) -> None:
 	assert {mapper.kind for mapper in ADAPTER.mappers(shopify_config)} == set(ADAPTER.kinds())
 	assert ADAPTER.filter_hint()
+	assert isinstance(ADAPTER.reader(shopify_config, scripted(), RecordingSleeper()), ShopifyReader)

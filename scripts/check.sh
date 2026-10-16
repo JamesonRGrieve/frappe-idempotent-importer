@@ -18,6 +18,11 @@ run python -m tools.spdx
 run ruff format --check .
 run ruff check .
 run mypy
-run python -I -m pytest -q
+# Coverage of the pure layers (the bench side is proven end to end) is a one-way ratchet: raise
+# .coverage-baseline in the commit that raises coverage; it never goes down.
+run python -I -m pytest -q \
+	--cov=idempotent_importer.core --cov=idempotent_importer.sources \
+	--cov=idempotent_importer.contract --cov=idempotent_importer.naming \
+	--cov-report=term:skip-covered --cov-fail-under="$(cat .coverage-baseline)"
 run python -m tools.prove
 echo "== All checks passed"

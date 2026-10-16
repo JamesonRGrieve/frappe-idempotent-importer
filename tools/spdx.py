@@ -11,7 +11,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEADER = "SPDX-License-Identifier: AGPL-3.0-or-later"
 EXEMPT_SUFFIXES = frozenset({".json", ".lock", ".pyc"})
-EXEMPT_NAMES = frozenset({"LICENSE", "modules.txt", "patches.txt", ".gitignore"})
+# The licence itself, Frappe's plain-text module lists, and data files with no comment syntax.
+EXEMPT_NAMES = frozenset(
+	{"LICENSE", "modules.txt", "patches.txt", ".gitignore", ".coverage", ".coverage-baseline"}
+)
 # Generated, cached or third-party trees, never part of the source.
 SKIPPED_DIRS = frozenset(
 	{".git", ".venv", ".cache", "__pycache__", ".ruff_cache", ".mypy_cache", ".pytest_cache"}

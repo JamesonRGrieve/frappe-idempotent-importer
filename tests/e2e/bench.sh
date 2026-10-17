@@ -45,10 +45,17 @@ FAKE_HOSTS=(woo-a-fake woo-b-fake shopify-fake woo-fake etsy-fake square_online-
 # into a running bench intermittently fails with "unable to find user frappe: no matching entries in passwd
 # file" while another environment starts or removes a container. A graph root with a run root of its own
 # (keyed by the graph root's path) can't collide with any other store; every podman call below goes
-# through it. The base images are pulled into it once and kept.
+# through it. The base images are pulled into it once and kept. Podman refuses a run root path longer
+# than RUN_ROOT_MAX_LENGTH, so the run root's name is short: `fii-` and 12 hex digits of the key.
+RUN_ROOT_MAX_LENGTH=50
 E2E_STORE="${E2E_STORE:-${XDG_DATA_HOME:-$HOME/.local/share}/frappe-idempotent-importer/e2e-podman}"
-E2E_RUN_ROOT="${XDG_RUNTIME_DIR:-/tmp}/frappe-idempotent-importer-e2e-$(printf '%s' "$E2E_STORE" | sha256sum | cut -c1-16)"
-E2E_STORE_ARGS=(--root "$E2E_STORE/graph" --runroot "$E2E_RUN_ROOT/run" --tmpdir "$E2E_RUN_ROOT/tmp")
+E2E_RUN_ROOT="${XDG_RUNTIME_DIR:-/tmp}/fii-$(printf '%s' "$E2E_STORE" | sha256sum | cut -c1-12)"
+E2E_PODMAN_RUN_ROOT="$E2E_RUN_ROOT/run"
+E2E_STORE_ARGS=(--root "$E2E_STORE/graph" --runroot "$E2E_PODMAN_RUN_ROOT" --tmpdir "$E2E_RUN_ROOT/tmp")
+if [ "${#E2E_PODMAN_RUN_ROOT}" -gt "$RUN_ROOT_MAX_LENGTH" ]; then
+	echo "The podman run root $E2E_PODMAN_RUN_ROOT is longer than $RUN_ROOT_MAX_LENGTH characters; set a shorter XDG_RUNTIME_DIR." >&2
+	exit 1
+fi
 
 podman() {
 	command podman "${E2E_STORE_ARGS[@]}" "$@"

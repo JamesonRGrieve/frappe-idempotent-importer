@@ -17,7 +17,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Source | Status | What it mirrors |
 |---|---|---|
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
-| Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
+| Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too, at each line's own rates) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
 | Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
 | BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, coupons and coupon promotions, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
@@ -215,10 +215,12 @@ Each of these is the operator's call.
     connection belongs to a Public Site). HRMS is needed only by the HR sources of later phases.
 14. **Schedule:** incremental hourly, full daily, a five-minute tick for paused runs. Times are UTC in the
     engine and the site's system time zone on posting dates.
-15. **Tax-inclusive prices** (Shopify's `taxesIncluded`): the invoice's taxes are "On Net Total" rows
-    included in the line rates, shipping's tax a row on the shipping charge; an order is kept only when
-    ERPNext computes every tax row and the total to the source's amounts, and one whose lines are taxed
-    at different rates is a gap (Item Tax Templates would be inventing the source's tax setup).
+15. **Tax-inclusive prices** (Shopify, Squarespace, Wix, Ecwid): the invoice's taxes are "On Net Total"
+    rows included in the line rates, shipping's (and a fee's) tax a row on its charge; an order is kept
+    only when ERPNext computes every tax row and the total to the source's amounts. Lines taxed at
+    different rates carry their own: each included tax books to an account of its own (`<title> - <abbr>`,
+    beside the connection's tax account) and each line's rates are an Item Tax Template (`GST at 5, PST
+    at 7 - <abbr>`), created as orders need them.
 16. **Draft orders** are draft Quotations, never submitted; a completed draft is left to its order and its
     Quotation's title marked "[Removed at source]" (a draft Quotation has no closed state).
 17. **Shipping rates** are mirrored only where a Shipping Rule is exact: flat rates to whole countries.
@@ -235,14 +237,11 @@ Each of these is the operator's call.
 
 Still to do:
 
-1. **Tax-inclusive orders beyond Shopify:** Squarespace, Wix and Ecwid orders whose prices include tax
-   are reported, not mirrored (their coverage pages say why for each); each needs the per-line rates the
-   Shopify mapping backs out, where the source gives them.
-2. **Menus** need a per-site menu in the router: Website Settings' top bar and footer are global.
-3. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
+1. **Menus** need a per-site menu in the router: Website Settings' top bar and footer are global.
+2. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-4. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
+3. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
 
 ## License
 

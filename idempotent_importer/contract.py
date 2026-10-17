@@ -19,7 +19,8 @@ order        number, currency, created_at, submitted, customer (identity | None)
              phone} | None), billing, shipping (address | None), lines ([line]), discount, charges
              ([charge]), total, payment ({method, reference, date} | None), refunds ([{gid, date, reason,
              amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks;
-             optionally taxes_included (line prices include the "included_tax" charges), and for an order
+             optionally taxes_included (line prices include the "included_tax" charges; when the lines'
+             rates differ each line carries its own, taxes ([{title, rate}])), and for an order
              in another currency than the company's, exchange_rate (company currency per order currency)
              and base_total (the total in the company's currency, as the source booked it), with the
              source's base_currency when it names it (the writer refuses one that isn't the company's)
@@ -38,7 +39,7 @@ Times are UTC ``YYYY-MM-DDTHH:MM:SSZ``; money and quantities are exact Decimals.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from idempotent_importer.core.errors import Unsupported
@@ -79,7 +80,9 @@ def address_fields(address: Address) -> Fields:
 
 @dataclass(frozen=True)
 class OrderLine:
-	"""One sold (or, in a refund, returned: negative quantity) line, before order-level discounts."""
+	"""One sold (or, in a refund, returned: negative quantity) line, before order-level discounts. In an
+	order whose lines include tax at different rates, ``taxes`` is this line's own rates (percent, by tax
+	title; see ``included_taxes``)."""
 
 	source_line: str
 	product: str | None
@@ -87,6 +90,7 @@ class OrderLine:
 	name: str
 	qty: Decimal
 	rate: Decimal
+	taxes: tuple[tuple[str, Decimal], ...] | None = None
 
 
 def order_line(
@@ -107,7 +111,7 @@ def order_line(
 
 
 def line_fields(line: OrderLine) -> Fields:
-	return {
+	fields: Fields = {
 		"source_line": line.source_line,
 		"product": line.product,
 		"variant": line.variant,
@@ -115,14 +119,18 @@ def line_fields(line: OrderLine) -> Fields:
 		"qty": line.qty,
 		"rate": line.rate,
 	}
+	if line.taxes is not None:
+		fields["taxes"] = [{"title": title, "rate": rate} for title, rate in line.taxes]
+	return fields
 
 
 @dataclass(frozen=True)
 class Charge:
 	"""An order-level amount on top of its lines: a tax, a shipping line or a fee. In an order whose line
 	prices include tax, a tax already in them is ``included_tax`` (``rate`` percent of the lines' net
-	amount), and a tax on shipping is ``shipping_tax`` (``rate`` percent of the shipping charge just
-	before it); either comes to ``amount``, which ERPNext must compute exactly."""
+	amount, or no rate when each line carries its own: see ``included_taxes``), and a tax on shipping is
+	``shipping_tax`` (``rate`` percent of the shipping charge just before it); either comes to ``amount``,
+	which ERPNext must compute exactly."""
 
 	kind: str
 	description: str
@@ -132,6 +140,46 @@ class Charge:
 
 TAX, SHIPPING, FEE = "tax", "shipping", "fee"
 INCLUDED_TAX, SHIPPING_TAX = "included_tax", "shipping_tax"
+
+type LineRates = dict[str, Decimal]
+
+
+def included_taxes(
+	lines: list[OrderLine], rates: list[LineRates], amounts: dict[str, Decimal]
+) -> tuple[list[OrderLine], list[Charge]]:
+	"""The taxes included in an order's line prices: each tax (by title) one ``included_tax`` charge of the
+	source's amount, ``rates`` being each line's rates (percent, by title). When every line is taxed at the
+	same rates, each charge carries its rate and applies to every line. When they differ (a tax-exempt
+	line, a reduced rate, a tax only some lines bear) the charges carry none and each line carries its own
+	rates, which ERPNext applies to that line alone (an Item Tax Template). A tax that comes to nothing is
+	left out, and so is its rate."""
+	if len(rates) != len(lines):
+		raise ValueError("included_taxes needs one set of rates per line")
+	titles = sorted(title for title, amount in amounts.items() if amount != 0)
+	own = [{title: rate[title] for title in titles if rate.get(title)} for rate in rates]
+	if all(line_rates == own[0] for line_rates in own) and set(own[0] if own else ()) == set(titles):
+		common = own[0] if own else {}
+		return lines, [Charge(INCLUDED_TAX, title, amounts[title], common[title]) for title in titles]
+	taxed = [
+		replace(line, taxes=tuple((title, line_rates[title]) for title in titles if title in line_rates))
+		for line, line_rates in zip(lines, own, strict=True)
+	]
+	return taxed, [Charge(INCLUDED_TAX, title, amounts[title]) for title in titles]
+
+
+def taxed_charge(charge: Charge, taxes: list[tuple[str, Decimal, Decimal]]) -> list[Charge]:
+	"""A charge before tax (shipping, a fee) in an order whose prices include tax, then each of its taxes
+	(title, rate percent, amount) at its rate of the charge; nothing when the charge is nothing."""
+	if charge.amount == 0:
+		return []
+	return [
+		charge,
+		*(
+			Charge(SHIPPING_TAX, f"{title} ({charge.description})", amount, rate)
+			for title, rate, amount in taxes
+			if amount
+		),
+	]
 
 
 def charge_fields(charge: Charge) -> Fields:

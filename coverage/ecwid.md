@@ -30,6 +30,7 @@ are storefront paths.
 | Orders | **Sales Invoice** (submitted when paid, partly or fully refunded, else draft) + **Payment Entry** | Ecwid's totals in the store's currency, exactly; the order id (with the store's prefix and suffix) as the number. |
 | Order items | Invoice lines at their prices before discounts, on the variation's item | The selected options in the line's name. |
 | Discount, taxes, shipping option, handling fee, surcharges | The invoice's discount; one charge per tax name (items, shipping, surcharges); shipping and fee charges | The order's tax total when Ecwid itemises none. |
+| Gross-price orders (`pricesIncludeTax`) | Items at their gross prices, the discount as Ecwid gives it (with tax, off the grand total); each item tax an "On Net Total" row included in the prices at the item's own rates (different rates per item through an **Item Tax Template** and a tax account per tax); shipping and surcharges at their prices before tax, then each of their taxes at its rate | Kept only when ERPNext computes every row and the total to Ecwid's amounts. |
 | Refunds | Credit note (one adjustment line: Ecwid doesn't say which items) + refund **Payment Entry** | Refunds have no ids, so each is keyed by its place in the order's list (Ecwid only adds them). |
 | Tracking number, shipping labels, private notes | **Comment** each | |
 | Published reviews | **Item Review** | |
@@ -39,7 +40,6 @@ are storefront paths.
 
 | Ecwid | Why it isn't mirrored |
 |---|---|
-| Gross-price orders (`pricesIncludeTax`) | Ecwid gives their discounts with tax, not the net amounts an invoice books (reported). |
 | Gift card products | No ERPNext home for a stored-value liability (reported). |
 | Shipping and free-shipping coupons, an amount off some products, once-per-customer coupons, coupons for new or repeat customers, some shipping methods or the front page, codes for both products and categories | No exact ERPNext coupon equivalent (reported). |
 | Cancelled and incomplete (unfinished online payment) orders | Not sales. |

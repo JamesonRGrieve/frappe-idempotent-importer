@@ -6,7 +6,8 @@
       "orderIds": [
         "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
         "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002",
-        "8f1e2d30-0003-4c5b-a69d-7e8f9a0b0003"
+        "8f1e2d30-0003-4c5b-a69d-7e8f9a0b0003",
+        "8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005"
       ]
     }
   },
@@ -130,6 +131,35 @@
                 "brand": "Visa"
               },
               "providerTransactionId": "pi_wix_0003",
+              "offlinePayment": false,
+              "paymentMethodName": {
+                "buyerLanguageName": "Credit/Debit Cards",
+                "siteLanguageName": "Credit/Debit Cards"
+              }
+            }
+          }
+        ],
+        "refunds": []
+      },
+      {
+        "orderId": "8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005",
+        "payments": [
+          {
+            "id": "f0000000-0000-4000-8000-000000000005",
+            "createdDate": "2026-09-06T17:31:00.000Z",
+            "updatedDate": "2026-09-06T17:31:00.000Z",
+            "amount": {
+              "amount": "31.50",
+              "formattedAmount": "$31.50"
+            },
+            "status": "PARTIALLY_REFUNDED",
+            "refundDisabled": false,
+            "regularPaymentDetails": {
+              "creditCardDetails": {
+                "lastFourDigits": "4242",
+                "brand": "Visa"
+              },
+              "providerTransactionId": "pi_wix_0005",
               "offlinePayment": false,
               "paymentMethodName": {
                 "buyerLanguageName": "Credit/Debit Cards",

@@ -242,12 +242,51 @@ class TestMappers:
 			Decimal("29.4"),
 		)
 
+	def test_a_gross_price_order_includes_its_taxes(self) -> None:
+		order = nodes(Kind.ORDER)["Order/CW-1001"]
+		items: list[JsonValue] = [item.raw() for item in order.children("items")]
+		second = order.children("items")[1].raw()
+		items[1] = {**second, "taxes": []}
+		surcharge: list[JsonValue] = [
+			{
+				"description": "Gift wrap",
+				"total": 3.15,
+				"totalWithoutTax": 3,
+				"taxes": [{"name": "GST", "value": 5, "total": 0.15}],
+			}
+		]
+		desired = mapper_of(Kind.ORDER).map(
+			order.with_fields(pricesIncludeTax=True, items=items, customSurcharges=surcharge)
+		)
+		assert desired is not None
+		found = desired.values()
+		assert found.flag("taxes_included")
+		assert [line.all().get("taxes") for line in found.records("lines")] == [
+			[{"title": "GST", "rate": Decimal(5)}],
+			[],
+		]
+		assert [c.all() for c in found.records("charges")] == [
+			{"kind": "included_tax", "description": "GST", "amount": Decimal("2.6")},
+			{"kind": "shipping", "description": "Canada Post Expedited", "amount": Decimal(12)},
+			{
+				"kind": "shipping_tax",
+				"description": "GST (Canada Post Expedited)",
+				"amount": Decimal("0.6"),
+				"rate": Decimal(5),
+			},
+			{"kind": "fee", "description": "Gift wrap", "amount": Decimal(3)},
+			{
+				"kind": "shipping_tax",
+				"description": "GST (Gift wrap)",
+				"amount": Decimal("0.15"),
+				"rate": Decimal(5),
+			},
+		]
+
 	def test_order_edges(self) -> None:
 		order = nodes(Kind.ORDER)["Order/CW-1001"]
 		mapper = mapper_of(Kind.ORDER)
 		assert mapper.map(order.with_fields(paymentStatus="CANCELLED")) is None
-		with pytest.raises(Unsupported, match="gross-price"):
-			mapper.map(order.with_fields(pricesIncludeTax=True))
 		surcharge: list[JsonValue] = [{"description": "Gift wrap", "totalWithoutTax": 3, "taxes": []}]
 		extra = mapper.map(
 			order.with_fields(

@@ -3,8 +3,8 @@
     "path": "/api/v3/7400100/orders"
   },
   "response": {
-    "total": 2,
-    "count": 2,
+    "total": 3,
+    "count": 3,
     "offset": 0,
     "limit": 100,
     "items": [
@@ -362,6 +362,178 @@
           "fulfillmentType": "pickup"
         },
         "pickupTime": "2026-09-06 17:00:00 +0000"
+      },
+      {
+        "id": "CW-1004",
+        "internalId": 1004,
+        "refundedAmount": 0,
+        "giftCardRedemption": 0,
+        "paymentMethod": "Credit card",
+        "customerTaxExempt": false,
+        "customerTaxId": "",
+        "customerTaxIdValid": false,
+        "reversedTaxApplied": false,
+        "b2b_b2c": "b2c",
+        "paymentStatus": "PAID",
+        "fulfillmentStatus": "AWAITING_PROCESSING",
+        "volumeDiscount": 0,
+        "membershipBasedDiscount": 0,
+        "totalAndMembershipBasedDiscount": 0,
+        "customDiscount": [],
+        "discount": 0,
+        "couponDiscount": 0,
+        "customSurcharges": [],
+        "createDate": "2026-09-06 16:00:00 +0000",
+        "updateDate": "2026-09-06 16:05:00 +0000",
+        "items": [
+          {
+            "id": 9541,
+            "productId": 9201,
+            "categoryId": 9101,
+            "price": 21,
+            "priceWithoutTax": 18.75,
+            "productPrice": 28,
+            "sku": "ECW-CANDLE-1",
+            "quantity": 1,
+            "shortDescription": "",
+            "tax": 2.25,
+            "shipping": 0,
+            "quantityInStock": 12,
+            "name": "Cedar candle",
+            "nameTranslated": {
+              "en": "Cedar candle"
+            },
+            "isShippingRequired": true,
+            "trackQuantity": true,
+            "imageUrl": "http://ecwid-fake:8080/images/ecw-candle-1.png",
+            "fixedShippingRateOnly": false,
+            "fixedShippingRate": 0,
+            "digital": false,
+            "couponApplied": false,
+            "couponAmount": 4,
+            "selectedOptions": [],
+            "taxes": [
+              {
+                "name": "GST",
+                "value": 5,
+                "total": 0.94,
+                "taxOnDiscountedSubtotal": 0.94,
+                "taxOnShipping": 0
+              },
+              {
+                "name": "PST",
+                "value": 7,
+                "total": 1.31,
+                "taxOnDiscountedSubtotal": 1.31,
+                "taxOnShipping": 0
+              }
+            ],
+            "attributes": []
+          },
+          {
+            "id": 9542,
+            "productId": 9202,
+            "categoryId": 9102,
+            "price": 10.5,
+            "priceWithoutTax": 10,
+            "productPrice": 14,
+            "sku": "ECW-MELT-FIR",
+            "quantity": 1,
+            "shortDescription": "",
+            "tax": 0.5,
+            "shipping": 0,
+            "quantityInStock": 12,
+            "name": "Wax melt sampler",
+            "nameTranslated": {
+              "en": "Wax melt sampler"
+            },
+            "isShippingRequired": true,
+            "trackQuantity": true,
+            "imageUrl": "http://ecwid-fake:8080/images/ecw-melt-fir.png",
+            "fixedShippingRateOnly": false,
+            "fixedShippingRate": 0,
+            "digital": false,
+            "couponApplied": false,
+            "couponAmount": 1,
+            "selectedOptions": [
+              {
+                "name": "Scent",
+                "type": "CHOICE",
+                "value": "Fir",
+                "valuesArray": [
+                  "Fir"
+                ],
+                "selections": [
+                  {
+                    "selectionTitle": "Fir",
+                    "selectionModifier": 0,
+                    "selectionModifierType": "ABSOLUTE"
+                  }
+                ]
+              }
+            ],
+            "taxes": [
+              {
+                "name": "GST",
+                "value": 5,
+                "total": 0.5,
+                "taxOnDiscountedSubtotal": 0.5,
+                "taxOnShipping": 0
+              }
+            ],
+            "attributes": [],
+            "combinationId": 920201
+          }
+        ],
+        "refunds": [],
+        "shipments": [],
+        "taxesOnShipping": [],
+        "hidden": false,
+        "acceptMarketing": true,
+        "disableAllCustomerNotifications": false,
+        "externalFulfillment": false,
+        "invoices": [],
+        "pricesIncludeTax": true,
+        "lang": "en",
+        "refererUrl": "https://cedarwick.example/products/",
+        "subtotal": 31.5,
+        "subtotalWithoutTax": 28.75,
+        "total": 31.5,
+        "totalWithoutTax": 28.75,
+        "tax": 2.75,
+        "totalBeforeGiftCardRedemption": 31.5,
+        "email": "Rowan.Pike@example.com",
+        "paymentModule": "Stripe",
+        "externalTransactionId": "ch_ecwid_1004",
+        "customerId": 9401,
+        "customerGroup": "General",
+        "customerGroupId": 0,
+        "billingPerson": {
+          "name": "Rowan Pike",
+          "firstName": "Rowan",
+          "lastName": "Pike",
+          "companyName": "",
+          "street": "14 Spray Avenue\nApt 2",
+          "city": "Banff",
+          "countryCode": "CA",
+          "countryName": "Canada",
+          "postalCode": "T1L 1A1",
+          "stateOrProvinceCode": "AB",
+          "stateOrProvinceName": "Alberta",
+          "phone": "+1 403-555-0190"
+        },
+        "shippingPerson": {
+          "name": "Rowan Pike",
+          "companyName": "",
+          "street": "14 Spray Avenue\nApt 2",
+          "city": "Banff",
+          "countryCode": "CA",
+          "countryName": "Canada",
+          "postalCode": "T1L 1A1",
+          "stateOrProvinceCode": "AB",
+          "stateOrProvinceName": "Alberta",
+          "phone": "+1 403-555-0190"
+        }
       }
     ]
   }

@@ -791,6 +791,281 @@
             },
             "nodes": []
           }
+        },
+        {
+          "id": "gid://shopify/Order/805",
+          "legacyResourceId": "805",
+          "name": "#1005",
+          "number": 5,
+          "email": "avery.lin@example.com",
+          "phone": null,
+          "note": null,
+          "tags": [
+            "web"
+          ],
+          "test": false,
+          "sourceName": "web",
+          "customerLocale": "en-CA",
+          "currencyCode": "CAD",
+          "taxesIncluded": true,
+          "createdAt": "2026-09-06T18:00:00Z",
+          "updatedAt": "2026-09-06T18:05:00Z",
+          "processedAt": "2026-09-06T18:00:00Z",
+          "cancelledAt": null,
+          "cancelReason": null,
+          "closedAt": null,
+          "riskLevel": "LOW",
+          "displayFinancialStatus": "PAID",
+          "displayFulfillmentStatus": "FULFILLED",
+          "paymentGatewayNames": [
+            "shopify_payments"
+          ],
+          "customer": {
+            "id": "gid://shopify/Customer/401"
+          },
+          "customAttributes": [],
+          "billingAddress": {
+            "id": "gid://shopify/MailingAddress/8011",
+            "firstName": "Avery",
+            "lastName": "Lin",
+            "company": null,
+            "address1": "1 Main St",
+            "address2": "Unit 2",
+            "city": "Edmonton",
+            "province": "Alberta",
+            "provinceCode": "AB",
+            "countryCodeV2": "CA",
+            "zip": "T5J 1A1",
+            "phone": "+17805550111"
+          },
+          "shippingAddress": {
+            "id": "gid://shopify/MailingAddress/8012",
+            "firstName": "Avery",
+            "lastName": "Lin",
+            "company": null,
+            "address1": "1 Main St",
+            "address2": "Unit 2",
+            "city": "Edmonton",
+            "province": "Alberta",
+            "provinceCode": "AB",
+            "countryCodeV2": "CA",
+            "zip": "T5J 1A1",
+            "phone": "+17805550111"
+          },
+          "discountCodes": [],
+          "subtotalPriceSet": {
+            "shopMoney": {
+              "amount": "31.5",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalDiscountsSet": {
+            "shopMoney": {
+              "amount": "0.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalShippingPriceSet": {
+            "shopMoney": {
+              "amount": "0.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalTaxSet": {
+            "shopMoney": {
+              "amount": "2.75",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalPriceSet": {
+            "shopMoney": {
+              "amount": "31.5",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalTipReceivedSet": {
+            "shopMoney": {
+              "amount": "0.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "originalTotalDutiesSet": null,
+          "taxLines": [
+            {
+              "title": "GST",
+              "rate": 0.05,
+              "priceSet": {
+                "shopMoney": {
+                  "amount": "1.44",
+                  "currencyCode": "CAD"
+                }
+              }
+            },
+            {
+              "title": "PST",
+              "rate": 0.07,
+              "priceSet": {
+                "shopMoney": {
+                  "amount": "1.31",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          ],
+          "additionalFees": [],
+          "lineItems": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": [
+              {
+                "id": "gid://shopify/LineItem/8501",
+                "name": "Silk Scarf",
+                "title": "Silk Scarf",
+                "variantTitle": null,
+                "sku": "SCARF-1",
+                "quantity": 1,
+                "taxable": true,
+                "requiresShipping": true,
+                "isGiftCard": false,
+                "product": {
+                  "id": "gid://shopify/Product/301"
+                },
+                "variant": {
+                  "id": "gid://shopify/ProductVariant/3011"
+                },
+                "originalUnitPriceSet": {
+                  "shopMoney": {
+                    "amount": "21.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "originalTotalSet": {
+                  "shopMoney": {
+                    "amount": "21.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "discountedTotalSet": {
+                  "shopMoney": {
+                    "amount": "21.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "taxLines": [
+                  {
+                    "title": "GST",
+                    "rate": 0.05,
+                    "priceSet": {
+                      "shopMoney": {
+                        "amount": "0.94",
+                        "currencyCode": "CAD"
+                      }
+                    }
+                  },
+                  {
+                    "title": "PST",
+                    "rate": 0.07,
+                    "priceSet": {
+                      "shopMoney": {
+                        "amount": "1.31",
+                        "currencyCode": "CAD"
+                      }
+                    }
+                  }
+                ],
+                "customAttributes": []
+              },
+              {
+                "id": "gid://shopify/LineItem/8502",
+                "name": "Everyday Bra - 34B / Beige",
+                "title": "Everyday Bra",
+                "variantTitle": "34B / Beige",
+                "sku": "BRA-34B-BEI",
+                "quantity": 1,
+                "taxable": true,
+                "requiresShipping": true,
+                "isGiftCard": false,
+                "product": {
+                  "id": "gid://shopify/Product/302"
+                },
+                "variant": {
+                  "id": "gid://shopify/ProductVariant/3021"
+                },
+                "originalUnitPriceSet": {
+                  "shopMoney": {
+                    "amount": "10.5",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "originalTotalSet": {
+                  "shopMoney": {
+                    "amount": "10.5",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "discountedTotalSet": {
+                  "shopMoney": {
+                    "amount": "10.5",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "taxLines": [
+                  {
+                    "title": "GST",
+                    "rate": 0.05,
+                    "priceSet": {
+                      "shopMoney": {
+                        "amount": "0.5",
+                        "currencyCode": "CAD"
+                      }
+                    }
+                  }
+                ],
+                "customAttributes": []
+              }
+            ]
+          },
+          "shippingLines": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          },
+          "refunds": [],
+          "fulfillments": [],
+          "transactions": [
+            {
+              "id": "gid://shopify/OrderTransaction/8405",
+              "kind": "SALE",
+              "status": "SUCCESS",
+              "gateway": "shopify_payments",
+              "processedAt": "2026-09-06T18:00:00Z",
+              "authorizationCode": "ch_805",
+              "amountSet": {
+                "shopMoney": {
+                  "amount": "31.5",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          ],
+          "events": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          },
+          "metafields": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          }
         }
       ]
     }

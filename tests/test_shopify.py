@@ -803,22 +803,38 @@ class TestOrderStates:
 		refund = order.records("refunds")[0]
 		assert refund.records("charges") == [], "a refund's tax is in its returned lines"
 
-	def test_tax_inclusive_lines_taxed_differently_are_unsupported(
+	def test_tax_inclusive_lines_taxed_differently_carry_their_own_rates(
 		self, shopify_config: ConnectionConfig
 	) -> None:
+		"""A tax-exempt line beside a taxed one: the GST charge has no rate of its own, and each line
+		carries the rates ERPNext applies to it alone (an Item Tax Template)."""
 		order = self.order(shopify_config, taxesIncluded=True).raw()
 		items = order["lineItems"]
 		assert isinstance(items, dict) and isinstance(items["nodes"], list)
 		first = items["nodes"][0]
 		assert isinstance(first, dict)
 		first["taxLines"] = []
-		with pytest.raises(Unsupported, match="taxed at different rates"):
-			self.mapper(shopify_config).map(Node(order))
+		desired = self.mapper(shopify_config).map(Node(order))
+		assert desired is not None
+		values = desired.values()
+		lines = values.records("lines")
+		assert [line.all().get("taxes") for line in lines] == [
+			[],
+			*([[{"title": "GST", "rate": Decimal("5.00")}]] * (len(lines) - 1)),
+		]
+		assert values.records("charges")[0].all() == {
+			"kind": "included_tax",
+			"description": "GST",
+			"amount": Decimal("6.06"),
+		}
 
-	def test_duties_are_unsupported(self, shopify_config: ConnectionConfig) -> None:
+	def test_duties_are_a_tax_charge(self, shopify_config: ConnectionConfig) -> None:
 		duties: JsonObject = {"shopMoney": {"amount": "3.0", "currencyCode": "CAD"}}
-		with pytest.raises(Unsupported, match="duties"):
-			self.mapper(shopify_config).map(self.order(shopify_config, originalTotalDutiesSet=duties))
+		desired = self.mapper(shopify_config).map(self.order(shopify_config, originalTotalDutiesSet=duties))
+		assert desired is not None
+		assert {"kind": "tax", "description": "Duties", "amount": Decimal("3.0")} in [
+			c.all() for c in desired.values().records("charges")
+		]
 
 	def test_tips_are_a_fee(self, shopify_config: ConnectionConfig) -> None:
 		tip: JsonObject = {"shopMoney": {"amount": "2.0", "currencyCode": "CAD"}}

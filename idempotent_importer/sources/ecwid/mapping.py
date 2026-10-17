@@ -17,15 +17,18 @@ from idempotent_importer.contract import (
 	Address,
 	Charge,
 	Discount,
+	LineRates,
 	OrderLine,
 	address_fields,
 	charge_fields,
 	date_of,
 	discount_fields,
+	included_taxes,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
+	taxed_charge,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -368,11 +371,11 @@ class OrderMapper:
 	items, shipping and surcharges, the shipping option, the handling fee and surcharges; refunds as credit
 	notes (one adjustment line each: Ecwid doesn't say which items), and the tracking number, each shipping
 	label and the private notes as comments. Paid orders are submitted; awaiting and custom payment statuses
-	are drafts; cancelled and incomplete orders map to nothing. Tax-inclusive (gross price) orders are
-	Unsupported."""
+	are drafts; cancelled and incomplete orders map to nothing. A gross-price order's taxes are included in
+	its prices (``inclusive_charges``)."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -381,16 +384,18 @@ class OrderMapper:
 		payment_status = node.string("paymentStatus")
 		if payment_status in NOT_SALES:
 			return None
-		if node.get("pricesIncludeTax") is True:
-			raise Unsupported(
-				"Ecwid gives a gross-price order's discounts with tax, not the net amounts ERPNext books"
-			)
 		currency = node.string("currency")
 		order_id = node.string("source_id")
 		submitted = payment_status in PAID
 		email = (node.optional_string("email") or "").lower() or None
 		customer = linked(node, "customerId")
 		billing = node.child("billingPerson")
+		inclusive = node.get("pricesIncludeTax") is True
+		lines = [self._line(item, currency, inclusive=inclusive) for item in node.children("items")]
+		if inclusive:
+			lines, found = inclusive_charges(node, lines)
+		else:
+			found = charges(node)
 		fields: Fields = {
 			"number": order_id,
 			"currency": currency,
@@ -406,9 +411,9 @@ class OrderMapper:
 			},
 			"billing": ecwid_address("Billing", billing, email),
 			"shipping": ecwid_address("Shipping", node.child("shippingPerson"), None),
-			"lines": [line_fields(self._line(item, currency)) for item in node.children("items")],
+			"lines": [line_fields(line) for line in lines],
 			"discount": amount_of(node, "discount"),
-			"charges": [charge_fields(charge) for charge in charges(node)],
+			"charges": [charge_fields(charge) for charge in found],
 			"total": amount_of(node, "total"),
 			"payment": {
 				"method": node.optional_string("paymentMethod") or "Ecwid",
@@ -426,9 +431,12 @@ class OrderMapper:
 			"notes": self._notes(node, order_id),
 			"remarks": node.optional_string("orderComments"),
 		}
+		if inclusive:
+			fields["taxes_included"] = True
 		return Desired(self.kind, node.id(), fields)
 
-	def _line(self, item: Node, currency: str) -> OrderLine:
+	def _line(self, item: Node, currency: str, *, inclusive: bool = False) -> OrderLine:
+		"""An item at its price before discounts: without tax, or with it in a gross-price order."""
 		product = linked(item, "productId")
 		quantity = Decimal(item.integer("quantity"))
 		chosen = ", ".join(
@@ -445,7 +453,12 @@ class OrderMapper:
 			self._context.variant(product, linked(item, "combinationId")) if product is not None else None,
 			f"{name} ({chosen})" if chosen else name,
 			quantity,
-			(item.optional_decimal("priceWithoutTax") or item.decimal("price")) * quantity,
+			(
+				item.decimal("price")
+				if inclusive
+				else item.optional_decimal("priceWithoutTax") or item.decimal("price")
+			)
+			* quantity,
 			currency,
 		)
 
@@ -550,6 +563,64 @@ def charges(order: Node) -> list[Charge]:
 			)
 		)
 	return [charge for charge in found if charge.amount != 0]
+
+
+def rated_taxes(node: Node, field: str, amount_field: str = "total") -> list[tuple[str, Decimal, Decimal]]:
+	"""Ecwid taxes as (name, rate percent, amount), as ``taxes_of`` reads them."""
+	taxes = node.children(field) if isinstance(node.get(field), list) else []
+	found = [
+		(
+			t.optional_string("name") or "Tax",
+			t.optional_decimal("value") or Decimal(0),
+			t.optional_decimal(amount_field) or amount_of(t, "total"),
+		)
+		for t in taxes
+	]
+	return [(name, rate, amount) for name, rate, amount in found if amount]
+
+
+def inclusive_charges(order: Node, lines: list[OrderLine]) -> tuple[list[OrderLine], list[Charge]]:
+	"""A gross-price order's (``pricesIncludeTax``) taxes: each item's an included tax at the item's own
+	rates; the shipping option and each surcharge at their prices before tax, each followed by its taxes
+	at their rates; the handling fee as it is."""
+	amounts: dict[str, Decimal] = {}
+	rates: list[LineRates] = []
+	for item in order.children("items"):
+		line_rates: LineRates = {}
+		for name, rate, amount in rated_taxes(item, "taxes", "taxOnDiscountedSubtotal"):
+			amounts[name] = amounts.get(name, Decimal(0)) + amount
+			line_rates[name] = line_rates.get(name, Decimal(0)) + rate
+		rates.append(line_rates)
+	lines, found = included_taxes(lines, rates, amounts)
+	option = order.child("shippingOption")
+	if option is not None:
+		shipping_taxes = rated_taxes(order, "taxesOnShipping")
+		without_tax = option.optional_decimal("shippingRateWithoutTax")
+		net = (
+			without_tax
+			if without_tax is not None
+			else amount_of(option, "shippingRate") - sum((a for _, _, a in shipping_taxes), Decimal(0))
+		)
+		name = option.optional_string("shippingMethodName") or "Shipping"
+		found += taxed_charge(Charge(SHIPPING, name, net), shipping_taxes)
+	handling = order.child("handlingFee")
+	if handling is not None and amount_of(handling, "value"):
+		found.append(
+			Charge(FEE, handling.optional_string("name") or "Handling fee", amount_of(handling, "value"))
+		)
+	surcharges = order.children("customSurcharges") if isinstance(order.get("customSurcharges"), list) else []
+	for surcharge in surcharges:
+		taxes = rated_taxes(surcharge, "taxes")
+		before_tax = surcharge.optional_decimal("totalWithoutTax")
+		net = (
+			before_tax
+			if before_tax is not None
+			else amount_of(surcharge, "total") - sum((a for _, _, a in taxes), Decimal(0))
+		)
+		found += taxed_charge(
+			Charge(FEE, surcharge.optional_string("description") or "Surcharge", net), taxes
+		)
+	return lines, found
 
 
 class ReviewMapper:

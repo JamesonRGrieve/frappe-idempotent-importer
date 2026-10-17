@@ -4,15 +4,19 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import ClassVar
 
 import pytest
 
 from idempotent_importer.contract import (
 	Charge,
 	Discount,
+	OrderLine,
 	booked,
 	date_of,
 	discount_fields,
+	included_taxes,
+	line_fields,
 	order_line,
 	order_remarks,
 	rating_fraction,
@@ -54,6 +58,42 @@ class TestOrderLines:
 		amount_only = refund_balance("r", Decimal("5.00"), [], [], "CAD")
 		assert amount_only is not None
 		assert amount_only.qty * amount_only.rate == Decimal("-5.00")
+
+
+class TestIncludedTaxes:
+	LINES: ClassVar[list[OrderLine]] = [
+		order_line("1", "p", None, "Toque", Decimal(1), Decimal("21.00"), "CAD"),
+		order_line("2", "q", None, "Bread", Decimal(1), Decimal("10.50"), "CAD"),
+	]
+
+	def test_one_set_of_rates_is_carried_by_the_charges(self) -> None:
+		rates = [{"GST": Decimal(5)}, {"GST": Decimal(5)}]
+		lines, charges = included_taxes(self.LINES, rates, {"GST": Decimal("1.50")})
+		assert lines == self.LINES
+		assert charges == [Charge("included_tax", "GST", Decimal("1.50"), Decimal(5))]
+		assert "taxes" not in line_fields(lines[0])
+
+	def test_lines_taxed_differently_carry_their_own_rates(self) -> None:
+		rates = [{"GST": Decimal(5), "PST": Decimal(7)}, {"GST": Decimal(5)}]
+		amounts = {"GST": Decimal("1.50"), "PST": Decimal("1.40"), "HST": Decimal(0)}
+		lines, charges = included_taxes(self.LINES, rates, amounts)
+		assert charges == [
+			Charge("included_tax", "GST", Decimal("1.50")),
+			Charge("included_tax", "PST", Decimal("1.40")),
+		]
+		assert [line_fields(line)["taxes"] for line in lines] == [
+			[{"title": "GST", "rate": Decimal(5)}, {"title": "PST", "rate": Decimal(7)}],
+			[{"title": "GST", "rate": Decimal(5)}],
+		]
+
+	def test_a_tax_exempt_line_has_no_rates(self) -> None:
+		lines, charges = included_taxes(self.LINES, [{"GST": Decimal(5)}, {}], {"GST": Decimal("1.00")})
+		assert [line.taxes for line in lines] == [(("GST", Decimal(5)),), ()]
+		assert charges[0].rate is None
+
+	def test_rates_are_one_per_line(self) -> None:
+		with pytest.raises(ValueError, match="one set of rates per line"):
+			included_taxes(self.LINES, [], {})
 
 
 def test_booked_ignores_which_product_a_line_named() -> None:

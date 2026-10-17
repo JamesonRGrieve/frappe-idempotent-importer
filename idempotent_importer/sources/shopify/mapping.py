@@ -11,18 +11,19 @@ from decimal import Decimal
 
 from idempotent_importer.contract import (
 	FEE,
-	INCLUDED_TAX,
 	SHIPPING,
 	SHIPPING_TAX,
 	TAX,
 	Address,
 	Charge,
 	Discount,
+	LineRates,
 	OrderLine,
 	address_fields,
 	charge_fields,
 	date_of,
 	discount_fields,
+	included_taxes,
 	line_fields,
 	order_line,
 	refund_balance,
@@ -120,16 +121,22 @@ def tax_lines(node: Node) -> dict[TaxKey, Decimal]:
 	return taxes
 
 
-def sale_charges(node: Node, lines: list[Node], shipping: list[Node], fees: list[Charge]) -> list[Charge]:
-	"""Taxes, shipping and fees. When the line prices include tax (``taxesIncluded``), each tax on the
-	lines is an included tax at its rate, which ERPNext must compute to Shopify's amount; shipping is its
-	price less its own taxes, each followed by those taxes at their rates. Lines taxed differently can't
-	share one set of rates, so such an order is Unsupported."""
+def sale_charges(
+	node: Node, lines: list[Node], shipping: list[Node], fees: list[Charge]
+) -> tuple[list[OrderLine], list[Charge]]:
+	"""The order's lines, then its taxes, shipping and fees. When the line prices include tax
+	(``taxesIncluded``), each tax on the lines is an included tax, which ERPNext must compute to Shopify's
+	amount, at each line's own rates when the lines are taxed differently; shipping is its price less its
+	own taxes, each followed by those taxes at their rates."""
+	currency = node.string("currencyCode")
+	sold = [sale_line(line, currency) for line in lines]
 	if not node.flag("taxesIncluded"):
 		charges = [Charge(TAX, title, amount) for (title, _), amount in tax_lines(node).items()]
 		charges += [Charge(SHIPPING, s.string("title"), money(s, "discountedPriceSet")) for s in shipping]
-		return [charge for charge in [*charges, *fees] if charge.amount != 0]
-	on_lines = tax_lines(node)
+		return sold, [charge for charge in [*charges, *fees] if charge.amount != 0]
+	on_lines: dict[str, Decimal] = {}
+	for (title, _), amount in tax_lines(node).items():
+		on_lines[title] = on_lines.get(title, Decimal(0)) + amount
 	shipping_charges: list[Charge] = []
 	for line in shipping:
 		taxes = tax_lines(line)
@@ -138,17 +145,16 @@ def sale_charges(node: Node, lines: list[Node], shipping: list[Node], fees: list
 			continue
 		shipping_charges.append(Charge(SHIPPING, line.string("title"), net))
 		for (title, rate), amount in taxes.items():
-			on_lines[(title, rate)] = on_lines.get((title, rate), Decimal(0)) - amount
+			on_lines[title] = on_lines.get(title, Decimal(0)) - amount
 			shipping_charges.append(Charge(SHIPPING_TAX, f"{title} (shipping)", amount, rate * 100))
-	rates = {key for key, amount in on_lines.items() if amount != 0}
-	if any(set(tax_lines(line)) != rates for line in lines):
-		raise Unsupported(
-			"its tax-inclusive lines are taxed at different rates (ERPNext includes one set of rates)"
-		)
-	included = [
-		Charge(INCLUDED_TAX, title, on_lines[(title, rate)], rate * 100) for title, rate in sorted(rates)
-	]
-	return [charge for charge in [*included, *shipping_charges, *fees] if charge.amount != 0]
+	rates: list[LineRates] = []
+	for line in lines:
+		line_rates: LineRates = {}
+		for title, rate in tax_lines(line):
+			line_rates[title] = line_rates.get(title, Decimal(0)) + rate * 100
+		rates.append(line_rates)
+	sold, included = included_taxes(sold, rates, on_lines)
+	return sold, [charge for charge in [*included, *shipping_charges, *fees] if charge.amount != 0]
 
 
 def sale_fields(node: Node, lines: list[Node], shipping: list[Node], fees: list[Charge]) -> Fields:
@@ -156,6 +162,7 @@ def sale_fields(node: Node, lines: list[Node], shipping: list[Node], fees: list[
 	charges and total."""
 	currency = node.string("currencyCode")
 	customer = node.child("customer")
+	sold, charges = sale_charges(node, lines, shipping, fees)
 	fields: Fields = {
 		"number": node.string("name"),
 		"currency": currency,
@@ -170,9 +177,9 @@ def sale_fields(node: Node, lines: list[Node], shipping: list[Node], fees: list[
 		"shipping": address_fields(a)
 		if (a := shopify_address("Shipping", node.child("shippingAddress")))
 		else None,
-		"lines": [line_fields(sale_line(line, currency)) for line in lines],
+		"lines": [line_fields(line) for line in sold],
 		"discount": money(node, "totalDiscountsSet"),
-		"charges": [charge_fields(c) for c in sale_charges(node, lines, shipping, fees)],
+		"charges": [charge_fields(c) for c in charges],
 		"total": money(node, "totalPriceSet"),
 	}
 	if node.flag("taxesIncluded"):
@@ -441,18 +448,20 @@ class DiscountMapper:
 
 class OrderMapper:
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def map(self, node: Node) -> Desired | None:
 		status = node.string("displayFinancialStatus")
 		if node.has("cancelledAt") or status not in PAID | UNPAID:
 			return None
-		if money(node, "originalTotalDutiesSet"):
-			raise Unsupported("duties have no ERPNext sales tax and charge type")
 		currency = node.string("currencyCode")
 		submitted = status in PAID
 		lines = {line.id(): line for line in node.children("lineItems")}
 		fees = [Charge(FEE, f.string("name"), money(f, "price")) for f in node.children("additionalFees")]
+		# Duties are collected for customs, as a tax is for its authority: a tax charge.
+		duties = money(node, "originalTotalDutiesSet")
+		if duties:
+			fees.insert(0, Charge(TAX, "Duties", duties))
 		tip = money(node, "totalTipReceivedSet")
 		if tip:
 			fees.append(Charge(FEE, "Tip", tip))
@@ -539,7 +548,7 @@ class DraftOrderMapper:
 	order, mirrored as such, so the draft's copy is retired."""
 
 	kind = Kind.DRAFT_ORDER
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		if node.string("status") == COMPLETED:

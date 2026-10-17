@@ -337,11 +337,69 @@ class TestMappers:
 		mapper = mapper_of(Kind.ORDER)
 		assert mapper.map(order.with_fields(status="CANCELED")) is None
 		assert mapper.map(order.with_fields(paymentStatus="DECLINED")) is None
-		with pytest.raises(Unsupported, match="tax-inclusive"):
-			mapper.map(order.with_fields(taxIncludedInPrices=True))
 		gift: JsonValue = [{**order.children("lineItems")[0].raw(), "itemType": {"preset": "GIFT_CARD"}}]
 		with pytest.raises(Unsupported, match="gift card"):
 			mapper.map(order.with_fields(lineItems=gift))
+
+	def test_a_tax_inclusive_order_includes_its_taxes(self) -> None:
+		order = nodes(Kind.ORDER)[ORDER_1].with_fields(taxIncludedInPrices=True)
+		desired = mapper_of(Kind.ORDER).map(order)
+		assert desired is not None
+		found = desired.values()
+		assert found.flag("taxes_included")
+		assert [line.decimal("rate") for line in found.records("lines")] == [
+			Decimal("18.81"),
+			Decimal("29.26"),
+		]
+		assert [c.all() for c in found.records("charges")] == [
+			{
+				"kind": "included_tax",
+				"description": "GST",
+				"amount": Decimal("2.88"),
+				"rate": Decimal("5.00"),
+			},
+			{"kind": "shipping", "description": "Canada Post Regular Parcel", "amount": Decimal("8.55")},
+			{
+				"kind": "shipping_tax",
+				"description": "GST (Canada Post Regular Parcel)",
+				"amount": Decimal("0.45"),
+				"rate": Decimal("5.00"),
+			},
+		]
+
+	def test_tax_inclusive_lines_taxed_differently_and_a_taxed_fee(self) -> None:
+		order = nodes(Kind.ORDER)[ORDER_1]
+		exempt = {**order.children("lineItems")[1].raw(), "taxInfo": None}
+		fee: JsonValue = {
+			"name": "Rush",
+			"price": {"amount": "2.10"},
+			"priceBeforeTax": {"amount": "2.00"},
+			"taxInfo": {"taxAmount": {"amount": "0.10"}, "taxRate": "0.05"},
+		}
+		desired = mapper_of(Kind.ORDER).map(
+			order.with_fields(
+				taxIncludedInPrices=True,
+				lineItems=[order.children("lineItems")[0].raw(), exempt],
+				shippingInfo=None,
+				additionalFees=[fee],
+			)
+		)
+		assert desired is not None
+		found = desired.values()
+		assert [line.all().get("taxes") for line in found.records("lines")] == [
+			[{"title": "GST", "rate": Decimal("5.00")}],
+			[],
+		]
+		assert [c.all() for c in found.records("charges")] == [
+			{"kind": "included_tax", "description": "GST", "amount": Decimal("1.62")},
+			{"kind": "fee", "description": "Rush", "amount": Decimal("2.00")},
+			{
+				"kind": "shipping_tax",
+				"description": "Tax (Rush)",
+				"amount": Decimal("0.10"),
+				"rate": Decimal("5.00"),
+			},
+		]
 
 	def test_order_edges(self) -> None:
 		order = nodes(Kind.ORDER, "v2")[ORDER_1]

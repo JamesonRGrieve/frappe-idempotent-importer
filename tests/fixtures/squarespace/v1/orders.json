@@ -281,6 +281,137 @@
         },
         "priceTaxInterpretation": "EXCLUSIVE",
         "testmode": false
+      },
+      {
+        "id": "6d4000000000000000000034",
+        "orderNumber": "1004",
+        "createdOn": "2026-09-06T14:00:00.000Z",
+        "modifiedOn": "2026-09-06T14:05:00.000Z",
+        "channel": "web",
+        "customerEmail": "Marin@Example.com",
+        "billingAddress": {
+          "firstName": "Marin",
+          "lastName": "Boudreau",
+          "address1": "14 Harbour Street",
+          "city": "Lunenburg",
+          "state": "NS",
+          "postalCode": "B0J 2C0",
+          "countryCode": "CA",
+          "phone": "+1 902-555-0131"
+        },
+        "shippingAddress": {
+          "firstName": "Marin",
+          "lastName": "Boudreau",
+          "address1": "14 Harbour Street",
+          "city": "Lunenburg",
+          "state": "NS",
+          "postalCode": "B0J 2C0",
+          "countryCode": "CA",
+          "phone": "+1 902-555-0131"
+        },
+        "fulfillmentStatus": "PENDING",
+        "paymentState": "PAID",
+        "lineItems": [
+          {
+            "id": "6f6000000000000000000341",
+            "productId": "6b2000000000000000000011",
+            "productName": "Cedar cutting board",
+            "quantity": 1,
+            "unitPricePaid": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 21
+            },
+            "lineItemType": "PHYSICAL_PRODUCT",
+            "imageUrl": "http://squarespace-fake:8080/img/SQS-BOARD-1.png",
+            "variantOptions": [],
+            "customizations": [],
+            "weight": 0,
+            "width": 0,
+            "length": 0,
+            "height": 0,
+            "variantId": "a1b2c3d4-0000-4000-8000-000000000111",
+            "sku": "SQS-BOARD-1"
+          },
+          {
+            "id": "6f6000000000000000000342",
+            "productId": "6b2000000000000000000012",
+            "productName": "Merino scarf",
+            "quantity": 1,
+            "unitPricePaid": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 10.5
+            },
+            "lineItemType": "PHYSICAL_PRODUCT",
+            "imageUrl": "http://squarespace-fake:8080/img/SQS-SCARF-CHAR.png",
+            "variantOptions": [
+              {
+                "optionName": "Colour",
+                "value": "Charcoal"
+              }
+            ],
+            "customizations": [],
+            "weight": 0,
+            "width": 0,
+            "length": 0,
+            "height": 0,
+            "variantId": "a1b2c3d4-0000-4000-8000-000000000121",
+            "sku": "SQS-SCARF-CHAR"
+          }
+        ],
+        "internalNotes": [],
+        "shippingLines": [],
+        "discountLines": [],
+        "formSubmission": [
+          {
+            "label": "How did you hear about us?",
+            "value": "A friend"
+          }
+        ],
+        "fulfillments": [],
+        "subtotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 31.5
+        },
+        "shippingTotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 0
+        },
+        "discountTotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 0
+        },
+        "taxTotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 2.75
+        },
+        "refundedTotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 0
+        },
+        "grandTotal": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 31.5
+        },
+        "priceTaxInterpretation": "INCLUSIVE",
+        "testmode": false,
+        "customerId": "6c3000000000000000000021",
+        "fulfilledOn": "2026-09-05T11:00:00.000Z"
       }
     ]
   }

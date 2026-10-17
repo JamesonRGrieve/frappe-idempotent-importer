@@ -32,6 +32,7 @@ sits out the minute when limited anyway (which pauses the run).
 | Order lines | Invoice lines at the unit price paid, on the variant's item | Option choices and product-form answers in the line's name. |
 | Promo discounts | The invoice's discount | |
 | Taxes | One charge per tax name, from the order's transactions (its sale and shipping items) | The order's tax total when it has no transactions. |
+| Tax-inclusive orders (`priceTaxInterpretation` INCLUSIVE) | Each tax an "On Net Total" row included in the line prices, at each line's rates from its transaction sale item (paired by amount; different rates per line through an **Item Tax Template** and a tax account per tax); shipping at its price less its taxes, then each tax at its rate | Kept only when ERPNext computes every row and the total to Squarespace's amounts. An order with no transactions yet includes its tax total at the one rate that comes to it. |
 | Shipping lines | Shipping charges | One for the shipping total when the order has none. |
 | Refunds of the order's payments | Credit note (one adjustment line) + refund **Payment Entry** | Squarespace doesn't say which lines a refund was for. |
 | Fulfillments, internal notes | **Comment** each | Carrier, service and tracking. |
@@ -41,7 +42,6 @@ sits out the minute when limited anyway (which pauses the run).
 | Squarespace | Why it isn't mirrored |
 |---|---|
 | Gift card products and gift card sales | No ERPNext home for a stored-value liability (reported). |
-| Tax-inclusive orders (`priceTaxInterpretation` INCLUSIVE) | Squarespace gives the taxes per transaction item, not the rate per invoice line ERPNext needs to back them out exactly (reported). |
 | Automatic discounts, free-shipping codes, once-per-customer codes, amount-off or free shipping for one product, other criteria | No exact ERPNext coupon equivalent (reported). |
 | Cancelled, failed and test-mode orders | Not sales. |
 | Mailing-list subscribers and donors | Not customers. |

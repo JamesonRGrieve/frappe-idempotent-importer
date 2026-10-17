@@ -230,6 +230,9 @@ CONTENT_DOCTYPES = (
 	"Sales Invoice",
 	"Sales Invoice Item",
 	"Sales Taxes and Charges",
+	"Account",
+	"Item Tax Template",
+	"Item Tax Template Detail",
 	"Payment Entry",
 	"Payment Entry Reference",
 	"GL Entry",
@@ -866,6 +869,9 @@ def assert_shopify(state: str) -> None:
 		0,
 		"no rate of a zone limited to provinces",
 	)
+	assert_tax_inclusive(
+		connection, "805", "31.50", {"GST": "1.44", "PST": "1.31"}, ["GST at 5, PST at 7", "GST at 5"]
+	)
 	draft = target(connection, "draft_order", "DraftOrder", "901")
 	quotation = frappe.db.get_value("Quotation", draft, ["docstatus", "grand_total", "title"], as_dict=True)
 	if state == "v1":
@@ -1164,6 +1170,13 @@ def assert_bigcommerce(state: str) -> None:
 @check
 def assert_squarespace(state: str) -> None:
 	connection = "squarespace-p"
+	assert_tax_inclusive(
+		connection,
+		"6d4000000000000000000034",
+		"31.50",
+		{"GST": "1.44", "PST": "1.31"},
+		["GST at 5, PST at 7", "GST at 5"],
+	)
 	board = target(connection, "product", "Product", "6b2000000000000000000011")
 	expect(
 		(board, frappe.db.get_value("Item", board, "item_group")),
@@ -1269,6 +1282,13 @@ def assert_squarespace(state: str) -> None:
 @check
 def assert_wix(state: str) -> None:
 	connection = "wix-x"
+	assert_tax_inclusive(
+		connection,
+		"8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005",
+		"31.50",
+		{"GST": "1.44", "PST": "1.31"},
+		["GST at 5, PST at 7", "GST at 5"],
+	)
 	mug = target(connection, "product", "Product", "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001")
 	expect(
 		(mug, frappe.db.get_value("Item", mug, "item_group")),
@@ -1455,6 +1475,40 @@ def assert_invoice(
 	return str(order)
 
 
+def assert_tax_inclusive(
+	connection: str, order_id: str, total: str, taxes: dict[str, str], templates: list[str | None]
+) -> None:
+	"""A tax-inclusive order whose lines are taxed at different rates: a submitted invoice at the source's
+	total, each included tax a row of its own (on its own account) at the source's amount, and each line
+	taxed through the Item Tax Template of its own rates (by title, e.g. "GST at 5, PST at 7")."""
+	order = target(connection, "order", "Order", order_id)
+	invoice = frappe.get_doc("Sales Invoice", order)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total)), (1, amount(total)), f"order {order_id}'s invoice"
+	)
+	expect(
+		{row.description: amount(row.tax_amount) for row in invoice.taxes if row.included_in_print_rate},
+		{title: amount(value) for title, value in taxes.items()},
+		f"order {order_id}'s included taxes",
+	)
+	expect(
+		len({row.account_head for row in invoice.taxes if row.included_in_print_rate}),
+		len(taxes),
+		f"order {order_id}'s included taxes, each on its own account",
+	)
+	abbr = frappe.db.get_value("Importer Connection", connection, "abbreviation")
+	expect(
+		[
+			frappe.db.get_value("Item Tax Template", line.item_tax_template, "title")
+			if line.item_tax_template
+			else None
+			for line in invoice.items
+		],
+		[f"{template} - {abbr}" if template else None for template in templates],
+		f"order {order_id}'s lines' own rates",
+	)
+
+
 @check
 def assert_lightspeed(state: str) -> None:
 	connection = "lightspeed-l"
@@ -1522,6 +1576,9 @@ def assert_lightspeed(state: str) -> None:
 @check
 def assert_ecwid(state: str) -> None:
 	connection = "ecwid-c"
+	assert_tax_inclusive(
+		connection, "CW-1004", "31.50", {"GST": "1.44", "PST": "1.31"}, ["GST at 5, PST at 7", "GST at 5"]
+	)
 	candle = target(connection, "product", "Product", "9201")
 	expect(
 		(

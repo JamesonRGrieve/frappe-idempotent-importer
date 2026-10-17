@@ -10,16 +10,20 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from idempotent_importer.contract import (
+	INCLUDED_TAX,
 	SHIPPING,
+	SHIPPING_TAX,
 	TAX,
 	Address,
 	Charge,
 	Discount,
+	LineRates,
 	OrderLine,
 	address_fields,
 	charge_fields,
 	date_of,
 	discount_fields,
+	included_taxes,
 	line_fields,
 	order_line,
 	refund_balance,
@@ -42,6 +46,8 @@ CANCELED = "CANCELED"
 PAID = frozenset({"PAID", "REFUNDED", "REFUND_PENDING", "REFUND_FAILED"})
 FAILED = "FAILED"
 PROMO_CODE = "CODE"
+# The places of a tax rate derived from an unpaid order's tax total (ERPNext keeps a rate to nine).
+TAX_RATE_PLACES = Decimal("0.000001")
 
 
 @dataclass(frozen=True)
@@ -331,11 +337,11 @@ class OrderMapper:
 	discounts) on the variant's item, the discount total, each tax (from the order's transactions, summed
 	by name; the tax total when there are none), each shipping line; payments' refunds as credit notes, and
 	fulfillments and internal notes as comments. Paid and refunded orders are submitted; unpaid ones are
-	drafts. Test-mode, cancelled and failed orders map to nothing; tax-inclusive orders and gift card sales
-	are Unsupported."""
+	drafts. Test-mode, cancelled and failed orders map to nothing; a tax-inclusive order's taxes are included
+	in its prices (``inclusive_charges``); gift card sales are Unsupported."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -348,8 +354,6 @@ class OrderMapper:
 			or payment_state == FAILED
 		):
 			return None
-		if node.optional_string("priceTaxInterpretation") == INCLUSIVE:
-			raise Unsupported("Squarespace gives a tax-inclusive order's taxes without the rate per line")
 		grand_total = node.required_child("grandTotal")
 		currency = currency_of(grand_total)
 		if currency is None:
@@ -364,6 +368,12 @@ class OrderMapper:
 			self._context.gid("Profile", profile.string("id")) if profile and is_customer(profile) else None
 		)
 		paid_on = sorted(t for p in payments if (t := p.optional_time("paidOn")))
+		lines = [self._line(line, currency) for line in node.children("lineItems")]
+		inclusive = node.optional_string("priceTaxInterpretation") == INCLUSIVE
+		if inclusive:
+			lines, found = inclusive_charges(node, documents, lines)
+		else:
+			found = charges(node, documents)
 		fields: Fields = {
 			"number": f"#{node.optional_string('orderNumber') or node.string('source_id')}",
 			"currency": currency,
@@ -382,9 +392,9 @@ class OrderMapper:
 			},
 			"billing": squarespace_address("Billing", billing, email),
 			"shipping": squarespace_address("Shipping", node.child("shippingAddress"), None),
-			"lines": [line_fields(self._line(line, currency)) for line in node.children("lineItems")],
+			"lines": [line_fields(line) for line in lines],
 			"discount": money_or_zero(node, "discountTotal"),
-			"charges": [charge_fields(charge) for charge in charges(node, documents)],
+			"charges": [charge_fields(charge) for charge in found],
 			"total": money_or_zero(node, "grandTotal"),
 			"payment": {
 				"method": payment_method(payments[0]) if payments else "Squarespace",
@@ -399,6 +409,8 @@ class OrderMapper:
 			"notes": self._notes(node),
 			"remarks": None,
 		}
+		if inclusive:
+			fields["taxes_included"] = True
 		return Desired(self.kind, node.id(), fields)
 
 	def _line(self, line: Node, currency: str) -> OrderLine:
@@ -492,6 +504,11 @@ def charges(order: Node, documents: list[Node]) -> list[Charge]:
 	if not taxes and money_or_zero(order, "taxTotal"):
 		taxes["Tax"] = money_or_zero(order, "taxTotal")
 	found = [Charge(TAX, title, amount) for title, amount in taxes.items()]
+	return [charge for charge in [*found, *shipping_charges(order)] if charge.amount != 0]
+
+
+def shipping_charges(order: Node) -> list[Charge]:
+	"""Each shipping line (one for the shipping total when there are none)."""
 	option = order.optional_string("shippingOptionName")
 	shipping = [
 		Charge(
@@ -499,9 +516,86 @@ def charges(order: Node, documents: list[Node]) -> list[Charge]:
 		)
 		for line in order.children("shippingLines")
 	]
-	if not shipping:
-		shipping = [Charge(SHIPPING, option or "Shipping", money_or_zero(order, "shippingTotal"))]
-	return [charge for charge in [*found, *shipping] if charge.amount != 0]
+	return shipping or [Charge(SHIPPING, option or "Shipping", money_or_zero(order, "shippingTotal"))]
+
+
+def paired[T](wanted: list[Decimal], items: list[tuple[Decimal, T]]) -> list[T | None]:
+	"""Each wanted amount's item: the first unpaired item of that amount, then (for any left over) the
+	unpaired items in their order. Squarespace's transaction items don't name the order line or shipping
+	line they are for; their amounts and order do."""
+	free = list(range(len(items)))
+	chosen: list[int | None] = []
+	for amount in wanted:
+		match = next((i for i in free if items[i][0] == amount), None)
+		if match is not None:
+			free.remove(match)
+		chosen.append(match)
+	result: list[T | None] = []
+	for match in chosen:
+		taken = free.pop(0) if match is None and free else match
+		result.append(items[taken][1] if taken is not None else None)
+	return result
+
+
+def inclusive_charges(
+	order: Node, documents: list[Node], lines: list[OrderLine]
+) -> tuple[list[OrderLine], list[Charge]]:
+	"""A tax-inclusive order's taxes (``priceTaxInterpretation`` INCLUSIVE: the unit prices paid include
+	them): each tax on the sale items an included tax, at the rates of each line's own sale item (paired
+	by amount); each shipping line at its price less its taxes, then each of those taxes at its rate. An
+	order with no transactions (not yet paid) has only its tax total, included at the one rate that comes
+	to it, which ERPNext then checks exactly."""
+	sales = [item for document in documents for item in document.children("salesLineItems")]
+	shipped = [item for document in documents for item in document.children("shippingLineItems")]
+	amounts: dict[str, Decimal] = {}
+	for item in sales:
+		for tax in item.children("taxes"):
+			title = tax.optional_string("name") or "Tax"
+			amounts[title] = amounts.get(title, Decimal(0)) + money_or_zero(tax, "amount")
+	found: list[Charge] = []
+	shipping_lines = shipping_charges(order)
+	shipping_taxes = paired(
+		[charge.amount for charge in shipping_lines], [(money_or_zero(i, "amount"), i) for i in shipped]
+	)
+	for charge, shipped_item in zip(shipping_lines, shipping_taxes, strict=True):
+		taxes = shipped_item.children("taxes") if shipped_item is not None else []
+		net = charge.amount - sum((money_or_zero(t, "amount") for t in taxes), Decimal(0))
+		if net == 0:
+			continue
+		found.append(Charge(SHIPPING, charge.description, net))
+		found += [
+			Charge(
+				SHIPPING_TAX,
+				f"{tax.optional_string('name') or 'Tax'} (shipping)",
+				money_or_zero(tax, "amount"),
+				tax.decimal("rate"),
+			)
+			for tax in taxes
+			if money_or_zero(tax, "amount")
+		]
+	if not sales:
+		total = money_or_zero(order, "taxTotal") - sum(
+			(c.amount for c in found if c.kind == SHIPPING_TAX), Decimal(0)
+		)
+		if not total:
+			return lines, found
+		gross = sum((line.qty * line.rate for line in lines), Decimal(0)) - money_or_zero(
+			order, "discountTotal"
+		)
+		rate = (total * 100 / (gross - total)).quantize(TAX_RATE_PLACES)
+		return lines, [Charge(INCLUDED_TAX, "Tax", total, rate), *found]
+	items = paired(
+		[line.qty * line.rate for line in lines], [(money_or_zero(i, "totalSales"), i) for i in sales]
+	)
+	rates: list[LineRates] = []
+	for sale in items:
+		line_rates: LineRates = {}
+		for tax in sale.children("taxes") if sale is not None else []:
+			title = tax.optional_string("name") or "Tax"
+			line_rates[title] = line_rates.get(title, Decimal(0)) + tax.decimal("rate")
+		rates.append(line_rates)
+	lines, included = included_taxes(lines, rates, amounts)
+	return lines, [*included, *found]
 
 
 def mappers(config: ConnectionConfig) -> list[Mapper]:

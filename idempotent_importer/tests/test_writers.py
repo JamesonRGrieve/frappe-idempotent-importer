@@ -634,6 +634,64 @@ class TestWriters(IntegrationTestCase):
 			"an included tax ERPNext computes differently isn't kept",
 		)
 
+	def test_an_order_whose_lines_include_tax_at_different_rates(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		mixed: Fields = {
+			**self.order(),
+			"lines": [
+				{
+					"source_line": gid("OrderItem", "11"),
+					"product": gid("Product", "1"),
+					"variant": None,
+					"name": "Wool Toque",
+					"qty": Decimal(1),
+					"rate": Decimal(112),
+					"taxes": [
+						{"title": "GST", "rate": Decimal(5)},
+						{"title": "PST", "rate": Decimal(7)},
+					],
+				},
+				{
+					"source_line": gid("OrderItem", "12"),
+					"product": None,
+					"variant": None,
+					"name": "Gift wrap",
+					"qty": Decimal(1),
+					"rate": Decimal(105),
+					"taxes": [{"title": "GST", "rate": Decimal(5)}],
+				},
+			],
+			"charges": [
+				{"kind": "included_tax", "description": "GST", "amount": Decimal(10)},
+				{"kind": "included_tax", "description": "PST", "amount": Decimal(7)},
+			],
+			"total": Decimal(217),
+			"taxes_included": True,
+		}
+		key = gid("Order", "11")
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, mixed), Outcome.CREATED)
+		invoice = frappe.get_doc("Sales Invoice", self.target(Kind.ORDER, key))
+		self.assertEqual(
+			(invoice.docstatus, Decimal(str(invoice.grand_total)), Decimal(str(invoice.net_total))),
+			(1, Decimal(217), Decimal(200)),
+		)
+		self.assertEqual(
+			[(row.description, Decimal(str(row.tax_amount))) for row in invoice.taxes],
+			[("GST", Decimal(10)), ("PST", Decimal(7))],
+		)
+		self.assertEqual(len({row.account_head for row in invoice.taxes}), 2, "each tax on its own account")
+		self.assertEqual(
+			[
+				frappe.db.get_value("Item Tax Template", line.item_tax_template, "title")
+				for line in invoice.items
+			],
+			[f"GST at 5, PST at 7 - {ABBREVIATION}", f"GST at 5 - {ABBREVIATION}"],
+		)
+		before = modified("Sales Invoice", invoice.name)
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, mixed), Outcome.SKIPPED)
+		self.assertEqual(modified("Sales Invoice", invoice.name), before)
+
 	def test_an_order_in_another_currency(self) -> None:
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
 		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())

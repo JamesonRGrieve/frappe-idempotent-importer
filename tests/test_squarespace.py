@@ -270,11 +270,63 @@ class TestMappers:
 		assert mapper.map(order.with_fields(testmode=True)) is None
 		assert mapper.map(order.with_fields(fulfillmentStatus="CANCELED")) is None
 		assert mapper.map(order.with_fields(paymentState="FAILED")) is None
-		with pytest.raises(Unsupported, match="tax-inclusive"):
-			mapper.map(order.with_fields(priceTaxInterpretation="INCLUSIVE"))
 		gift: list[JsonValue] = [{**order.children("lineItems")[0].raw(), "lineItemType": "GIFT_CARD"}]
 		with pytest.raises(Unsupported, match="gift card"):
 			mapper.map(order.with_fields(lineItems=gift))
+
+	def test_a_tax_inclusive_order_includes_its_taxes(self) -> None:
+		"""Order 1001 as if its prices included GST: GST at 5% on every line, and shipping at its price less
+		its GST, then that GST at its rate."""
+		order = nodes(Kind.ORDER)[ORDER_1001].with_fields(priceTaxInterpretation="INCLUSIVE")
+		desired = mapper_of(Kind.ORDER).map(order)
+		assert desired is not None
+		found = desired.values()
+		assert found.flag("taxes_included")
+		assert [c.all() for c in found.records("charges")] == [
+			{"kind": "included_tax", "description": "GST", "amount": Decimal("7.30"), "rate": Decimal("5.0")},
+			{"kind": "shipping", "description": "Canada Post Expedited", "amount": Decimal("11.4")},
+			{
+				"kind": "shipping_tax",
+				"description": "GST (shipping)",
+				"amount": Decimal("0.6"),
+				"rate": Decimal("5.0"),
+			},
+		]
+		assert all(not line.has("taxes") for line in found.records("lines"))
+
+	def test_tax_inclusive_lines_taxed_differently(self) -> None:
+		"""A tax-exempt scarf beside the taxed board: each line carries its own sale item's rates (paired
+		by amount, whatever their order)."""
+		order = nodes(Kind.ORDER)[ORDER_1001]
+		document = order.children("transactions")[0].raw()
+		sales = document["salesLineItems"]
+		assert isinstance(sales, list) and isinstance(sales[1], dict)
+		sales[1]["taxes"] = []
+		document["salesLineItems"] = [sales[1], sales[0]]
+		desired = mapper_of(Kind.ORDER).map(
+			order.with_fields(priceTaxInterpretation="INCLUSIVE", transactions=[document])
+		)
+		assert desired is not None
+		found = desired.values()
+		assert [line.all().get("taxes") for line in found.records("lines")] == [
+			[{"title": "GST", "rate": Decimal("5.0")}],
+			[],
+		]
+		assert found.records("charges")[0].all() == {
+			"kind": "included_tax",
+			"description": "GST",
+			"amount": Decimal("4.64"),
+		}
+
+	def test_an_unpaid_tax_inclusive_order_includes_its_tax_total(self) -> None:
+		order = nodes(Kind.ORDER)[ORDER_1001].with_fields(
+			priceTaxInterpretation="INCLUSIVE", transactions=[], shippingLines=[]
+		)
+		desired = mapper_of(Kind.ORDER).map(order)
+		assert desired is not None
+		included = desired.values().records("charges")[0]
+		assert (included.string("kind"), included.decimal("amount")) == ("included_tax", Decimal("7.9"))
+		assert included.decimal("rate") == Decimal("5.720492")
 
 	def test_an_order_without_transactions_or_shipping_lines(self) -> None:
 		order = nodes(Kind.ORDER)[ORDER_1001].with_fields(transactions=[], shippingLines=[])

@@ -18,15 +18,18 @@ from idempotent_importer.contract import (
 	Address,
 	Charge,
 	Discount,
+	LineRates,
 	OrderLine,
 	address_fields,
 	charge_fields,
 	date_of,
 	discount_fields,
+	included_taxes,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
+	taxed_charge,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -510,10 +513,11 @@ class OrderMapper:
 	selected shipping option and the additional fees as charges; refunds that returned money as credit
 	notes (their lines at the price paid, and an adjustment for the tax and the rest), each fulfillment as
 	a comment. Approved orders that Wix took payment for are submitted; others are drafts. Cancelled,
-	rejected and declined orders map to nothing; tax-inclusive orders and gift card sales are Unsupported."""
+	rejected and declined orders map to nothing; a tax-inclusive order's taxes are included in its prices
+	(``inclusive_charges``); gift card sales are Unsupported."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -523,8 +527,6 @@ class OrderMapper:
 		payment_status = node.optional_string("paymentStatus")
 		if status in NOT_SALES or payment_status == DECLINED:
 			return None
-		if node.get("taxIncludedInPrices") is True:
-			raise Unsupported("a tax-inclusive Wix order (coverage/wix.md)")
 		currency = node.string("currency")
 		submitted = status == APPROVED and payment_status in PAID
 		summary = node.required_child("priceSummary")
@@ -536,6 +538,12 @@ class OrderMapper:
 		payment = next((p for p in node.children("payments") if p.optional_string("status") in CHARGED), None)
 		lines = {line.string("id"): line for line in node.children("lineItems")}
 		contact_details = billing.child("contactDetails") if billing else None
+		inclusive = node.get("taxIncludedInPrices") is True
+		sold = [self._line(line, currency, inclusive=inclusive) for line in lines.values()]
+		if inclusive:
+			sold, found = inclusive_charges(node, shipping_info, list(lines.values()), sold)
+		else:
+			found = charges(node, shipping_info)
 		fields: Fields = {
 			"number": f"#{node.optional_integer('number') or node.string('source_id')}",
 			"currency": currency,
@@ -562,9 +570,9 @@ class OrderMapper:
 			"shipping": order_address(
 				"Shipping", logistics.child("shippingDestination") if logistics else None
 			),
-			"lines": [line_fields(self._line(line, currency)) for line in lines.values()],
+			"lines": [line_fields(line) for line in sold],
 			"discount": money_of(summary, "discount"),
-			"charges": [charge_fields(charge) for charge in charges(node, shipping_info)],
+			"charges": [charge_fields(charge) for charge in found],
 			"total": money_of(summary, "total"),
 			"payment": {
 				"method": payment_method(payment) if payment else "Wix",
@@ -581,9 +589,13 @@ class OrderMapper:
 			"notes": [self._note(f, node.time("createdDate")) for f in node.children("fulfillments")],
 			"remarks": node.optional_string("buyerNote"),
 		}
+		if inclusive:
+			fields["taxes_included"] = True
 		return Desired(self.kind, node.id(), fields)
 
-	def _line(self, line: Node, currency: str) -> OrderLine:
+	def _line(self, line: Node, currency: str, *, inclusive: bool = False) -> OrderLine:
+		"""A line at its price before discounts: before tax, or with it when the order's prices include
+		tax."""
 		item_type = line.child("itemType")
 		if item_type is not None and item_type.optional_string("preset") == GIFT_CARD:
 			raise Unsupported("a gift card sale has no ERPNext item (coverage/wix.md)")
@@ -609,7 +621,8 @@ class OrderMapper:
 			self._context.variant(product, variant) if product and variant else None,
 			f"{name} ({chosen})" if chosen else name,
 			Decimal(line.integer("quantity")),
-			money_of(line, "totalPriceBeforeTax") + money_of(line, "totalDiscount"),
+			money_of(line, "totalPriceAfterTax" if inclusive else "totalPriceBeforeTax")
+			+ money_of(line, "totalDiscount"),
 			currency,
 		)
 
@@ -698,6 +711,61 @@ def tax_amounts(tax_info: Node | None) -> list[tuple[str, Decimal]]:
 	]
 	total = money(tax_info.child("taxAmount"))
 	return found or ([("Tax", total)] if total else [])
+
+
+def tax_rates(tax_info: Node | None) -> list[tuple[str, Decimal, Decimal]]:
+	"""A line's (or a charge's) taxes as (name, rate percent, amount); one "Tax" at its rate when taxed
+	without a breakdown. Wix gives rates as fractions ("0.05")."""
+	if tax_info is None:
+		return []
+	found = [
+		(
+			tax.optional_string("taxName") or tax.optional_string("jurisdiction") or "Tax",
+			tax.decimal("rate") * 100,
+			money_of(tax, "taxAmount"),
+		)
+		for tax in tax_info.children("taxBreakdown")
+	]
+	total = money(tax_info.child("taxAmount"))
+	if found or not total:
+		return found
+	return [("Tax", tax_info.decimal("taxRate") * 100, total)]
+
+
+def inclusive_charges(
+	order: Node, shipping_info: Node | None, line_nodes: list[Node], lines: list[OrderLine]
+) -> tuple[list[OrderLine], list[Charge]]:
+	"""A tax-inclusive order's (``taxIncludedInPrices``) taxes: each line's an included tax at the line's
+	own rates; the shipping option and each additional fee at their prices before tax, each followed by its
+	taxes at their rates."""
+	amounts: dict[str, Decimal] = {}
+	rates: list[LineRates] = []
+	for line in line_nodes:
+		line_rates: LineRates = {}
+		for title, rate, amount in tax_rates(line.child("taxInfo")):
+			amounts[title] = amounts.get(title, Decimal(0)) + amount
+			line_rates[title] = line_rates.get(title, Decimal(0)) + rate
+		rates.append(line_rates)
+	lines, included = included_taxes(lines, rates, amounts)
+	found: list[Charge] = []
+	if shipping_info is not None:
+		cost = shipping_info.child("cost")
+		taxes = tax_rates(cost.child("taxInfo") if cost else None)
+		net = money_of(cost, "price") - sum((amount for _, _, amount in taxes), Decimal(0))
+		found += taxed_charge(
+			Charge(SHIPPING, shipping_info.optional_string("title") or "Shipping", net), taxes
+		)
+	for fee in order.children("additionalFees"):
+		name = fee.optional_string("name") or "Fee"
+		taxes = tax_rates(fee.child("taxInfo"))
+		before_tax = money(fee.child("priceBeforeTax"))
+		net = (
+			before_tax
+			if before_tax is not None
+			else money_of(fee, "price") - sum((amount for _, _, amount in taxes), Decimal(0))
+		)
+		found += taxed_charge(Charge(FEE, name, net), taxes)
+	return lines, [*included, *found]
 
 
 def charges(order: Node, shipping_info: Node | None) -> list[Charge]:

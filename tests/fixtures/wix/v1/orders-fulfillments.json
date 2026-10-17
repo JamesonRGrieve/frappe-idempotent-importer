@@ -5,7 +5,8 @@
     "body": {
       "orderIds": [
         "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
-        "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002"
+        "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002",
+        "8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005"
       ]
     }
   },
@@ -39,6 +40,10 @@
       },
       {
         "orderId": "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002",
+        "fulfillments": []
+      },
+      {
+        "orderId": "8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005",
         "fulfillments": []
       }
     ]

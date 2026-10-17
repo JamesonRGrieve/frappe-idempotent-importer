@@ -38,6 +38,7 @@ from idempotent_importer.core.errors import UnresolvedDependency, Unsupported
 from idempotent_importer.core.fields import Field, Values
 from idempotent_importer.core.hasher import part_hash
 from idempotent_importer.core.kind import Kind
+from idempotent_importer.core.money import decimal_text
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity, system_datetime
 from idempotent_importer.erpnext.writers.base import Writer
@@ -47,6 +48,9 @@ QUOTATION = "Quotation"
 PAYMENT = "Payment Entry"
 DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 UOM = "Nos"
+ACCOUNT_NAME_LENGTH = 140
+# The charges ERPNext computes from a rate rather than books as given: each must come to the source's amount.
+COMPUTED = frozenset({INCLUDED_TAX, SHIPPING_TAX})
 ITEM_NAME_LENGTH = 140
 TITLE_LENGTH = 140
 INVOICE_FIELDS = (
@@ -133,10 +137,69 @@ class SalesDocuments(Writer):
 				"discount_amount": money(values.decimal("discount")) if values.has("discount") else 0,
 			}
 		)
-		doc.set("items", [self._line(line) for line in values.records("lines")])
-		doc.set("taxes", self.charges(values.records("charges")))
+		lines = values.records("lines")
+		charges = values.records("charges")
+		accounts = self.included_tax_accounts(lines, charges)
+		doc.set("items", [self._line(line, accounts) for line in lines])
+		doc.set("taxes", self.charges(charges, accounts))
 
-	def _line(self, line: Values) -> dict[str, Any]:
+	def included_tax_accounts(self, lines: list[Values], charges: list[Values]) -> dict[str, str]:
+		"""The account of each tax included in the line prices, by title. ERPNext keys a line's tax rates by
+		account, so when the lines carry their own rates, several taxes are included, or shipping is taxed at
+		another rate, each included tax books to an account of its own (``<title> - <abbr>`` beside the
+		connection's tax account); a single tax at one rate for everything books to the connection's tax
+		account."""
+		titles = [c.string("description") for c in charges if c.string("kind") == INCLUDED_TAX]
+		rates = {c.optional_decimal("rate") for c in charges if c.string("kind") in COMPUTED}
+		if len(titles) <= 1 and len(rates) <= 1 and not any(line.has("taxes") for line in lines):
+			return {}
+		return {title: self._tax_account(title) for title in titles}
+
+	def _tax_account(self, title: str) -> str:
+		parent, currency = frappe.db.get_value(
+			"Account", self.context.tax_account, ["parent_account", "account_currency"]
+		)
+		account_name = self.context.suffixed(title)[:ACCOUNT_NAME_LENGTH]
+		existing = frappe.db.get_value(
+			"Account", {"company": self.context.company, "account_name": account_name, "is_group": 0}
+		)
+		if existing:
+			return str(existing)
+		account = frappe.get_doc(
+			{
+				"doctype": "Account",
+				"account_name": account_name,
+				"parent_account": parent,
+				"company": self.context.company,
+				"account_type": "Tax",
+				"account_currency": currency,
+			}
+		)
+		account.insert(ignore_permissions=True)
+		return str(account.name)
+
+	def _item_tax_template(self, rates: list[tuple[str, str, Decimal]]) -> str:
+		"""The Item Tax Template that taxes a line at exactly ``rates`` (tax title, its account, percent),
+		named after them ("GST at 5, PST at 7 - <abbr>": Frappe takes no "%" in a name) and shared by every
+		line taxed alike."""
+		title = self.context.suffixed(", ".join(f"{tax} at {decimal_text(rate)}" for tax, _, rate in rates))[
+			:TITLE_LENGTH
+		]
+		existing = frappe.db.get_value("Item Tax Template", {"title": title, "company": self.context.company})
+		if existing:
+			return str(existing)
+		template = frappe.get_doc(
+			{
+				"doctype": "Item Tax Template",
+				"title": title,
+				"company": self.context.company,
+				"taxes": [{"tax_type": account, "tax_rate": float(rate)} for _, account, rate in rates],
+			}
+		)
+		template.insert(ignore_permissions=True)
+		return str(template.name)
+
+	def _line(self, line: Values, accounts: dict[str, str] | None = None) -> dict[str, Any]:
 		product = line.optional_string("product")
 		variant = line.optional_string("variant")
 		if product is None:
@@ -148,7 +211,7 @@ class SalesDocuments(Writer):
 			if variant_item is None and frappe.db.get_value("Item", item, "has_variants"):
 				raise UnresolvedDependency(f"{variant} of {product} isn't mirrored yet")
 		name = line.string("name") or item
-		return {
+		row: dict[str, Any] = {
 			"item_code": item,
 			"item_name": name[:ITEM_NAME_LENGTH],
 			"description": name,
@@ -159,12 +222,23 @@ class SalesDocuments(Writer):
 			"rate": money(line.decimal("rate")),
 			"cost_center": self.context.cost_center,
 		}
+		if line.has("taxes"):
+			# A line exempt from every included tax has no template: the rows' rates (none) apply.
+			rates = [
+				(title, (accounts or {})[title], tax.decimal("rate"))
+				for tax in line.records("taxes")
+				if (title := tax.string("title"))
+			]
+			row["item_tax_template"] = self._item_tax_template(rates) if rates else None
+		return row
 
-	def charges(self, charges: list[Values]) -> list[dict[str, Any]]:
+	def charges(self, charges: list[Values], included: dict[str, str] | None = None) -> list[dict[str, Any]]:
 		"""The Sales Taxes and Charges rows: amounts as "Actual" rows; a tax included in the line prices
-		as an "On Net Total" row at its rate; a tax on shipping at its rate of the shipping row before it
-		(ERPNext keys a document's tax rates by account, so the shipping tax can't be an "Actual" row on
-		the tax account an included rate uses)."""
+		as an "On Net Total" row at its rate (none when each line carries its own, through its Item Tax
+		Template), on its own account when it has one (``included_tax_accounts``); a tax on shipping at its
+		rate of the shipping row before it (ERPNext keys a document's tax rates by account, so the shipping
+		tax can't be an "Actual" row on the tax account an included rate uses)."""
+		included = included or {}
 		accounts = {
 			TAX: self.context.tax_account,
 			INCLUDED_TAX: self.context.tax_account,
@@ -175,30 +249,28 @@ class SalesDocuments(Writer):
 		rows: list[dict[str, Any]] = []
 		for charge in charges:
 			kind = charge.string("kind")
-			account = accounts[kind]
+			description = charge.string("description")
+			account = included.get(description, accounts[kind]) if kind == INCLUDED_TAX else accounts[kind]
 			if account is None:
-				raise Unsupported(
-					f'its {kind} "{charge.string("description")}" needs the connection\'s Fee Account'
-				)
+				raise Unsupported(f'its {kind} "{description}" needs the connection\'s Fee Account')
 			row: dict[str, Any] = {
 				"charge_type": "Actual",
 				"account_head": account,
-				"description": charge.string("description"),
+				"description": description,
 				"tax_amount": money(charge.decimal("amount")),
 				"cost_center": self.context.cost_center,
 			}
 			if kind == INCLUDED_TAX:
+				rate = charge.optional_decimal("rate")
 				row |= {
 					"charge_type": "On Net Total",
-					"rate": float(charge.decimal("rate")),
+					"rate": float(rate) if rate is not None else 0,
 					"included_in_print_rate": 1,
 					"tax_amount": 0,
 				}
 			elif kind == SHIPPING_TAX:
 				if not rows or rows[-1]["charge_type"] != "Actual":
-					raise Unsupported(
-						f'its shipping tax "{charge.string("description")}" follows no shipping'
-					)
+					raise Unsupported(f'its shipping tax "{description}" follows no shipping')
 				row |= {
 					"charge_type": "On Previous Row Amount",
 					"row_id": str(len(rows)),
@@ -234,7 +306,7 @@ class SalesDocuments(Writer):
 		if base_total is not None:
 			same(doc.base_grand_total, base_total, "total in the company's currency")
 		for row, charge in zip(doc.taxes, charges, strict=True):
-			if charge.has("rate"):
+			if charge.string("kind") in COMPUTED:
 				same(row.tax_amount, charge.decimal("amount"), f'"{charge.string("description")}"')
 
 

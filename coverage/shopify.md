@@ -60,7 +60,8 @@ profiles are read in full.
 | Customers and their addresses | **Customer**, **Contact**, **Address** (default address as billing) | |
 | Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code, on the Public Site's Webshop Store | Another store can hold the same code at once. |
 | Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. A refunded order gets exactly Shopify's refunds: nothing is derived from its status. |
-| Orders with tax-inclusive prices | The same, each tax in the prices an "On Net Total" row at its rate, included in the line rates; shipping at its price less its tax, then that tax at its rate on the shipping row | Kept only when ERPNext computes every tax row and the total to Shopify's amounts; lines taxed at different rates are a gap (one set of rates applies to every line). |
+| Orders with tax-inclusive prices | The same, each tax in the prices an "On Net Total" row included in the line rates; shipping at its price less its tax, then that tax at its rate on the shipping row | Lines taxed alike: each row at its rate. Lines taxed differently (an exempt line, a tax only some lines bear): each tax on an account of its own (`<title> - <abbr>`) and each line's own rates as an **Item Tax Template** (`GST at 5, PST at 7 - <abbr>`). Kept only when ERPNext computes every tax row and the total to Shopify's amounts. |
+| Duties | A tax charge ("Duties") on the tax account | |
 | Orders awaiting payment | Draft **Sales Invoice** | Voided and cancelled orders aren't mirrored. |
 | Refunds | Credit note + refund **Payment Entry** | Shipping or other amounts refunded beyond the lines become an adjustment line. |
 | Order timeline comments | **Comment** on the invoice | |
@@ -81,8 +82,6 @@ profiles are read in full.
 |---|---|
 | Gift cards and their balances | No first-party gift-card ledger. |
 | Discounts: automatic, Buy X Get Y, free shipping, app discounts, once-per-customer, customer- or segment-specific, minimum quantity, single-variant | ERPNext's coupons can't enforce them exactly. |
-| Tax-inclusive orders whose lines are taxed at different rates | ERPNext includes one set of rates in every line's price (per-item rates need Item Tax Templates the source doesn't have). |
-| Duties | No sales tax and charge type for them. |
 | Fulfillments and tracking | Delivery Notes would move stock a second time (see README, "Decisions to confirm"). |
 | Delivery profiles for some products only; zones limited to provinces or "rest of world"; rates with price or weight conditions; carrier-calculated rates | A Shipping Rule is store-wide and per country; outside a rule's band ERPNext charges nothing instead of not offering the rate; ERPNext has no carrier rates. Reported as warnings. |
 | Menus | Website Settings' top bar and footer are global; a Public Site has no menu of its own (the router would need one). |

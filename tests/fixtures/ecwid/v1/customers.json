@@ -1,0 +1,102 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/customers"
+  },
+  "response": {
+    "total": 2,
+    "count": 2,
+    "offset": 0,
+    "limit": 100,
+    "items": [
+      {
+        "id": 9401,
+        "email": "Rowan.Pike@example.com",
+        "registered": "2026-09-01 15:00:00 +0000",
+        "updated": "2026-09-01 15:00:00 +0000",
+        "billingPerson": {
+          "name": "Rowan Pike",
+          "firstName": "Rowan",
+          "lastName": "Pike",
+          "companyName": "",
+          "street": "14 Spray Avenue\nApt 2",
+          "city": "Banff",
+          "countryCode": "CA",
+          "countryName": "Canada",
+          "postalCode": "T1L 1A1",
+          "stateOrProvinceCode": "AB",
+          "stateOrProvinceName": "Alberta",
+          "phone": "+1 403-555-0190"
+        },
+        "shippingAddresses": [
+          {
+            "id": 1,
+            "name": "Rowan Pike",
+            "companyName": "",
+            "street": "14 Spray Avenue\nApt 2",
+            "city": "Banff",
+            "countryCode": "CA",
+            "countryName": "Canada",
+            "postalCode": "T1L 1A1",
+            "stateOrProvinceCode": "AB",
+            "stateOrProvinceName": "Alberta",
+            "phone": "+1 403-555-0190",
+            "addressFormatted": "14 Spray Avenue, Apt 2, Banff AB T1L 1A1, Canada"
+          }
+        ],
+        "contacts": [
+          {
+            "contact": "Rowan.Pike@example.com",
+            "type": "EMAIL",
+            "default": true,
+            "orderBy": 0,
+            "timestamp": "2026-09-01 15:00:00 +0000"
+          }
+        ],
+        "customerGroupName": "General",
+        "customerGroupId": 0,
+        "taxId": "",
+        "taxIdValid": false,
+        "taxExempt": false,
+        "acceptMarketing": true,
+        "lang": "en",
+        "privateAdminNotes": "Prefers unscented gift wrap."
+      },
+      {
+        "id": 9402,
+        "email": "jun.okafor@example.com",
+        "registered": "2026-09-03 18:30:00 +0000",
+        "updated": "2026-09-03 18:30:00 +0000",
+        "billingPerson": {
+          "name": "Jun Okafor",
+          "firstName": "Jun",
+          "lastName": "Okafor",
+          "companyName": ""
+        },
+        "shippingAddresses": [],
+        "contacts": [
+          {
+            "contact": "jun.okafor@example.com",
+            "type": "EMAIL",
+            "default": true,
+            "orderBy": 0,
+            "timestamp": "2026-09-03 18:30:00 +0000"
+          },
+          {
+            "contact": "+1 587-555-0123",
+            "type": "PHONE",
+            "default": true,
+            "orderBy": 1,
+            "timestamp": "2026-09-03 18:30:00 +0000"
+          }
+        ],
+        "customerGroupName": "General",
+        "customerGroupId": 0,
+        "taxId": "",
+        "taxIdValid": false,
+        "taxExempt": false,
+        "acceptMarketing": false,
+        "lang": "fr"
+      }
+    ]
+  }
+}

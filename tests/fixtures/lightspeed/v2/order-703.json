@@ -1,0 +1,186 @@
+{
+  "request": {
+    "path": "/en/orders/703.json"
+  },
+  "response": {
+    "order": {
+      "id": 703,
+      "createdAt": "2026-09-12T11:00:00+00:00",
+      "updatedAt": "2026-09-12T11:00:00+00:00",
+      "number": "ORD00003",
+      "status": "processing_awaiting_shipment",
+      "customStatusId": null,
+      "channel": "main",
+      "remoteIp": "203.0.113.7",
+      "userAgent": "Mozilla/5.0",
+      "referralId": false,
+      "priceCost": 0,
+      "priceExcl": 34,
+      "priceIncl": 35.7,
+      "weight": 0,
+      "volume": 0,
+      "colli": 0,
+      "gender": "",
+      "birthDate": false,
+      "nationalId": "",
+      "email": "ada@example.com",
+      "firstname": "Ada",
+      "middlename": "",
+      "lastname": "Moreau",
+      "phone": "+1 902-555-0177",
+      "mobile": "",
+      "newsletterSubscribed": false,
+      "isCompany": false,
+      "companyName": "",
+      "companyCoCNumber": "",
+      "companyVatNumber": "",
+      "addressBillingName": "Ada Moreau",
+      "addressBillingStreet": "Barrington Street",
+      "addressBillingStreet2": "",
+      "addressBillingNumber": "88",
+      "addressBillingExtension": "",
+      "addressBillingZipcode": "B3J 1Z4",
+      "addressBillingCity": "Halifax",
+      "addressBillingRegion": "Nova Scotia",
+      "addressBillingCountry": {
+        "id": 38,
+        "code": "ca",
+        "code3": "can",
+        "title": "Canada"
+      },
+      "addressBillingRegionData": {
+        "id": 552,
+        "name": "Nova Scotia",
+        "code": "NS"
+      },
+      "addressShippingCompany": false,
+      "addressShippingName": "Ada Moreau",
+      "addressShippingStreet": "Barrington Street",
+      "addressShippingStreet2": "",
+      "addressShippingNumber": "88",
+      "addressShippingExtension": "",
+      "addressShippingZipcode": "B3J 1Z4",
+      "addressShippingCity": "Halifax",
+      "addressShippingRegion": "Nova Scotia",
+      "addressShippingCountry": {
+        "id": 38,
+        "code": "ca",
+        "code3": "can",
+        "title": "Canada"
+      },
+      "addressShippingRegionData": {
+        "id": 552,
+        "name": "Nova Scotia",
+        "code": "NS"
+      },
+      "paymentId": "creditcard",
+      "paymentStatus": "paid",
+      "paymentIsPost": false,
+      "paymentIsInvoiceExternal": false,
+      "paymentTaxRate": 0,
+      "paymentTaxRates": [],
+      "paymentBasePriceExcl": 0,
+      "paymentBasePriceIncl": 0,
+      "paymentPriceExcl": 0,
+      "paymentPriceIncl": 0,
+      "paymentTitle": "Credit card",
+      "paymentData": {
+        "method": "creditcard"
+      },
+      "shipmentId": "core|33265|55707",
+      "shipmentStatus": "not_shipped",
+      "shipmentIsCashOnDelivery": false,
+      "shipmentIsPickup": false,
+      "shipmentTaxRate": 0.05,
+      "shipmentTaxRates": [
+        {
+          "name": "GST",
+          "rate": 0.05,
+          "amount": 0.4
+        }
+      ],
+      "shipmentBasePriceExcl": 8,
+      "shipmentBasePriceIncl": 8.4,
+      "shipmentPriceExcl": 8,
+      "shipmentPriceIncl": 8.4,
+      "shipmentDiscountExcl": 0,
+      "shipmentDiscountIncl": 0,
+      "shipmentTitle": "Canada Post Regular",
+      "shipmentData": {
+        "method": "default",
+        "shipment_id": 33265,
+        "shipping_value_id": 55707
+      },
+      "shippingDate": null,
+      "deliveryDate": null,
+      "isDiscounted": false,
+      "discountType": "amount",
+      "discountAmount": 0,
+      "discountPercentage": 0,
+      "discountCouponCode": "",
+      "taxRates": [
+        {
+          "name": "GST",
+          "rate": 0.05,
+          "amount": 1.7
+        }
+      ],
+      "isNewCustomer": false,
+      "comment": "",
+      "memo": "",
+      "allowNotifications": true,
+      "doNotifyNew": false,
+      "doNotifyReminder": false,
+      "doNotifyCancelled": false,
+      "language": {
+        "id": 1,
+        "code": "en",
+        "locale": "en_GB",
+        "title": "English"
+      },
+      "customer": {
+        "resource": {
+          "id": 803,
+          "url": "customers/803",
+          "link": "https://api.shoplightspeed.com/en/customers/803.json"
+        }
+      },
+      "invoices": {
+        "resource": {
+          "id": false,
+          "url": "invoices?order=703",
+          "link": "https://api.shoplightspeed.com/en/invoices.json?order=703"
+        }
+      },
+      "shipments": {
+        "resource": {
+          "id": false,
+          "url": "shipments?order=703",
+          "link": "https://api.shoplightspeed.com/en/shipments.json?order=703"
+        }
+      },
+      "products": {
+        "resource": {
+          "id": false,
+          "url": "orders/703/products",
+          "link": "https://api.shoplightspeed.com/en/orders/703/products.json"
+        }
+      },
+      "metafields": {
+        "resource": {
+          "id": false,
+          "url": "orders/703/metafields",
+          "link": "https://api.shoplightspeed.com/en/orders/703/metafields.json"
+        }
+      },
+      "quote": false,
+      "events": {
+        "resource": {
+          "id": false,
+          "url": "orders/events?order=703",
+          "link": "https://api.shoplightspeed.com/en/orders/events.json?order=703"
+        }
+      }
+    }
+  }
+}

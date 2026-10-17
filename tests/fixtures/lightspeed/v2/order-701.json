@@ -1,0 +1,186 @@
+{
+  "request": {
+    "path": "/en/orders/701.json"
+  },
+  "response": {
+    "order": {
+      "id": 701,
+      "createdAt": "2026-09-02T16:00:00+00:00",
+      "updatedAt": "2026-09-10T15:00:00+00:00",
+      "number": "ORD00001",
+      "status": "completed_shipped",
+      "customStatusId": null,
+      "channel": "main",
+      "remoteIp": "203.0.113.7",
+      "userAgent": "Mozilla/5.0",
+      "referralId": false,
+      "priceCost": 0,
+      "priceExcl": 75,
+      "priceIncl": 78.75,
+      "weight": 0,
+      "volume": 0,
+      "colli": 0,
+      "gender": "",
+      "birthDate": false,
+      "nationalId": "",
+      "email": "Marguerite@example.com",
+      "firstname": "Marguerite",
+      "middlename": "",
+      "lastname": "Leblanc",
+      "phone": "+1 902-555-0141",
+      "mobile": "",
+      "newsletterSubscribed": false,
+      "isCompany": false,
+      "companyName": "",
+      "companyCoCNumber": "",
+      "companyVatNumber": "",
+      "addressBillingName": "Marguerite Leblanc",
+      "addressBillingStreet": "Spring Garden Road",
+      "addressBillingStreet2": "",
+      "addressBillingNumber": "12",
+      "addressBillingExtension": "",
+      "addressBillingZipcode": "B3H 1X3",
+      "addressBillingCity": "Halifax",
+      "addressBillingRegion": "Nova Scotia",
+      "addressBillingCountry": {
+        "id": 38,
+        "code": "ca",
+        "code3": "can",
+        "title": "Canada"
+      },
+      "addressBillingRegionData": {
+        "id": 552,
+        "name": "Nova Scotia",
+        "code": "NS"
+      },
+      "addressShippingCompany": false,
+      "addressShippingName": "Marguerite Leblanc",
+      "addressShippingStreet": "Spring Garden Road",
+      "addressShippingStreet2": "",
+      "addressShippingNumber": "12",
+      "addressShippingExtension": "",
+      "addressShippingZipcode": "B3H 1X3",
+      "addressShippingCity": "Halifax",
+      "addressShippingRegion": "Nova Scotia",
+      "addressShippingCountry": {
+        "id": 38,
+        "code": "ca",
+        "code3": "can",
+        "title": "Canada"
+      },
+      "addressShippingRegionData": {
+        "id": 552,
+        "name": "Nova Scotia",
+        "code": "NS"
+      },
+      "paymentId": "creditcard",
+      "paymentStatus": "paid",
+      "paymentIsPost": false,
+      "paymentIsInvoiceExternal": false,
+      "paymentTaxRate": 0,
+      "paymentTaxRates": [],
+      "paymentBasePriceExcl": 0,
+      "paymentBasePriceIncl": 0,
+      "paymentPriceExcl": 0,
+      "paymentPriceIncl": 0,
+      "paymentTitle": "Credit card",
+      "paymentData": {
+        "method": "creditcard"
+      },
+      "shipmentId": "core|33265|55707",
+      "shipmentStatus": "shipped",
+      "shipmentIsCashOnDelivery": false,
+      "shipmentIsPickup": false,
+      "shipmentTaxRate": 0.05,
+      "shipmentTaxRates": [
+        {
+          "name": "GST",
+          "rate": 0.05,
+          "amount": 0.5
+        }
+      ],
+      "shipmentBasePriceExcl": 10,
+      "shipmentBasePriceIncl": 10.5,
+      "shipmentPriceExcl": 10,
+      "shipmentPriceIncl": 10.5,
+      "shipmentDiscountExcl": 0,
+      "shipmentDiscountIncl": 0,
+      "shipmentTitle": "Canada Post Expedited",
+      "shipmentData": {
+        "method": "default",
+        "shipment_id": 33265,
+        "shipping_value_id": 55707
+      },
+      "shippingDate": null,
+      "deliveryDate": null,
+      "isDiscounted": true,
+      "discountType": "amount",
+      "discountAmount": 5,
+      "discountPercentage": 0,
+      "discountCouponCode": "LS-WELCOME5",
+      "taxRates": [
+        {
+          "name": "GST",
+          "rate": 0.05,
+          "amount": 3.75
+        }
+      ],
+      "isNewCustomer": false,
+      "comment": "Please leave it at the back door.",
+      "memo": "Wrap carefully.",
+      "allowNotifications": true,
+      "doNotifyNew": false,
+      "doNotifyReminder": false,
+      "doNotifyCancelled": false,
+      "language": {
+        "id": 1,
+        "code": "en",
+        "locale": "en_GB",
+        "title": "English"
+      },
+      "customer": {
+        "resource": {
+          "id": 801,
+          "url": "customers/801",
+          "link": "https://api.shoplightspeed.com/en/customers/801.json"
+        }
+      },
+      "invoices": {
+        "resource": {
+          "id": false,
+          "url": "invoices?order=701",
+          "link": "https://api.shoplightspeed.com/en/invoices.json?order=701"
+        }
+      },
+      "shipments": {
+        "resource": {
+          "id": false,
+          "url": "shipments?order=701",
+          "link": "https://api.shoplightspeed.com/en/shipments.json?order=701"
+        }
+      },
+      "products": {
+        "resource": {
+          "id": false,
+          "url": "orders/701/products",
+          "link": "https://api.shoplightspeed.com/en/orders/701/products.json"
+        }
+      },
+      "metafields": {
+        "resource": {
+          "id": false,
+          "url": "orders/701/metafields",
+          "link": "https://api.shoplightspeed.com/en/orders/701/metafields.json"
+        }
+      },
+      "quote": false,
+      "events": {
+        "resource": {
+          "id": false,
+          "url": "orders/events?order=701",
+          "link": "https://api.shoplightspeed.com/en/orders/events.json?order=701"
+        }
+      }
+    }
+  }
+}

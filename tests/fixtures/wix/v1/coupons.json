@@ -1,0 +1,112 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v2/coupons/query",
+    "body": {
+      "query": {
+        "paging": {
+          "offset": 0
+        }
+      }
+    }
+  },
+  "response": {
+    "coupons": [
+      {
+        "id": "c0000000-0000-4000-8000-000000000001",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 7,
+        "specification": {
+          "name": "Welcome 10%",
+          "code": "WIX-WELCOME10",
+          "percentOffRate": 10,
+          "minimumSubtotal": 40,
+          "limitPerCustomer": 1,
+          "startTime": "1785585600000",
+          "expirationTime": "1798761599000",
+          "active": true,
+          "type": "PercentOff",
+          "scope": {
+            "namespace": "stores"
+          }
+        }
+      },
+      {
+        "id": "c0000000-0000-4000-8000-000000000002",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 2,
+        "specification": {
+          "name": "Free shipping",
+          "code": "WIX-SHIPFREE",
+          "freeShipping": true,
+          "usageLimit": 100,
+          "startTime": "1785585600000",
+          "active": true,
+          "type": "FreeShipping",
+          "scope": {
+            "namespace": "stores"
+          }
+        }
+      },
+      {
+        "id": "c0000000-0000-4000-8000-000000000003",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 0,
+        "specification": {
+          "name": "$5 off mugs",
+          "code": "WIX-MUG5",
+          "moneyOffAmount": 5,
+          "startTime": "1785585600000",
+          "active": true,
+          "type": "MoneyOff",
+          "scope": {
+            "namespace": "stores",
+            "group": {
+              "name": "product",
+              "entityId": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+            }
+          }
+        }
+      },
+      {
+        "id": "c0000000-0000-4000-8000-000000000004",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 0,
+        "specification": {
+          "name": "Towel 15%",
+          "code": "WIX-TOWEL15",
+          "percentOffRate": 15,
+          "startTime": "1785585600000",
+          "active": true,
+          "type": "PercentOff",
+          "scope": {
+            "namespace": "stores",
+            "group": {
+              "name": "product",
+              "entityId": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002"
+            }
+          }
+        }
+      },
+      {
+        "id": "c0000000-0000-4000-8000-000000000005",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 0,
+        "specification": {
+          "name": "Old sale",
+          "code": "WIX-OLD",
+          "percentOffRate": 20,
+          "startTime": "1785585600000",
+          "active": false,
+          "type": "PercentOff"
+        }
+      }
+    ],
+    "totalResults": 5
+  }
+}

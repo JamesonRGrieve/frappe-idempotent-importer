@@ -1,0 +1,24 @@
+{
+  "request": {
+    "path": "/en/brands/601.json"
+  },
+  "response": {
+    "brand": {
+      "id": 601,
+      "createdAt": "2026-08-01T12:00:00+00:00",
+      "updatedAt": "2026-08-01T12:00:00+00:00",
+      "url": "harbour-lane",
+      "title": "Harbour Lane",
+      "content": "<p>Our own label.</p>",
+      "image": false,
+      "products": {
+        "resource": {
+          "id": false,
+          "url": "products?brand=601",
+          "link": "https://api.shoplightspeed.com/en/products.json?brand=601"
+        }
+      },
+      "isVisible": true
+    }
+  }
+}

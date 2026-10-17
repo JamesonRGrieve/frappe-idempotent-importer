@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/v2/sites"
+  },
+  "response": {
+    "sites": [
+      {
+        "id": "SITE1",
+        "site_title": "Prairie Pottery",
+        "domain": "prairiepottery.square.site",
+        "is_published": true,
+        "created_at": "2026-09-01T08:00:00.000Z",
+        "updated_at": "2026-09-02T10:00:00.000Z"
+      }
+    ]
+  }
+}

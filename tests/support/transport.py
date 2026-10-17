@@ -4,11 +4,17 @@ fixtures (or a script of responses) and a sleeper that records waits instead of 
 
 from __future__ import annotations
 
+import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from idempotent_importer.core.http import HttpResponse
 from tests.support.fixtures import Answer, RestResponder, ShopifyResponder
+
+ETSY_TOKEN_PATH = "/v3/public/oauth/token"
+# The fixtures' shop owner (user 7001), as Etsy's access tokens name their user.
+ETSY_ACCESS_TOKEN = "7001.fixture-access-token"
+ETSY_ROTATED_REFRESH_TOKEN = "fixture-refresh-token"
 
 type Route = Callable[[str, str, bytes, dict[str, str]], HttpResponse]
 
@@ -50,6 +56,31 @@ def response(answer: Answer) -> HttpResponse:
 def woocommerce(state: str) -> FakeTransport:
 	responder = RestResponder("woocommerce", state)
 	return FakeTransport(lambda method, url, _body, _headers: response(responder.answer(method, url)))
+
+
+def rest_source(source: str, state: str) -> FakeTransport:
+	"""A REST source answering from its fixtures (requests' bodies matched too)."""
+	responder = RestResponder(source, state)
+	return FakeTransport(lambda method, url, body, _headers: response(responder.answer(method, url, body)))
+
+
+def etsy(state: str) -> FakeTransport:
+	"""Etsy as the tests see it: the token endpoint grants the shop owner's tokens (a new refresh token
+	each time), everything else comes from the Etsy fixtures."""
+	responder = RestResponder("etsy", state)
+
+	def route(method: str, url: str, body: bytes, _headers: dict[str, str]) -> HttpResponse:
+		if method == "POST" and url.endswith(ETSY_TOKEN_PATH):
+			grant = {
+				"access_token": ETSY_ACCESS_TOKEN,
+				"token_type": "Bearer",
+				"expires_in": 3600,
+				"refresh_token": ETSY_ROTATED_REFRESH_TOKEN,
+			}
+			return HttpResponse(200, json.dumps(grant).encode())
+		return response(responder.answer(method, url, body))
+
+	return FakeTransport(route)
 
 
 def shopify(state: str) -> FakeTransport:

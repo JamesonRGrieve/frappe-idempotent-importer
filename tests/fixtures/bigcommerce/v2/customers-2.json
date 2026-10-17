@@ -1,0 +1,106 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/customers",
+    "query": {
+      "page": 2
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 42,
+        "email": "tomas@example.com",
+        "first_name": "Tomas",
+        "last_name": "Berg",
+        "company": "",
+        "phone": "",
+        "registration_ip_address": "",
+        "notes": "",
+        "tax_exempt_category": "",
+        "customer_group_id": 0,
+        "date_modified": "2026-09-02T10:00:00+00:00",
+        "date_created": "2026-09-02T10:00:00+00:00",
+        "address_count": 0,
+        "attribute_count": 0,
+        "authentication": {
+          "force_password_reset": false
+        },
+        "addresses": [],
+        "attributes": [],
+        "form_fields": [],
+        "store_credit_amounts": [
+          {
+            "amount": "0.00"
+          }
+        ],
+        "accepts_product_review_abandoned_cart_emails": true,
+        "origin_channel_id": 1,
+        "channel_ids": [
+          1
+        ]
+      },
+      {
+        "id": 43,
+        "email": "maya@example.com",
+        "first_name": "Maya",
+        "last_name": "Chen",
+        "company": "",
+        "phone": "",
+        "registration_ip_address": "",
+        "notes": "",
+        "tax_exempt_category": "",
+        "customer_group_id": 0,
+        "date_modified": "2026-09-08T10:00:00+00:00",
+        "date_created": "2026-09-08T10:00:00+00:00",
+        "address_count": 1,
+        "attribute_count": 0,
+        "authentication": {
+          "force_password_reset": false
+        },
+        "addresses": [
+          {
+            "id": 4301,
+            "customer_id": 43,
+            "first_name": "Maya",
+            "last_name": "Chen",
+            "company": "",
+            "address1": "88 Bow Valley Trail",
+            "address2": "",
+            "city": "Banff",
+            "state_or_province": "Alberta",
+            "postal_code": "T1L 1A1",
+            "country_code": "CA",
+            "country": "Canada",
+            "phone": "+1 403-555-0143",
+            "address_type": "residential",
+            "form_fields": []
+          }
+        ],
+        "attributes": [],
+        "form_fields": [],
+        "store_credit_amounts": [
+          {
+            "amount": "0.00"
+          }
+        ],
+        "accepts_product_review_abandoned_cart_emails": true,
+        "origin_channel_id": 1,
+        "channel_ids": [
+          1
+        ]
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 3,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 2,
+        "total_pages": 2,
+        "links": {
+          "current": "?page=2&limit=250"
+        }
+      }
+    }
+  }
+}

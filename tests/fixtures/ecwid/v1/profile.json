@@ -1,0 +1,113 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/profile"
+  },
+  "response": {
+    "generalInfo": {
+      "storeId": 7400100,
+      "storeUrl": "https://cedarwick.example",
+      "websitePlatform": "instantsite",
+      "instantSiteV2Enabled": true,
+      "storefrontUrlFormat": "CLEAN",
+      "storefrontUrlSlugFormat": "WITHOUT_IDS"
+    },
+    "settings": {
+      "closed": false,
+      "storeName": "Cedar & Wick Candle Co.",
+      "storeDescription": "<p>Hand-poured candles from Canmore.</p>",
+      "productReviewsFeatureEnabled": true,
+      "hideOutOfStockProductsInStorefront": false,
+      "allowPreordersForOutOfStockProducts": true
+    },
+    "company": {
+      "companyName": "Cedar & Wick Candle Co. Ltd.",
+      "email": "hello@cedarwick.example",
+      "street": "88 Bow Valley Trail\nUnit 3",
+      "city": "Canmore",
+      "countryCode": "CA",
+      "postalCode": "T1W 1N8",
+      "stateOrProvinceCode": "AB",
+      "phone": "+1 403-555-0172"
+    },
+    "formatsAndUnits": {
+      "currency": "CAD",
+      "currencyPrefix": "$",
+      "currencySuffix": "",
+      "currencyPrecision": 2,
+      "currencyGroupSeparator": ",",
+      "currencyDecimalSeparator": ".",
+      "currencyTruncateZeroFractional": false,
+      "currencyRate": 0.73,
+      "weightUnit": "KILOGRAM",
+      "weightPrecision": 2,
+      "dateFormat": "dd/MM/yyyy",
+      "timeFormat": "HH:mm",
+      "timezone": "America/Edmonton",
+      "dimensionsUnit": "CM",
+      "orderNumberPrefix": "CW-",
+      "orderNumberSuffix": ""
+    },
+    "languages": {
+      "enabledLanguages": [
+        "en",
+        "fr"
+      ],
+      "defaultLanguage": "en"
+    },
+    "taxSettings": {
+      "automaticTaxEnabled": false,
+      "pricesIncludeTax": false,
+      "taxExemptBusiness": false,
+      "taxes": [
+        {
+          "id": 9301,
+          "name": "GST",
+          "enabled": true,
+          "includeInPrice": false,
+          "useShippingAddress": true,
+          "taxShipping": true,
+          "appliedByDefault": true,
+          "defaultTax": 5,
+          "rules": []
+        }
+      ]
+    },
+    "legalPagesSettings": {
+      "requireTermsAgreementAtCheckout": true,
+      "legalPages": [
+        {
+          "type": "TERMS",
+          "enabled": true,
+          "title": "Terms & Conditions",
+          "display": "INLINE",
+          "text": "<p>Orders ship within three business days.</p>",
+          "externalUrl": ""
+        },
+        {
+          "type": "PRIVACY_STATEMENT",
+          "enabled": true,
+          "title": "Privacy Statement",
+          "display": "INLINE",
+          "text": "<p>We use your details only to fill your order.</p>",
+          "externalUrl": ""
+        },
+        {
+          "type": "REVOCATION_TERMS",
+          "enabled": false,
+          "title": "Right to Withdraw",
+          "display": "INLINE",
+          "text": "",
+          "externalUrl": ""
+        },
+        {
+          "type": "LEGAL_INFO",
+          "enabled": true,
+          "title": "Company Info",
+          "display": "EXTERNAL_URL",
+          "text": "",
+          "externalUrl": "https://cedarwick.example/about"
+        }
+      ]
+    }
+  }
+}

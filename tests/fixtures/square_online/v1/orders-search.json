@@ -1,0 +1,423 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/orders/search",
+    "body": {
+      "location_ids": [
+        "LOCMAIN1",
+        "LOCMARKET2"
+      ]
+    }
+  },
+  "response": {
+    "orders": [
+      {
+        "id": "ORDER_1",
+        "location_id": "LOCMAIN1",
+        "source": {
+          "name": "Square Online"
+        },
+        "line_items": [
+          {
+            "uid": "LINE_1",
+            "name": "Ocean mug",
+            "quantity": "2",
+            "catalog_object_id": "VAR_MUG",
+            "catalog_version": 1,
+            "variation_name": "Regular",
+            "item_type": "ITEM",
+            "base_price_money": {
+              "amount": 3200,
+              "currency": "CAD"
+            },
+            "variation_total_price_money": {
+              "amount": 6400,
+              "currency": "CAD"
+            },
+            "gross_sales_money": {
+              "amount": 6400,
+              "currency": "CAD"
+            },
+            "applied_taxes": [
+              {
+                "uid": "AT",
+                "tax_uid": "TAX_GST_UID",
+                "applied_money": {
+                  "amount": 320,
+                  "currency": "CAD"
+                }
+              }
+            ],
+            "total_tax_money": {
+              "amount": 320,
+              "currency": "CAD"
+            },
+            "total_discount_money": {
+              "amount": 0,
+              "currency": "CAD"
+            },
+            "total_money": {
+              "amount": 6720,
+              "currency": "CAD"
+            }
+          },
+          {
+            "uid": "LINE_2",
+            "name": "Linen apron",
+            "quantity": "1",
+            "catalog_object_id": "VAR_APRON_CHAR",
+            "catalog_version": 1,
+            "variation_name": "Charcoal",
+            "item_type": "ITEM",
+            "base_price_money": {
+              "amount": 4800,
+              "currency": "CAD"
+            },
+            "variation_total_price_money": {
+              "amount": 4800,
+              "currency": "CAD"
+            },
+            "gross_sales_money": {
+              "amount": 4800,
+              "currency": "CAD"
+            },
+            "applied_taxes": [
+              {
+                "uid": "AT",
+                "tax_uid": "TAX_GST_UID",
+                "applied_money": {
+                  "amount": 216,
+                  "currency": "CAD"
+                }
+              }
+            ],
+            "total_tax_money": {
+              "amount": 216,
+              "currency": "CAD"
+            },
+            "total_discount_money": {
+              "amount": 480,
+              "currency": "CAD"
+            },
+            "total_money": {
+              "amount": 4536,
+              "currency": "CAD"
+            },
+            "applied_discounts": [
+              {
+                "uid": "AD",
+                "discount_uid": "DISC_FALL",
+                "applied_money": {
+                  "amount": 480,
+                  "currency": "CAD"
+                }
+              }
+            ]
+          }
+        ],
+        "taxes": [
+          {
+            "uid": "TAX_GST_UID",
+            "catalog_object_id": "TAX_GST",
+            "name": "GST",
+            "type": "ADDITIVE",
+            "percentage": "5.0",
+            "applied_money": {
+              "amount": 586,
+              "currency": "CAD"
+            },
+            "scope": "ORDER"
+          }
+        ],
+        "discounts": [
+          {
+            "uid": "DISC_FALL",
+            "name": "Fall sale",
+            "type": "FIXED_PERCENTAGE",
+            "percentage": "10.0",
+            "applied_money": {
+              "amount": 480,
+              "currency": "CAD"
+            },
+            "scope": "LINE_ITEM"
+          }
+        ],
+        "service_charges": [
+          {
+            "uid": "SC_SHIP",
+            "name": "Shipping",
+            "amount_money": {
+              "amount": 1000,
+              "currency": "CAD"
+            },
+            "applied_money": {
+              "amount": 1000,
+              "currency": "CAD"
+            },
+            "total_money": {
+              "amount": 1050,
+              "currency": "CAD"
+            },
+            "total_tax_money": {
+              "amount": 50,
+              "currency": "CAD"
+            },
+            "calculation_phase": "SUBTOTAL_PHASE",
+            "taxable": true,
+            "applied_taxes": [
+              {
+                "uid": "AT",
+                "tax_uid": "TAX_GST_UID",
+                "applied_money": {
+                  "amount": 50,
+                  "currency": "CAD"
+                }
+              }
+            ],
+            "type": "CUSTOM",
+            "treatment_type": "LINE_ITEM_TREATMENT",
+            "scope": "ORDER"
+          }
+        ],
+        "fulfillments": [
+          {
+            "uid": "FUL_1",
+            "type": "SHIPMENT",
+            "state": "COMPLETED",
+            "shipment_details": {
+              "recipient": {
+                "display_name": "Ada Lovelace",
+                "email_address": "Ada@Example.com",
+                "phone_number": "+1 780-555-0111",
+                "address": {
+                  "address_line_1": "1 Main St",
+                  "locality": "Edmonton",
+                  "administrative_district_level_1": "AB",
+                  "postal_code": "T5J 1A1",
+                  "country": "CA",
+                  "first_name": "Ada",
+                  "last_name": "Lovelace"
+                }
+              },
+              "carrier": "Canada Post",
+              "tracking_number": "CP123456789CA",
+              "shipping_note": "Leave at the side door",
+              "placed_at": "2026-09-03T12:00:00.000Z",
+              "shipped_at": "2026-09-04T09:00:00.000Z"
+            }
+          }
+        ],
+        "tenders": [
+          {
+            "id": "TENDER_1",
+            "location_id": "LOCMAIN1",
+            "transaction_id": null,
+            "created_at": "2026-09-03T12:01:00.000Z",
+            "amount_money": {
+              "amount": 12306,
+              "currency": "CAD"
+            },
+            "processing_fee_money": {
+              "amount": 0,
+              "currency": "CAD"
+            },
+            "customer_id": null,
+            "type": "CARD",
+            "payment_id": "PAY_1"
+          }
+        ],
+        "refunds": [],
+        "created_at": "2026-09-03T12:00:00.000Z",
+        "updated_at": "2026-09-04T09:00:00.000Z",
+        "state": "COMPLETED",
+        "version": 3,
+        "total_money": {
+          "amount": 12306,
+          "currency": "CAD"
+        },
+        "total_tax_money": {
+          "amount": 586,
+          "currency": "CAD"
+        },
+        "total_discount_money": {
+          "amount": 480,
+          "currency": "CAD"
+        },
+        "total_tip_money": {
+          "amount": 0,
+          "currency": "CAD"
+        },
+        "total_service_charge_money": {
+          "amount": 1000,
+          "currency": "CAD"
+        },
+        "net_amount_due_money": {
+          "amount": 0,
+          "currency": "CAD"
+        },
+        "net_amounts": {
+          "total_money": {
+            "amount": 12306,
+            "currency": "CAD"
+          },
+          "tax_money": {
+            "amount": 586,
+            "currency": "CAD"
+          },
+          "discount_money": {
+            "amount": 480,
+            "currency": "CAD"
+          },
+          "tip_money": {
+            "amount": 0,
+            "currency": "CAD"
+          },
+          "service_charge_money": {
+            "amount": 1000,
+            "currency": "CAD"
+          }
+        },
+        "customer_id": "CUST_ADA",
+        "closed_at": "2026-09-04T09:00:00.000Z"
+      },
+      {
+        "id": "ORDER_2",
+        "location_id": "LOCMAIN1",
+        "source": {
+          "name": "Square Online"
+        },
+        "line_items": [
+          {
+            "uid": "LINE_1",
+            "name": "Ocean mug",
+            "quantity": "1",
+            "catalog_object_id": "VAR_MUG",
+            "catalog_version": 1,
+            "variation_name": "Regular",
+            "item_type": "ITEM",
+            "base_price_money": {
+              "amount": 3200,
+              "currency": "CAD"
+            },
+            "variation_total_price_money": {
+              "amount": 3200,
+              "currency": "CAD"
+            },
+            "gross_sales_money": {
+              "amount": 3200,
+              "currency": "CAD"
+            },
+            "applied_taxes": [
+              {
+                "uid": "AT",
+                "tax_uid": "TAX_GST_UID",
+                "applied_money": {
+                  "amount": 160,
+                  "currency": "CAD"
+                }
+              }
+            ],
+            "total_tax_money": {
+              "amount": 160,
+              "currency": "CAD"
+            },
+            "total_discount_money": {
+              "amount": 0,
+              "currency": "CAD"
+            },
+            "total_money": {
+              "amount": 3360,
+              "currency": "CAD"
+            }
+          }
+        ],
+        "taxes": [
+          {
+            "uid": "TAX_GST_UID",
+            "catalog_object_id": "TAX_GST",
+            "name": "GST",
+            "type": "ADDITIVE",
+            "percentage": "5.0",
+            "applied_money": {
+              "amount": 160,
+              "currency": "CAD"
+            },
+            "scope": "ORDER"
+          }
+        ],
+        "discounts": [],
+        "service_charges": [],
+        "fulfillments": [
+          {
+            "uid": "FUL_2",
+            "type": "PICKUP",
+            "state": "PROPOSED",
+            "pickup_details": {
+              "recipient": {
+                "display_name": "Bob Smith",
+                "email_address": "bob@example.com",
+                "phone_number": "+1 780-555-0133"
+              },
+              "schedule_type": "ASAP",
+              "note": "Pay at pickup",
+              "placed_at": "2026-09-05T14:00:00.000Z"
+            }
+          }
+        ],
+        "tenders": [],
+        "refunds": [],
+        "created_at": "2026-09-05T14:00:00.000Z",
+        "updated_at": "2026-09-05T14:00:00.000Z",
+        "state": "OPEN",
+        "version": 3,
+        "total_money": {
+          "amount": 3360,
+          "currency": "CAD"
+        },
+        "total_tax_money": {
+          "amount": 160,
+          "currency": "CAD"
+        },
+        "total_discount_money": {
+          "amount": 0,
+          "currency": "CAD"
+        },
+        "total_tip_money": {
+          "amount": 0,
+          "currency": "CAD"
+        },
+        "total_service_charge_money": {
+          "amount": 0,
+          "currency": "CAD"
+        },
+        "net_amount_due_money": {
+          "amount": 3360,
+          "currency": "CAD"
+        },
+        "net_amounts": {
+          "total_money": {
+            "amount": 3360,
+            "currency": "CAD"
+          },
+          "tax_money": {
+            "amount": 160,
+            "currency": "CAD"
+          },
+          "discount_money": {
+            "amount": 0,
+            "currency": "CAD"
+          },
+          "tip_money": {
+            "amount": 0,
+            "currency": "CAD"
+          },
+          "service_charge_money": {
+            "amount": 0,
+            "currency": "CAD"
+          }
+        },
+        "customer_id": "CUST_BOB"
+      }
+    ]
+  }
+}

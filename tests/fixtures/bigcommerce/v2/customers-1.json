@@ -1,0 +1,74 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/customers",
+    "query": {
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 41,
+        "email": "Ingrid@Example.com",
+        "first_name": "Ingrid",
+        "last_name": "Johansson",
+        "company": "Trail Co-op",
+        "phone": "+1 403-555-0141",
+        "registration_ip_address": "",
+        "notes": "Prefers email.",
+        "tax_exempt_category": "",
+        "customer_group_id": 0,
+        "date_modified": "2026-09-01T10:00:00+00:00",
+        "date_created": "2026-09-01T10:00:00+00:00",
+        "address_count": 1,
+        "attribute_count": 0,
+        "authentication": {
+          "force_password_reset": false
+        },
+        "addresses": [
+          {
+            "id": 4101,
+            "customer_id": 41,
+            "first_name": "Ingrid",
+            "last_name": "Johansson",
+            "company": "Trail Co-op",
+            "address1": "12 Spruce Lane",
+            "address2": "",
+            "city": "Canmore",
+            "state_or_province": "Alberta",
+            "postal_code": "T1W 2B2",
+            "country_code": "CA",
+            "country": "Canada",
+            "phone": "",
+            "address_type": "residential",
+            "form_fields": []
+          }
+        ],
+        "attributes": [],
+        "form_fields": [],
+        "store_credit_amounts": [
+          {
+            "amount": "0.00"
+          }
+        ],
+        "accepts_product_review_abandoned_cart_emails": true,
+        "origin_channel_id": 1,
+        "channel_ids": [
+          1
+        ]
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 3,
+        "count": 1,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 2,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

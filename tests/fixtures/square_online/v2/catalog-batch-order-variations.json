@@ -1,0 +1,112 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/batch-retrieve",
+    "body": {
+      "object_ids": [
+        "VAR_APRON_CHAR",
+        "VAR_APRON_NAT",
+        "VAR_MUG"
+      ],
+      "include_related_objects": false
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "ITEM_VARIATION",
+        "id": "VAR_APRON_CHAR",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_variation_data": {
+          "item_id": "ITEM_APRON",
+          "name": "Charcoal",
+          "ordinal": 1,
+          "pricing_type": "FIXED_PRICING",
+          "price_money": {
+            "amount": 4500,
+            "currency": "CAD"
+          },
+          "track_inventory": true,
+          "sellable": true,
+          "stockable": true,
+          "sku": "PP-APRON-CHAR",
+          "item_option_values": [
+            {
+              "item_option_id": "OPT_COLOR",
+              "item_option_value_id": "VAL_CHARCOAL"
+            }
+          ],
+          "image_ids": [
+            "IMG_APRON_CHAR"
+          ],
+          "location_overrides": [
+            {
+              "location_id": "LOCMAIN1",
+              "price_money": {
+                "amount": 4800,
+                "currency": "CAD"
+              },
+              "pricing_type": "FIXED_PRICING",
+              "track_inventory": true,
+              "sold_out": true
+            }
+          ]
+        }
+      },
+      {
+        "type": "ITEM_VARIATION",
+        "id": "VAR_APRON_NAT",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_variation_data": {
+          "item_id": "ITEM_APRON",
+          "name": "Natural",
+          "ordinal": 0,
+          "pricing_type": "FIXED_PRICING",
+          "price_money": {
+            "amount": 4500,
+            "currency": "CAD"
+          },
+          "track_inventory": true,
+          "sellable": true,
+          "stockable": true,
+          "sku": "PP-APRON-NAT",
+          "item_option_values": [
+            {
+              "item_option_id": "OPT_COLOR",
+              "item_option_value_id": "VAL_NATURAL"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ITEM_VARIATION",
+        "id": "VAR_MUG",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_variation_data": {
+          "item_id": "ITEM_MUG",
+          "name": "Regular",
+          "ordinal": 0,
+          "pricing_type": "FIXED_PRICING",
+          "price_money": {
+            "amount": 3400,
+            "currency": "CAD"
+          },
+          "track_inventory": true,
+          "sellable": true,
+          "stockable": true,
+          "sku": "PP-MUG-OCEAN",
+          "upc": "0629104150021"
+        }
+      }
+    ]
+  }
+}

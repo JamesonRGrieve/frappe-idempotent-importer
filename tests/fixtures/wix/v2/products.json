@@ -1,0 +1,252 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v3/products/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "products": [
+      {
+        "id": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+        "revision": "5",
+        "createdDate": "2026-08-03T15:00:00.000Z",
+        "updatedDate": "2026-08-25T16:00:00.000Z",
+        "name": "Speckled clay mug",
+        "slug": "speckled-clay-mug",
+        "url": {
+          "relativePath": "/product-page/speckled-clay-mug",
+          "url": "https://www.prairiepottery.example/product-page/speckled-clay-mug"
+        },
+        "plainDescription": "<p>Speckled clay mug, made in our Moose Jaw studio.</p>",
+        "visible": true,
+        "visibleInPos": true,
+        "media": {
+          "main": {
+            "id": "mug-front.png",
+            "image": {
+              "id": "mug-front.png",
+              "url": "http://wix-fake:8080/media/mug-front.png",
+              "width": 1200,
+              "height": 1200,
+              "altText": "Speckled clay mug"
+            },
+            "altText": "Speckled clay mug",
+            "mediaType": "IMAGE"
+          },
+          "itemsInfo": {
+            "items": [
+              {
+                "id": "mug-front.png",
+                "image": {
+                  "id": "mug-front.png",
+                  "url": "http://wix-fake:8080/media/mug-front.png",
+                  "width": 1200,
+                  "height": 1200,
+                  "altText": "Speckled clay mug"
+                },
+                "altText": "Speckled clay mug",
+                "mediaType": "IMAGE"
+              },
+              {
+                "id": "mug-side.png",
+                "image": {
+                  "id": "mug-side.png",
+                  "url": "http://wix-fake:8080/media/mug-side.png",
+                  "width": 1200,
+                  "height": 1200
+                },
+                "mediaType": "IMAGE"
+              }
+            ]
+          }
+        },
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Speckled clay mug | Prairie Pottery",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "Speckled clay mug from Prairie Pottery."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "options": [],
+        "modifiers": [],
+        "directCategoriesInfo": {
+          "categories": [
+            {
+              "id": "3b9f2a40-0001-4d6c-8e1f-2a3b4c5d0001",
+              "index": 0
+            }
+          ]
+        },
+        "mainCategoryId": "3b9f2a40-0001-4d6c-8e1f-2a3b4c5d0001",
+        "inventory": {
+          "availabilityStatus": "IN_STOCK",
+          "preorderStatus": "DISABLED"
+        },
+        "productType": "PHYSICAL",
+        "handle": "speckled-clay-mug",
+        "currency": "CAD",
+        "physicalProperties": {
+          "weightMeasurementUnitInfo": {
+            "weightMeasurementUnit": "KG"
+          }
+        },
+        "brand": {
+          "id": "0b1c2d3e-0001-4f5a-8b9c-0d1e2f3a0001",
+          "name": "Prairie Pottery"
+        },
+        "ribbon": {
+          "id": "r-1",
+          "name": "Bestseller"
+        }
+      },
+      {
+        "id": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+        "revision": "5",
+        "createdDate": "2026-08-04T15:00:00.000Z",
+        "updatedDate": "2026-08-25T16:00:00.000Z",
+        "name": "Linen tea towel",
+        "slug": "linen-tea-towel",
+        "url": {
+          "relativePath": "/product-page/linen-tea-towel",
+          "url": "https://www.prairiepottery.example/product-page/linen-tea-towel"
+        },
+        "plainDescription": "<p>Linen tea towel, made in our Moose Jaw studio.</p>",
+        "visible": true,
+        "visibleInPos": true,
+        "media": {
+          "main": {
+            "id": "towel.png",
+            "image": {
+              "id": "towel.png",
+              "url": "http://wix-fake:8080/media/towel.png",
+              "width": 1200,
+              "height": 1200,
+              "altText": "Linen tea towel"
+            },
+            "altText": "Linen tea towel",
+            "mediaType": "IMAGE"
+          },
+          "itemsInfo": {
+            "items": [
+              {
+                "id": "towel.png",
+                "image": {
+                  "id": "towel.png",
+                  "url": "http://wix-fake:8080/media/towel.png",
+                  "width": 1200,
+                  "height": 1200,
+                  "altText": "Linen tea towel"
+                },
+                "altText": "Linen tea towel",
+                "mediaType": "IMAGE"
+              }
+            ]
+          }
+        },
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Linen tea towel | Prairie Pottery",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "Linen tea towel from Prairie Pottery."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "options": [
+          {
+            "id": "5e2a1b30-0001-4c7d-9f0e-3a4b5c6d0001",
+            "name": "Colour",
+            "optionRenderType": "TEXT_CHOICES",
+            "key": "Colour",
+            "choicesSettings": {
+              "choices": [
+                {
+                  "choiceId": "5e2a1b30-0011-4c7d-9f0e-3a4b5c6d0011",
+                  "choiceType": "CHOICE_TEXT",
+                  "key": "Sage",
+                  "name": "Sage",
+                  "inStock": true,
+                  "visible": true
+                },
+                {
+                  "choiceId": "5e2a1b30-0012-4c7d-9f0e-3a4b5c6d0012",
+                  "choiceType": "CHOICE_TEXT",
+                  "key": "Rust",
+                  "name": "Rust",
+                  "inStock": true,
+                  "visible": true
+                }
+              ]
+            }
+          }
+        ],
+        "modifiers": [],
+        "directCategoriesInfo": {
+          "categories": [
+            {
+              "id": "3b9f2a40-0002-4d6c-8e1f-2a3b4c5d0002",
+              "index": 0
+            }
+          ]
+        },
+        "mainCategoryId": "3b9f2a40-0002-4d6c-8e1f-2a3b4c5d0002",
+        "inventory": {
+          "availabilityStatus": "IN_STOCK",
+          "preorderStatus": "DISABLED"
+        },
+        "productType": "PHYSICAL",
+        "handle": "linen-tea-towel",
+        "currency": "CAD",
+        "physicalProperties": {
+          "weightMeasurementUnitInfo": {
+            "weightMeasurementUnit": "KG"
+          }
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 2,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

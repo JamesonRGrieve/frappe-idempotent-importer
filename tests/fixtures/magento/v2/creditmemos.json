@@ -1,0 +1,90 @@
+{
+  "request": {
+    "path": "/rest/default/V1/creditmemos",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "order_id",
+      "searchCriteria[filterGroups][0][filters][0][value]": "501,502,503",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "in",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "adjustment": 10,
+        "adjustment_negative": 0,
+        "adjustment_positive": 10,
+        "base_adjustment": 10,
+        "base_currency_code": "CAD",
+        "base_grand_total": 10,
+        "base_subtotal": 0,
+        "base_tax_amount": 0,
+        "created_at": "2026-09-08 11:00:00",
+        "creditmemo_status": 2,
+        "entity_id": 901,
+        "grand_total": 10,
+        "increment_id": "000000901",
+        "order_currency_code": "CAD",
+        "order_id": 501,
+        "shipping_amount": 0,
+        "state": 2,
+        "store_id": 1,
+        "subtotal": 0,
+        "tax_amount": 0,
+        "updated_at": "2026-09-08 11:00:00",
+        "items": [
+          {
+            "base_cost": 0,
+            "base_price": 79.99,
+            "entity_id": 9011,
+            "order_item_id": 1001,
+            "qty": 0,
+            "row_total": 0,
+            "price": 79.99,
+            "sku": "MAG-KETTLE-1",
+            "name": "Copper kettle",
+            "product_id": 11
+          },
+          {
+            "base_cost": 0,
+            "base_price": 159.5,
+            "entity_id": 9012,
+            "order_item_id": 1002,
+            "qty": 0,
+            "row_total": 0,
+            "price": 159.5,
+            "sku": "MAG-JACKET-NAVY",
+            "name": "Storm shell jacket",
+            "product_id": 12
+          }
+        ],
+        "comments": [
+          {
+            "comment": "Dented lid: partial refund.",
+            "created_at": "2026-09-08 11:00:00",
+            "entity_id": 9101,
+            "is_customer_notified": 1,
+            "is_visible_on_front": 0,
+            "parent_id": 901
+          }
+        ]
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [
+        {
+          "filters": [
+            {
+              "field": "order_id",
+              "value": "501,502,503",
+              "condition_type": "in"
+            }
+          ]
+        }
+      ],
+      "page_size": 100,
+      "current_page": 1
+    },
+    "total_count": 1
+  }
+}

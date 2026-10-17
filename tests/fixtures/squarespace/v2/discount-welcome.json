@@ -1,0 +1,35 @@
+{
+  "request": {
+    "path": "/v1/commerce/discounts/6e5000000000000000000041"
+  },
+  "response": {
+    "discount": {
+      "id": "6e5000000000000000000041",
+      "websiteId": "5f3c3d55ac435e1a051f7701",
+      "name": "Welcome 10%",
+      "trigger": {
+        "type": "CODE",
+        "promoCode": "SQS-WELCOME10"
+      },
+      "template": {
+        "type": "PERCENTAGE",
+        "percentage": 10
+      },
+      "criteria": {
+        "type": "ANY_ORDER"
+      },
+      "validFrom": "2026-09-01T00:00:00.000Z",
+      "isLimitedUses": false,
+      "isOncePerCustomer": true,
+      "status": "ACTIVE",
+      "numberOfUses": 0,
+      "subscriptionOptions": {
+        "type": "EXCLUDED"
+      },
+      "paymentPlanOptions": {
+        "type": "NONE"
+      },
+      "validTo": "2026-12-31T23:59:59.000Z"
+    }
+  }
+}

@@ -13,11 +13,13 @@ import json
 import time
 import traceback
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from datetime import timedelta
 from decimal import Decimal
 from functools import wraps
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qs, urlsplit
 
 import frappe
 from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
@@ -38,41 +40,100 @@ FISCAL_YEAR_END = "2026-12-31"
 CURRENCY = "CAD"
 COUNTRY = "Canada"
 FALLBACK_ITEM = "IMPORTED-LINE"
-# The fake store's credentials (tests/e2e/fake_store.py checks them).
-WOO_USER = "e2e"
-WOO_SECRET = "e2e-application-password"
-# A Dev Dashboard app's client credentials, exchanged at the fake store for its Admin API token.
-SHOPIFY_CLIENT_ID = "e2e-client-id"
-SHOPIFY_CLIENT_SECRET = "e2e-client-secret"
+FAKE_PORT = 8080
+# The Etsy connection as if the operator had saved the app and connected the shop.
+ETSY_CONNECTED_REFRESH_TOKEN = "e2e-refresh-token"
+# The refresh token the fake Etsy issues on every refresh (tests/e2e/fake_store.py).
+ETSY_ROTATED_REFRESH_TOKEN = "fixture-refresh-token"
 
 
-def business(abbr: str) -> dict[str, str]:
-	return {
-		"WA": {
-			"company": "Store A",
-			"site": "store-a",
-			"connection": "woo-a",
-			"source": "WooCommerce",
-			"fake": "woo-a-fake",
+@dataclass(frozen=True)
+class Business:
+	"""One business of the suite: its company, Public Site and Webshop Store, and its connection to one
+	source, answered by the fake store as ``fake`` with the test credentials it checks."""
+
+	abbr: str
+	company: str
+	connection: str
+	source: str
+	source_id: str
+	fake: str
+	store_url: str
+	credentials: dict[str, str] = field(default_factory=dict)
+	endpoint_path: str = ""
+
+	@property
+	def site(self) -> str:
+		return self.company.lower().replace(" ", "-")
+
+	@property
+	def endpoint(self) -> str:
+		return f"http://{self.fake}:{FAKE_PORT}{self.endpoint_path}"
+
+
+WOO_CREDENTIALS = {
+	"auth_method": "Application Password",
+	"api_user": "e2e",
+	"api_secret": "e2e-application-password",
+}
+BUSINESSES = (
+	Business(
+		"WA",
+		"Store A",
+		"woo-a",
+		"WooCommerce",
+		"woocommerce",
+		"woo-a-fake",
+		"https://woo-a.example.test",
+		WOO_CREDENTIALS,
+	),
+	Business(
+		"WB",
+		"Store B",
+		"woo-b",
+		"WooCommerce",
+		"woocommerce",
+		"woo-b-fake",
+		"https://woo-b.example.test",
+		WOO_CREDENTIALS,
+	),
+	Business(
+		"SH",
+		"Store S",
+		"shop-s",
+		"Shopify",
+		"shopify",
+		"shopify-fake",
+		"e2e-fixture.myshopify.com",
+		# A Dev Dashboard app's client credentials, exchanged at the fake store for its Admin API token.
+		{"auth_method": "Client Credentials", "api_user": "e2e-client-id", "api_secret": "e2e-client-secret"},
+		"/admin/api/2026-10/graphql.json",
+	),
+	Business(
+		"ET",
+		"Store E",
+		"etsy-e",
+		"Etsy",
+		"etsy",
+		"etsy-fake",
+		"https://www.etsy.com/shop/ClayAndCloth",
+		{
+			"api_user": "e2e-keystring",
+			"api_secret": "e2e-shared-secret",
+			"refresh_token": ETSY_CONNECTED_REFRESH_TOKEN,
 		},
-		"WB": {
-			"company": "Store B",
-			"site": "store-b",
-			"connection": "woo-b",
-			"source": "WooCommerce",
-			"fake": "woo-b-fake",
-		},
-		"SH": {
-			"company": "Store S",
-			"site": "store-s",
-			"connection": "shop-s",
-			"source": "Shopify",
-			"fake": "shopify-fake",
-		},
-	}[abbr]
+	),
+)
 
 
-ABBREVIATIONS = ("WA", "WB", "SH")
+def business(abbr: str) -> Business:
+	return next(spec for spec in BUSINESSES if spec.abbr == abbr)
+
+
+def business_of(connection: str) -> Business:
+	return next(spec for spec in BUSINESSES if spec.connection == connection)
+
+
 CONTENT_DOCTYPES = (
 	"Item Group",
 	"Item",
@@ -130,8 +191,8 @@ def setup_site() -> None:
 			"currency": CURRENCY,
 			"full_name": "E2E Admin",
 			"email": "e2e@example.test",
-			"company_name": business("WA")["company"],
-			"company_abbr": "WA",
+			"company_name": BUSINESSES[0].company,
+			"company_abbr": BUSINESSES[0].abbr,
 			"chart_of_accounts": "Standard",
 			"fy_start_date": FISCAL_YEAR_START,
 			"fy_end_date": FISCAL_YEAR_END,
@@ -139,26 +200,20 @@ def setup_site() -> None:
 	)
 	frappe.db.set_single_value("Webshop Settings", "enable_reviews", 1)
 	make_fallback_item()
-	endpoints: dict[str, str] = {}
-	for abbr in ABBREVIATIONS:
-		spec = business(abbr)
-		if not frappe.db.exists("Company", spec["company"]):
+	for spec in BUSINESSES:
+		if not frappe.db.exists("Company", spec.company):
 			frappe.get_doc(
 				{
 					"doctype": "Company",
-					"company_name": spec["company"],
-					"abbr": abbr,
+					"company_name": spec.company,
+					"abbr": spec.abbr,
 					"default_currency": CURRENCY,
 					"country": COUNTRY,
 					"chart_of_accounts": "Standard",
 				}
 			).insert()
-		make_business(abbr, spec)
-		endpoints[spec["connection"]] = (
-			f"http://{spec['fake']}:8080/admin/api/2026-10/graphql.json"
-			if spec["source"] == "Shopify"
-			else f"http://{spec['fake']}:8080"
-		)
+		make_business(spec)
+	endpoints = {spec.connection: spec.endpoint for spec in BUSINESSES}
 	update_site_config("idempotent_importer_test_endpoints", endpoints)
 	frappe.db.commit()
 
@@ -187,15 +242,15 @@ def account(abbr: str, name: str, parent: str, account_type: str) -> str:
 				"doctype": "Account",
 				"account_name": name,
 				"parent_account": f"{parent} - {abbr}",
-				"company": business(abbr)["company"],
+				"company": business(abbr).company,
 				"account_type": account_type,
 			}
 		).insert()
 	return full
 
 
-def make_business(abbr: str, spec: dict[str, str]) -> None:
-	company = spec["company"]
+def make_business(spec: Business) -> None:
+	company, abbr, site = spec.company, spec.abbr, spec.site
 	price_list = f"{company} Prices"
 	if not frappe.db.exists("Price List", price_list):
 		frappe.get_doc(
@@ -214,17 +269,17 @@ def make_business(abbr: str, spec: dict[str, str]) -> None:
 				"quotation_series": "SAL-QTN-.YYYY.-",
 			}
 		).insert()
-	if not frappe.db.exists("Public Site", spec["site"]):
+	if not frappe.db.exists("Public Site", site):
 		frappe.get_doc(
 			{
 				"doctype": "Public Site",
-				"site_name": spec["site"],
+				"site_name": site,
 				"enabled": 1,
 				"company": company,
-				"route_prefix": spec["site"],
+				"route_prefix": site,
 				"home_route": "home",
 				"webshop_store": store,
-				"domains": [{"domain": f"{spec['site']}.example.test"}],
+				"domains": [{"domain": f"{site}.example.test"}],
 			}
 		).insert()
 	root_group = f"{company} Catalogue"
@@ -248,23 +303,17 @@ def make_business(abbr: str, spec: dict[str, str]) -> None:
 			}
 		).insert()
 	guest_name = frappe.db.get_value("Customer", {"customer_name": guest})
-	if frappe.db.exists("Importer Connection", spec["connection"]):
+	if frappe.db.exists("Importer Connection", spec.connection):
 		return
 	frappe.get_doc(
 		{
 			"doctype": "Importer Connection",
-			"connection_id": spec["connection"],
+			"connection_id": spec.connection,
 			"enabled": 1,
-			"source": spec["source"],
-			"store_url": "e2e-fixture.myshopify.com"
-			if spec["source"] == "Shopify"
-			else f"https://{spec['connection']}.example.test",
-			"auth_method": "Application Password"
-			if spec["source"] == "WooCommerce"
-			else "Client Credentials",
-			"api_user": WOO_USER if spec["source"] == "WooCommerce" else SHOPIFY_CLIENT_ID,
-			"api_secret": WOO_SECRET if spec["source"] == "WooCommerce" else SHOPIFY_CLIENT_SECRET,
-			"public_site": spec["site"],
+			"source": spec.source,
+			"store_url": spec.store_url,
+			**spec.credentials,
+			"public_site": site,
 			"abbreviation": abbr,
 			"item_group": root_group,
 			"price_list": price_list,
@@ -312,6 +361,8 @@ def main() -> None:
 		"assert_connection_untouched": assert_connection_untouched,
 		"assert_woocommerce": assert_woocommerce,
 		"assert_shopify": assert_shopify,
+		"assert_etsy": assert_etsy,
+		"assert_etsy_connect": assert_etsy_connect,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -362,10 +413,10 @@ def checksum(name: str) -> None:
 	"""Records the content tables' digests, and each connection's records' digests, as ``name``."""
 	tables = table_checksums()
 	connections = {
-		spec["connection"]: {
-			key: digest_of(record) for key, record in connection_records(spec["connection"]).items()
+		spec.connection: {
+			key: digest_of(record) for key, record in connection_records(spec.connection).items()
 		}
-		for spec in map(business, ABBREVIATIONS)
+		for spec in BUSINESSES
 	}
 	state = {"tables": tables, "connections": connections}
 	(STATE_DIR / f"checksum-{name}.json").write_text(json.dumps(state, indent=1, sort_keys=True))
@@ -408,8 +459,7 @@ def run(connection: str, mode: str) -> dict[str, Any]:
 
 def target(connection: str, kind: str, type_: str, source_id: str) -> str:
 	"""The record a source object was mirrored to."""
-	source = "shopify" if connection == "shop-s" else "woocommerce"
-	gid = f"gid://{source}/{connection}/{type_}/{source_id}"
+	gid = f"gid://{business_of(connection).source_id}/{connection}/{type_}/{source_id}"
 	name = frappe.db.get_value(
 		"Importer Link", {"connection": connection, "kind": kind, "gid": gid}, "target_name"
 	)
@@ -766,6 +816,145 @@ def assert_shopify(state: str) -> None:
 	target(connection, "order", "Order", "803")
 
 
+def item_price(connection: str, item: str) -> Decimal:
+	price_list = frappe.db.get_value("Importer Connection", connection, "price_list")
+	return amount(
+		frappe.db.get_value("Item Price", {"item_code": item, "price_list": price_list}, "price_list_rate")
+	)
+
+
+def stock_of(connection: str, item: str) -> Decimal:
+	warehouse = frappe.db.get_value("Importer Connection", connection, "warehouse")
+	return amount(frappe.db.get_value("Bin", {"item_code": item, "warehouse": warehouse}, "actual_qty") or 0)
+
+
+def published(item: str) -> int:
+	return int(frappe.db.get_value("Website Item", {"item_code": item}, "published") or 0)
+
+
+@check
+def assert_etsy(state: str) -> None:
+	connection = "etsy-e"
+	mug = target(connection, "product", "Listing", "601")
+	expect(
+		(
+			mug,
+			frappe.db.get_value("Item", mug, "item_name"),
+			frappe.db.get_value("Item", mug, "has_variants"),
+		),
+		("ET-MUG-OCEAN", 'Hand-thrown mug "Ocean"', 0),
+		"the mug, one item, entities decoded",
+	)
+	expect(frappe.db.get_value("Item", mug, "item_group"), "Mugs - ET", "section → Item Group")
+	expect(stock_of(connection, mug), amount("4"), "the mug's stock, not reduced by its receipts")
+	apron = target(connection, "product", "Listing", "602")
+	expect(frappe.db.count("Item", {"variant_of": apron}), 2, "the apron's variants")
+	charcoal = part(connection, "variant", "ListingVariant/602-1002")
+	expect(stock_of(connection, charcoal), amount("0"), "the charcoal apron is out of stock")
+	expect(published(target(connection, "product", "Listing", "604")), 0, "an inactive listing, unpublished")
+	receipt = target(connection, "order", "Receipt", "801")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", receipt, ["docstatus", "grand_total", "customer", "po_no"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), invoice.customer, invoice.po_no),
+		(1, amount("134.40"), target(connection, "customer", "User", "9001"), "#801"),
+		"receipt 801's invoice, linked to its buyer",
+	)
+	expect(
+		frappe.db.count(
+			"Comment",
+			{"reference_doctype": "Sales Invoice", "reference_name": receipt, "comment_type": "Comment"},
+		),
+		1,
+		"receipt 801's shipment tracking",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Receipt", "802"), "docstatus"),
+		0,
+		"unpaid receipt 802",
+	)
+	expect(
+		frappe.db.get_value("Item Review", target(connection, "review", "Review", "70011"), "item"),
+		mug,
+		"the mug's review",
+	)
+	for policy in ("Policy/5001-policy_privacy", "ReturnPolicy/41"):
+		type_, policy_id = policy.split("/")
+		expect(
+			frappe.db.get_value("Web Page", target(connection, "policy", type_, policy_id), "published"),
+			1,
+			f"Etsy policy {policy}",
+		)
+	connected = frappe.get_doc("Importer Connection", connection)
+	expect(
+		connected.get_password("refresh_token"),
+		ETSY_ROTATED_REFRESH_TOKEN,
+		"the refresh token Etsy rotated, kept",
+	)
+	if state == "v1":
+		expect(item_price(connection, mug), amount("32"), "the mug's price")
+		expect(published(target(connection, "product", "Listing", "603")), 0, "a draft listing, unpublished")
+		return
+	expect(item_price(connection, mug), amount("34"), "the mug's new price")
+	expect(
+		frappe.db.get_value("Item", target(connection, "product", "Listing", "603"), "disabled"),
+		1,
+		"the listing removed at Etsy, disabled",
+	)
+	credit = part(connection, "refund", "Refund/801-1788432000")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-10"),
+		"receipt 801's refund",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Receipt", "803"), "docstatus"),
+		1,
+		"new paid receipt 803",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
+		2,
+		"the new review on the apron",
+	)
+
+
+@check
+def assert_etsy_connect(connection: str) -> None:
+	"""Connect to Etsy: the approval URL asks for read scopes with PKCE, and Etsy's redirect back with a code
+	is exchanged for the refresh token the connection keeps."""
+	frappe.db.set_value("Importer Connection", connection, "credential_hold", "held for the check")
+	frappe.db.commit()
+	url = api.etsy_connect(connection)
+	query = parse_qs(urlsplit(url).query)
+	expect(
+		(query["client_id"], query["code_challenge_method"], query["redirect_uri"]),
+		(["e2e-keystring"], ["S256"], [api.etsy_redirect_uri()]),
+		"the Etsy approval URL",
+	)
+	api.etsy_callback(code="e2e-authorization-code", state=query["state"][0])
+	expect(
+		frappe.get_doc("Importer Connection", connection).get_password("refresh_token"),
+		ETSY_ROTATED_REFRESH_TOKEN,
+		"the refresh token Etsy issued for the code",
+	)
+	expect(
+		frappe.db.get_value("Importer Connection", connection, "credential_hold"), None, "the hold, released"
+	)
+	expect(
+		frappe.local.response.get("location"),
+		f"/app/importer-connection/{connection}?etsy=connected",
+		"back on the connection",
+	)
+	try:
+		api.etsy_callback(code="e2e-authorization-code", state=query["state"][0])
+	except frappe.ValidationError:
+		print("a used approval can't be replayed")
+	else:
+		raise AssertionError("an Etsy approval was accepted twice")
+
+
 @check
 def assert_shared_coupon_codes(code: str, *connections: str) -> None:
 	"""Each connection holds ``code`` at once, as its own Coupon Code scoped to its Public Site's store."""
@@ -785,15 +974,11 @@ def assert_shared_coupon_codes(code: str, *connections: str) -> None:
 
 def trouble(connection: str, kind: str | None) -> None:
 	"""Makes the connection's fake store rate limit (``throttle``) or refuse (``reject``) every request."""
-	path = STATE_DIR / f"{business_of(connection)['fake']}-trouble"
+	path = STATE_DIR / f"{business_of(connection).fake}-trouble"
 	if kind is None:
 		path.unlink(missing_ok=True)
 	else:
 		path.write_text(kind)
-
-
-def business_of(connection: str) -> dict[str, str]:
-	return next(spec for spec in map(business, ABBREVIATIONS) if spec["connection"] == connection)
 
 
 def runs(connection: str) -> int:
@@ -875,17 +1060,17 @@ def sync_now_in_background(connection: str) -> None:
 
 @check
 def assert_listed_sources_refuse(template: str) -> None:
-	"""A connection to a listed source (Etsy) can be saved, but its run refuses to start, says why, and
+	"""A connection to a listed source (Odoo) can be saved, but its run refuses to start, says why, and
 	touches nothing."""
-	connection = "etsy-e2e"
+	connection = "odoo-e2e"
 	if not frappe.db.exists("Importer Connection", connection):
 		doc = frappe.copy_doc(frappe.get_doc("Importer Connection", template))
 		doc.update(
 			{
 				"connection_id": connection,
-				"source": "Etsy",
-				"store_url": "https://www.etsy.com/shop/e2e",
-				"abbreviation": "ET",
+				"source": "Odoo",
+				"store_url": "https://odoo.example.test",
+				"abbreviation": "OD",
 				"cursors": None,
 				"last_run": None,
 			}

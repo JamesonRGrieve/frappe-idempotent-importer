@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores-reader/v1/collections/query",
+    "body": {
+      "query": {
+        "paging": {
+          "offset": 0
+        }
+      },
+      "includeDescription": true
+    }
+  },
+  "response": {
+    "collections": [
+      {
+        "id": "00000000-000000-000000-000000000001",
+        "name": "All Products",
+        "slug": "all-products",
+        "visible": true,
+        "numberOfProducts": 2
+      },
+      {
+        "id": "c01e0000-1001-4a5b-8c9d-0e1f2a3b1001",
+        "name": "Planters",
+        "slug": "planters",
+        "visible": true,
+        "numberOfProducts": 1,
+        "description": "Pots for plants.",
+        "media": {
+          "mainMedia": {
+            "image": {
+              "url": "http://wix-fake:8080/media/planters.png",
+              "width": 1000,
+              "height": 1000,
+              "altText": "Planters"
+            },
+            "mediaType": "image",
+            "id": "planters.png",
+            "title": "Planters"
+          }
+        }
+      }
+    ],
+    "metadata": {
+      "items": 100,
+      "offset": 0
+    },
+    "totalResults": 2
+  }
+}

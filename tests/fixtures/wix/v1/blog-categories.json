@@ -1,0 +1,40 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/blog/v3/categories/query",
+    "body": {
+      "query": {
+        "paging": {
+          "offset": 0
+        }
+      }
+    }
+  },
+  "response": {
+    "categories": [
+      {
+        "id": "4d3c2b10-0001-4e5f-8a9b-0c1d2e3f0001",
+        "label": "Studio notes",
+        "postCount": 1,
+        "url": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/blog/categories/studio-notes"
+        },
+        "description": "News from the studio.",
+        "displayPosition": 0,
+        "language": "en",
+        "slug": "studio-notes",
+        "coverImage": {
+          "id": "studio.png",
+          "url": "http://wix-fake:8080/media/studio.png",
+          "altText": "The studio"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 1,
+      "offset": 0,
+      "total": 1
+    }
+  }
+}

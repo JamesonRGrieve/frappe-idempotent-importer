@@ -1,0 +1,25 @@
+{
+  "request": {
+    "path": "/rest/default/V1/directory/currency"
+  },
+  "response": {
+    "base_currency_code": "CAD",
+    "base_currency_symbol": "CA$",
+    "default_display_currency_code": "CAD",
+    "default_display_currency_symbol": "CA$",
+    "available_currency_codes": [
+      "CAD",
+      "USD"
+    ],
+    "exchange_rates": [
+      {
+        "currency_to": "CAD",
+        "rate": 1
+      },
+      {
+        "currency_to": "USD",
+        "rate": 0.73
+      }
+    ]
+  }
+}

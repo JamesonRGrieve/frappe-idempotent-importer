@@ -1,0 +1,87 @@
+{
+  "request": {
+    "path": "/en/variants.json",
+    "query": {
+      "product": "501"
+    }
+  },
+  "response": {
+    "variants": [
+      {
+        "id": 5011,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-11T09:00:00+00:00",
+        "isDefault": true,
+        "sortOrder": 1,
+        "articleCode": "ls-mug-1",
+        "ean": "0881122330011",
+        "sku": "LS-MUG-1",
+        "hs": "6912.00",
+        "unitPrice": 0,
+        "unitUnit": "",
+        "priceExcl": 26,
+        "priceIncl": 27.3,
+        "priceCost": 9.5,
+        "oldPriceExcl": 0,
+        "oldPriceIncl": 0,
+        "stockTracking": "enabled",
+        "stockLevel": 14,
+        "stockAlert": 2,
+        "stockMinimum": 0,
+        "stockSold": 3,
+        "stockBuyMininum": 1,
+        "stockBuyMinimum": 1,
+        "stockBuyMaximum": 10000,
+        "weight": 350,
+        "weightValue": "0.350",
+        "weightUnit": "kg",
+        "volume": 0,
+        "volumeValue": 0,
+        "volumeUnit": "ml",
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "sizeXValue": "0.000",
+        "sizeYValue": "0.000",
+        "sizeZValue": "0.000",
+        "sizeUnit": "cm",
+        "matrix": false,
+        "title": "Default",
+        "taxType": "auto",
+        "image": false,
+        "tax": {
+          "resource": {
+            "id": 926219,
+            "url": "taxes/926219",
+            "link": "https://api.shoplightspeed.com/en/taxes/926219.json"
+          }
+        },
+        "product": {
+          "resource": {
+            "id": 501,
+            "url": "products/501",
+            "link": "https://api.shoplightspeed.com/en/products/501.json"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?variant=5011",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?variant=5011"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "variants/5011/metafields",
+            "link": "https://api.shoplightspeed.com/en/variants/5011/metafields.json"
+          }
+        },
+        "additionalcost": false,
+        "options": [],
+        "allowWithdrawal": true
+      }
+    ]
+  }
+}

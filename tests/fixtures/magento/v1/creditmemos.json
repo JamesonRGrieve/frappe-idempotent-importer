@@ -1,0 +1,30 @@
+{
+  "request": {
+    "path": "/rest/default/V1/creditmemos",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "order_id",
+      "searchCriteria[filterGroups][0][filters][0][value]": "501,502",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "in",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [],
+    "search_criteria": {
+      "filter_groups": [
+        {
+          "filters": [
+            {
+              "field": "order_id",
+              "value": "501,502",
+              "condition_type": "in"
+            }
+          ]
+        }
+      ],
+      "page_size": 100,
+      "current_page": 1
+    },
+    "total_count": 0
+  }
+}

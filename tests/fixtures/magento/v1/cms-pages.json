@@ -1,0 +1,69 @@
+{
+  "request": {
+    "path": "/rest/default/V1/cmsPage/search",
+    "query": {
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "id": 1,
+        "identifier": "home",
+        "title": "Home page",
+        "page_layout": "1column",
+        "meta_title": "Home page | Harbourside",
+        "meta_keywords": "",
+        "meta_description": "Home page at Harbourside Goods.",
+        "content_heading": "Home page",
+        "content": "<p>Welcome to Harbourside Goods.</p>",
+        "creation_time": "2026-09-01 08:00:00",
+        "update_time": "2026-09-01 08:00:00",
+        "sort_order": "0",
+        "active": true
+      },
+      {
+        "id": 2,
+        "identifier": "company/our-story",
+        "title": "Our story",
+        "page_layout": "1column",
+        "meta_title": "Our story | Harbourside",
+        "meta_keywords": "",
+        "meta_description": "Our story at Harbourside Goods.",
+        "content_heading": "Our story",
+        "content": "<p>Outfitting Victoria's harbour since 2015.</p>",
+        "creation_time": "2026-09-01 08:00:00",
+        "update_time": "2026-09-01 08:00:00",
+        "sort_order": "0",
+        "active": true
+      },
+      {
+        "id": 3,
+        "identifier": "enable-cookies",
+        "title": "Enable cookies",
+        "page_layout": "1column",
+        "meta_title": "Enable cookies | Harbourside",
+        "meta_keywords": "",
+        "meta_description": "Enable cookies at Harbourside Goods.",
+        "content_heading": "Enable cookies",
+        "content": "<p>Please enable cookies.</p>",
+        "creation_time": "2026-09-01 08:00:00",
+        "update_time": "2026-09-01 08:00:00",
+        "sort_order": "0",
+        "active": false
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [],
+      "page_size": 100,
+      "current_page": 1,
+      "sort_orders": [
+        {
+          "field": "page_id",
+          "direction": "ASC"
+        }
+      ]
+    },
+    "total_count": 3
+  }
+}

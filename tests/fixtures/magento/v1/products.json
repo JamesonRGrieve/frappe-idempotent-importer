@@ -1,0 +1,489 @@
+{
+  "request": {
+    "path": "/rest/default/V1/products",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "visibility",
+      "searchCriteria[filterGroups][0][filters][0][value]": "1",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "neq",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "id": 11,
+        "sku": "MAG-KETTLE-1",
+        "name": "Copper kettle",
+        "attribute_set_id": 4,
+        "price": 89.99,
+        "status": 1,
+        "visibility": 4,
+        "type_id": "simple",
+        "created_at": "2026-09-01 09:00:00",
+        "updated_at": "2026-09-01 09:00:00",
+        "weight": 1.4,
+        "extension_attributes": {
+          "website_ids": [
+            1
+          ],
+          "category_links": [
+            {
+              "position": 0,
+              "category_id": "3"
+            },
+            {
+              "position": 1,
+              "category_id": "2"
+            }
+          ],
+          "stock_item": {
+            "item_id": 11,
+            "product_id": 11,
+            "stock_id": 1,
+            "qty": 7,
+            "is_in_stock": true,
+            "is_qty_decimal": false,
+            "show_default_notification_message": false,
+            "use_config_min_qty": true,
+            "min_qty": 0,
+            "use_config_min_sale_qty": 1,
+            "min_sale_qty": 1,
+            "use_config_max_sale_qty": true,
+            "max_sale_qty": 10000,
+            "use_config_backorders": true,
+            "backorders": 0,
+            "use_config_notify_stock_qty": true,
+            "notify_stock_qty": 1,
+            "use_config_qty_increments": true,
+            "qty_increments": 0,
+            "use_config_enable_qty_inc": true,
+            "enable_qty_increments": false,
+            "use_config_manage_stock": true,
+            "manage_stock": true,
+            "low_stock_date": "2026-09-01 08:00:00",
+            "is_decimal_divided": false,
+            "stock_status_changed_auto": 0
+          }
+        },
+        "product_links": [],
+        "options": [],
+        "media_gallery_entries": [
+          {
+            "id": 201,
+            "media_type": "image",
+            "label": "Side view",
+            "position": 1,
+            "disabled": false,
+            "types": [],
+            "file": "/c/o/copper-kettle-side.png"
+          },
+          {
+            "id": 202,
+            "media_type": "image",
+            "label": "Copper kettle",
+            "position": 2,
+            "disabled": false,
+            "types": [
+              "image",
+              "small_image",
+              "thumbnail"
+            ],
+            "file": "/c/o/copper-kettle.png"
+          },
+          {
+            "id": 203,
+            "media_type": "image",
+            "label": "Old photo",
+            "position": 3,
+            "disabled": true,
+            "types": [],
+            "file": "/c/o/copper-kettle-old.png"
+          }
+        ],
+        "tier_prices": [],
+        "custom_attributes": [
+          {
+            "attribute_code": "description",
+            "value": "<p>A hand-hammered copper kettle.</p>"
+          },
+          {
+            "attribute_code": "url_key",
+            "value": "copper-kettle"
+          },
+          {
+            "attribute_code": "meta_title",
+            "value": "Copper kettle | Harbourside Goods"
+          },
+          {
+            "attribute_code": "meta_description",
+            "value": "A copper kettle for the stove."
+          },
+          {
+            "attribute_code": "special_price",
+            "value": "79.99"
+          },
+          {
+            "attribute_code": "tax_class_id",
+            "value": "2"
+          },
+          {
+            "attribute_code": "cost",
+            "value": "41.5"
+          },
+          {
+            "attribute_code": "country_of_manufacture",
+            "value": "CA"
+          },
+          {
+            "attribute_code": "options_container",
+            "value": "container2"
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "sku": "MAG-JACKET",
+        "name": "Storm shell jacket",
+        "attribute_set_id": 4,
+        "price": 0,
+        "status": 1,
+        "visibility": 4,
+        "type_id": "configurable",
+        "created_at": "2026-09-01 09:00:00",
+        "updated_at": "2026-09-01 09:00:00",
+        "extension_attributes": {
+          "website_ids": [
+            1
+          ],
+          "category_links": [
+            {
+              "position": 0,
+              "category_id": "4"
+            },
+            {
+              "position": 1,
+              "category_id": "5"
+            }
+          ],
+          "stock_item": {
+            "item_id": 12,
+            "product_id": 12,
+            "stock_id": 1,
+            "qty": 0,
+            "is_in_stock": true,
+            "is_qty_decimal": false,
+            "show_default_notification_message": false,
+            "use_config_min_qty": true,
+            "min_qty": 0,
+            "use_config_min_sale_qty": 1,
+            "min_sale_qty": 1,
+            "use_config_max_sale_qty": true,
+            "max_sale_qty": 10000,
+            "use_config_backorders": true,
+            "backorders": 0,
+            "use_config_notify_stock_qty": true,
+            "notify_stock_qty": 1,
+            "use_config_qty_increments": true,
+            "qty_increments": 0,
+            "use_config_enable_qty_inc": true,
+            "enable_qty_increments": false,
+            "use_config_manage_stock": true,
+            "manage_stock": true,
+            "low_stock_date": "2026-09-01 08:00:00",
+            "is_decimal_divided": false,
+            "stock_status_changed_auto": 0
+          },
+          "configurable_product_options": [
+            {
+              "id": 7,
+              "attribute_id": "93",
+              "label": "Colour",
+              "position": 0,
+              "is_use_default": true,
+              "values": [
+                {
+                  "value_index": 49
+                },
+                {
+                  "value_index": 50
+                }
+              ],
+              "product_id": 12
+            }
+          ],
+          "configurable_product_links": [
+            121,
+            122
+          ]
+        },
+        "product_links": [],
+        "options": [],
+        "media_gallery_entries": [
+          {
+            "id": 211,
+            "media_type": "image",
+            "label": "Storm shell jacket",
+            "position": 1,
+            "disabled": false,
+            "types": [
+              "image",
+              "small_image",
+              "thumbnail"
+            ],
+            "file": "/s/t/storm-shell.png"
+          }
+        ],
+        "tier_prices": [],
+        "custom_attributes": [
+          {
+            "attribute_code": "description",
+            "value": "<p>A waterproof shell for coastal weather.</p>"
+          },
+          {
+            "attribute_code": "url_key",
+            "value": "storm-shell-jacket"
+          },
+          {
+            "attribute_code": "tax_class_id",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "sku": "MAG-APRON-1",
+        "name": "Linen apron",
+        "attribute_set_id": 4,
+        "price": 24,
+        "status": 2,
+        "visibility": 4,
+        "type_id": "simple",
+        "created_at": "2026-09-01 09:00:00",
+        "updated_at": "2026-09-01 09:00:00",
+        "weight": 0.3,
+        "extension_attributes": {
+          "website_ids": [
+            1
+          ],
+          "category_links": [
+            {
+              "position": 0,
+              "category_id": "3"
+            }
+          ],
+          "stock_item": {
+            "item_id": 13,
+            "product_id": 13,
+            "stock_id": 1,
+            "qty": 15,
+            "is_in_stock": true,
+            "is_qty_decimal": false,
+            "show_default_notification_message": false,
+            "use_config_min_qty": true,
+            "min_qty": 0,
+            "use_config_min_sale_qty": 1,
+            "min_sale_qty": 1,
+            "use_config_max_sale_qty": true,
+            "max_sale_qty": 10000,
+            "use_config_backorders": true,
+            "backorders": 0,
+            "use_config_notify_stock_qty": true,
+            "notify_stock_qty": 1,
+            "use_config_qty_increments": true,
+            "qty_increments": 0,
+            "use_config_enable_qty_inc": true,
+            "enable_qty_increments": false,
+            "use_config_manage_stock": true,
+            "manage_stock": true,
+            "low_stock_date": "2026-09-01 08:00:00",
+            "is_decimal_divided": false,
+            "stock_status_changed_auto": 0
+          }
+        },
+        "product_links": [],
+        "options": [],
+        "media_gallery_entries": [],
+        "tier_prices": [],
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "linen-apron"
+          },
+          {
+            "attribute_code": "tax_class_id",
+            "value": "2"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "sku": "MAG-PRINT-1",
+        "name": "Tide chart print",
+        "attribute_set_id": 4,
+        "price": 15,
+        "status": 1,
+        "visibility": 4,
+        "type_id": "downloadable",
+        "created_at": "2026-09-01 09:00:00",
+        "updated_at": "2026-09-01 09:00:00",
+        "extension_attributes": {
+          "website_ids": [
+            1
+          ],
+          "category_links": [],
+          "stock_item": {
+            "item_id": 14,
+            "product_id": 14,
+            "stock_id": 1,
+            "qty": 0,
+            "is_in_stock": true,
+            "is_qty_decimal": false,
+            "show_default_notification_message": false,
+            "use_config_min_qty": true,
+            "min_qty": 0,
+            "use_config_min_sale_qty": 1,
+            "min_sale_qty": 1,
+            "use_config_max_sale_qty": true,
+            "max_sale_qty": 10000,
+            "use_config_backorders": true,
+            "backorders": 0,
+            "use_config_notify_stock_qty": true,
+            "notify_stock_qty": 1,
+            "use_config_qty_increments": true,
+            "qty_increments": 0,
+            "use_config_enable_qty_inc": true,
+            "enable_qty_increments": false,
+            "use_config_manage_stock": false,
+            "manage_stock": false,
+            "low_stock_date": "2026-09-01 08:00:00",
+            "is_decimal_divided": false,
+            "stock_status_changed_auto": 0
+          },
+          "downloadable_product_links": [
+            {
+              "id": 1,
+              "title": "Tide chart (PDF)",
+              "sort_order": 1,
+              "is_shareable": 2,
+              "price": 0,
+              "number_of_downloads": 0,
+              "link_type": "file",
+              "link_file": "/t/i/tide-chart.pdf",
+              "sample_type": "file"
+            }
+          ]
+        },
+        "product_links": [],
+        "options": [],
+        "media_gallery_entries": [],
+        "tier_prices": [],
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "tide-chart-print"
+          },
+          {
+            "attribute_code": "tax_class_id",
+            "value": "2"
+          },
+          {
+            "attribute_code": "description",
+            "value": "<p>A printable tide chart for Victoria harbour.</p>"
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "sku": "MAG-PICNIC-SET",
+        "name": "Picnic set",
+        "attribute_set_id": 4,
+        "price": 0,
+        "status": 1,
+        "visibility": 4,
+        "type_id": "bundle",
+        "created_at": "2026-09-01 09:00:00",
+        "updated_at": "2026-09-01 09:00:00",
+        "extension_attributes": {
+          "website_ids": [
+            1
+          ],
+          "category_links": [],
+          "stock_item": {
+            "item_id": 15,
+            "product_id": 15,
+            "stock_id": 1,
+            "qty": 0,
+            "is_in_stock": true,
+            "is_qty_decimal": false,
+            "show_default_notification_message": false,
+            "use_config_min_qty": true,
+            "min_qty": 0,
+            "use_config_min_sale_qty": 1,
+            "min_sale_qty": 1,
+            "use_config_max_sale_qty": true,
+            "max_sale_qty": 10000,
+            "use_config_backorders": true,
+            "backorders": 0,
+            "use_config_notify_stock_qty": true,
+            "notify_stock_qty": 1,
+            "use_config_qty_increments": true,
+            "qty_increments": 0,
+            "use_config_enable_qty_inc": true,
+            "enable_qty_increments": false,
+            "use_config_manage_stock": true,
+            "manage_stock": true,
+            "low_stock_date": "2026-09-01 08:00:00",
+            "is_decimal_divided": false,
+            "stock_status_changed_auto": 0
+          },
+          "bundle_product_options": [
+            {
+              "option_id": 1,
+              "title": "Blanket",
+              "required": true,
+              "type": "select",
+              "position": 1,
+              "sku": "MAG-PICNIC-SET"
+            }
+          ]
+        },
+        "product_links": [],
+        "options": [],
+        "media_gallery_entries": [],
+        "tier_prices": [],
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "picnic-set"
+          },
+          {
+            "attribute_code": "tax_class_id",
+            "value": "2"
+          }
+        ]
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [
+        {
+          "filters": [
+            {
+              "field": "visibility",
+              "value": "1",
+              "condition_type": "neq"
+            }
+          ]
+        }
+      ],
+      "page_size": 100,
+      "current_page": 1,
+      "sort_orders": [
+        {
+          "field": "entity_id",
+          "direction": "ASC"
+        }
+      ]
+    },
+    "total_count": 5
+  }
+}

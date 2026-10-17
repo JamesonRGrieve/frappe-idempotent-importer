@@ -1,0 +1,13 @@
+{
+  "request": {
+    "path": "/v3/application/shops/5001/listings",
+    "query": {
+      "state": "draft",
+      "offset": 0
+    }
+  },
+  "response": {
+    "count": 0,
+    "results": []
+  }
+}

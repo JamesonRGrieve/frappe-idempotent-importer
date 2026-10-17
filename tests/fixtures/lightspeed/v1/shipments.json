@@ -1,0 +1,8 @@
+{
+  "request": {
+    "path": "/en/shipments.json"
+  },
+  "response": {
+    "shipments": []
+  }
+}

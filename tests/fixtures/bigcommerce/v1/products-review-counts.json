@@ -1,0 +1,37 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products",
+    "query": {
+      "include_fields": "reviews_count",
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 111,
+        "reviews_count": 1
+      },
+      {
+        "id": 112,
+        "reviews_count": 1
+      },
+      {
+        "id": 113,
+        "reviews_count": 0
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 3,
+        "count": 3,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

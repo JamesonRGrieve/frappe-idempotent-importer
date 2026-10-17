@@ -46,12 +46,12 @@ def test_every_source_has_a_coverage_page(adapter_id: str) -> None:
 
 
 def test_listed_sources_refuse_to_run() -> None:
-	etsy = adapter_for("etsy")
-	assert not etsy.built
-	config = ConnectionConfig("etsy", "shop", "https://etsy.example")
+	odoo = adapter_for("odoo")
+	assert not odoo.built
+	config = ConnectionConfig("odoo", "erp", "https://odoo.example")
 	with pytest.raises(SourceError, match="not built yet"):
-		etsy.reader(config, scripted(), RecordingSleeper())
-	assert etsy.mappers(config) == []
+		odoo.reader(config, scripted(), RecordingSleeper())
+	assert odoo.mappers(config) == []
 
 
 def test_lookups() -> None:

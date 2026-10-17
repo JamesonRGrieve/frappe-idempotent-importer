@@ -1,0 +1,123 @@
+{
+  "request": {
+    "path": "/en/discounts.json"
+  },
+  "response": {
+    "discounts": [
+      {
+        "id": 1001,
+        "createdAt": "2026-09-01T08:00:00+00:00",
+        "updatedAt": "2026-09-01T08:00:00+00:00",
+        "isActive": true,
+        "startDate": "2026-09-01",
+        "endDate": "2026-12-31",
+        "type": "price",
+        "discount": 5,
+        "applyTo": "all",
+        "shipment": "default",
+        "usageLimit": 100,
+        "timesUsed": 1,
+        "minimumAmount": 30,
+        "allowCombination": true,
+        "before_tax": true,
+        "minimum_after": false,
+        "code": "LS-WELCOME5",
+        "categories": [],
+        "products": []
+      },
+      {
+        "id": 1002,
+        "createdAt": "2026-09-01T08:00:00+00:00",
+        "updatedAt": "2026-09-01T08:00:00+00:00",
+        "isActive": true,
+        "startDate": "2026-09-01",
+        "endDate": "2026-12-31",
+        "type": "percentage",
+        "discount": 15,
+        "applyTo": "products",
+        "shipment": "default",
+        "usageLimit": 0,
+        "timesUsed": 1,
+        "minimumAmount": 0,
+        "allowCombination": true,
+        "before_tax": true,
+        "minimum_after": false,
+        "code": "LS-TOWELS15",
+        "categories": [],
+        "products": [
+          {
+            "id": 502,
+            "createdAt": "2026-09-01T09:00:00+00:00",
+            "updatedAt": "2026-09-01T09:00:00+00:00",
+            "isVisible": true,
+            "url": "waffle-dish-towel",
+            "title": "Waffle dish towel"
+          }
+        ]
+      },
+      {
+        "id": 1003,
+        "createdAt": "2026-09-01T08:00:00+00:00",
+        "updatedAt": "2026-09-01T08:00:00+00:00",
+        "isActive": true,
+        "startDate": "2026-09-01",
+        "endDate": "2026-12-31",
+        "type": "percentage",
+        "discount": 0,
+        "applyTo": "all",
+        "shipment": "free",
+        "usageLimit": 0,
+        "timesUsed": 1,
+        "minimumAmount": 0,
+        "allowCombination": true,
+        "before_tax": true,
+        "minimum_after": false,
+        "code": "LS-SHIPFREE",
+        "categories": [],
+        "products": []
+      },
+      {
+        "id": 1004,
+        "createdAt": "2026-09-01T08:00:00+00:00",
+        "updatedAt": "2026-09-01T08:00:00+00:00",
+        "isActive": false,
+        "startDate": "2026-09-01",
+        "endDate": "2026-12-31",
+        "type": "percentage",
+        "discount": 10,
+        "applyTo": "all",
+        "shipment": "default",
+        "usageLimit": 0,
+        "timesUsed": 1,
+        "minimumAmount": 0,
+        "allowCombination": true,
+        "before_tax": true,
+        "minimum_after": false,
+        "code": "LS-RETIRED",
+        "categories": [],
+        "products": []
+      },
+      {
+        "id": 1005,
+        "createdAt": "2026-09-01T08:00:00+00:00",
+        "updatedAt": "2026-09-01T08:00:00+00:00",
+        "isActive": true,
+        "startDate": "2026-09-01",
+        "endDate": "2026-12-31",
+        "type": "percentage",
+        "discount": 10,
+        "applyTo": "all",
+        "shipment": "discount",
+        "usageLimit": 0,
+        "timesUsed": 1,
+        "minimumAmount": 0,
+        "allowCombination": true,
+        "before_tax": true,
+        "minimum_after": false,
+        "code": "LS-SHIPHALF",
+        "categories": [],
+        "products": []
+      }
+    ]
+  }
+}

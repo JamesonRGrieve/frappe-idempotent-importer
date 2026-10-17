@@ -1,0 +1,39 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v2/coupons/query",
+    "body": {
+      "query": {
+        "paging": {
+          "offset": 0
+        }
+      }
+    }
+  },
+  "response": {
+    "coupons": [
+      {
+        "id": "c0000000-0000-4000-8000-000000000004",
+        "dateCreated": "1785585600000",
+        "expired": false,
+        "numberOfUsages": 0,
+        "specification": {
+          "name": "Planters 20%",
+          "code": "WIX-PLANT20",
+          "percentOffRate": 20,
+          "startTime": "1785585600000",
+          "active": true,
+          "type": "PercentOff",
+          "scope": {
+            "namespace": "stores",
+            "group": {
+              "name": "collection",
+              "entityId": "c01e0000-1001-4a5b-8c9d-0e1f2a3b1001"
+            }
+          }
+        }
+      }
+    ],
+    "totalResults": 1
+  }
+}

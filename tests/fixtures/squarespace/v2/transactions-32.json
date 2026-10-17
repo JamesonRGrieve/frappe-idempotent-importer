@@ -1,0 +1,14 @@
+{
+  "request": {
+    "path": "/1.0/commerce/transactions",
+    "query": {
+      "orderId": "6d4000000000000000000032"
+    }
+  },
+  "response": {
+    "pagination": {
+      "hasNextPage": false
+    },
+    "documents": []
+  }
+}

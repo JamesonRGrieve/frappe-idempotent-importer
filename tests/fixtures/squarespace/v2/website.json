@@ -1,0 +1,19 @@
+{
+  "request": {
+    "path": "/1.0/authorization/website"
+  },
+  "response": {
+    "id": "5f3c3d55ac435e1a051f7701",
+    "siteId": "5f3c3d55ac435e1a051f7700",
+    "title": "Harbour & Pine",
+    "url": "https://harbourpine.example",
+    "currency": "CAD",
+    "language": "en-CA",
+    "timeZone": "America/Halifax",
+    "measurementStandard": "METRIC",
+    "location": {
+      "country": "CA",
+      "region": "NS"
+    }
+  }
+}

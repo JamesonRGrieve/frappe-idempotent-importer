@@ -1,0 +1,62 @@
+{
+  "request": {
+    "path": "/en/orders/702/products.json"
+  },
+  "response": {
+    "orderProducts": [
+      {
+        "id": 7021,
+        "supplierTitle": "Harbour Lane",
+        "brandTitle": "Harbour Lane",
+        "productTitle": "Waffle dish towel",
+        "variantTitle": "Colour Sand",
+        "taxRate": 0.05,
+        "taxRates": [
+          {
+            "name": "GST",
+            "rate": 0.05,
+            "amount": 1
+          }
+        ],
+        "quantityOrdered": 1,
+        "quantityInvoiced": 1,
+        "quantityShipped": 0,
+        "quantityRefunded": 0,
+        "quantityReturned": 0,
+        "articleCode": "ls-towel-sand",
+        "ean": "",
+        "sku": "LS-TOWEL-SAND",
+        "weight": 0,
+        "volume": 0,
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "priceCost": 0,
+        "customExcl": 0,
+        "customIncl": 0,
+        "basePriceExcl": 20,
+        "basePriceIncl": 21,
+        "priceExcl": 20,
+        "priceIncl": 21,
+        "discountExcl": 0,
+        "discountIncl": 0,
+        "customFields": false,
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        },
+        "variant": {
+          "resource": {
+            "id": 5021,
+            "url": "variants/5021",
+            "link": "https://api.shoplightspeed.com/en/variants/5021.json"
+          }
+        }
+      }
+    ]
+  }
+}

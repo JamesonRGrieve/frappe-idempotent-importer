@@ -1,0 +1,96 @@
+{
+  "request": {
+    "path": "/en/reviews.json"
+  },
+  "response": {
+    "reviews": [
+      {
+        "id": 1501,
+        "createdAt": "2026-09-04T12:00:00+00:00",
+        "updatedAt": "2026-09-04T12:00:00+00:00",
+        "isVisible": true,
+        "score": 5,
+        "name": "Marguerite L.",
+        "content": "Keeps tea hot.",
+        "customer": {
+          "resource": {
+            "id": 801,
+            "url": "customers/801",
+            "link": "https://api.shoplightspeed.com/en/customers/801.json"
+          }
+        },
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "product": {
+          "resource": {
+            "id": 501,
+            "url": "products/501",
+            "link": "https://api.shoplightspeed.com/en/products/501.json"
+          }
+        }
+      },
+      {
+        "id": 1502,
+        "createdAt": "2026-09-05T12:00:00+00:00",
+        "updatedAt": "2026-09-05T12:00:00+00:00",
+        "isVisible": false,
+        "score": 4,
+        "name": "Owen P.",
+        "content": "Soft, but sheds at first.",
+        "customer": {
+          "resource": {
+            "id": 802,
+            "url": "customers/802",
+            "link": "https://api.shoplightspeed.com/en/customers/802.json"
+          }
+        },
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        }
+      },
+      {
+        "id": 1503,
+        "createdAt": "2026-09-12T12:00:00+00:00",
+        "updatedAt": "2026-09-12T12:00:00+00:00",
+        "isVisible": true,
+        "score": 5,
+        "name": "Ada M.",
+        "content": "Lovely colour.",
+        "customer": {
+          "resource": {
+            "id": 803,
+            "url": "customers/803",
+            "link": "https://api.shoplightspeed.com/en/customers/803.json"
+          }
+        },
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        }
+      }
+    ]
+  }
+}

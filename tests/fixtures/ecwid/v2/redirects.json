@@ -1,0 +1,23 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/instant-site/redirects"
+  },
+  "response": {
+    "total": 2,
+    "count": 2,
+    "offset": 0,
+    "limit": 100,
+    "items": [
+      {
+        "id": "rd-41a",
+        "fromUrl": "/cedar-gift",
+        "toUrl": "https://cedarwick.example/products/cedar-candle"
+      },
+      {
+        "id": "rd-41b",
+        "fromUrl": "https://cedarwick.example/holiday-sale",
+        "toUrl": "https://gifts.example.com/cedarwick"
+      }
+    ]
+  }
+}

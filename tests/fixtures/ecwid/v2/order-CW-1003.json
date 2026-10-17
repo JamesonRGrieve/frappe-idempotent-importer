@@ -1,0 +1,177 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/orders/CW-1003"
+  },
+  "response": {
+    "id": "CW-1003",
+    "internalId": 96003,
+    "refundedAmount": 0,
+    "giftCardRedemption": 0,
+    "paymentMethod": "Credit card",
+    "customerTaxExempt": false,
+    "customerTaxId": "",
+    "customerTaxIdValid": false,
+    "reversedTaxApplied": false,
+    "b2b_b2c": "b2c",
+    "paymentStatus": "PAID",
+    "fulfillmentStatus": "AWAITING_PROCESSING",
+    "orderComments": "",
+    "volumeDiscount": 0,
+    "membershipBasedDiscount": 0,
+    "totalAndMembershipBasedDiscount": 0,
+    "customDiscount": [],
+    "discount": 4.2,
+    "couponDiscount": 4.2,
+    "customSurcharges": [],
+    "createDate": "2026-09-09 14:30:00 +0000",
+    "updateDate": "2026-09-09 14:30:00 +0000",
+    "createTimestamp": 1788964200,
+    "updateTimestamp": 1788964200,
+    "items": [
+      {
+        "id": 960301,
+        "productId": 9202,
+        "categoryId": 9102,
+        "price": 14,
+        "priceWithoutTax": 14,
+        "productPrice": 14,
+        "sku": "ECW-MELT-BIRCH",
+        "quantity": 2,
+        "shortDescription": "",
+        "tax": 1.19,
+        "shipping": 0,
+        "quantityInStock": 12,
+        "name": "Wax melt sampler",
+        "nameTranslated": {
+          "en": "Wax melt sampler"
+        },
+        "isShippingRequired": true,
+        "trackQuantity": true,
+        "imageUrl": "http://ecwid-fake:8080/images/ecw-melt-birch.png",
+        "fixedShippingRateOnly": false,
+        "fixedShippingRate": 0,
+        "digital": false,
+        "couponApplied": true,
+        "couponAmount": 4.2,
+        "selectedOptions": [
+          {
+            "name": "Scent",
+            "type": "CHOICE",
+            "value": "Birch",
+            "valuesArray": [
+              "Birch"
+            ],
+            "selections": [
+              {
+                "selectionTitle": "Birch",
+                "selectionModifier": 0,
+                "selectionModifierType": "ABSOLUTE"
+              }
+            ]
+          }
+        ],
+        "taxes": [
+          {
+            "name": "GST",
+            "value": 5,
+            "total": 1.19,
+            "taxOnDiscountedSubtotal": 1.19,
+            "taxOnShipping": 0,
+            "sourceTaxRateId": 9301,
+            "sourceTaxRateType": "MANUAL",
+            "taxClassCode": "default",
+            "taxClassName": "Standard rate"
+          }
+        ],
+        "discounts": [],
+        "attributes": [],
+        "combinationId": 920202
+      }
+    ],
+    "refunds": [],
+    "shipments": [],
+    "taxesOnShipping": [
+      {
+        "name": "GST",
+        "value": 5,
+        "total": 0.4
+      }
+    ],
+    "hidden": false,
+    "acceptMarketing": false,
+    "disableAllCustomerNotifications": false,
+    "externalFulfillment": false,
+    "invoices": [],
+    "pricesIncludeTax": false,
+    "lang": "en",
+    "refererUrl": "https://cedarwick.example/products/",
+    "subtotal": 28,
+    "subtotalWithoutTax": 28,
+    "total": 33.39,
+    "totalWithoutTax": 31.8,
+    "tax": 1.59,
+    "totalBeforeGiftCardRedemption": 33.39,
+    "email": "ines.moreau@example.com",
+    "paymentModule": "Stripe",
+    "externalTransactionId": "ch_ecw_9Kd20",
+    "discountCoupon": {
+      "id": 9502,
+      "name": "Melts 15% off",
+      "code": "ECW-MELTS15",
+      "discountType": "PERCENT",
+      "status": "ACTIVE",
+      "discount": 15,
+      "launchDate": "2026-09-01 00:00:00 +0000",
+      "usesLimit": "ONCEPERCUSTOMER",
+      "applicationLimit": "UNLIMITED",
+      "creationDate": "2026-08-30 10:05:00 +0000",
+      "updateDate": "2026-08-30 10:05:00 +0000",
+      "catalogLimit": {
+        "products": [
+          9202
+        ],
+        "categories": []
+      },
+      "orderCount": 1
+    },
+    "customerId": 9403,
+    "customerGroup": "General",
+    "customerGroupId": 0,
+    "billingPerson": {
+      "name": "Ines Moreau",
+      "firstName": "Ines",
+      "lastName": "Moreau",
+      "companyName": "",
+      "street": "220 Stephen Avenue SW",
+      "city": "Calgary",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T2P 0B4",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0147"
+    },
+    "shippingPerson": {
+      "name": "Ines Moreau",
+      "companyName": "",
+      "street": "220 Stephen Avenue SW",
+      "city": "Calgary",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T2P 0B4",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0147"
+    },
+    "shippingOption": {
+      "shippingCarrierName": "Canada Post",
+      "shippingMethodName": "Canada Post Expedited",
+      "shippingMethodId": "8817-1693924000",
+      "isPickup": false,
+      "fulfillmentType": "shipping",
+      "estimatedTransitTime": "2-4 days",
+      "shippingRate": 8,
+      "shippingRateWithoutTax": 8
+    }
+  }
+}

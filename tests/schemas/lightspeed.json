@@ -1,0 +1,3203 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Lightspeed eCom REST API responses read by wp-woo-idempotent-importer",
+    "version": "2026-10-16",
+    "description": "Lightspeed eCom (C-Series) publishes no OpenAPI document. This subset is transcribed by hand from the example responses and property lists of each endpoint page of the official reference at https://developers.lightspeedhq.com/ecom/endpoints/ (fetched 2026-10-16; each schema and operation cites its page): only the responses the Lightspeed adapter reads, with every property those pages show for them. Paths are relative to `<cluster>/<language>` (e.g. https://api.webshopapp.com/en). Types follow the examples where the property lists give none; fields the examples send as `false` when unset (images, links, a customer's gender or birth date) allow it. Required properties are the identifiers and the fields the adapter cannot do without."
+  },
+  "servers": [
+    {
+      "url": "https://api.webshopapp.com/{language}"
+    },
+    {
+      "url": "https://api.shoplightspeed.com/{language}"
+    }
+  ],
+  "paths": {
+    "/shop.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/shop/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shop/website.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/shopwebsite/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShopWebsiteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/products.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/categoryproduct/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoriesProductListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/category/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/category/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/product/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/product/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}/images.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/productimage/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductImageListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/variants.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/variant/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VariantListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brands/{brand_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/brand/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/customer/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/customer/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discounts.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/discount/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discounts/{discount_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/discount/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/order/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/order/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}/products.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/orderproduct/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderProductListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shipments.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/shipment/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipmentListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/invoice/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/invoices/{invoice_id}/items.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/invoiceitem/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceItemListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/textpages.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/textpage/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TextpageListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/textpages/{textpage_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/textpage/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TextpageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blogs/articles.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogArticleListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blogs/articles/{blogArticle_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogArticleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blogs.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/blog/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blogs/{blog_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/blog/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redirects.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/redirect/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redirects/{redirect_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/redirect/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/review/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews/{review_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/review/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Link": {
+        "type": "object",
+        "description": "A link to another resource ({\"resource\": {\"id\", \"url\", \"link\"}}), as every endpoint page shows them; `id` is false for a link to a list.",
+        "properties": {
+          "resource": {
+            "type": "object",
+            "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "embedded": {}
+            },
+            "required": [
+              "url"
+            ]
+          }
+        },
+        "required": [
+          "resource"
+        ]
+      },
+      "LinkOrFalse": {
+        "description": "A link, or false when nothing is linked (every endpoint page).",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/Link"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "Image": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/productimage/",
+        "properties": {
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumb": {
+            "type": "string"
+          },
+          "src": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "src"
+        ]
+      },
+      "ImageOrFalse": {
+        "description": "An image, or false when none is set (category, product, variant, brand and blog article pages).",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/Image"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "Country": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shop/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "code3": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "Language": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "TaxRate": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/order/",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "number"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "RegionData": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/order/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "Currency": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shop/",
+        "properties": {
+          "shortcode": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "currencyRate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "shortcode"
+        ]
+      },
+      "Shop": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shop/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "isB2b": {
+            "type": "boolean"
+          },
+          "isRetail": {
+            "type": "boolean"
+          },
+          "subDomain": {
+            "type": "string"
+          },
+          "mainDomain": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "street2": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Country"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "vatNumber": {
+            "type": "string"
+          },
+          "cocNumber": {
+            "type": "string"
+          },
+          "industry": {
+            "type": "string"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/Currency"
+          },
+          "company": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "javascript": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "website": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "scripts": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "currency"
+        ]
+      },
+      "ShopWebsite": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shopwebsite/",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "string"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/category/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "depth": {
+            "type": "integer"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "type": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "sorting": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "fulltitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageOrFalse"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "children": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "products": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "title"
+        ]
+      },
+      "OptionValue": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/variant/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "SetOption": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionValue"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Set": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SetOption"
+            }
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "hasMatrix": {
+            "type": "boolean"
+          },
+          "data01": {
+            "type": "string"
+          },
+          "data02": {
+            "type": "string"
+          },
+          "data03": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "fulltitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "set": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Set"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "brand": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "deliverydate": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageOrFalse"
+          },
+          "images": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "relations": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "reviews": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "type": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "attributes": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "supplier": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "tags": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "variants": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "movements": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "templateDataFields": {
+            "type": "object",
+            "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+            "properties": {
+              "data01": {
+                "type": "string"
+              },
+              "data02": {
+                "type": "string"
+              },
+              "data03": {
+                "type": "string"
+              },
+              "data04": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "title"
+        ]
+      },
+      "VariantOption": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/variant/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionValue"
+            }
+          },
+          "value": {
+            "$ref": "#/components/schemas/OptionValue"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "Variant": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/variant/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "articleCode": {
+            "type": "string"
+          },
+          "ean": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "hs": {
+            "type": "string",
+            "nullable": true
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "unitUnit": {
+            "type": "string"
+          },
+          "priceExcl": {
+            "type": "number"
+          },
+          "priceIncl": {
+            "type": "number"
+          },
+          "priceCost": {
+            "type": "number"
+          },
+          "oldPriceExcl": {
+            "type": "number"
+          },
+          "oldPriceIncl": {
+            "type": "number"
+          },
+          "stockTracking": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "enabled",
+              "indicator"
+            ]
+          },
+          "stockLevel": {
+            "type": "integer"
+          },
+          "stockAlert": {
+            "type": "integer"
+          },
+          "stockMinimum": {
+            "type": "integer"
+          },
+          "stockSold": {
+            "type": "integer"
+          },
+          "stockBuyMininum": {
+            "type": "integer"
+          },
+          "stockBuyMinimum": {
+            "type": "integer"
+          },
+          "stockBuyMaximum": {
+            "type": "integer"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "weightValue": {
+            "type": "string"
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "g",
+              "kg",
+              "oz",
+              "lb"
+            ]
+          },
+          "volume": {
+            "type": "number"
+          },
+          "volumeValue": {
+            "type": "number"
+          },
+          "volumeUnit": {
+            "type": "string"
+          },
+          "colli": {
+            "type": "integer"
+          },
+          "sizeX": {
+            "type": "number"
+          },
+          "sizeY": {
+            "type": "number"
+          },
+          "sizeZ": {
+            "type": "number"
+          },
+          "sizeXValue": {
+            "type": "string"
+          },
+          "sizeYValue": {
+            "type": "string"
+          },
+          "sizeZValue": {
+            "type": "string"
+          },
+          "sizeUnit": {
+            "type": "string"
+          },
+          "matrix": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "taxType": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageOrFalse"
+          },
+          "tax": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "movements": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "additionalcost": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariantOption"
+            }
+          },
+          "allowWithdrawal": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "priceExcl",
+          "priceIncl",
+          "product"
+        ]
+      },
+      "ProductImage": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/productimage/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "extension": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "thumb": {
+            "type": "string"
+          },
+          "src": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "src"
+        ]
+      },
+      "CategoriesProduct": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/categoryproduct/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "product": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "category",
+          "product"
+        ]
+      },
+      "Brand": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/brand/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageOrFalse"
+          },
+          "products": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "isVisible": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ]
+      },
+      "Customer": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/customer/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isConfirmed": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string"
+          },
+          "lastOnlineAt": {
+            "type": "string",
+            "nullable": true
+          },
+          "remoteIp": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "userAgent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "referralId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "gender": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "middlename": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "isCompany": {
+            "type": "boolean"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyCoCNumber": {
+            "type": "string"
+          },
+          "companyVatNumber": {
+            "type": "string"
+          },
+          "addressBillingName": {
+            "type": "string"
+          },
+          "addressBillingStreet": {
+            "type": "string"
+          },
+          "addressBillingStreet2": {
+            "type": "string"
+          },
+          "addressBillingNumber": {
+            "type": "string"
+          },
+          "addressBillingExtension": {
+            "type": "string"
+          },
+          "addressBillingZipcode": {
+            "type": "string"
+          },
+          "addressBillingCity": {
+            "type": "string"
+          },
+          "addressBillingRegion": {
+            "type": "string"
+          },
+          "addressBillingCountry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Country"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "addressShippingName": {
+            "type": "string"
+          },
+          "addressShippingStreet": {
+            "type": "string"
+          },
+          "addressShippingStreet2": {
+            "type": "string"
+          },
+          "addressShippingNumber": {
+            "type": "string"
+          },
+          "addressShippingExtension": {
+            "type": "string"
+          },
+          "addressShippingZipcode": {
+            "type": "string"
+          },
+          "addressShippingCity": {
+            "type": "string"
+          },
+          "addressShippingRegion": {
+            "type": "string"
+          },
+          "addressShippingCountry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Country"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "addressShippingCompany": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "memo": {
+            "type": "string"
+          },
+          "doNotifyRegistered": {
+            "type": "boolean"
+          },
+          "doNotifyConfirmed": {
+            "type": "boolean"
+          },
+          "doNotifyPassword": {
+            "type": "boolean"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "groups": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "invoices": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "orders": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "reviews": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "shipments": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "tickets": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "login": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "DiscountProduct": {
+        "type": "object",
+        "description": "A product a discount is limited to, sent whole (Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discount/; its other properties are the Product's).",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "DiscountCategory": {
+        "type": "object",
+        "description": "A category a discount is limited to, sent whole (Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discount/; its other properties are the Category's).",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Discount": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discount/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "price",
+              "percentage"
+            ]
+          },
+          "discount": {
+            "type": "number"
+          },
+          "applyTo": {
+            "type": "string",
+            "enum": [
+              "all",
+              "categories",
+              "products",
+              "productscategories"
+            ]
+          },
+          "shipment": {
+            "type": "string",
+            "enum": [
+              "default",
+              "discount",
+              "free"
+            ]
+          },
+          "usageLimit": {
+            "type": "integer"
+          },
+          "timesUsed": {
+            "type": "integer"
+          },
+          "minimumAmount": {
+            "type": "number"
+          },
+          "allowCombination": {
+            "type": "boolean"
+          },
+          "before_tax": {
+            "type": "boolean"
+          },
+          "minimum_after": {
+            "type": "boolean"
+          },
+          "code": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountCategory"
+            }
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountProduct"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "isActive",
+          "type",
+          "code"
+        ]
+      },
+      "Order": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/order/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "on_hold",
+              "processing_awaiting_payment",
+              "processing_awaiting_shipment",
+              "processing_awaiting_pickup",
+              "processing_ready_for_pickup",
+              "completed",
+              "completed_shipped",
+              "completed_picked_up",
+              "cancelled"
+            ]
+          },
+          "customStatusId": {
+            "type": "integer",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string"
+          },
+          "remoteIp": {
+            "type": "string"
+          },
+          "userAgent": {
+            "type": "string"
+          },
+          "referralId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "priceCost": {
+            "type": "number"
+          },
+          "priceExcl": {
+            "type": "number"
+          },
+          "priceIncl": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          },
+          "colli": {
+            "type": "number"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "birthDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "firstname": {
+            "type": "string"
+          },
+          "middlename": {
+            "type": "string"
+          },
+          "lastname": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "newsletterSubscribed": {
+            "type": "boolean"
+          },
+          "isCompany": {
+            "type": "boolean"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "companyCoCNumber": {
+            "type": "string"
+          },
+          "companyVatNumber": {
+            "type": "string"
+          },
+          "addressBillingName": {
+            "type": "string"
+          },
+          "addressBillingStreet": {
+            "type": "string"
+          },
+          "addressBillingStreet2": {
+            "type": "string"
+          },
+          "addressBillingNumber": {
+            "type": "string"
+          },
+          "addressBillingExtension": {
+            "type": "string"
+          },
+          "addressBillingZipcode": {
+            "type": "string"
+          },
+          "addressBillingCity": {
+            "type": "string"
+          },
+          "addressBillingRegion": {
+            "type": "string"
+          },
+          "addressBillingCountry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Country"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "addressBillingRegionData": {
+            "$ref": "#/components/schemas/RegionData"
+          },
+          "addressShippingName": {
+            "type": "string"
+          },
+          "addressShippingStreet": {
+            "type": "string"
+          },
+          "addressShippingStreet2": {
+            "type": "string"
+          },
+          "addressShippingNumber": {
+            "type": "string"
+          },
+          "addressShippingExtension": {
+            "type": "string"
+          },
+          "addressShippingZipcode": {
+            "type": "string"
+          },
+          "addressShippingCity": {
+            "type": "string"
+          },
+          "addressShippingRegion": {
+            "type": "string"
+          },
+          "addressShippingCountry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Country"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "addressShippingCompany": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "addressShippingRegionData": {
+            "$ref": "#/components/schemas/RegionData"
+          },
+          "paymentId": {
+            "type": "string"
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "not_paid",
+              "partially_paid",
+              "paid",
+              "cancelled"
+            ]
+          },
+          "paymentIsPost": {
+            "type": "boolean"
+          },
+          "paymentIsInvoiceExternal": {
+            "type": "boolean"
+          },
+          "paymentTaxRate": {
+            "type": "number"
+          },
+          "paymentTaxRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxRate"
+            }
+          },
+          "paymentBasePriceExcl": {
+            "type": "number"
+          },
+          "paymentBasePriceIncl": {
+            "type": "number"
+          },
+          "paymentPriceExcl": {
+            "type": "number"
+          },
+          "paymentPriceIncl": {
+            "type": "number"
+          },
+          "paymentTitle": {
+            "type": "string"
+          },
+          "paymentData": {
+            "type": "object"
+          },
+          "shipmentId": {
+            "type": "string"
+          },
+          "shipmentStatus": {
+            "type": "string",
+            "enum": [
+              "not_shipped",
+              "partially_shipped",
+              "shipped",
+              "cancelled"
+            ]
+          },
+          "shipmentIsCashOnDelivery": {
+            "type": "boolean"
+          },
+          "shipmentIsPickup": {
+            "type": "boolean"
+          },
+          "shipmentTaxRate": {
+            "type": "number"
+          },
+          "shipmentTaxRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxRate"
+            }
+          },
+          "shipmentBasePriceExcl": {
+            "type": "number"
+          },
+          "shipmentBasePriceIncl": {
+            "type": "number"
+          },
+          "shipmentPriceExcl": {
+            "type": "number"
+          },
+          "shipmentPriceIncl": {
+            "type": "number"
+          },
+          "shipmentDiscountExcl": {
+            "type": "number"
+          },
+          "shipmentDiscountIncl": {
+            "type": "number"
+          },
+          "shipmentTitle": {
+            "type": "string"
+          },
+          "shipmentData": {
+            "type": "object"
+          },
+          "shippingDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "deliveryDate": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDiscounted": {
+            "type": "boolean"
+          },
+          "discountType": {
+            "type": "string"
+          },
+          "discountAmount": {
+            "type": "number"
+          },
+          "discountPercentage": {
+            "type": "number"
+          },
+          "discountCouponCode": {
+            "type": "string"
+          },
+          "taxRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxRate"
+            }
+          },
+          "isNewCustomer": {
+            "type": "boolean"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "memo": {
+            "type": "string"
+          },
+          "allowNotifications": {
+            "type": "boolean"
+          },
+          "doNotifyNew": {
+            "type": "boolean"
+          },
+          "doNotifyReminder": {
+            "type": "boolean"
+          },
+          "doNotifyCancelled": {
+            "type": "boolean"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "customer": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "invoices": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "shipments": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "products": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "events": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "priceExcl",
+          "priceIncl",
+          "createdAt"
+        ]
+      },
+      "OrderProduct": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/orderproduct/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "supplierTitle": {
+            "type": "string"
+          },
+          "brandTitle": {
+            "type": "string"
+          },
+          "productTitle": {
+            "type": "string"
+          },
+          "variantTitle": {
+            "type": "string"
+          },
+          "taxRate": {
+            "type": "number"
+          },
+          "taxRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxRate"
+            }
+          },
+          "quantityOrdered": {
+            "type": "integer"
+          },
+          "quantityInvoiced": {
+            "type": "integer"
+          },
+          "quantityShipped": {
+            "type": "integer"
+          },
+          "quantityRefunded": {
+            "type": "integer"
+          },
+          "quantityReturned": {
+            "type": "integer"
+          },
+          "articleCode": {
+            "type": "string"
+          },
+          "ean": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          },
+          "colli": {
+            "type": "number"
+          },
+          "sizeX": {
+            "type": "number"
+          },
+          "sizeY": {
+            "type": "number"
+          },
+          "sizeZ": {
+            "type": "number"
+          },
+          "priceCost": {
+            "type": "number"
+          },
+          "customExcl": {
+            "type": "number"
+          },
+          "customIncl": {
+            "type": "number"
+          },
+          "basePriceExcl": {
+            "type": "number"
+          },
+          "basePriceIncl": {
+            "type": "number"
+          },
+          "priceExcl": {
+            "type": "number"
+          },
+          "priceIncl": {
+            "type": "number"
+          },
+          "discountExcl": {
+            "type": "number"
+          },
+          "discountIncl": {
+            "type": "number"
+          },
+          "customFields": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "product": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "variant": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          }
+        },
+        "required": [
+          "id",
+          "quantityOrdered",
+          "basePriceExcl",
+          "priceExcl"
+        ]
+      },
+      "Shipment": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shipment/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "shipped",
+              "not_shipped",
+              "cancelled"
+            ]
+          },
+          "trackingCode": {
+            "type": "string"
+          },
+          "doNotifyShipped": {
+            "type": "boolean"
+          },
+          "doNotifyReadyForPickup": {
+            "type": "boolean"
+          },
+          "doNotifyTrackingCode": {
+            "type": "boolean"
+          },
+          "totalWeight": {
+            "type": "number"
+          },
+          "totalSizeX": {
+            "type": "number"
+          },
+          "totalSizeY": {
+            "type": "number"
+          },
+          "totalSizeZ": {
+            "type": "number"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "products": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "events": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "order"
+        ]
+      },
+      "Invoice": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/invoice/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "not_paid",
+              "paid",
+              null
+            ]
+          },
+          "isVatShifted": {
+            "type": "boolean"
+          },
+          "priceExcl": {
+            "type": "number"
+          },
+          "priceIncl": {
+            "type": "number"
+          },
+          "doNotifyNew": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "doNotifyPaid": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "invoice": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "isCreditNote": {
+            "type": "boolean"
+          },
+          "creditNote": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "items": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "metafields": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "events": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "isCreditNote",
+          "priceIncl",
+          "order"
+        ]
+      },
+      "InvoiceItem": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/invoiceitem/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "variant": {
+            "type": "string"
+          },
+          "orderProductId": {
+            "type": "integer",
+            "nullable": true
+          },
+          "articleCode": {
+            "type": "string"
+          },
+          "ean": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "taxRate": {
+            "type": "number"
+          },
+          "basePriceExcl": {
+            "type": "number"
+          },
+          "basePriceIncl": {
+            "type": "number"
+          },
+          "priceExcl": {
+            "type": "number"
+          },
+          "priceIncl": {
+            "type": "number"
+          },
+          "discountExcl": {
+            "type": "number"
+          },
+          "discountIncl": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "product": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "additonalCostsTax": {
+            "type": "number"
+          },
+          "additionalCostIncl": {
+            "type": "number"
+          },
+          "additionalCostExcl": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "quantity",
+          "priceExcl"
+        ]
+      },
+      "Textpage": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/textpage/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isLocked": {
+            "type": "boolean"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "title"
+        ]
+      },
+      "Blog": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blog/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "sortOrder": {
+            "type": "integer"
+          },
+          "commentable": {
+            "type": "string",
+            "enum": [
+              "no",
+              "after_approval",
+              "without_approval"
+            ]
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "articles": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "comments": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "tags": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "title"
+        ]
+      },
+      "BlogArticle": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/ImageOrFalse"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "blog": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "comments": {
+            "$ref": "#/components/schemas/Link"
+          },
+          "tags": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "title",
+          "blog"
+        ]
+      },
+      "Redirect": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/redirect/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isPermanent": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "target"
+        ]
+      },
+      "Review": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/review/",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "isVisible": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/LinkOrFalse"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Language"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "product": {
+            "$ref": "#/components/schemas/Link"
+          }
+        },
+        "required": [
+          "id",
+          "score",
+          "product"
+        ]
+      },
+      "ShopResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shop/",
+        "properties": {
+          "shop": {
+            "$ref": "#/components/schemas/Shop"
+          }
+        },
+        "required": [
+          "shop"
+        ]
+      },
+      "ShopWebsiteResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shopwebsite/",
+        "properties": {
+          "shopWebsite": {
+            "$ref": "#/components/schemas/ShopWebsite"
+          }
+        },
+        "required": [
+          "shopWebsite"
+        ]
+      },
+      "CategoriesProductListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/categoryproduct/",
+        "properties": {
+          "categoriesProducts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoriesProduct"
+            }
+          }
+        },
+        "required": [
+          "categoriesProducts"
+        ]
+      },
+      "CategoryListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/category/",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        },
+        "required": [
+          "categories"
+        ]
+      },
+      "CategoryResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/category/",
+        "properties": {
+          "category": {
+            "$ref": "#/components/schemas/Category"
+          }
+        },
+        "required": [
+          "category"
+        ]
+      },
+      "ProductListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        },
+        "required": [
+          "products"
+        ]
+      },
+      "ProductResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/product/",
+        "properties": {
+          "product": {
+            "$ref": "#/components/schemas/Product"
+          }
+        },
+        "required": [
+          "product"
+        ]
+      },
+      "ProductImageListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/productimage/",
+        "properties": {
+          "productImages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductImage"
+            }
+          }
+        },
+        "required": [
+          "productImages"
+        ]
+      },
+      "VariantListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/variant/",
+        "properties": {
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Variant"
+            }
+          }
+        },
+        "required": [
+          "variants"
+        ]
+      },
+      "BrandResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/brand/",
+        "properties": {
+          "brand": {
+            "$ref": "#/components/schemas/Brand"
+          }
+        },
+        "required": [
+          "brand"
+        ]
+      },
+      "CustomerListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/customer/",
+        "properties": {
+          "customers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          }
+        },
+        "required": [
+          "customers"
+        ]
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/customer/",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer"
+          }
+        },
+        "required": [
+          "customer"
+        ]
+      },
+      "DiscountListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discount/",
+        "properties": {
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Discount"
+            }
+          }
+        },
+        "required": [
+          "discounts"
+        ]
+      },
+      "DiscountResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discount/",
+        "properties": {
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          }
+        },
+        "required": [
+          "discount"
+        ]
+      },
+      "OrderListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/order/",
+        "properties": {
+          "orders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          }
+        },
+        "required": [
+          "orders"
+        ]
+      },
+      "OrderResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/order/",
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/Order"
+          }
+        },
+        "required": [
+          "order"
+        ]
+      },
+      "OrderProductListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/orderproduct/",
+        "properties": {
+          "orderProducts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderProduct"
+            }
+          }
+        },
+        "required": [
+          "orderProducts"
+        ]
+      },
+      "ShipmentListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/shipment/",
+        "properties": {
+          "shipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Shipment"
+            }
+          }
+        },
+        "required": [
+          "shipments"
+        ]
+      },
+      "InvoiceListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/invoice/",
+        "properties": {
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Invoice"
+            }
+          }
+        },
+        "required": [
+          "invoices"
+        ]
+      },
+      "InvoiceItemListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/invoiceitem/",
+        "properties": {
+          "invoiceItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceItem"
+            }
+          }
+        },
+        "required": [
+          "invoiceItems"
+        ]
+      },
+      "TextpageListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/textpage/",
+        "properties": {
+          "textpages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Textpage"
+            }
+          }
+        },
+        "required": [
+          "textpages"
+        ]
+      },
+      "TextpageResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/textpage/",
+        "properties": {
+          "textpage": {
+            "$ref": "#/components/schemas/Textpage"
+          }
+        },
+        "required": [
+          "textpage"
+        ]
+      },
+      "BlogArticleListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/",
+        "properties": {
+          "blogArticles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlogArticle"
+            }
+          }
+        },
+        "required": [
+          "blogArticles"
+        ]
+      },
+      "BlogArticleResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blogarticle/",
+        "properties": {
+          "blogArticle": {
+            "$ref": "#/components/schemas/BlogArticle"
+          }
+        },
+        "required": [
+          "blogArticle"
+        ]
+      },
+      "BlogListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blog/",
+        "properties": {
+          "blogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Blog"
+            }
+          }
+        },
+        "required": [
+          "blogs"
+        ]
+      },
+      "BlogResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/blog/",
+        "properties": {
+          "blog": {
+            "$ref": "#/components/schemas/Blog"
+          }
+        },
+        "required": [
+          "blog"
+        ]
+      },
+      "RedirectListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/redirect/",
+        "properties": {
+          "redirects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Redirect"
+            }
+          }
+        },
+        "required": [
+          "redirects"
+        ]
+      },
+      "RedirectResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/redirect/",
+        "properties": {
+          "redirect": {
+            "$ref": "#/components/schemas/Redirect"
+          }
+        },
+        "required": [
+          "redirect"
+        ]
+      },
+      "ReviewListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/review/",
+        "properties": {
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        },
+        "required": [
+          "reviews"
+        ]
+      },
+      "ReviewResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/review/",
+        "properties": {
+          "review": {
+            "$ref": "#/components/schemas/Review"
+          }
+        },
+        "required": [
+          "review"
+        ]
+      }
+    }
+  }
+}

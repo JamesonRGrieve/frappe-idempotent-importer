@@ -1,0 +1,49 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/reviews"
+  },
+  "response": {
+    "total": 2,
+    "count": 2,
+    "offset": 0,
+    "limit": 100,
+    "items": [
+      {
+        "id": 9701,
+        "status": "published",
+        "rating": 5,
+        "productId": 9201,
+        "review": "Smells like the forest after rain.",
+        "reviewerInfo": {
+          "name": "Rowan P.",
+          "email": "Rowan.Pike@example.com",
+          "country": "Canada",
+          "city": "Banff",
+          "orders": 1
+        },
+        "createDate": "2026-09-05 12:00:00 +0000",
+        "updateDate": "2026-09-05 12:00:00 +0000",
+        "createTimestamp": 1788609600000,
+        "updateTimestamp": 1788609600000,
+        "customerId": 9401,
+        "orderId": "CW-1001"
+      },
+      {
+        "id": 9702,
+        "status": "moderated",
+        "rating": 3,
+        "productId": 9202,
+        "review": "The birch was faint.",
+        "reviewerInfo": {
+          "name": "A guest",
+          "email": "guest@example.com",
+          "orders": 0
+        },
+        "createDate": "2026-09-06 08:00:00 +0000",
+        "updateDate": "2026-09-06 08:00:00 +0000",
+        "createTimestamp": 1788681600000,
+        "updateTimestamp": 1788681600000
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "request": {
+    "path": "/en/shipments.json",
+    "query": {
+      "order": "701"
+    }
+  },
+  "response": {
+    "shipments": [
+      {
+        "id": 901,
+        "createdAt": "2026-09-04T11:00:00+00:00",
+        "updatedAt": "2026-09-04T11:00:00+00:00",
+        "number": "SHIP00001",
+        "status": "shipped",
+        "trackingCode": "CP987654321CA",
+        "doNotifyShipped": true,
+        "doNotifyReadyForPickup": false,
+        "doNotifyTrackingCode": true,
+        "totalWeight": 0,
+        "totalSizeX": 0,
+        "totalSizeY": 0,
+        "totalSizeZ": 0,
+        "customer": {
+          "resource": {
+            "id": 801,
+            "url": "customers/801",
+            "link": "https://api.shoplightspeed.com/en/customers/801.json"
+          }
+        },
+        "order": {
+          "resource": {
+            "id": 701,
+            "url": "orders/701",
+            "link": "https://api.shoplightspeed.com/en/orders/701.json"
+          }
+        },
+        "products": {
+          "resource": {
+            "id": false,
+            "url": "shipments/901/products",
+            "link": "https://api.shoplightspeed.com/en/shipments/901/products.json"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "shipments/901/metafields",
+            "link": "https://api.shoplightspeed.com/en/shipments/901/metafields.json"
+          }
+        },
+        "events": {
+          "resource": {
+            "id": false,
+            "url": "orders/events?shipment=901",
+            "link": "https://api.shoplightspeed.com/en/orders/events.json?shipment=901"
+          }
+        }
+      }
+    ]
+  }
+}

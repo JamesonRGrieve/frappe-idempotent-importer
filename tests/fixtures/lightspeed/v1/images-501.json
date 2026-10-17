@@ -1,0 +1,31 @@
+{
+  "request": {
+    "path": "/en/products/501/images.json"
+  },
+  "response": {
+    "productImages": [
+      {
+        "id": 5102,
+        "sortOrder": 2,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "extension": "png",
+        "size": 2048,
+        "title": "ls-mug-side",
+        "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-mug-side.png",
+        "src": "http://lightspeed-fake:8080/files/ls-mug-side.png"
+      },
+      {
+        "id": 5101,
+        "sortOrder": 1,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "extension": "png",
+        "size": 2048,
+        "title": "ls-mug",
+        "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-mug.png",
+        "src": "http://lightspeed-fake:8080/files/ls-mug.png"
+      }
+    ]
+  }
+}

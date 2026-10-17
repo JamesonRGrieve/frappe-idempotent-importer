@@ -1,0 +1,43 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/503/shipping_addresses"
+  },
+  "response": [
+    {
+      "id": 5030,
+      "order_id": 503,
+      "first_name": "Maya",
+      "last_name": "Chen",
+      "company": "",
+      "street_1": "88 Bow Valley Trail",
+      "street_2": "",
+      "city": "Banff",
+      "state": "Alberta",
+      "zip": "T1L 1A1",
+      "country": "Canada",
+      "country_iso2": "CA",
+      "phone": "",
+      "email": "maya@example.com",
+      "items_total": 1,
+      "items_shipped": 0,
+      "shipping_method": "Canada Post Regular",
+      "base_cost": "8.0000",
+      "cost_ex_tax": "8.0000",
+      "cost_inc_tax": "8.4000",
+      "cost_tax": "0.4000",
+      "cost_tax_class_id": 2,
+      "base_handling_cost": "0.0000",
+      "handling_cost_ex_tax": "0.0000",
+      "handling_cost_inc_tax": "0.0000",
+      "handling_cost_tax": "0.0000",
+      "handling_cost_tax_class_id": 2,
+      "shipping_zone_id": 1,
+      "shipping_zone_name": "Canada",
+      "form_fields": [],
+      "shipping_quotes": {
+        "url": "https://api.bigcommerce.com/stores/bcfix123/v2/orders/503/shipping_addresses/5030/shipping_quotes",
+        "resource": "/orders/503/shipping_addresses/5030/shipping_quotes"
+      }
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/contacts/v5/contacts/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "contacts": [
+      {
+        "id": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+        "revision": "4",
+        "createdDate": "2026-08-10T12:00:00.000Z",
+        "updatedDate": "2026-08-27T10:00:00.000Z",
+        "name": {
+          "first": "Maya",
+          "last": "Thunderchild"
+        },
+        "email": {
+          "email": "Maya.Thunderchild@example.com",
+          "subscriptionStatus": {
+            "status": "SUBSCRIBED"
+          },
+          "deliverabilityStatus": "VALID"
+        },
+        "locale": "en-CA",
+        "addresses": [
+          {
+            "id": "ad000000-0000-4000-8000-000000000001",
+            "tag": "SHIPPING",
+            "defaultAddress": false,
+            "address": {
+              "streetAddress": {
+                "number": "88",
+                "name": "Coteau Street West"
+              },
+              "city": "Moose Jaw",
+              "subdivision": "CA-SK",
+              "postalCode": "S6H 5C9",
+              "country": "CA"
+            },
+            "recipient": {
+              "firstName": "Maya",
+              "lastName": "Thunderchild",
+              "phone": "+1 306 555 0177"
+            }
+          },
+          {
+            "id": "ad000000-0000-4000-8000-000000000002",
+            "tag": "BILLING",
+            "defaultAddress": true,
+            "address": {
+              "addressLine": "1200 Albert Street",
+              "addressLine2": "Suite 4",
+              "city": "Regina",
+              "subdivision": "SK",
+              "postalCode": "S4R 2R4",
+              "country": "CA"
+            }
+          }
+        ],
+        "source": {
+          "appId": "215238eb-22a5-4c36-9e7b-e7c08025e04e"
+        },
+        "lastActivity": {
+          "date": "2026-09-01T10:00:00.000Z"
+        },
+        "memberInfo": {
+          "memberId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+          "signupDate": "2026-08-10T12:00:00.000Z",
+          "email": "Maya.Thunderchild@example.com",
+          "emailVerified": true,
+          "status": "ACTIVE",
+          "sessionInfo": {
+            "lastWebLogin": "2026-09-01T10:00:00.000Z"
+          }
+        },
+        "phone": {
+          "tag": "MOBILE",
+          "phone": "+1 306 555 0177",
+          "e164": "+13065550177",
+          "subscriptionStatus": {
+            "status": "NOT_SET"
+          }
+        },
+        "company": {
+          "name": "Thunderchild Design"
+        }
+      },
+      {
+        "id": "2c4e6a80-0002-4b3d-9e1f-5a6b7c8d0002",
+        "revision": "4",
+        "createdDate": "2026-08-11T12:00:00.000Z",
+        "updatedDate": "2026-08-27T10:00:00.000Z",
+        "name": {
+          "first": "Owen",
+          "last": "Baptiste"
+        },
+        "email": {
+          "email": "owen@example.com",
+          "subscriptionStatus": {
+            "status": "SUBSCRIBED"
+          },
+          "deliverabilityStatus": "VALID"
+        },
+        "locale": "en-CA",
+        "addresses": [],
+        "source": {
+          "appId": "215238eb-22a5-4c36-9e7b-e7c08025e04e"
+        },
+        "lastActivity": {
+          "date": "2026-09-01T10:00:00.000Z"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 2,
+      "hasNext": true,
+      "cursors": {
+        "next": "contacts-page-2"
+      }
+    }
+  }
+}

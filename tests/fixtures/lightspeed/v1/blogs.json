@@ -1,0 +1,39 @@
+{
+  "request": {
+    "path": "/en/blogs.json"
+  },
+  "response": {
+    "blogs": [
+      {
+        "id": 1201,
+        "createdAt": "2026-08-04T09:00:00+00:00",
+        "updatedAt": "2026-08-04T09:00:00+00:00",
+        "sortOrder": 0,
+        "commentable": "no",
+        "url": "journal",
+        "title": "Journal",
+        "articles": {
+          "resource": {
+            "id": false,
+            "url": "blogs/articles?blog=1201",
+            "link": "https://api.shoplightspeed.com/en/blogs/articles.json?blog=1201"
+          }
+        },
+        "comments": {
+          "resource": {
+            "id": false,
+            "url": "blogs/comments?blog=1201",
+            "link": "https://api.shoplightspeed.com/en/blogs/comments.json?blog=1201"
+          }
+        },
+        "tags": {
+          "resource": {
+            "id": false,
+            "url": "blogs/tags?blog=1201",
+            "link": "https://api.shoplightspeed.com/en/blogs/tags.json?blog=1201"
+          }
+        }
+      }
+    ]
+  }
+}

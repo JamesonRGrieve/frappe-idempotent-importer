@@ -8,13 +8,16 @@ from __future__ import annotations
 import sys
 
 from idempotent_importer.sources.shopify.queries import QueryLibrary
+from tests.support.fixtures import FIXTURES
 from tools.proofs import (
 	invalid_operations,
 	invalid_rest_fixtures,
+	invalid_source_fixtures,
 	mismatched_shopify_fixtures,
 	mispriced_operations,
 )
 from tools.schemas import shopify_schema
+from tools.specs import sources
 
 REST_SOURCES = ("woocommerce",)
 
@@ -33,6 +36,12 @@ def main() -> int:
 		),
 		"REST fixtures that don't match their source's OpenAPI document": [
 			failure for source in REST_SOURCES for failure in invalid_rest_fixtures(source)
+		],
+		"REST fixtures that don't match their source's published API spec": [
+			failure
+			for source in sources()
+			if (FIXTURES / source).is_dir()
+			for failure in invalid_source_fixtures(source)
 		],
 	}
 	failed = False

@@ -1,0 +1,99 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/coupons",
+    "query": {
+      "exclude_type": "promotion",
+      "page": 1
+    }
+  },
+  "response": [
+    {
+      "id": 61,
+      "name": "Welcome",
+      "type": "per_total_discount",
+      "amount": "4.5000",
+      "min_purchase": "50.0000",
+      "expires": "Thu, 31 Dec 2026 23:59:00 +0000",
+      "enabled": true,
+      "code": "BC-WELCOME",
+      "applies_to": {
+        "entity": "categories",
+        "ids": [
+          0
+        ]
+      },
+      "max_uses": 100,
+      "max_uses_per_customer": 1,
+      "restricted_to": {},
+      "shipping_methods": [],
+      "date_created": "Tue, 01 Sep 2026 10:00:00 +0000",
+      "num_uses": 2
+    },
+    {
+      "id": 62,
+      "name": "Free shipping",
+      "type": "free_shipping",
+      "amount": "0.0000",
+      "min_purchase": "0.0000",
+      "expires": "",
+      "enabled": true,
+      "code": "BC-SHIPFREE",
+      "applies_to": {
+        "entity": "categories",
+        "ids": [
+          0
+        ]
+      },
+      "max_uses": 0,
+      "max_uses_per_customer": 0,
+      "restricted_to": {},
+      "shipping_methods": [],
+      "date_created": "Tue, 01 Sep 2026 10:00:00 +0000",
+      "num_uses": 2
+    },
+    {
+      "id": 63,
+      "name": "Toque sale",
+      "type": "percentage_discount",
+      "amount": "20.0000",
+      "min_purchase": "0.0000",
+      "expires": "",
+      "enabled": false,
+      "code": "BC-TOQUE20",
+      "applies_to": {
+        "entity": "products",
+        "ids": [
+          112
+        ]
+      },
+      "max_uses": 0,
+      "max_uses_per_customer": 0,
+      "restricted_to": {},
+      "shipping_methods": [],
+      "date_created": "Tue, 01 Sep 2026 10:00:00 +0000",
+      "num_uses": 2
+    },
+    {
+      "id": 64,
+      "name": "Half-price shipping",
+      "type": "shipping_discount",
+      "amount": "50.0000",
+      "min_purchase": "0.0000",
+      "expires": "",
+      "enabled": true,
+      "code": "BC-SHIPHALF",
+      "applies_to": {
+        "entity": "categories",
+        "ids": [
+          0
+        ]
+      },
+      "max_uses": 0,
+      "max_uses_per_customer": 0,
+      "restricted_to": {},
+      "shipping_methods": [],
+      "date_created": "Tue, 01 Sep 2026 10:00:00 +0000",
+      "num_uses": 2
+    }
+  ]
+}

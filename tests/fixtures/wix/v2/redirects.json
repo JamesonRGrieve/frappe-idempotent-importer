@@ -1,0 +1,30 @@
+{
+  "request": {
+    "path": "/seo-redirects-service/v1/redirects"
+  },
+  "response": {
+    "redirects": [
+      {
+        "id": "e1000000-0000-4000-8000-000000000001",
+        "from": "/old-mug",
+        "to": "/product-page/speckled-clay-mug",
+        "createdDate": "2026-08-20T10:00:00.000Z"
+      },
+      {
+        "id": "e1000000-0000-4000-8000-000000000002",
+        "from": "/shop-sale",
+        "to": "https://sale.prairiepottery.example/",
+        "createdDate": "2026-08-21T10:00:00.000Z"
+      },
+      {
+        "id": "e1000000-0000-4000-8000-000000000003",
+        "from": "/archive/",
+        "to": "/blog",
+        "options": {
+          "groupRedirect": true
+        },
+        "createdDate": "2026-08-22T10:00:00.000Z"
+      }
+    ]
+  }
+}

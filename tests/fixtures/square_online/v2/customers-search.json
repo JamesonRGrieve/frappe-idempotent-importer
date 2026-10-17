@@ -1,0 +1,74 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/customers/search",
+    "body": {
+      "limit": 100
+    }
+  },
+  "response": {
+    "customers": [
+      {
+        "id": "CUST_ADA",
+        "created_at": "2026-09-01T09:00:00.000Z",
+        "updated_at": "2026-09-01T09:00:00.000Z",
+        "given_name": "Ada",
+        "family_name": "Lovelace",
+        "email_address": "Ada@Example.com",
+        "preferences": {
+          "email_unsubscribed": false
+        },
+        "creation_source": "ONLINE_STORE",
+        "version": 1,
+        "phone_number": "+1 780-555-0111",
+        "address": {
+          "address_line_1": "1 Main St",
+          "locality": "Edmonton",
+          "administrative_district_level_1": "AB",
+          "postal_code": "T5J 1A1",
+          "country": "CA",
+          "first_name": "Ada",
+          "last_name": "Lovelace"
+        },
+        "company_name": "Analytical Engines",
+        "note": "Prefers email"
+      },
+      {
+        "id": "CUST_BOB",
+        "created_at": "2026-09-02T09:00:00.000Z",
+        "updated_at": "2026-09-02T09:00:00.000Z",
+        "given_name": "Bob",
+        "family_name": "Smith",
+        "email_address": "bob@example.com",
+        "preferences": {
+          "email_unsubscribed": false
+        },
+        "creation_source": "ONLINE_STORE",
+        "version": 1
+      },
+      {
+        "id": "CUST_GRACE",
+        "created_at": "2026-09-06T09:00:00.000Z",
+        "updated_at": "2026-09-06T09:00:00.000Z",
+        "given_name": "Grace",
+        "family_name": "Hopper",
+        "email_address": "grace@example.com",
+        "preferences": {
+          "email_unsubscribed": false
+        },
+        "creation_source": "ONLINE_STORE",
+        "version": 1,
+        "phone_number": "+1 780-555-0122",
+        "address": {
+          "address_line_1": "5 Navy Rd",
+          "locality": "Calgary",
+          "administrative_district_level_1": "AB",
+          "postal_code": "T2P 1J9",
+          "country": "CA",
+          "first_name": "Grace",
+          "last_name": "Hopper"
+        }
+      }
+    ]
+  }
+}

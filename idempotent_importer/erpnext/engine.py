@@ -16,6 +16,7 @@ from time import monotonic
 from typing import Any
 
 import frappe
+from frappe.utils.password import set_encrypted_password
 
 from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.http import SystemSleeper
@@ -56,6 +57,8 @@ from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
 from idempotent_importer.sources.registry import by_label
 
 LOGGER = "idempotent_importer"
+# The connection's field for the OAuth credential a source rotates (Etsy's refresh token).
+ROTATING_CREDENTIAL_FIELD = "refresh_token"
 TEST_ENDPOINTS = "idempotent_importer_test_endpoints"
 # How long one background step job works before handing over to the next (a job's queue timeout is
 # longer, so a page in flight always finishes).
@@ -140,15 +143,26 @@ class Engine:
 
 def config_of(doc: Any, adapter: Adapter) -> ConnectionConfig:
 	endpoints = frappe.conf.get(TEST_ENDPOINTS) or {}
+	connection = str(doc.name)
 	return ConnectionConfig(
 		source=adapter.id,
-		connection=str(doc.name),
+		connection=connection,
 		store_url=str(doc.store_url or ""),
 		api_user=str(doc.api_user or ""),
 		api_secret=str(doc.get_password("api_secret", raise_exception=False) or ""),
 		auth_method=str(doc.auth_method or ""),
+		account=str(doc.api_account or ""),
+		refresh_token=str(doc.get_password("refresh_token", raise_exception=False) or ""),
+		save_refresh_token=lambda token: save_refresh_token(connection, token),
 		endpoint_override=endpoints.get(doc.name),
 	)
+
+
+def save_refresh_token(connection: str, token: str) -> None:
+	"""Keeps the refresh token a source just issued, committed at once: the source has already retired
+	the old one, so it must survive whatever the rest of the step rolls back."""
+	set_encrypted_password(CONNECTION, connection, token, ROTATING_CREDENTIAL_FIELD)
+	frappe.db.commit()
 
 
 def build(connection: str, log_lines: list[str]) -> Engine:

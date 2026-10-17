@@ -1,0 +1,67 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/store"
+  },
+  "response": {
+    "id": "bcfix123",
+    "domain": "northerntrail.example",
+    "secure_url": "http://bigcommerce-fake:8080",
+    "control_panel_base_url": "https://store-bcfix123.mybigcommerce.com",
+    "status": "live",
+    "name": "Northern Trail Outfitters",
+    "first_name": "Ingrid",
+    "last_name": "Johansson",
+    "address": "200 Trail Road\nCanmore, AB T1W 1A1\nCanada",
+    "country": "Canada",
+    "country_code": "CA",
+    "phone": "+1 403-555-0100",
+    "admin_email": "owner@northerntrail.example",
+    "order_email": "orders@northerntrail.example",
+    "favicon_url": "http://bigcommerce-fake:8080/img/favicon.png",
+    "timezone": {
+      "name": "America/Edmonton",
+      "raw_offset": -25200,
+      "dst_offset": -21600,
+      "dst_correction": true,
+      "date_format": {
+        "display": "jS M Y",
+        "export": "M jS Y",
+        "extended_display": "M jS Y @ g:i A"
+      }
+    },
+    "language": "en",
+    "currency": "CAD",
+    "currency_symbol": "$",
+    "decimal_separator": ".",
+    "thousands_separator": ",",
+    "decimal_places": 2,
+    "currency_symbol_location": "left",
+    "weight_units": "KGS",
+    "dimension_units": "Centimeters",
+    "dimension_decimal_places": 2,
+    "dimension_decimal_token": ".",
+    "dimension_thousands_token": ",",
+    "plan_name": "Standard",
+    "plan_level": "Standard",
+    "plan_is_trial": false,
+    "industry": "Outdoor Gear",
+    "logo": {
+      "url": "http://bigcommerce-fake:8080/img/logo.png"
+    },
+    "is_price_entered_with_tax": false,
+    "store_id": 1001234,
+    "default_channel_id": 1,
+    "default_site_id": 1000,
+    "active_comparison_modules": [],
+    "features": {
+      "stencil_enabled": true,
+      "sitewidehttps_enabled": true,
+      "facebook_catalog_id": "",
+      "checkout_type": "optimized",
+      "wishlists_enabled": true,
+      "graphql_storefront_api_enabled": true,
+      "shopper_consent_tracking_enabled": false,
+      "multi_storefront_enabled": false
+    }
+  }
+}

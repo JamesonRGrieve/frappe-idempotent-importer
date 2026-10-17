@@ -1,0 +1,95 @@
+{
+  "request": {
+    "path": "/v2/commerce/products",
+    "query": {
+      "cursor": "eyJwcm9kdWN0cyI6IjIifQ"
+    }
+  },
+  "response": {
+    "pagination": {
+      "hasNextPage": false
+    },
+    "products": [
+      {
+        "id": "6b2000000000000000000014",
+        "type": "DIGITAL",
+        "storePageId": "6a1000000000000000000001",
+        "name": "Harbour kitchen e-book",
+        "description": "<p>Thirty coastal recipes.</p>",
+        "url": "https://harbourpine.example/kitchen/p/harbour-kitchen-e-book",
+        "urlSlug": "harbour-kitchen-e-book",
+        "tags": [],
+        "isVisible": true,
+        "images": [
+          {
+            "id": "img-ebook",
+            "url": "http://squarespace-fake:8080/img/ebook.png",
+            "orderIndex": 0,
+            "availableFormats": [
+              "100w",
+              "300w",
+              "500w",
+              "750w",
+              "1000w",
+              "1500w",
+              "2500w"
+            ],
+            "originalSize": {
+              "width": 1200,
+              "height": 1200
+            }
+          }
+        ],
+        "createdOn": "2026-09-02T11:00:00.000Z",
+        "modifiedOn": "2026-09-02T11:00:00.000Z",
+        "pricing": {
+          "basePrice": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 12
+          },
+          "onSale": false,
+          "salePrice": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 0
+          }
+        },
+        "digitalGood": {
+          "id": "dg-ebook",
+          "filename": "harbour-kitchen.pdf"
+        }
+      },
+      {
+        "id": "6b2000000000000000000015",
+        "type": "GIFT_CARD",
+        "storePageId": "6a1000000000000000000001",
+        "name": "Gift card",
+        "description": "",
+        "url": "https://harbourpine.example/kitchen/p/gift-card",
+        "urlSlug": "gift-card",
+        "tags": [],
+        "isVisible": true,
+        "images": [],
+        "createdOn": "2026-09-02T12:00:00.000Z",
+        "modifiedOn": "2026-09-02T12:00:00.000Z",
+        "variants": [
+          {
+            "id": "a1b2c3d4-0000-4000-8000-000000000151",
+            "sku": "SQS-GIFT-25",
+            "pricing": {
+              "basePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 25
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "request": {
+    "path": "/en/shipments.json",
+    "query": {
+      "order": "702"
+    }
+  },
+  "response": {
+    "shipments": []
+  }
+}

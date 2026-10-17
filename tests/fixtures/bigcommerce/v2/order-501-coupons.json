@@ -1,0 +1,16 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/501/coupons"
+  },
+  "response": [
+    {
+      "id": 1,
+      "coupon_id": 61,
+      "order_id": 501,
+      "code": "BC-WELCOME",
+      "amount": "4.5000",
+      "type": "2",
+      "discount": 4.5
+    }
+  ]
+}

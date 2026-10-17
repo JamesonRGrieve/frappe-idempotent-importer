@@ -1,0 +1,24 @@
+{
+  "request": {
+    "path": "/1.0/commerce/store_pages"
+  },
+  "response": {
+    "pagination": {
+      "hasNextPage": false
+    },
+    "storePages": [
+      {
+        "id": "6a1000000000000000000001",
+        "title": "Kitchen",
+        "urlSlug": "kitchen",
+        "isEnabled": true
+      },
+      {
+        "id": "6a1000000000000000000002",
+        "title": "Apparel",
+        "urlSlug": "apparel",
+        "isEnabled": true
+      }
+    ]
+  }
+}

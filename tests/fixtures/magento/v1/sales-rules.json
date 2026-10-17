@@ -1,0 +1,346 @@
+{
+  "request": {
+    "path": "/rest/default/V1/salesRules/search",
+    "query": {
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "rule_id": 61,
+        "name": "Welcome five off",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Welcome five off"
+          }
+        ],
+        "description": "Welcome five off (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 1,
+        "is_active": true,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [
+            {
+              "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Address",
+              "attribute_name": "base_subtotal",
+              "operator": ">=",
+              "value": "50"
+            }
+          ],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "cart_fixed",
+        "discount_amount": 5,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "SPECIFIC_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 0,
+        "simple_free_shipping": "0"
+      },
+      {
+        "rule_id": 62,
+        "name": "Fall fifteen",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Fall fifteen"
+          }
+        ],
+        "description": "Fall fifteen (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 0,
+        "is_active": true,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "by_percent",
+        "discount_amount": 15,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "SPECIFIC_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 100,
+        "simple_free_shipping": "0",
+        "from_date": "2026-09-01",
+        "to_date": "2026-10-30"
+      },
+      {
+        "rule_id": 63,
+        "name": "Free shipping",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Free shipping"
+          }
+        ],
+        "description": "Free shipping (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 0,
+        "is_active": true,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "by_percent",
+        "discount_amount": 0,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "SPECIFIC_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 0,
+        "simple_free_shipping": "2"
+      },
+      {
+        "rule_id": 64,
+        "name": "Outerwear autumn sale",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Outerwear autumn sale"
+          }
+        ],
+        "description": "Outerwear autumn sale (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 0,
+        "is_active": true,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "by_percent",
+        "discount_amount": 10,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "NO_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 0,
+        "simple_free_shipping": "0"
+      },
+      {
+        "rule_id": 65,
+        "name": "Jacket twenty off",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Jacket twenty off"
+          }
+        ],
+        "description": "Jacket twenty off (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 0,
+        "is_active": true,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [
+            {
+              "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product",
+              "attribute_name": "category_ids",
+              "operator": "==",
+              "value": "4"
+            }
+          ],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "by_fixed",
+        "discount_amount": 20,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "SPECIFIC_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 0,
+        "simple_free_shipping": "0"
+      },
+      {
+        "rule_id": 66,
+        "name": "Old summer code",
+        "store_labels": [
+          {
+            "store_id": 0,
+            "store_label": "Old summer code"
+          }
+        ],
+        "description": "Old summer code (cart price rule)",
+        "website_ids": [
+          1
+        ],
+        "customer_group_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "uses_per_customer": 0,
+        "is_active": false,
+        "condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "action_condition": {
+          "condition_type": "Magento\\SalesRule\\Model\\Rule\\Condition\\Product\\Combine",
+          "conditions": [],
+          "aggregator_type": "all",
+          "operator": "",
+          "value": "1"
+        },
+        "stop_rules_processing": false,
+        "is_advanced": true,
+        "product_ids": [],
+        "sort_order": 0,
+        "simple_action": "by_percent",
+        "discount_amount": 20,
+        "discount_qty": 0,
+        "discount_step": 0,
+        "apply_to_shipping": false,
+        "times_used": 0,
+        "is_rss": true,
+        "coupon_type": "SPECIFIC_COUPON",
+        "use_auto_generation": false,
+        "uses_per_coupon": 0,
+        "simple_free_shipping": "0"
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [],
+      "page_size": 100,
+      "current_page": 1,
+      "sort_orders": [
+        {
+          "field": "rule_id",
+          "direction": "ASC"
+        }
+      ]
+    },
+    "total_count": 6
+  }
+}

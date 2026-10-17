@@ -1,0 +1,43 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/502/shipping_addresses"
+  },
+  "response": [
+    {
+      "id": 5020,
+      "order_id": 502,
+      "first_name": "Tomas",
+      "last_name": "Berg",
+      "company": "",
+      "street_1": "5 Elk Run",
+      "street_2": "",
+      "city": "Canmore",
+      "state": "Alberta",
+      "zip": "T1W 3C3",
+      "country": "Canada",
+      "country_iso2": "CA",
+      "phone": "",
+      "email": "tomas@example.com",
+      "items_total": 1,
+      "items_shipped": 0,
+      "shipping_method": "Pickup in store",
+      "base_cost": "0.0000",
+      "cost_ex_tax": "0.0000",
+      "cost_inc_tax": "0.0000",
+      "cost_tax": "0.0000",
+      "cost_tax_class_id": 2,
+      "base_handling_cost": "0.0000",
+      "handling_cost_ex_tax": "0.0000",
+      "handling_cost_inc_tax": "0.0000",
+      "handling_cost_tax": "0.0000",
+      "handling_cost_tax_class_id": 2,
+      "shipping_zone_id": 1,
+      "shipping_zone_name": "Canada",
+      "form_fields": [],
+      "shipping_quotes": {
+        "url": "https://api.bigcommerce.com/stores/bcfix123/v2/orders/502/shipping_addresses/5020/shipping_quotes",
+        "resource": "/orders/502/shipping_addresses/5020/shipping_quotes"
+      }
+    }
+  ]
+}

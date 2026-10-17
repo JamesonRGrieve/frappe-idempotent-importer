@@ -1,0 +1,49 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products/111/variants"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 1110,
+        "product_id": 111,
+        "sku": "BC-MUG-1",
+        "sku_id": null,
+        "price": null,
+        "sale_price": null,
+        "cost_price": null,
+        "retail_price": null,
+        "weight": null,
+        "width": null,
+        "height": null,
+        "depth": null,
+        "is_free_shipping": false,
+        "fixed_cost_shipping_price": null,
+        "purchasing_disabled": false,
+        "purchasing_disabled_message": "",
+        "upc": null,
+        "image_url": "",
+        "inventory_level": 12,
+        "inventory_warning_level": 0,
+        "bin_picking_number": null,
+        "mpn": null,
+        "gtin": null,
+        "option_values": [],
+        "calculated_price": 26.0,
+        "calculated_weight": 0.15
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 1,
+        "count": 1,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

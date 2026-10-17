@@ -1,0 +1,25 @@
+{
+  "request": {
+    "path": "/v3/application/shops/5001/sections",
+    "query": {}
+  },
+  "response": {
+    "count": 2,
+    "results": [
+      {
+        "shop_section_id": 51,
+        "title": "Mugs",
+        "rank": 1,
+        "user_id": 7001,
+        "active_listing_count": 1
+      },
+      {
+        "shop_section_id": 52,
+        "title": "Aprons",
+        "rank": 2,
+        "user_id": 7001,
+        "active_listing_count": 1
+      }
+    ]
+  }
+}

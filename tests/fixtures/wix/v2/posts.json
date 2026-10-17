@@ -1,0 +1,274 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/blog/v3/posts/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "firstPublishedDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "posts": [
+      {
+        "id": "0e1f2a30-0001-4b5c-9d6e-7f8a9b0c0001",
+        "title": "Firing the anagama",
+        "excerpt": "Three days & nights of stoking.",
+        "firstPublishedDate": "2026-08-15T14:00:00.000Z",
+        "lastPublishedDate": "2026-08-16T09:00:00.000Z",
+        "url": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/post/firing-the-anagama"
+        },
+        "slug": "firing-the-anagama",
+        "featured": true,
+        "pinned": false,
+        "categoryIds": [
+          "4d3c2b10-0001-4e5f-8a9b-0c1d2e3f0001"
+        ],
+        "memberId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+        "hashtags": [
+          "woodfire",
+          "studio"
+        ],
+        "commentingEnabled": true,
+        "minutesToRead": 4,
+        "tagIds": [],
+        "relatedPostIds": [],
+        "language": "en",
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Firing the anagama",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "How we fire our wood kiln."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "richContent": {
+          "nodes": [
+            {
+              "type": "HEADING",
+              "id": "n-heading",
+              "nodes": [
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": "Three days of fire",
+                    "decorations": []
+                  }
+                }
+              ],
+              "headingData": {
+                "level": 2
+              }
+            },
+            {
+              "type": "PARAGRAPH",
+              "id": "n-paragraph",
+              "nodes": [
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": "We stoke ",
+                    "decorations": []
+                  }
+                },
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": "every five minutes",
+                    "decorations": [
+                      {
+                        "type": "BOLD"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": " \u2014 see ",
+                    "decorations": []
+                  }
+                },
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": "our kiln",
+                    "decorations": [
+                      {
+                        "type": "LINK",
+                        "linkData": {
+                          "link": {
+                            "url": "https://www.prairiepottery.example/kiln",
+                            "target": "BLANK"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": ".",
+                    "decorations": [
+                      {
+                        "type": "COLOR",
+                        "colorData": {}
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BULLETED_LIST",
+              "id": "n-bulleted_list",
+              "nodes": [
+                {
+                  "type": "LIST_ITEM",
+                  "id": "n-list_item",
+                  "nodes": [
+                    {
+                      "type": "PARAGRAPH",
+                      "id": "n-paragraph",
+                      "nodes": [
+                        {
+                          "type": "TEXT",
+                          "id": "",
+                          "nodes": [],
+                          "textData": {
+                            "text": "Ash glaze",
+                            "decorations": []
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "LIST_ITEM",
+                  "id": "n-list_item",
+                  "nodes": [
+                    {
+                      "type": "PARAGRAPH",
+                      "id": "n-paragraph",
+                      "nodes": [
+                        {
+                          "type": "TEXT",
+                          "id": "",
+                          "nodes": [],
+                          "textData": {
+                            "text": "Flashing",
+                            "decorations": []
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "IMAGE",
+              "id": "n-image",
+              "nodes": [],
+              "imageData": {
+                "image": {
+                  "src": {
+                    "url": "http://wix-fake:8080/media/kiln.png"
+                  },
+                  "width": 1600,
+                  "height": 900
+                },
+                "altText": "The kiln at night"
+              }
+            }
+          ]
+        },
+        "media": {
+          "wixMedia": {
+            "image": {
+              "id": "kiln-cover.png",
+              "url": "http://wix-fake:8080/media/kiln-cover.png",
+              "width": 1600,
+              "height": 900
+            }
+          },
+          "displayed": true,
+          "custom": true,
+          "altText": "Kiln cover"
+        },
+        "hasUnpublishedChanges": false
+      },
+      {
+        "id": "0e1f2a30-0002-4b5c-9d6e-7f8a9b0c0002",
+        "title": "Glaze day",
+        "firstPublishedDate": "2026-09-04T14:00:00.000Z",
+        "url": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/post/glaze-day"
+        },
+        "slug": "glaze-day",
+        "categoryIds": [],
+        "hashtags": [],
+        "richContent": {
+          "nodes": [
+            {
+              "type": "PARAGRAPH",
+              "id": "n-paragraph",
+              "nodes": [
+                {
+                  "type": "TEXT",
+                  "id": "",
+                  "nodes": [],
+                  "textData": {
+                    "text": "Dipping 200 pots in one afternoon.",
+                    "decorations": []
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 2,
+      "cursors": {}
+    }
+  }
+}

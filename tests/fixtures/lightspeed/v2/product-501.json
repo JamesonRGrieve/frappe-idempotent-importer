@@ -1,0 +1,124 @@
+{
+  "request": {
+    "path": "/en/products/501.json"
+  },
+  "response": {
+    "product": {
+      "id": 501,
+      "createdAt": "2026-09-01T09:00:00+00:00",
+      "updatedAt": "2026-09-11T09:00:00+00:00",
+      "isVisible": true,
+      "visibility": "visible",
+      "hasMatrix": false,
+      "data01": "",
+      "data02": "",
+      "data03": "",
+      "url": "stoneware-mug",
+      "title": "Stoneware mug",
+      "fulltitle": "Stoneware mug by Harbour Lane",
+      "description": "Stoneware mug short description",
+      "content": "<p>A hand-thrown stoneware mug.</p>",
+      "set": false,
+      "brand": {
+        "resource": {
+          "id": 601,
+          "url": "brands/601",
+          "link": "https://api.shoplightspeed.com/en/brands/601.json"
+        }
+      },
+      "categories": {
+        "resource": {
+          "id": false,
+          "url": "categories/products?product=501",
+          "link": "https://api.shoplightspeed.com/en/categories/products.json?product=501"
+        }
+      },
+      "deliverydate": {
+        "resource": {
+          "id": 6488,
+          "url": "deliverydates/6488",
+          "link": "https://api.shoplightspeed.com/en/deliverydates/6488.json"
+        }
+      },
+      "image": {
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "extension": "png",
+        "size": 2048,
+        "title": "ls-mug",
+        "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-mug.png",
+        "src": "http://lightspeed-fake:8080/files/ls-mug.png"
+      },
+      "images": {
+        "resource": {
+          "id": false,
+          "url": "products/501/images",
+          "link": "https://api.shoplightspeed.com/en/products/501/images.json"
+        }
+      },
+      "relations": {
+        "resource": {
+          "id": false,
+          "url": "products/501/relations",
+          "link": "https://api.shoplightspeed.com/en/products/501/relations.json"
+        }
+      },
+      "metafields": {
+        "resource": {
+          "id": false,
+          "url": "products/501/metafields",
+          "link": "https://api.shoplightspeed.com/en/products/501/metafields.json"
+        }
+      },
+      "reviews": {
+        "resource": {
+          "id": false,
+          "url": "reviews?product=501",
+          "link": "https://api.shoplightspeed.com/en/reviews.json?product=501"
+        }
+      },
+      "type": false,
+      "attributes": {
+        "resource": {
+          "id": false,
+          "url": "products/501/attributes",
+          "link": "https://api.shoplightspeed.com/en/products/501/attributes.json"
+        }
+      },
+      "supplier": {
+        "resource": {
+          "id": 78794,
+          "url": "suppliers/78794",
+          "link": "https://api.shoplightspeed.com/en/suppliers/78794.json"
+        }
+      },
+      "tags": {
+        "resource": {
+          "id": false,
+          "url": "tags/products?product=501",
+          "link": "https://api.shoplightspeed.com/en/tags/products.json?product=501"
+        }
+      },
+      "variants": {
+        "resource": {
+          "id": false,
+          "url": "variants?product=501",
+          "link": "https://api.shoplightspeed.com/en/variants.json?product=501"
+        }
+      },
+      "movements": {
+        "resource": {
+          "id": false,
+          "url": "variants/movements?product=501",
+          "link": "https://api.shoplightspeed.com/en/variants/movements.json?product=501"
+        }
+      },
+      "templateDataFields": {
+        "data01": "",
+        "data02": "",
+        "data03": "",
+        "data04": ""
+      }
+    }
+  }
+}

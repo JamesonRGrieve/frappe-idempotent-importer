@@ -1,0 +1,41 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/customers/9402"
+  },
+  "response": {
+    "id": 9402,
+    "email": "jun.okafor@example.com",
+    "registered": "2026-09-03 18:30:00 +0000",
+    "updated": "2026-09-03 18:30:00 +0000",
+    "billingPerson": {
+      "name": "Jun Okafor",
+      "firstName": "Jun",
+      "lastName": "Okafor",
+      "companyName": ""
+    },
+    "shippingAddresses": [],
+    "contacts": [
+      {
+        "contact": "jun.okafor@example.com",
+        "type": "EMAIL",
+        "default": true,
+        "orderBy": 0,
+        "timestamp": "2026-09-03 18:30:00 +0000"
+      },
+      {
+        "contact": "+1 587-555-0123",
+        "type": "PHONE",
+        "default": true,
+        "orderBy": 1,
+        "timestamp": "2026-09-03 18:30:00 +0000"
+      }
+    ],
+    "customerGroupName": "General",
+    "customerGroupId": 0,
+    "taxId": "",
+    "taxIdValid": false,
+    "taxExempt": false,
+    "acceptMarketing": false,
+    "lang": "fr"
+  }
+}

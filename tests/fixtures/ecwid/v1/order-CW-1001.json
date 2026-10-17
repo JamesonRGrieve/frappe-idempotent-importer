@@ -1,0 +1,253 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/orders/CW-1001"
+  },
+  "response": {
+    "id": "CW-1001",
+    "internalId": 96001,
+    "refundedAmount": 0,
+    "giftCardRedemption": 0,
+    "paymentMethod": "Credit card",
+    "customerTaxExempt": false,
+    "customerTaxId": "",
+    "customerTaxIdValid": false,
+    "reversedTaxApplied": false,
+    "b2b_b2c": "b2c",
+    "paymentStatus": "PAID",
+    "fulfillmentStatus": "SHIPPED",
+    "orderComments": "Leave it with the neighbour.",
+    "volumeDiscount": 0,
+    "membershipBasedDiscount": 0,
+    "totalAndMembershipBasedDiscount": 0,
+    "customDiscount": [],
+    "discount": 5,
+    "couponDiscount": 5,
+    "customSurcharges": [],
+    "createDate": "2026-09-02 16:00:00 +0000",
+    "updateDate": "2026-09-04 11:00:00 +0000",
+    "createTimestamp": 1788364800,
+    "updateTimestamp": 1788519600,
+    "items": [
+      {
+        "id": 960101,
+        "productId": 9201,
+        "categoryId": 9101,
+        "price": 28,
+        "priceWithoutTax": 28,
+        "productPrice": 28,
+        "sku": "ECW-CANDLE-1",
+        "quantity": 2,
+        "shortDescription": "",
+        "tax": 2.6,
+        "shipping": 0,
+        "quantityInStock": 12,
+        "name": "Cedar candle",
+        "nameTranslated": {
+          "en": "Cedar candle"
+        },
+        "isShippingRequired": true,
+        "trackQuantity": true,
+        "imageUrl": "http://ecwid-fake:8080/images/ecw-candle-1.png",
+        "fixedShippingRateOnly": false,
+        "fixedShippingRate": 0,
+        "digital": false,
+        "couponApplied": true,
+        "couponAmount": 4,
+        "selectedOptions": [],
+        "taxes": [
+          {
+            "name": "GST",
+            "value": 5,
+            "total": 2.6,
+            "taxOnDiscountedSubtotal": 2.6,
+            "taxOnShipping": 0,
+            "sourceTaxRateId": 9301,
+            "sourceTaxRateType": "MANUAL",
+            "taxClassCode": "default",
+            "taxClassName": "Standard rate"
+          }
+        ],
+        "discounts": [],
+        "attributes": []
+      },
+      {
+        "id": 960102,
+        "productId": 9202,
+        "categoryId": 9102,
+        "price": 14,
+        "priceWithoutTax": 14,
+        "productPrice": 14,
+        "sku": "ECW-MELT-FIR",
+        "quantity": 1,
+        "shortDescription": "",
+        "tax": 0.65,
+        "shipping": 0,
+        "quantityInStock": 12,
+        "name": "Wax melt sampler",
+        "nameTranslated": {
+          "en": "Wax melt sampler"
+        },
+        "isShippingRequired": true,
+        "trackQuantity": true,
+        "imageUrl": "http://ecwid-fake:8080/images/ecw-melt-fir.png",
+        "fixedShippingRateOnly": false,
+        "fixedShippingRate": 0,
+        "digital": false,
+        "couponApplied": true,
+        "couponAmount": 1,
+        "selectedOptions": [
+          {
+            "name": "Scent",
+            "type": "CHOICE",
+            "value": "Fir",
+            "valuesArray": [
+              "Fir"
+            ],
+            "selections": [
+              {
+                "selectionTitle": "Fir",
+                "selectionModifier": 0,
+                "selectionModifierType": "ABSOLUTE"
+              }
+            ]
+          }
+        ],
+        "taxes": [
+          {
+            "name": "GST",
+            "value": 5,
+            "total": 0.65,
+            "taxOnDiscountedSubtotal": 0.65,
+            "taxOnShipping": 0,
+            "sourceTaxRateId": 9301,
+            "sourceTaxRateType": "MANUAL",
+            "taxClassCode": "default",
+            "taxClassName": "Standard rate"
+          }
+        ],
+        "discounts": [],
+        "attributes": [],
+        "combinationId": 920201
+      }
+    ],
+    "refunds": [],
+    "shipments": [
+      {
+        "id": "lbl-7731",
+        "created": "2026-09-04 11:00:00 +0000",
+        "shipTo": {
+          "name": "Rowan Pike",
+          "companyName": "",
+          "street": "14 Spray Avenue\nApt 2",
+          "city": "Banff",
+          "countryCode": "CA",
+          "countryName": "Canada",
+          "postalCode": "T1L 1A1",
+          "stateOrProvinceCode": "AB",
+          "stateOrProvinceName": "Alberta",
+          "phone": "+1 403-555-0190"
+        },
+        "shippingService": {
+          "carrier": "CANADA_POST",
+          "carrierName": "Canada Post",
+          "carrierServiceName": "Expedited Parcel",
+          "carrierServiceCode": "DOM.EP"
+        },
+        "tracking": {
+          "tracking_number": "CP123456789CA",
+          "tracking_url": "https://www.canadapost-postescanada.ca/track?pin=CP123456789CA",
+          "estimatedDays": 2
+        }
+      }
+    ],
+    "taxesOnShipping": [
+      {
+        "name": "GST",
+        "value": 5,
+        "total": 0.6
+      }
+    ],
+    "hidden": false,
+    "acceptMarketing": true,
+    "disableAllCustomerNotifications": false,
+    "externalFulfillment": false,
+    "invoices": [
+      {
+        "internalId": 8801,
+        "id": "1",
+        "created": "2026-09-02 16:00:00 +0000",
+        "link": "https://cedarwick.example/invoice/8801.pdf",
+        "type": "SALE"
+      }
+    ],
+    "pricesIncludeTax": false,
+    "lang": "en",
+    "refererUrl": "https://cedarwick.example/products/",
+    "subtotal": 70,
+    "subtotalWithoutTax": 70,
+    "total": 80.85,
+    "totalWithoutTax": 77,
+    "tax": 3.85,
+    "totalBeforeGiftCardRedemption": 80.85,
+    "email": "Rowan.Pike@example.com",
+    "paymentModule": "Stripe",
+    "externalTransactionId": "ch_ecw_3Pz81",
+    "discountCoupon": {
+      "id": 9501,
+      "name": "Welcome $5",
+      "code": "ECW-WELCOME5",
+      "discountType": "ABS",
+      "status": "ACTIVE",
+      "discount": 5,
+      "launchDate": "2026-09-01 00:00:00 +0000",
+      "usesLimit": "UNLIMITED",
+      "applicationLimit": "UNLIMITED",
+      "creationDate": "2026-08-30 10:00:00 +0000",
+      "updateDate": "2026-08-30 10:00:00 +0000",
+      "totalLimit": 30,
+      "expirationDate": "2026-12-31 23:59:59 +0000",
+      "orderCount": 1
+    },
+    "customerId": 9401,
+    "customerGroup": "General",
+    "customerGroupId": 0,
+    "billingPerson": {
+      "name": "Rowan Pike",
+      "firstName": "Rowan",
+      "lastName": "Pike",
+      "companyName": "",
+      "street": "14 Spray Avenue\nApt 2",
+      "city": "Banff",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T1L 1A1",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0190"
+    },
+    "shippingPerson": {
+      "name": "Rowan Pike",
+      "companyName": "",
+      "street": "14 Spray Avenue\nApt 2",
+      "city": "Banff",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T1L 1A1",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0190"
+    },
+    "shippingOption": {
+      "shippingCarrierName": "Canada Post",
+      "shippingMethodName": "Canada Post Expedited",
+      "shippingMethodId": "8817-1693924000",
+      "isPickup": false,
+      "fulfillmentType": "shipping",
+      "estimatedTransitTime": "2-4 days",
+      "shippingRate": 12,
+      "shippingRateWithoutTax": 12
+    },
+    "trackingNumber": "CP123456789CA",
+    "privateAdminNotes": "Gift for her sister."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "request": {
+    "path": "/en/blogs/articles.json"
+  },
+  "response": {
+    "blogArticles": [
+      {
+        "id": 1301,
+        "createdAt": "2026-09-03T09:00:00+00:00",
+        "updatedAt": "2026-09-03T09:00:00+00:00",
+        "publishedAt": "2026-09-03T09:00:00+00:00",
+        "isPublished": true,
+        "url": "caring-for-linen",
+        "title": "Caring for linen",
+        "author": "Marguerite Leblanc",
+        "summary": "<p>Caring for linen.</p>",
+        "content": "<p>Caring for linen, step by step.</p>",
+        "image": {
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "extension": "png",
+          "size": 2048,
+          "title": "ls-linen-care",
+          "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-linen-care.png",
+          "src": "http://lightspeed-fake:8080/files/ls-linen-care.png"
+        },
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "blog": {
+          "resource": {
+            "id": 1201,
+            "url": "blogs/1201",
+            "link": "https://api.shoplightspeed.com/en/blogs/1201.json"
+          }
+        },
+        "comments": {
+          "resource": {
+            "id": false,
+            "url": "blogs/comments?article=1301",
+            "link": "https://api.shoplightspeed.com/en/blogs/comments.json?article=1301"
+          }
+        },
+        "tags": {
+          "resource": {
+            "id": false,
+            "url": "blogs/articles/tags?article=1301",
+            "link": "https://api.shoplightspeed.com/en/blogs/articles/tags.json?article=1301"
+          }
+        }
+      }
+    ]
+  }
+}

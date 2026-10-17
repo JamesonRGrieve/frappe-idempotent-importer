@@ -1,0 +1,109 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/ecom/v1/payments/list-by-ids",
+    "body": {
+      "orderIds": [
+        "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001"
+      ]
+    }
+  },
+  "response": {
+    "orderTransactions": [
+      {
+        "orderId": "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
+        "payments": [
+          {
+            "id": "f0000000-0000-4000-8000-000000000001",
+            "createdDate": "2026-09-02T17:31:00.000Z",
+            "updatedDate": "2026-09-02T17:31:00.000Z",
+            "amount": {
+              "amount": "69.93",
+              "formattedAmount": "$69.93"
+            },
+            "status": "PARTIALLY_REFUNDED",
+            "refundDisabled": false,
+            "regularPaymentDetails": {
+              "creditCardDetails": {
+                "lastFourDigits": "4242",
+                "brand": "Visa"
+              },
+              "providerTransactionId": "pi_wix_0001",
+              "offlinePayment": false,
+              "paymentMethodName": {
+                "buyerLanguageName": "Credit/Debit Cards",
+                "siteLanguageName": "Credit/Debit Cards"
+              }
+            }
+          }
+        ],
+        "refunds": [
+          {
+            "id": "b0000000-0000-4000-8000-000000000001",
+            "createdDate": "2026-09-06T10:00:00.000Z",
+            "transactions": [
+              {
+                "paymentId": "f0000000-0000-4000-8000-000000000001",
+                "amount": {
+                  "amount": "17.01",
+                  "formattedAmount": "$17.01"
+                },
+                "refundStatus": "SUCCEEDED",
+                "providerRefundId": "re_wix_0001"
+              }
+            ],
+            "details": {
+              "reason": "One towel arrived torn",
+              "shippingIncluded": false,
+              "lineItems": [
+                {
+                  "lineItemId": "6a5b4c30-0001-4d2e-8f1a-9b0c1d2e0001",
+                  "quantity": 1
+                }
+              ]
+            },
+            "summary": {
+              "requestedRefund": {
+                "amount": "17.01",
+                "formattedAmount": "$17.01"
+              },
+              "refunded": {
+                "amount": "17.01",
+                "formattedAmount": "$17.01"
+              },
+              "pending": false,
+              "breakdown": {
+                "lineItems": [
+                  {
+                    "lineItemId": "6a5b4c30-0001-4d2e-8f1a-9b0c1d2e0001",
+                    "totalRefundedAmount": {
+                      "amount": "17.01",
+                      "formattedAmount": "$17.01"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "b0000000-0000-4000-8000-000000000002",
+            "createdDate": "2026-09-06T11:00:00.000Z",
+            "transactions": [
+              {
+                "paymentId": "f0000000-0000-4000-8000-000000000001",
+                "amount": {
+                  "amount": "5.00",
+                  "formattedAmount": "$5.00"
+                },
+                "refundStatus": "FAILED"
+              }
+            ],
+            "details": {
+              "reason": "Duplicate request"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

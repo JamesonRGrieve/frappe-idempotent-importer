@@ -1,0 +1,91 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/categories/v1/categories/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "categories": [
+      {
+        "id": "3b9f2a40-0001-4d6c-8e1f-2a3b4c5d0001",
+        "revision": "3",
+        "createdDate": "2026-08-01T15:00:00.000Z",
+        "updatedDate": "2026-08-20T15:00:00.000Z",
+        "name": "Mugs",
+        "slug": "mugs",
+        "description": "Everyday mugs.\nDishwasher safe.",
+        "visible": true,
+        "itemCounter": 2,
+        "image": {
+          "id": "cat-mugs.png",
+          "url": "http://wix-fake:8080/media/cat-mugs.png",
+          "width": 800,
+          "height": 800,
+          "altText": "A row of mugs"
+        },
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Mugs | Prairie Pottery",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "Handmade stoneware mugs."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "treeReference": {
+          "appNamespace": "@wix/stores",
+          "treeKey": null
+        },
+        "breadcrumbsInfo": {
+          "breadcrumbs": []
+        }
+      },
+      {
+        "id": "3b9f2a40-0002-4d6c-8e1f-2a3b4c5d0002",
+        "revision": "1",
+        "createdDate": "2026-08-02T15:00:00.000Z",
+        "updatedDate": "2026-08-02T15:00:00.000Z",
+        "name": "Kitchen linens",
+        "slug": "kitchen-linens",
+        "visible": true,
+        "itemCounter": 1,
+        "parentCategory": {
+          "id": "3b9f2a40-0001-4d6c-8e1f-2a3b4c5d0001",
+          "index": 0
+        },
+        "treeReference": {
+          "appNamespace": "@wix/stores",
+          "treeKey": null
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 2,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

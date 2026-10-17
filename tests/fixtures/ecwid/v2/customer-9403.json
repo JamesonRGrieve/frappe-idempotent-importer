@@ -1,0 +1,57 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/customers/9403"
+  },
+  "response": {
+    "id": 9403,
+    "email": "ines.moreau@example.com",
+    "registered": "2026-09-09 14:00:00 +0000",
+    "updated": "2026-09-09 14:00:00 +0000",
+    "billingPerson": {
+      "name": "Ines Moreau",
+      "firstName": "Ines",
+      "lastName": "Moreau",
+      "companyName": "",
+      "street": "220 Stephen Avenue SW",
+      "city": "Calgary",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T2P 0B4",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0147"
+    },
+    "shippingAddresses": [
+      {
+        "id": 3,
+        "name": "Ines Moreau",
+        "companyName": "",
+        "street": "220 Stephen Avenue SW",
+        "city": "Calgary",
+        "countryCode": "CA",
+        "countryName": "Canada",
+        "postalCode": "T2P 0B4",
+        "stateOrProvinceCode": "AB",
+        "stateOrProvinceName": "Alberta",
+        "phone": "+1 403-555-0147",
+        "addressFormatted": "220 Stephen Avenue SW, Calgary AB T2P 0B4, Canada"
+      }
+    ],
+    "contacts": [
+      {
+        "contact": "ines.moreau@example.com",
+        "type": "EMAIL",
+        "default": true,
+        "orderBy": 0,
+        "timestamp": "2026-09-09 14:00:00 +0000"
+      }
+    ],
+    "customerGroupName": "General",
+    "customerGroupId": 0,
+    "taxId": "",
+    "taxIdValid": false,
+    "taxExempt": false,
+    "acceptMarketing": false,
+    "lang": "en"
+  }
+}

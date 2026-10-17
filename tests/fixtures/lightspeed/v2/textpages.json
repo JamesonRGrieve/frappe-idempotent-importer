@@ -1,0 +1,31 @@
+{
+  "request": {
+    "path": "/en/textpages.json"
+  },
+  "response": {
+    "textpages": [
+      {
+        "id": 1101,
+        "createdAt": "2026-08-03T09:00:00+00:00",
+        "updatedAt": "2026-08-03T09:00:00+00:00",
+        "isLocked": false,
+        "isVisible": true,
+        "sortOrder": 1,
+        "url": "our-workshop",
+        "title": "Our workshop",
+        "content": "<p>Made by hand in Halifax since 2019.</p>"
+      },
+      {
+        "id": 1102,
+        "createdAt": "2026-08-03T09:30:00+00:00",
+        "updatedAt": "2026-08-03T09:30:00+00:00",
+        "isLocked": false,
+        "isVisible": false,
+        "sortOrder": 2,
+        "url": "wholesale",
+        "title": "Wholesale",
+        "content": "<p>Coming soon.</p>"
+      }
+    ]
+  }
+}

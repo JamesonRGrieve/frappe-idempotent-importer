@@ -1,0 +1,91 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products/112/variants"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 1121,
+        "product_id": 112,
+        "sku": "BC-TOQUE-RED",
+        "sku_id": null,
+        "price": null,
+        "sale_price": null,
+        "cost_price": null,
+        "retail_price": null,
+        "weight": null,
+        "width": null,
+        "height": null,
+        "depth": null,
+        "is_free_shipping": false,
+        "fixed_cost_shipping_price": null,
+        "purchasing_disabled": false,
+        "purchasing_disabled_message": "",
+        "upc": null,
+        "image_url": "",
+        "inventory_level": 5,
+        "inventory_warning_level": 0,
+        "bin_picking_number": null,
+        "mpn": null,
+        "gtin": null,
+        "option_values": [
+          {
+            "id": 71,
+            "option_id": 7,
+            "option_display_name": "Colour",
+            "label": "Red"
+          }
+        ],
+        "calculated_price": 30.0,
+        "calculated_weight": 0.15
+      },
+      {
+        "id": 1122,
+        "product_id": 112,
+        "sku": "BC-TOQUE-NAVY",
+        "sku_id": null,
+        "price": 32.5,
+        "sale_price": null,
+        "cost_price": null,
+        "retail_price": null,
+        "weight": null,
+        "width": null,
+        "height": null,
+        "depth": null,
+        "is_free_shipping": false,
+        "fixed_cost_shipping_price": null,
+        "purchasing_disabled": false,
+        "purchasing_disabled_message": "",
+        "upc": null,
+        "image_url": "http://bigcommerce-fake:8080/img/toque-navy.png",
+        "inventory_level": 0,
+        "inventory_warning_level": 0,
+        "bin_picking_number": null,
+        "mpn": null,
+        "gtin": "0778899100025",
+        "option_values": [
+          {
+            "id": 72,
+            "option_id": 7,
+            "option_display_name": "Colour",
+            "label": "Navy"
+          }
+        ],
+        "calculated_price": 32.5,
+        "calculated_weight": 0.15
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

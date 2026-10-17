@@ -1,0 +1,45 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products/112/reviews"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 302,
+        "title": "Itchy",
+        "text": "Warm but a little itchy.",
+        "status": "pending",
+        "rating": 3,
+        "email": "tomas@example.com",
+        "name": "Tomas",
+        "date_reviewed": "2026-09-04T08:00:00+00:00",
+        "date_created": "2026-09-04T08:00:00+00:00",
+        "date_modified": "2026-09-04T08:00:00+00:00"
+      },
+      {
+        "id": 303,
+        "title": "Love the navy",
+        "text": "Exactly the colour in the photo.",
+        "status": "approved",
+        "rating": 5,
+        "email": "maya@example.com",
+        "name": "Maya",
+        "date_reviewed": "2026-09-09T14:00:00+00:00",
+        "date_created": "2026-09-09T14:00:00+00:00",
+        "date_modified": "2026-09-09T14:00:00+00:00"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

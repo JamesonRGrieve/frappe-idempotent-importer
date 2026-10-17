@@ -1,0 +1,42 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/orders/payment_actions/refunds",
+    "query": {
+      "order_id:in": "501,502,503"
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 9001,
+        "order_id": 501,
+        "user_id": 0,
+        "created": "2026-09-10T15:00:00+00:00",
+        "reason": "Mug arrived dented",
+        "total_amount": "10.00",
+        "total_tax": 0,
+        "uses_merchant_override_values": true,
+        "items": [
+          {
+            "item_type": "ORDER",
+            "item_id": 501,
+            "reason": "Mug arrived dented",
+            "quantity": 1,
+            "requested_amount": "10.00"
+          }
+        ],
+        "payments": [
+          {
+            "id": 1,
+            "provider_id": "stripe",
+            "amount": "10.00",
+            "offline": false,
+            "is_declined": false,
+            "declined_message": ""
+          }
+        ]
+      }
+    ],
+    "meta": {}
+  }
+}

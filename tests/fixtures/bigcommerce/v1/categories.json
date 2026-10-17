@@ -1,0 +1,69 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/trees/categories"
+  },
+  "response": {
+    "data": [
+      {
+        "category_id": 21,
+        "category_uuid": "8e0a7c6e-0000-4000-8000-000000000021",
+        "tree_id": 1,
+        "parent_id": 0,
+        "name": "Camp Kitchen",
+        "description": "<p>Everything for cooking outdoors.</p>",
+        "views": 0,
+        "sort_order": 0,
+        "page_title": "Camp Kitchen | Northern Trail",
+        "meta_keywords": [
+          "camp kitchen"
+        ],
+        "meta_description": "Shop camp kitchen.",
+        "layout_file": "category.html",
+        "image_url": "http://bigcommerce-fake:8080/img/cat-kitchen.png",
+        "is_visible": true,
+        "search_keywords": "",
+        "default_product_sort": "use_store_settings",
+        "url": {
+          "path": "/camp-kitchen/",
+          "is_customized": false
+        }
+      },
+      {
+        "category_id": 22,
+        "category_uuid": "8e0a7c6e-0000-4000-8000-000000000022",
+        "tree_id": 1,
+        "parent_id": 0,
+        "name": "Headwear",
+        "description": "<p>Hats and toques.</p>",
+        "views": 0,
+        "sort_order": 1,
+        "page_title": "Headwear | Northern Trail",
+        "meta_keywords": [
+          "headwear"
+        ],
+        "meta_description": "Shop headwear.",
+        "layout_file": "category.html",
+        "image_url": "",
+        "is_visible": true,
+        "search_keywords": "",
+        "default_product_sort": "use_store_settings",
+        "url": {
+          "path": "/headwear/",
+          "is_customized": false
+        }
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

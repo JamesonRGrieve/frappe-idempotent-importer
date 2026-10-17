@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v3/products/query",
+    "body": {
+      "query": {
+        "filter": {
+          "id": {
+            "$in": [
+              "9f9f9f9f-0000-4000-8000-00000000dead"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "response": {
+    "products": [],
+    "pagingMetadata": {
+      "count": 0,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

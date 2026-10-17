@@ -1,0 +1,23 @@
+{
+  "request": {
+    "path": "/rest/default/V1/store/storeViews"
+  },
+  "response": [
+    {
+      "id": 0,
+      "code": "admin",
+      "name": "Admin",
+      "website_id": 0,
+      "store_group_id": 0,
+      "is_active": 1
+    },
+    {
+      "id": 1,
+      "code": "default",
+      "name": "Default Store View",
+      "website_id": 1,
+      "store_group_id": 1,
+      "is_active": 1
+    }
+  ]
+}

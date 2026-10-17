@@ -1,0 +1,435 @@
+{
+  "request": {
+    "path": "/v3/application/shops/5001/receipts",
+    "query": {
+      "offset": 0
+    }
+  },
+  "response": {
+    "count": 3,
+    "results": [
+      {
+        "receipt_id": 801,
+        "receipt_type": 0,
+        "seller_user_id": 7001,
+        "seller_email": "studio@example.com",
+        "buyer_user_id": 9001,
+        "buyer_email": "Ada@Example.com",
+        "name": "Ada Lovelace",
+        "first_line": "1 Main St",
+        "second_line": null,
+        "city": "Edmonton",
+        "state": "AB",
+        "zip": "T5J 0N3",
+        "status": "partially refunded",
+        "formatted_address": "Ada Lovelace\n1 Main St\nEdmonton, AB T5J 0N3\nCanada",
+        "country_iso": "CA",
+        "payment_method": "cc",
+        "payment_email": null,
+        "message_from_seller": null,
+        "message_from_buyer": "Please wrap it as a gift",
+        "message_from_payment": null,
+        "is_paid": true,
+        "is_shipped": true,
+        "create_timestamp": 1788000000,
+        "created_timestamp": 1788000000,
+        "update_timestamp": 1788001000,
+        "updated_timestamp": 1788001000,
+        "is_gift": false,
+        "gift_message": "",
+        "gift_sender": "",
+        "grandtotal": {
+          "amount": 13440,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "subtotal": {
+          "amount": 11200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_price": {
+          "amount": 11200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_shipping_cost": {
+          "amount": 1200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_tax_cost": {
+          "amount": 1040,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_vat_cost": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "discount_amt": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "gift_wrap_price": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "shipments": [
+          {
+            "receipt_shipping_id": 3001,
+            "shipment_notification_timestamp": 1788086400,
+            "carrier_name": "Canada Post",
+            "tracking_code": "CP123456789CA"
+          }
+        ],
+        "transactions": [
+          {
+            "transaction_id": 70011,
+            "title": "Hand-thrown mug &quot;Ocean&quot;",
+            "description": null,
+            "seller_user_id": 7001,
+            "buyer_user_id": 9001,
+            "create_timestamp": 1788000000,
+            "created_timestamp": 1788000000,
+            "paid_timestamp": 1788000060,
+            "shipped_timestamp": null,
+            "quantity": 2,
+            "listing_image_id": null,
+            "receipt_id": 801,
+            "is_digital": false,
+            "file_data": "",
+            "listing_id": 601,
+            "transaction_type": "listing",
+            "product_id": 9101,
+            "sku": "MUG-OCEAN",
+            "price": {
+              "amount": 3200,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "shipping_cost": {
+              "amount": 0,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "variations": [],
+            "product_data": [],
+            "shipping_profile_id": null,
+            "min_processing_days": null,
+            "max_processing_days": null,
+            "shipping_method": "Canada Post Expedited",
+            "shipping_upgrade": null,
+            "expected_ship_date": null,
+            "buyer_coupon": 0,
+            "shop_coupon": 0
+          },
+          {
+            "transaction_id": 70012,
+            "title": "Linen apron",
+            "description": null,
+            "seller_user_id": 7001,
+            "buyer_user_id": 9001,
+            "create_timestamp": 1788000000,
+            "created_timestamp": 1788000000,
+            "paid_timestamp": 1788000060,
+            "shipped_timestamp": null,
+            "quantity": 1,
+            "listing_image_id": null,
+            "receipt_id": 801,
+            "is_digital": false,
+            "file_data": "",
+            "listing_id": 602,
+            "transaction_type": "listing",
+            "product_id": 9202,
+            "sku": "APRON-CHA",
+            "price": {
+              "amount": 4800,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "shipping_cost": {
+              "amount": 0,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "variations": [
+              {
+                "property_id": 200,
+                "value_id": 1002,
+                "formatted_name": "Color",
+                "formatted_value": "Charcoal",
+                "question_id": null,
+                "mime_type": null
+              }
+            ],
+            "product_data": [],
+            "shipping_profile_id": null,
+            "min_processing_days": null,
+            "max_processing_days": null,
+            "shipping_method": "Canada Post Expedited",
+            "shipping_upgrade": null,
+            "expected_ship_date": null,
+            "buyer_coupon": 0,
+            "shop_coupon": 0
+          }
+        ],
+        "refunds": [
+          {
+            "amount": {
+              "amount": 1000,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "created_timestamp": 1788432000,
+            "reason": "Chipped handle",
+            "note_from_issuer": null,
+            "status": "Completed"
+          }
+        ]
+      },
+      {
+        "receipt_id": 802,
+        "receipt_type": 0,
+        "seller_user_id": 7001,
+        "seller_email": "studio@example.com",
+        "buyer_user_id": 9002,
+        "buyer_email": "grace@example.com",
+        "name": "Grace Hopper",
+        "first_line": "1 Main St",
+        "second_line": null,
+        "city": "Edmonton",
+        "state": "AB",
+        "zip": "T5J 0N3",
+        "status": "open",
+        "formatted_address": "Grace Hopper\n1 Main St\nEdmonton, AB T5J 0N3\nCanada",
+        "country_iso": "CA",
+        "payment_method": "cc",
+        "payment_email": null,
+        "message_from_seller": null,
+        "message_from_buyer": null,
+        "message_from_payment": null,
+        "is_paid": false,
+        "is_shipped": false,
+        "create_timestamp": 1788003600,
+        "created_timestamp": 1788003600,
+        "update_timestamp": 1788003600,
+        "updated_timestamp": 1788003600,
+        "is_gift": false,
+        "gift_message": "",
+        "gift_sender": "",
+        "grandtotal": {
+          "amount": 6000,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "subtotal": {
+          "amount": 4800,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_price": {
+          "amount": 4800,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_shipping_cost": {
+          "amount": 1200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_tax_cost": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_vat_cost": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "discount_amt": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "gift_wrap_price": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "shipments": [],
+        "transactions": [
+          {
+            "transaction_id": 70021,
+            "title": "Linen apron",
+            "description": null,
+            "seller_user_id": 7001,
+            "buyer_user_id": 9001,
+            "create_timestamp": 1788000000,
+            "created_timestamp": 1788000000,
+            "paid_timestamp": null,
+            "shipped_timestamp": null,
+            "quantity": 1,
+            "listing_image_id": null,
+            "receipt_id": 802,
+            "is_digital": false,
+            "file_data": "",
+            "listing_id": 602,
+            "transaction_type": "listing",
+            "product_id": 9201,
+            "sku": "APRON-NAT",
+            "price": {
+              "amount": 4800,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "shipping_cost": {
+              "amount": 0,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "variations": [
+              {
+                "property_id": 200,
+                "value_id": 1001,
+                "formatted_name": "Color",
+                "formatted_value": "Natural",
+                "question_id": null,
+                "mime_type": null
+              }
+            ],
+            "product_data": [],
+            "shipping_profile_id": null,
+            "min_processing_days": null,
+            "max_processing_days": null,
+            "shipping_method": "Canada Post Expedited",
+            "shipping_upgrade": null,
+            "expected_ship_date": null,
+            "buyer_coupon": 0,
+            "shop_coupon": 0
+          }
+        ],
+        "refunds": []
+      },
+      {
+        "receipt_id": 803,
+        "receipt_type": 0,
+        "seller_user_id": 7001,
+        "seller_email": "studio@example.com",
+        "buyer_user_id": 9001,
+        "buyer_email": "ada@example.com",
+        "name": "Ada Lovelace",
+        "first_line": "1 Main St",
+        "second_line": null,
+        "city": "Edmonton",
+        "state": "AB",
+        "zip": "T5J 0N3",
+        "status": "paid",
+        "formatted_address": "Ada Lovelace\n1 Main St\nEdmonton, AB T5J 0N3\nCanada",
+        "country_iso": "CA",
+        "payment_method": "cc",
+        "payment_email": null,
+        "message_from_seller": null,
+        "message_from_buyer": null,
+        "message_from_payment": null,
+        "is_paid": true,
+        "is_shipped": false,
+        "create_timestamp": 1788604800,
+        "created_timestamp": 1788604800,
+        "update_timestamp": 1788604800,
+        "updated_timestamp": 1788604800,
+        "is_gift": false,
+        "gift_message": "",
+        "gift_sender": "",
+        "grandtotal": {
+          "amount": 4600,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "subtotal": {
+          "amount": 3400,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_price": {
+          "amount": 3400,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_shipping_cost": {
+          "amount": 1200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_tax_cost": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "total_vat_cost": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "discount_amt": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "gift_wrap_price": {
+          "amount": 0,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "shipments": [],
+        "transactions": [
+          {
+            "transaction_id": 70031,
+            "title": "Hand-thrown mug &quot;Ocean&quot;",
+            "description": null,
+            "seller_user_id": 7001,
+            "buyer_user_id": 9001,
+            "create_timestamp": 1788000000,
+            "created_timestamp": 1788000000,
+            "paid_timestamp": 1788000060,
+            "shipped_timestamp": null,
+            "quantity": 1,
+            "listing_image_id": null,
+            "receipt_id": 803,
+            "is_digital": false,
+            "file_data": "",
+            "listing_id": 601,
+            "transaction_type": "listing",
+            "product_id": 9101,
+            "sku": "MUG-OCEAN",
+            "price": {
+              "amount": 3400,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "shipping_cost": {
+              "amount": 0,
+              "divisor": 100,
+              "currency_code": "CAD"
+            },
+            "variations": [],
+            "product_data": [],
+            "shipping_profile_id": null,
+            "min_processing_days": null,
+            "max_processing_days": null,
+            "shipping_method": "Canada Post Expedited",
+            "shipping_upgrade": null,
+            "expected_ship_date": null,
+            "buyer_coupon": 0,
+            "shop_coupon": 0
+          }
+        ],
+        "refunds": []
+      }
+    ]
+  }
+}

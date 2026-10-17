@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/inventory/counts/batch-retrieve",
+    "body": {
+      "catalog_object_ids": [
+        "VAR_APRON_CHAR",
+        "VAR_APRON_NAT",
+        "VAR_GIFT",
+        "VAR_MUG"
+      ],
+      "location_ids": [
+        "LOCMAIN1"
+      ],
+      "states": [
+        "IN_STOCK"
+      ]
+    }
+  },
+  "response": {
+    "counts": [
+      {
+        "catalog_object_id": "VAR_APRON_CHAR",
+        "catalog_object_type": "ITEM_VARIATION",
+        "state": "IN_STOCK",
+        "location_id": "LOCMAIN1",
+        "quantity": "2",
+        "calculated_at": "2026-09-01T10:00:00.000Z"
+      },
+      {
+        "catalog_object_id": "VAR_APRON_NAT",
+        "catalog_object_type": "ITEM_VARIATION",
+        "state": "IN_STOCK",
+        "location_id": "LOCMAIN1",
+        "quantity": "3",
+        "calculated_at": "2026-09-01T10:00:00.000Z"
+      },
+      {
+        "catalog_object_id": "VAR_MUG",
+        "catalog_object_type": "ITEM_VARIATION",
+        "state": "IN_STOCK",
+        "location_id": "LOCMAIN1",
+        "quantity": "4",
+        "calculated_at": "2026-09-01T10:00:00.000Z"
+      }
+    ]
+  }
+}

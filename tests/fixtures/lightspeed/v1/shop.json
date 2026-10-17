@@ -1,0 +1,82 @@
+{
+  "request": {
+    "path": "/en/shop.json"
+  },
+  "response": {
+    "shop": {
+      "id": 7301,
+      "createdAt": "2026-08-01T12:00:00+00:00",
+      "status": "live",
+      "isB2b": false,
+      "isRetail": false,
+      "subDomain": "harbourlane",
+      "mainDomain": "harbourlane.example",
+      "email": "hello@harbourlane.example",
+      "phone": "+1 902-555-0100",
+      "fax": "",
+      "street": "Water Street",
+      "street2": "Unit 4",
+      "zipcode": "B3J 1S9",
+      "city": "Halifax",
+      "region": "Nova Scotia",
+      "country": {
+        "id": 38,
+        "code": "ca",
+        "code3": "can",
+        "title": "Canada"
+      },
+      "vatNumber": "123456789RT0001",
+      "cocNumber": "",
+      "industry": "Home goods",
+      "currency": {
+        "shortcode": "CAD",
+        "symbol": "$",
+        "title": "Canadian Dollar",
+        "isDefault": true,
+        "currencyRate": "1.000000"
+      },
+      "company": {
+        "resource": {
+          "id": false,
+          "url": "shop/company",
+          "link": "https://api.shoplightspeed.com/en/shop/company.json"
+        }
+      },
+      "limits": {
+        "resource": {
+          "id": false,
+          "url": "shop/limits",
+          "link": "https://api.shoplightspeed.com/en/shop/limits.json"
+        }
+      },
+      "javascript": {
+        "resource": {
+          "id": false,
+          "url": "shop/javascript",
+          "link": "https://api.shoplightspeed.com/en/shop/javascript.json"
+        }
+      },
+      "website": {
+        "resource": {
+          "id": false,
+          "url": "shop/website",
+          "link": "https://api.shoplightspeed.com/en/shop/website.json"
+        }
+      },
+      "scripts": {
+        "resource": {
+          "id": false,
+          "url": "shop/scripts",
+          "link": "https://api.shoplightspeed.com/en/shop/scripts.json"
+        }
+      },
+      "metafields": {
+        "resource": {
+          "id": false,
+          "url": "shop/metafields",
+          "link": "https://api.shoplightspeed.com/en/shop/metafields.json"
+        }
+      }
+    }
+  }
+}

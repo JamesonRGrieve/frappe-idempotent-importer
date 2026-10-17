@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v3/products/query-variants",
+    "body": {
+      "query": {
+        "filter": {
+          "productData.productId": {
+            "$in": [
+              "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "response": {
+    "variants": [
+      {
+        "variantId": "00000000-0000-0000-0000-000000000000",
+        "visible": true,
+        "sku": "WIX-MUG-1",
+        "optionChoices": [],
+        "price": {
+          "actualPrice": {
+            "amount": "30.00",
+            "formattedAmount": "$30.00"
+          }
+        },
+        "physicalProperties": {
+          "weight": 0.45
+        },
+        "inventoryStatus": {
+          "inStock": true,
+          "preorderEnabled": false
+        },
+        "productData": {
+          "productId": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+          "name": "Speckled clay mug",
+          "productType": "PHYSICAL",
+          "slug": "speckled-clay-mug",
+          "visible": true,
+          "currency": "CAD"
+        },
+        "revenueDetails": {
+          "cost": {
+            "amount": "9.50",
+            "formattedAmount": "$9.50"
+          }
+        },
+        "barcode": "0845511200019"
+      }
+    ],
+    "pagingMetadata": {
+      "count": 1,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

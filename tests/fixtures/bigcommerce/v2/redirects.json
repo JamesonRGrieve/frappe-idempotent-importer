@@ -1,0 +1,55 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/storefront/redirects",
+    "query": {
+      "include": "to_url",
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 1,
+        "site_id": 1000,
+        "from_path": "/old-trail-mug/",
+        "to": {
+          "type": "product",
+          "entity_id": 111
+        },
+        "to_url": "http://bigcommerce-fake:8080/enamel-trail-mug/"
+      },
+      {
+        "id": 2,
+        "site_id": 1000,
+        "from_path": "/winter-sale/",
+        "to": {
+          "type": "url",
+          "url": "https://northerntrail.example/sale"
+        },
+        "to_url": "https://northerntrail.example/sale"
+      },
+      {
+        "id": 3,
+        "site_id": 1000,
+        "from_path": "/kitchen/",
+        "to": {
+          "type": "category",
+          "entity_id": 21
+        },
+        "to_url": "http://bigcommerce-fake:8080/camp-kitchen/"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 3,
+        "count": 3,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

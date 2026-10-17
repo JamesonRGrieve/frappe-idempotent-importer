@@ -1,0 +1,11 @@
+{
+  "request": {
+    "path": "/en/categories/products.json",
+    "query": {
+      "product": "503"
+    }
+  },
+  "response": {
+    "categoriesProducts": []
+  }
+}

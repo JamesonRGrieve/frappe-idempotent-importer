@@ -1,0 +1,53 @@
+{
+  "request": {
+    "path": "/1.0/profiles/6c3000000000000000000021"
+  },
+  "response": {
+    "profiles": [
+      {
+        "id": "6c3000000000000000000021",
+        "firstName": "Marin",
+        "lastName": "Boudreau",
+        "email": "Marin@Example.com",
+        "hasAccount": true,
+        "isCustomer": true,
+        "createdOn": "2026-09-01T08:00:00.000Z",
+        "acceptsMarketing": true,
+        "address": {
+          "firstName": "Marin",
+          "lastName": "Boudreau",
+          "address1": "14 Harbour Street",
+          "city": "Lunenburg",
+          "state": "NS",
+          "postalCode": "B0J 2C0",
+          "countryCode": "CA",
+          "phone": "+1 902-555-0131"
+        },
+        "transactionsSummary": {
+          "orderCount": 1,
+          "totalOrderAmount": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 165.9
+          },
+          "totalRefundAmount": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 0
+          },
+          "donationCount": 0,
+          "totalDonationAmount": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 0
+          },
+          "firstOrderSubmittedOn": "2026-09-03T14:00:00.000Z",
+          "lastOrderSubmittedOn": "2026-09-03T14:00:00.000Z"
+        }
+      }
+    ]
+  }
+}

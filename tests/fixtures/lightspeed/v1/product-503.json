@@ -1,0 +1,110 @@
+{
+  "request": {
+    "path": "/en/products/503.json"
+  },
+  "response": {
+    "product": {
+      "id": 503,
+      "createdAt": "2026-09-01T09:00:00+00:00",
+      "updatedAt": "2026-09-01T09:00:00+00:00",
+      "isVisible": false,
+      "visibility": "hidden",
+      "hasMatrix": false,
+      "data01": "",
+      "data02": "",
+      "data03": "",
+      "url": "prototype-jug",
+      "title": "Prototype jug",
+      "fulltitle": "Prototype jug by Harbour Lane",
+      "description": "Prototype jug short description",
+      "content": "",
+      "set": false,
+      "brand": false,
+      "categories": {
+        "resource": {
+          "id": false,
+          "url": "categories/products?product=503",
+          "link": "https://api.shoplightspeed.com/en/categories/products.json?product=503"
+        }
+      },
+      "deliverydate": {
+        "resource": {
+          "id": 6488,
+          "url": "deliverydates/6488",
+          "link": "https://api.shoplightspeed.com/en/deliverydates/6488.json"
+        }
+      },
+      "image": false,
+      "images": {
+        "resource": {
+          "id": false,
+          "url": "products/503/images",
+          "link": "https://api.shoplightspeed.com/en/products/503/images.json"
+        }
+      },
+      "relations": {
+        "resource": {
+          "id": false,
+          "url": "products/503/relations",
+          "link": "https://api.shoplightspeed.com/en/products/503/relations.json"
+        }
+      },
+      "metafields": {
+        "resource": {
+          "id": false,
+          "url": "products/503/metafields",
+          "link": "https://api.shoplightspeed.com/en/products/503/metafields.json"
+        }
+      },
+      "reviews": {
+        "resource": {
+          "id": false,
+          "url": "reviews?product=503",
+          "link": "https://api.shoplightspeed.com/en/reviews.json?product=503"
+        }
+      },
+      "type": false,
+      "attributes": {
+        "resource": {
+          "id": false,
+          "url": "products/503/attributes",
+          "link": "https://api.shoplightspeed.com/en/products/503/attributes.json"
+        }
+      },
+      "supplier": {
+        "resource": {
+          "id": 78794,
+          "url": "suppliers/78794",
+          "link": "https://api.shoplightspeed.com/en/suppliers/78794.json"
+        }
+      },
+      "tags": {
+        "resource": {
+          "id": false,
+          "url": "tags/products?product=503",
+          "link": "https://api.shoplightspeed.com/en/tags/products.json?product=503"
+        }
+      },
+      "variants": {
+        "resource": {
+          "id": false,
+          "url": "variants?product=503",
+          "link": "https://api.shoplightspeed.com/en/variants.json?product=503"
+        }
+      },
+      "movements": {
+        "resource": {
+          "id": false,
+          "url": "variants/movements?product=503",
+          "link": "https://api.shoplightspeed.com/en/variants/movements.json?product=503"
+        }
+      },
+      "templateDataFields": {
+        "data01": "",
+        "data02": "",
+        "data03": "",
+        "data04": ""
+      }
+    }
+  }
+}

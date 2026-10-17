@@ -1,0 +1,92 @@
+{
+  "request": {
+    "path": "/en/categories.json"
+  },
+  "response": {
+    "categories": [
+      {
+        "id": 401,
+        "createdAt": "2026-08-02T10:00:00+00:00",
+        "updatedAt": "2026-08-02T10:00:00+00:00",
+        "isVisible": true,
+        "depth": 1,
+        "path": [
+          "401"
+        ],
+        "type": "category",
+        "sortOrder": 1,
+        "sorting": "popular",
+        "url": "tableware",
+        "title": "Tableware",
+        "fulltitle": "Tableware",
+        "description": "Tableware short description",
+        "content": "<p>Everything for the table.</p>",
+        "image": {
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "extension": "png",
+          "size": 2048,
+          "title": "ls-cat-tableware",
+          "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-cat-tableware.png",
+          "src": "http://lightspeed-fake:8080/files/ls-cat-tableware.png"
+        },
+        "parent": false,
+        "children": {
+          "resource": {
+            "id": false,
+            "url": "categories?parent=401",
+            "link": "https://api.shoplightspeed.com/en/categories.json?parent=401"
+          }
+        },
+        "products": {
+          "resource": {
+            "id": false,
+            "url": "categories/products?category=401",
+            "link": "https://api.shoplightspeed.com/en/categories/products.json?category=401"
+          }
+        }
+      },
+      {
+        "id": 402,
+        "createdAt": "2026-08-02T10:00:00+00:00",
+        "updatedAt": "2026-08-02T10:00:00+00:00",
+        "isVisible": true,
+        "depth": 2,
+        "path": [
+          "402",
+          "401"
+        ],
+        "type": "category",
+        "sortOrder": 2,
+        "sorting": "popular",
+        "url": "tableware/tea-towels",
+        "title": "Tea towels",
+        "fulltitle": "Tea towels",
+        "description": "Tea towels short description",
+        "content": "",
+        "image": false,
+        "parent": {
+          "resource": {
+            "id": 401,
+            "url": "categories/401",
+            "link": "https://api.shoplightspeed.com/en/categories/401.json"
+          }
+        },
+        "children": {
+          "resource": {
+            "id": false,
+            "url": "categories?parent=402",
+            "link": "https://api.shoplightspeed.com/en/categories.json?parent=402"
+          }
+        },
+        "products": {
+          "resource": {
+            "id": false,
+            "url": "categories/products?category=402",
+            "link": "https://api.shoplightspeed.com/en/categories/products.json?category=402"
+          }
+        }
+      }
+    ]
+  }
+}

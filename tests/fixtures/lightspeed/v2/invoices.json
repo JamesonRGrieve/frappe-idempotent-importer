@@ -1,0 +1,65 @@
+{
+  "request": {
+    "path": "/en/invoices.json"
+  },
+  "response": {
+    "invoices": [
+      {
+        "id": 9102,
+        "createdAt": "2026-09-10T15:00:00+00:00",
+        "updatedAt": "2026-09-10T15:00:00+00:00",
+        "number": "INV00004",
+        "status": "paid",
+        "isVatShifted": false,
+        "priceExcl": -25,
+        "priceIncl": -26.25,
+        "doNotifyNew": false,
+        "doNotifyPaid": false,
+        "invoice": {
+          "resource": {
+            "id": 9101,
+            "url": "invoices/9101",
+            "link": "https://api.shoplightspeed.com/en/invoices/9101.json"
+          }
+        },
+        "isCreditNote": true,
+        "creditNote": false,
+        "order": {
+          "resource": {
+            "id": 701,
+            "url": "orders/701",
+            "link": "https://api.shoplightspeed.com/en/orders/701.json"
+          }
+        },
+        "customer": {
+          "resource": {
+            "id": 801,
+            "url": "customers/801",
+            "link": "https://api.shoplightspeed.com/en/customers/801.json"
+          }
+        },
+        "items": {
+          "resource": {
+            "id": false,
+            "url": "invoices/9102/items",
+            "link": "https://api.shoplightspeed.com/en/invoices/9102/items.json"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "invoices/9102/metafields",
+            "link": "https://api.shoplightspeed.com/en/invoices/9102/metafields.json"
+          }
+        },
+        "events": {
+          "resource": {
+            "id": false,
+            "url": "orders/events?invoice=9102",
+            "link": "https://api.shoplightspeed.com/en/orders/events.json?invoice=9102"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,220 @@
+{
+  "request": {
+    "path": "/en/variants.json",
+    "query": {
+      "product": "502"
+    }
+  },
+  "response": {
+    "variants": [
+      {
+        "id": 5022,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "isDefault": false,
+        "sortOrder": 2,
+        "articleCode": "ls-towel-slate",
+        "ean": "0881122330028",
+        "sku": "LS-TOWEL-SLATE",
+        "hs": null,
+        "unitPrice": 0,
+        "unitUnit": "",
+        "priceExcl": 20,
+        "priceIncl": 21,
+        "priceCost": 0,
+        "oldPriceExcl": 0,
+        "oldPriceIncl": 0,
+        "stockTracking": "indicator",
+        "stockLevel": 0,
+        "stockAlert": 2,
+        "stockMinimum": 0,
+        "stockSold": 3,
+        "stockBuyMininum": 1,
+        "stockBuyMinimum": 1,
+        "stockBuyMaximum": 10000,
+        "weight": 120,
+        "weightValue": "120.000",
+        "weightUnit": "g",
+        "volume": 0,
+        "volumeValue": 0,
+        "volumeUnit": "ml",
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "sizeXValue": "0.000",
+        "sizeYValue": "0.000",
+        "sizeZValue": "0.000",
+        "sizeUnit": "cm",
+        "matrix": true,
+        "title": "Colour Slate",
+        "taxType": "auto",
+        "image": {
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "extension": "png",
+          "size": 2048,
+          "title": "ls-towel-slate",
+          "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-towel-slate.png",
+          "src": "http://lightspeed-fake:8080/files/ls-towel-slate.png"
+        },
+        "tax": {
+          "resource": {
+            "id": 926219,
+            "url": "taxes/926219",
+            "link": "https://api.shoplightspeed.com/en/taxes/926219.json"
+          }
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?variant=5022",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?variant=5022"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "variants/5022/metafields",
+            "link": "https://api.shoplightspeed.com/en/variants/5022/metafields.json"
+          }
+        },
+        "additionalcost": false,
+        "options": [
+          {
+            "id": 76,
+            "sortOrder": 1,
+            "name": "Colour",
+            "createdAt": "2026-09-01T09:00:00+00:00",
+            "updatedAt": "2026-09-01T09:00:00+00:00",
+            "values": [
+              {
+                "id": 9001,
+                "sortOrder": 1,
+                "name": "Sand"
+              },
+              {
+                "id": 9002,
+                "sortOrder": 2,
+                "name": "Slate"
+              }
+            ],
+            "value": {
+              "id": 9002,
+              "sortOrder": 2,
+              "name": "Slate"
+            }
+          }
+        ],
+        "allowWithdrawal": true
+      },
+      {
+        "id": 5021,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "isDefault": true,
+        "sortOrder": 1,
+        "articleCode": "ls-towel-sand",
+        "ean": "",
+        "sku": "LS-TOWEL-SAND",
+        "hs": null,
+        "unitPrice": 0,
+        "unitUnit": "",
+        "priceExcl": 20,
+        "priceIncl": 21,
+        "priceCost": 0,
+        "oldPriceExcl": 25,
+        "oldPriceIncl": 26.25,
+        "stockTracking": "indicator",
+        "stockLevel": 6,
+        "stockAlert": 2,
+        "stockMinimum": 0,
+        "stockSold": 3,
+        "stockBuyMininum": 1,
+        "stockBuyMinimum": 1,
+        "stockBuyMaximum": 10000,
+        "weight": 120,
+        "weightValue": "120.000",
+        "weightUnit": "g",
+        "volume": 0,
+        "volumeValue": 0,
+        "volumeUnit": "ml",
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "sizeXValue": "0.000",
+        "sizeYValue": "0.000",
+        "sizeZValue": "0.000",
+        "sizeUnit": "cm",
+        "matrix": true,
+        "title": "Colour Sand",
+        "taxType": "auto",
+        "image": false,
+        "tax": {
+          "resource": {
+            "id": 926219,
+            "url": "taxes/926219",
+            "link": "https://api.shoplightspeed.com/en/taxes/926219.json"
+          }
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?variant=5021",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?variant=5021"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "variants/5021/metafields",
+            "link": "https://api.shoplightspeed.com/en/variants/5021/metafields.json"
+          }
+        },
+        "additionalcost": false,
+        "options": [
+          {
+            "id": 76,
+            "sortOrder": 1,
+            "name": "Colour",
+            "createdAt": "2026-09-01T09:00:00+00:00",
+            "updatedAt": "2026-09-01T09:00:00+00:00",
+            "values": [
+              {
+                "id": 9001,
+                "sortOrder": 1,
+                "name": "Sand"
+              },
+              {
+                "id": 9002,
+                "sortOrder": 2,
+                "name": "Slate"
+              }
+            ],
+            "value": {
+              "id": 9001,
+              "sortOrder": 1,
+              "name": "Sand"
+            }
+          }
+        ],
+        "allowWithdrawal": true
+      }
+    ]
+  }
+}

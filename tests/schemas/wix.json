@@ -1,0 +1,4546 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Wix REST APIs read by wp-woo-idempotent-importer",
+    "version": "2026-10-16",
+    "description": "Wix publishes no OpenAPI document. This subset is transcribed by hand from the \"REST API > Schema\" block of each method page of Wix's official REST reference (fetched 2026-10-16; each schema and operation cites its page): only the responses the Wix adapter reads, with every property those pages document for them (opaque sub-objects the adapter keeps whole are left open). Required properties are the identifiers and the fields the adapter cannot do without. The blog posts reference lists the path as /v3/posts/query in its schema block and /blog/v3/posts/query in its examples; the examples' path (the one the blog categories method shares) is used."
+  },
+  "servers": [
+    {
+      "url": "https://www.wixapis.com"
+    }
+  ],
+  "paths": {
+    "/stores/v3/provision/version": {
+      "get": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-versioning/get-catalog-version.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCatalogVersionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/site-properties/v4/properties": {
+      "get": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PropertiesReadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/v3/products/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryProductsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/v3/products/query-variants": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryVariantsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/v3/inventory-items/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/inventory-items-v3/query-inventory-items.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryInventoryItemsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/v1/categories/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryCategoriesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores-reader/v1/products/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1QueryProductsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores-reader/v1/collections/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-collections.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/V1QueryCollectionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/v5/contacts/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryContactsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stores/v2/coupons/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryCouponsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ecom/v1/orders/search": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ecom/v1/payments/list-by-ids": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListTransactionsForMultipleOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ecom/v1/fulfillments/list-by-ids": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListFulfillmentsForMultipleOrdersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog/v3/categories/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/blog/category/query-categories.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryBlogCategoriesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog/v3/posts/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryPostsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/seo-redirects-service/v1/redirects": {
+      "get": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-management/seo/redirects/redirect-v1/list-redirects.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListRedirectsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews/v1/reviews/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryReviewsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Price": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "amount": {
+            "type": "string"
+          },
+          "formattedAmount": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "Image": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "altText": {
+            "type": "string"
+          },
+          "filename": {
+            "type": "string"
+          }
+        }
+      },
+      "PageUrl": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "base": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      },
+      "PageUrlV2": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "relativePath": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "SeoTag": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "props": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "children": {
+            "type": "string"
+          },
+          "custom": {
+            "type": "boolean"
+          },
+          "disabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SeoKeyword": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "isMain": {
+            "type": "boolean"
+          },
+          "origin": {
+            "type": "string"
+          }
+        }
+      },
+      "SeoSchema": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SeoTag"
+            }
+          },
+          "settings": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "preventAutoRedirect": {
+                "type": "boolean"
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SeoKeyword"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Cursors": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "next": {
+            "type": "string"
+          },
+          "prev": {
+            "type": "string"
+          }
+        }
+      },
+      "CursorPagingMetadata": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "cursors": {
+            "$ref": "#/components/schemas/Cursors"
+          },
+          "hasNext": {
+            "type": "boolean"
+          },
+          "total": {
+            "type": "integer"
+          }
+        }
+      },
+      "PagingMetadataV2": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "total": {
+            "type": "integer"
+          },
+          "tooManyToCount": {
+            "type": "boolean"
+          },
+          "cursors": {
+            "$ref": "#/components/schemas/Cursors"
+          }
+        }
+      },
+      "V1PagingMetadata": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "items": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        }
+      },
+      "GetCatalogVersionResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-versioning/get-catalog-version.md",
+        "properties": {
+          "catalogVersion": {
+            "type": "string",
+            "enum": [
+              "V1_CATALOG",
+              "V3_CATALOG",
+              "STORES_NOT_INSTALLED"
+            ]
+          }
+        },
+        "required": [
+          "catalogVersion"
+        ]
+      },
+      "PropertiesReadResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "properties": {
+            "$ref": "#/components/schemas/Properties"
+          }
+        },
+        "required": [
+          "properties"
+        ]
+      },
+      "Properties": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+        "properties": {
+          "categories": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+            "properties": {
+              "primary": {
+                "type": "string"
+              },
+              "secondary": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "businessTermId": {
+                "type": "string"
+              }
+            }
+          },
+          "locale": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+            "properties": {
+              "languageCode": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              }
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "paymentCurrency": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "fax": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+            "properties": {
+              "street": {
+                "type": "string"
+              },
+              "city": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "zip": {
+                "type": "string"
+              },
+              "hint": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "placement": {
+                    "type": "string",
+                    "enum": [
+                      "BEFORE",
+                      "AFTER",
+                      "REPLACE"
+                    ]
+                  }
+                }
+              },
+              "isPhysical": {
+                "type": "boolean"
+              },
+              "googleFormattedAddress": {
+                "type": "string"
+              },
+              "streetNumber": {
+                "type": "string"
+              },
+              "apartmentNumber": {
+                "type": "string"
+              },
+              "coordinates": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/site-properties/properties/get-site-properties.md",
+                "properties": {
+                  "latitude": {
+                    "type": "number"
+                  },
+                  "longitude": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "siteDisplayName": {
+            "type": "string"
+          },
+          "businessName": {
+            "type": "string"
+          },
+          "logo": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "businessSchedule": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "multilingual": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "consentPolicy": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "businessConfig": {
+            "type": "string"
+          },
+          "externalSiteUrl": {
+            "type": "string"
+          },
+          "trackClicksAnalytics": {
+            "type": "boolean"
+          },
+          "companyId": {
+            "type": "string"
+          }
+        }
+      },
+      "QueryProductsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "products"
+        ]
+      },
+      "ProductMedia": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "video": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "altText": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "mediaType": {
+            "type": "string",
+            "enum": [
+              "IMAGE",
+              "VIDEO"
+            ]
+          },
+          "thumbnail": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "uploadId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectedOptionChoice": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "colorCode": {
+            "type": "string"
+          },
+          "choiceId": {
+            "type": "string"
+          },
+          "choiceType": {
+            "type": "string",
+            "enum": [
+              "CHOICE_TEXT",
+              "ONE_COLOR"
+            ]
+          },
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "inStock": {
+            "type": "boolean"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "displayImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "media": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ConnectedOption": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "choicesSettings": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "choices": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ConnectedOptionChoice"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "optionRenderType": {
+            "type": "string",
+            "enum": [
+              "TEXT_CHOICES",
+              "SWATCH_CHOICES"
+            ]
+          },
+          "key": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Ribbon": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductCategory": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "index": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+        "properties": {
+          "physicalProperties": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "pricePerUnit": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "fulfillerId": {
+                "type": "string"
+              },
+              "shippingWeightRange": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+                "properties": {
+                  "minValue": {
+                    "type": "number"
+                  },
+                  "maxValue": {
+                    "type": "number"
+                  }
+                }
+              },
+              "pricePerUnitRange": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "weightMeasurementUnitInfo": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+                "properties": {
+                  "weightMeasurementUnit": {
+                    "type": "string",
+                    "enum": [
+                      "UNSPECIFIED_WEIGHT_UNIT",
+                      "KG",
+                      "LB"
+                    ]
+                  }
+                }
+              },
+              "deliveryProfileId": {
+                "type": "string"
+              }
+            }
+          },
+          "digitalProperties": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "url": {
+            "$ref": "#/components/schemas/PageUrlV2"
+          },
+          "description": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "plainDescription": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "visibleInPos": {
+            "type": "boolean"
+          },
+          "media": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "main": {
+                "$ref": "#/components/schemas/ProductMedia"
+              },
+              "itemsInfo": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ProductMedia"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "seoData": {
+            "$ref": "#/components/schemas/SeoSchema"
+          },
+          "taxGroupId": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectedOption"
+            }
+          },
+          "modifiers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "brand": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "infoSections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "uniqueName": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "plainDescription": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "ribbon": {
+            "$ref": "#/components/schemas/Ribbon"
+          },
+          "directCategoriesInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProductCategory"
+                }
+              }
+            }
+          },
+          "allCategoriesInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ProductCategory"
+                }
+              }
+            }
+          },
+          "mainCategoryId": {
+            "type": "string"
+          },
+          "costRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "inventory": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/products-v3/query-products.md",
+            "properties": {
+              "availabilityStatus": {
+                "type": "string",
+                "enum": [
+                  "IN_STOCK",
+                  "OUT_OF_STOCK",
+                  "PARTIALLY_OUT_OF_STOCK"
+                ]
+              },
+              "preorderStatus": {
+                "type": "string",
+                "enum": [
+                  "ENABLED",
+                  "DISABLED",
+                  "PARTIALLY_ENABLED"
+                ]
+              },
+              "preorderAvailability": {
+                "type": "string",
+                "enum": [
+                  "ALL_VARIANTS",
+                  "NO_VARIANTS",
+                  "SOME_VARIANTS"
+                ]
+              }
+            }
+          },
+          "productType": {
+            "type": "string",
+            "enum": [
+              "PHYSICAL",
+              "DIGITAL"
+            ]
+          },
+          "handle": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "breadcrumbsInfo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "actualPriceRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "compareAtPriceRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "variantsInfo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "purchaseEligibility": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "additionalRibbons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ribbon"
+            }
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "subscriptionDetails": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "variantSummary": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "QueryVariantsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+        "properties": {
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReadOnlyVariant"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "variants"
+        ]
+      },
+      "OptionChoice": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+        "properties": {
+          "optionChoiceIds": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "optionId": {
+                "type": "string"
+              },
+              "choiceId": {
+                "type": "string"
+              }
+            }
+          },
+          "optionChoiceNames": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "optionName": {
+                "type": "string"
+              },
+              "choiceName": {
+                "type": "string"
+              },
+              "renderType": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "optionName",
+              "choiceName"
+            ]
+          }
+        }
+      },
+      "ReadOnlyVariant": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+        "properties": {
+          "physicalProperties": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "weight": {
+                "type": "number"
+              },
+              "pricePerUnit": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "digitalProperties": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "barcode": {
+            "type": "string"
+          },
+          "optionChoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionChoice"
+            }
+          },
+          "price": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "actualPrice": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "compareAtPrice": {
+                "$ref": "#/components/schemas/Price"
+              }
+            },
+            "required": [
+              "actualPrice"
+            ]
+          },
+          "revenueDetails": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "cost": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "profit": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "profitMargin": {
+                "type": "number"
+              }
+            }
+          },
+          "media": {
+            "$ref": "#/components/schemas/ProductMedia"
+          },
+          "subscriptionPricesInfo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "inventoryStatus": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "inStock": {
+                "type": "boolean"
+              },
+              "preorderEnabled": {
+                "type": "boolean"
+              }
+            }
+          },
+          "productData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/read-only-variants-v3/query-variants.md",
+            "properties": {
+              "physicalProperties": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "productId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "productType": {
+                "type": "string",
+                "enum": [
+                  "PHYSICAL",
+                  "DIGITAL"
+                ]
+              },
+              "slug": {
+                "type": "string"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "visibleInPos": {
+                "type": "boolean"
+              },
+              "mainCategoryId": {
+                "type": "string"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "revision": {
+                "type": "string"
+              },
+              "handle": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "productId"
+            ]
+          },
+          "variantId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "variantId",
+          "productData",
+          "price"
+        ]
+      },
+      "QueryInventoryItemsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/inventory-items-v3/query-inventory-items.md",
+        "properties": {
+          "inventoryItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InventoryItem"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "inventoryItems"
+        ]
+      },
+      "InventoryItem": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/inventory-items-v3/query-inventory-items.md",
+        "properties": {
+          "inStock": {
+            "type": "boolean"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "variantId": {
+            "type": "string"
+          },
+          "locationId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          },
+          "trackQuantity": {
+            "type": "boolean"
+          },
+          "availabilityStatus": {
+            "type": "string",
+            "enum": [
+              "OUT_OF_STOCK",
+              "IN_STOCK",
+              "PREORDER"
+            ]
+          },
+          "preorderInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/inventory-items-v3/query-inventory-items.md",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "message": {
+                "type": "string"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "counter": {
+                "type": "integer"
+              },
+              "quantity": {
+                "type": "integer"
+              }
+            }
+          },
+          "product": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/inventory-items-v3/query-inventory-items.md",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "directCategoryIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "variantName": {
+                "type": "string"
+              },
+              "variantSku": {
+                "type": "string"
+              },
+              "variantVisible": {
+                "type": "boolean"
+              }
+            }
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "variantId",
+          "productId"
+        ]
+      },
+      "QueryCategoriesResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "categories"
+        ]
+      },
+      "Category": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "itemCounter": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "breadcrumbsInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+            "properties": {
+              "breadcrumbs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+                  "properties": {
+                    "categoryId": {
+                      "type": "string"
+                    },
+                    "categoryName": {
+                      "type": "string"
+                    },
+                    "categorySlug": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "parentCategory": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "index": {
+                "type": "integer"
+              }
+            }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "seoData": {
+            "$ref": "#/components/schemas/SeoSchema"
+          },
+          "richContentDescription": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "treeReference": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v3/categories/query-categories.md",
+            "properties": {
+              "appNamespace": {
+                "type": "string"
+              },
+              "treeKey": {
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          "managingAppId": {
+            "type": "string"
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "V1QueryProductsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/V1Product"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/V1PagingMetadata"
+          },
+          "totalResults": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "products"
+        ]
+      },
+      "V1PriceData": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "discountedPrice": {
+            "type": "number"
+          },
+          "formatted": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "price": {
+                "type": "string"
+              },
+              "discountedPrice": {
+                "type": "string"
+              },
+              "pricePerUnit": {
+                "type": "string"
+              }
+            }
+          },
+          "pricePerUnit": {
+            "type": "number"
+          }
+        }
+      },
+      "V1CostAndProfitData": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "itemCost": {
+            "type": "number"
+          },
+          "formattedItemCost": {
+            "type": "string"
+          },
+          "profit": {
+            "type": "number"
+          },
+          "formattedProfit": {
+            "type": "string"
+          },
+          "profitMargin": {
+            "type": "number"
+          }
+        }
+      },
+      "V1Dimensions": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "length": {
+            "type": "string"
+          },
+          "width": {
+            "type": "string"
+          },
+          "height": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN_DIMENSIONS_UNIT",
+              "MM",
+              "CM",
+              "M",
+              "IN",
+              "FT",
+              "YD"
+            ]
+          }
+        }
+      },
+      "V1MediaItemUrlAndSize": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          },
+          "format": {
+            "type": "string"
+          },
+          "altText": {
+            "type": "string"
+          }
+        }
+      },
+      "V1MediaItem": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "image": {
+            "$ref": "#/components/schemas/V1MediaItemUrlAndSize"
+          },
+          "video": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "thumbnail": {
+            "$ref": "#/components/schemas/V1MediaItemUrlAndSize"
+          },
+          "mediaType": {
+            "type": "string",
+            "enum": [
+              "unspecified_media_item_type",
+              "image",
+              "video",
+              "audio",
+              "document",
+              "zip"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "V1Media": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "mainMedia": {
+            "$ref": "#/components/schemas/V1MediaItem"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/V1MediaItem"
+            }
+          }
+        }
+      },
+      "V1Variant": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "choices": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "variant": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "priceData": {
+                "$ref": "#/components/schemas/V1PriceData"
+              },
+              "convertedPriceData": {
+                "$ref": "#/components/schemas/V1PriceData"
+              },
+              "costAndProfitData": {
+                "$ref": "#/components/schemas/V1CostAndProfitData"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "sku": {
+                "type": "string"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "productDimensions": {
+                "$ref": "#/components/schemas/V1Dimensions"
+              },
+              "packageDimensions": {
+                "$ref": "#/components/schemas/V1Dimensions"
+              }
+            }
+          },
+          "stock": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "trackQuantity": {
+                "type": "boolean"
+              },
+              "quantity": {
+                "type": "integer"
+              },
+              "inStock": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "V1Product": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "productType": {
+            "type": "string",
+            "enum": [
+              "unspecified_product_type",
+              "physical",
+              "digital"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "weightRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "productDimensions": {
+            "$ref": "#/components/schemas/V1Dimensions"
+          },
+          "packageDimensions": {
+            "$ref": "#/components/schemas/V1Dimensions"
+          },
+          "stock": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "trackInventory": {
+                "type": "boolean"
+              },
+              "quantity": {
+                "type": "integer"
+              },
+              "inventoryStatus": {
+                "type": "string",
+                "enum": [
+                  "IN_STOCK",
+                  "OUT_OF_STOCK",
+                  "PARTIALLY_OUT_OF_STOCK"
+                ]
+              }
+            }
+          },
+          "priceData": {
+            "$ref": "#/components/schemas/V1PriceData"
+          },
+          "convertedPriceData": {
+            "$ref": "#/components/schemas/V1PriceData"
+          },
+          "priceRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "costAndProfitData": {
+            "$ref": "#/components/schemas/V1CostAndProfitData"
+          },
+          "costRange": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "pricePerUnitData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "additionalInfoSections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "media": {
+            "$ref": "#/components/schemas/V1Media"
+          },
+          "customTextFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "maxLength": {
+                  "type": "integer"
+                },
+                "mandatory": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "manageVariants": {
+            "type": "boolean"
+          },
+          "productOptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+              "properties": {
+                "optionType": {
+                  "type": "string",
+                  "enum": [
+                    "unspecified_option_type",
+                    "drop_down",
+                    "color"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "choices": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "media": {
+                        "$ref": "#/components/schemas/V1Media"
+                      },
+                      "inStock": {
+                        "type": "boolean"
+                      },
+                      "visible": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "productPageUrl": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "base": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            }
+          },
+          "numericId": {
+            "type": "number"
+          },
+          "inventoryItemId": {
+            "type": "string"
+          },
+          "discount": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-products.md",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "UNDEFINED",
+                  "NONE",
+                  "AMOUNT",
+                  "PERCENT"
+                ]
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          },
+          "collectionIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/V1Variant"
+            }
+          },
+          "lastUpdated": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "seoData": {
+            "$ref": "#/components/schemas/SeoSchema"
+          },
+          "ribbon": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "V1QueryCollectionsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-collections.md",
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/V1Collection"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/V1PagingMetadata"
+          },
+          "totalResults": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "collections"
+        ]
+      },
+      "V1Collection": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/stores/catalog-v1/catalog/query-collections.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "media": {
+            "$ref": "#/components/schemas/V1Media"
+          },
+          "numberOfProducts": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "visible": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "QueryContactsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "contacts"
+        ]
+      },
+      "ContactSubscription": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "NO_SUBSCRIPTION_STATUS",
+              "NOT_SET",
+              "PENDING",
+              "SUBSCRIBED",
+              "UNSUBSCRIBED"
+            ]
+          },
+          "updatedDate": {
+            "type": "string"
+          }
+        }
+      },
+      "ContactAddressDetails": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+        "properties": {
+          "streetAddress": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "number": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "apt": {
+                "type": "string"
+              },
+              "formattedAddressLine": {
+                "type": "string"
+              }
+            }
+          },
+          "addressLine": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "subdivision": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "formattedAddress": {
+            "type": "string"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "geocode": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "countryFullname": {
+            "type": "string"
+          },
+          "subdivisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "subdivisionFullname": {
+            "type": "string"
+          }
+        }
+      },
+      "ContactAddress": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "enum": [
+              "OTHER",
+              "HOME",
+              "WORK",
+              "BILLING",
+              "SHIPPING"
+            ]
+          },
+          "address": {
+            "$ref": "#/components/schemas/ContactAddressDetails"
+          },
+          "defaultAddress": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "recipient": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "company": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "first": {
+                "type": "string"
+              },
+              "last": {
+                "type": "string"
+              }
+            }
+          },
+          "email": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "subscriptionStatus": {
+                "$ref": "#/components/schemas/ContactSubscription"
+              },
+              "deliverabilityStatus": {
+                "type": "string",
+                "enum": [
+                  "NOT_SET",
+                  "VALID",
+                  "BOUNCED",
+                  "SPAM_COMPLAINT",
+                  "INACTIVE"
+                ]
+              }
+            }
+          },
+          "additionalEmails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "phone": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "tag": {
+                "type": "string",
+                "enum": [
+                  "OTHER",
+                  "MAIN",
+                  "HOME",
+                  "MOBILE",
+                  "WORK",
+                  "FAX"
+                ]
+              },
+              "phone": {
+                "type": "string"
+              },
+              "e164": {
+                "type": "string"
+              },
+              "subscriptionStatus": {
+                "$ref": "#/components/schemas/ContactSubscription"
+              },
+              "deliverabilityStatus": {
+                "type": "string",
+                "enum": [
+                  "NO_PHONE_DELIVERABILITY_STATUS",
+                  "NOT_SET",
+                  "VALID",
+                  "INVALID"
+                ]
+              }
+            }
+          },
+          "additionalPhones": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+              "properties": {
+                "tag": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "e164": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactAddress"
+            }
+          },
+          "company": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "jobTitle": {
+                "type": "string"
+              }
+            }
+          },
+          "locale": {
+            "type": "string"
+          },
+          "birthdate": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "assigneeId": {
+            "type": "string"
+          },
+          "locationIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "image": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "source": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "appId": {
+                "type": "string"
+              },
+              "additionalInfo": {
+                "type": "string"
+              }
+            }
+          },
+          "lastActivity": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "segmentIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "memberInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/members-contacts/contacts/contacts-v5/query-contacts.md",
+            "properties": {
+              "memberId": {
+                "type": "string"
+              },
+              "signupDate": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "emailVerified": {
+                "type": "boolean"
+              },
+              "emailVerificationRequired": {
+                "type": "boolean"
+              },
+              "requireProfileCompletion": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "PENDING",
+                  "ACTIVE",
+                  "BLOCKED",
+                  "OFFLINE"
+                ]
+              },
+              "profileInfo": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "userInfo": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "sessionInfo": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "groupInfo": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "QueryCouponsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+        "properties": {
+          "coupons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Coupon"
+            }
+          },
+          "totalResults": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "coupons"
+        ]
+      },
+      "Coupon": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "specification": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+            "properties": {
+              "scope": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+                "properties": {
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "group": {
+                    "type": "object",
+                    "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "entityId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "minimumSubtotal": {
+                "type": "number"
+              },
+              "moneyOffAmount": {
+                "type": "number"
+              },
+              "percentOffRate": {
+                "type": "number"
+              },
+              "freeShipping": {
+                "type": "boolean"
+              },
+              "fixedPriceAmount": {
+                "type": "number"
+              },
+              "buyXGetY": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+                "properties": {
+                  "x": {
+                    "type": "integer"
+                  },
+                  "y": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "startTime": {
+                "type": "string"
+              },
+              "expirationTime": {
+                "type": "string"
+              },
+              "usageLimit": {
+                "type": "integer"
+              },
+              "limitPerCustomer": {
+                "type": "integer"
+              },
+              "limitedToOneItem": {
+                "type": "boolean"
+              },
+              "appliesToSubscriptions": {
+                "type": "boolean"
+              },
+              "discountedCycleCount": {
+                "type": "integer"
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          "dateCreated": {
+            "type": "string"
+          },
+          "expired": {
+            "type": "boolean"
+          },
+          "numberOfUsages": {
+            "type": "integer"
+          },
+          "displayData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "mediaItem": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/coupons/coupons/query-coupons.md",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "integer"
+                  },
+                  "height": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "formattedPrice": {
+                "type": "string"
+              }
+            }
+          },
+          "appId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "specification"
+        ]
+      },
+      "SearchOrdersResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "orders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          },
+          "metadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        },
+        "required": [
+          "orders"
+        ]
+      },
+      "TaxBreakdown": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "jurisdiction": {
+            "type": "string"
+          },
+          "rate": {
+            "type": "string"
+          },
+          "taxAmount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "taxType": {
+            "type": "string"
+          },
+          "taxName": {
+            "type": "string"
+          },
+          "jurisdictionType": {
+            "type": "string",
+            "enum": [
+              "UNDEFINED",
+              "COUNTRY",
+              "STATE",
+              "COUNTY",
+              "CITY",
+              "SPECIAL"
+            ]
+          },
+          "nonTaxableAmount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "taxableAmount": {
+            "$ref": "#/components/schemas/Price"
+          }
+        }
+      },
+      "LineItemTaxInfo": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "taxAmount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "taxableAmount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "taxRate": {
+            "type": "string"
+          },
+          "taxGroupId": {
+            "type": "string"
+          },
+          "taxIncludedInPrice": {
+            "type": "boolean"
+          },
+          "taxBreakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaxBreakdown"
+            }
+          }
+        }
+      },
+      "TranslatableString": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "original": {
+            "type": "string"
+          },
+          "translated": {
+            "type": "string"
+          }
+        }
+      },
+      "DescriptionLine": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "plainText": {
+            "$ref": "#/components/schemas/TranslatableString"
+          },
+          "colorInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "original": {
+                "type": "string"
+              },
+              "translated": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              }
+            }
+          },
+          "name": {
+            "$ref": "#/components/schemas/TranslatableString"
+          }
+        }
+      },
+      "OrderLineItem": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "productName": {
+            "$ref": "#/components/schemas/TranslatableString"
+          },
+          "catalogReference": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "catalogItemId": {
+                "type": "string"
+              },
+              "appId": {
+                "type": "string"
+              },
+              "options": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "totalDiscount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "descriptionLines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DescriptionLine"
+            }
+          },
+          "image": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "physicalProperties": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "weight": {
+                "type": "number"
+              },
+              "sku": {
+                "type": "string"
+              },
+              "shippable": {
+                "type": "boolean"
+              }
+            }
+          },
+          "itemType": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "preset": {
+                "type": "string",
+                "enum": [
+                  "UNRECOGNISED",
+                  "PHYSICAL",
+                  "DIGITAL",
+                  "GIFT_CARD",
+                  "SERVICE"
+                ]
+              },
+              "custom": {
+                "type": "string"
+              }
+            }
+          },
+          "fulfillerId": {
+            "type": "string"
+          },
+          "refundQuantity": {
+            "type": "integer"
+          },
+          "restockQuantity": {
+            "type": "integer"
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "priceBeforeDiscounts": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "totalPriceBeforeTax": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "totalPriceAfterTax": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "paymentOption": {
+            "type": "string"
+          },
+          "taxInfo": {
+            "$ref": "#/components/schemas/LineItemTaxInfo"
+          },
+          "digitalFile": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "subscriptionInfo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "priceDescription": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "depositAmount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "lineItemPrice": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "taxableAddress": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "priceUndetermined": {
+            "type": "boolean"
+          },
+          "fixedQuantity": {
+            "type": "boolean"
+          },
+          "decimalQuantity": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "modifierGroups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": [
+          "id",
+          "quantity"
+        ]
+      },
+      "OrderAddress": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "subdivision": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "streetAddress": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "number": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "addressLine": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "geocode": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "countryFullname": {
+            "type": "string"
+          },
+          "subdivisionFullname": {
+            "type": "string"
+          }
+        }
+      },
+      "AddressWithContact": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/OrderAddress"
+          },
+          "contactDetails": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "company": {
+                "type": "string"
+              },
+              "vatId": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "number"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderLineItem"
+            }
+          },
+          "buyerInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "visitorId": {
+                "type": "string"
+              },
+              "memberId": {
+                "type": "string"
+              },
+              "contactId": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          },
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "UNSPECIFIED",
+              "NOT_PAID",
+              "PAID",
+              "PARTIALLY_REFUNDED",
+              "FULLY_REFUNDED",
+              "PENDING",
+              "PARTIALLY_PAID",
+              "PENDING_MERCHANT",
+              "CANCELED",
+              "DECLINED"
+            ]
+          },
+          "fulfillmentStatus": {
+            "type": "string",
+            "enum": [
+              "NOT_FULFILLED",
+              "FULFILLED",
+              "PARTIALLY_FULFILLED"
+            ]
+          },
+          "buyerLanguage": {
+            "type": "string"
+          },
+          "weightUnit": {
+            "type": "string",
+            "enum": [
+              "UNSPECIFIED_WEIGHT_UNIT",
+              "KG",
+              "LB"
+            ]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "currencyConversionDetails": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "originalCurrency": {
+                "type": "string"
+              },
+              "conversionRate": {
+                "type": "string"
+              }
+            }
+          },
+          "taxIncludedInPrices": {
+            "type": "boolean"
+          },
+          "siteLanguage": {
+            "type": "string"
+          },
+          "priceSummary": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "subtotal": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "shipping": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "tax": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "discount": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "total": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "totalAdditionalFees": {
+                "$ref": "#/components/schemas/Price"
+              }
+            }
+          },
+          "billingInfo": {
+            "$ref": "#/components/schemas/AddressWithContact"
+          },
+          "shippingInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "carrierId": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "logistics": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                "properties": {
+                  "shippingDestination": {
+                    "$ref": "#/components/schemas/AddressWithContact"
+                  },
+                  "pickupDetails": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "deliveryTime": {
+                    "type": "string"
+                  },
+                  "instructions": {
+                    "type": "string"
+                  },
+                  "deliveryTimeSlot": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "cost": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                "properties": {
+                  "price": {
+                    "$ref": "#/components/schemas/Price"
+                  },
+                  "totalPriceBeforeTax": {
+                    "$ref": "#/components/schemas/Price"
+                  },
+                  "totalPriceAfterTax": {
+                    "$ref": "#/components/schemas/Price"
+                  },
+                  "taxInfo": {
+                    "$ref": "#/components/schemas/LineItemTaxInfo"
+                  },
+                  "discount": {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                }
+              },
+              "region": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "buyerNote": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "INITIALIZED",
+              "APPROVED",
+              "CANCELED",
+              "PENDING",
+              "REJECTED"
+            ]
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "taxInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+            "properties": {
+              "totalTax": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "taxBreakdown": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                  "properties": {
+                    "taxName": {
+                      "type": "string"
+                    },
+                    "taxType": {
+                      "type": "string"
+                    },
+                    "jurisdiction": {
+                      "type": "string"
+                    },
+                    "jurisdictionType": {
+                      "type": "string"
+                    },
+                    "rate": {
+                      "type": "string"
+                    },
+                    "aggregatedTaxAmount": {
+                      "$ref": "#/components/schemas/Price"
+                    }
+                  }
+                }
+              },
+              "taxExempt": {
+                "type": "boolean"
+              }
+            }
+          },
+          "appliedDiscounts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+              "properties": {
+                "coupon": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "$ref": "#/components/schemas/Price"
+                    }
+                  }
+                },
+                "merchantDiscount": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "discountRule": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "discountType": {
+                  "type": "string",
+                  "enum": [
+                    "GLOBAL",
+                    "SPECIFIC_ITEMS",
+                    "SHIPPING"
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "lineItemDiscounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "totalDiscount": {
+                        "$ref": "#/components/schemas/Price"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "attributionSource": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "channelInfo": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "seenByAHuman": {
+            "type": "boolean"
+          },
+          "checkoutId": {
+            "type": "string"
+          },
+          "customFields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "balanceSummary": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "additionalFees": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/orders/search-orders.md",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "price": {
+                  "$ref": "#/components/schemas/Price"
+                },
+                "taxInfo": {
+                  "$ref": "#/components/schemas/LineItemTaxInfo"
+                },
+                "providerAppId": {
+                  "type": "string"
+                },
+                "priceBeforeTax": {
+                  "$ref": "#/components/schemas/Price"
+                },
+                "priceAfterTax": {
+                  "$ref": "#/components/schemas/Price"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "lineItemIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "source": {
+                  "type": "string",
+                  "enum": [
+                    "SERVICE_PLUGIN",
+                    "ITEM",
+                    "MANUAL",
+                    "SHIPPING",
+                    "PLATFORM"
+                  ]
+                },
+                "taxableAddress": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "extendedFields": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "purchaseFlowId": {
+            "type": "string"
+          },
+          "recipientInfo": {
+            "$ref": "#/components/schemas/AddressWithContact"
+          },
+          "tags": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "purchasedDate": {
+            "type": "string"
+          },
+          "businessLocation": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "payAfterFreeTrial": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "platformFeeSummary": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "imported": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "createdDate",
+          "currency",
+          "status",
+          "priceSummary"
+        ]
+      },
+      "ListTransactionsForMultipleOrdersResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+        "properties": {
+          "orderTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderTransactions"
+            }
+          }
+        },
+        "required": [
+          "orderTransactions"
+        ]
+      },
+      "OrderTransactions": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "payments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Payment"
+            }
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Refund"
+            }
+          }
+        },
+        "required": [
+          "orderId"
+        ]
+      },
+      "Payment": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+        "properties": {
+          "regularPaymentDetails": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+            "properties": {
+              "creditCardDetails": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                "properties": {
+                  "lastFourDigits": {
+                    "type": "string"
+                  },
+                  "brand": {
+                    "type": "string"
+                  }
+                }
+              },
+              "paymentOrderId": {
+                "type": "string"
+              },
+              "gatewayTransactionId": {
+                "type": "string"
+              },
+              "providerTransactionId": {
+                "type": "string"
+              },
+              "offlinePayment": {
+                "type": "boolean"
+              },
+              "savedPaymentMethod": {
+                "type": "boolean"
+              },
+              "authorizationDetails": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "chargebacks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "platformFee": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "paymentMethodName": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                "properties": {
+                  "buyerLanguageName": {
+                    "type": "string"
+                  },
+                  "siteLanguageName": {
+                    "type": "string"
+                  },
+                  "userDefinedName": {
+                    "type": "object",
+                    "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                    "properties": {
+                      "predefined": {
+                        "type": "string"
+                      },
+                      "custom": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "giftcardPaymentDetails": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "membershipPaymentDetails": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/Price"
+          },
+          "refundDisabled": {
+            "type": "boolean"
+          },
+          "supportReceiptGeneration": {
+            "type": "boolean"
+          },
+          "cashRounding": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPROVED",
+              "PENDING",
+              "PENDING_MERCHANT",
+              "CANCELED",
+              "DECLINED",
+              "REFUNDED",
+              "PARTIALLY_REFUNDED",
+              "AUTHORIZED",
+              "VOIDED"
+            ]
+          },
+          "chargeCorrelationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Refund": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "transactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+              "properties": {
+                "paymentId": {
+                  "type": "string"
+                },
+                "amount": {
+                  "$ref": "#/components/schemas/Price"
+                },
+                "refundStatus": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING",
+                    "SUCCEEDED",
+                    "FAILED",
+                    "SCHEDULED",
+                    "STARTED"
+                  ]
+                },
+                "refundStatusInfo": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "gatewayRefundId": {
+                  "type": "string"
+                },
+                "providerRefundId": {
+                  "type": "string"
+                },
+                "externalRefund": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "details": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                  "properties": {
+                    "lineItemId": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "shippingIncluded": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "lineItems": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                  "properties": {
+                    "lineItemId": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "additionalFees": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                  "properties": {
+                    "additionalFeeId": {
+                      "type": "string"
+                    },
+                    "amount": {
+                      "$ref": "#/components/schemas/Price"
+                    }
+                  }
+                }
+              },
+              "shipping": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                "properties": {
+                  "amount": {
+                    "$ref": "#/components/schemas/Price"
+                  }
+                }
+              }
+            }
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+            "properties": {
+              "requestedRefund": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "pendingRefund": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "refunded": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "failedRefundAmount": {
+                "$ref": "#/components/schemas/Price"
+              },
+              "pending": {
+                "type": "boolean"
+              },
+              "breakdown": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                "properties": {
+                  "lineItems": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-transactions/list-transactions-for-multiple-orders.md",
+                      "properties": {
+                        "lineItemId": {
+                          "type": "string"
+                        },
+                        "totalRefundedAmount": {
+                          "$ref": "#/components/schemas/Price"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "requestingServiceAppId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ListFulfillmentsForMultipleOrdersResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+        "properties": {
+          "ordersWithFulfillments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderWithFulfillments"
+            }
+          }
+        },
+        "required": [
+          "ordersWithFulfillments"
+        ]
+      },
+      "OrderWithFulfillments": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "fulfillments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Fulfillment"
+            }
+          }
+        },
+        "required": [
+          "orderId"
+        ]
+      },
+      "Fulfillment": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+        "properties": {
+          "trackingInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+            "properties": {
+              "trackingNumber": {
+                "type": "string"
+              },
+              "shippingProvider": {
+                "type": "string"
+              },
+              "trackingLink": {
+                "type": "string"
+              }
+            }
+          },
+          "customInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+            "properties": {
+              "fieldsData": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "lineItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/orders/order-fulfillments/list-fulfillments-for-multiple-orders.md",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "status": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "QueryBlogCategoriesResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/category/query-categories.md",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlogCategory"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/PagingMetadataV2"
+          }
+        },
+        "required": [
+          "categories"
+        ]
+      },
+      "BlogCategory": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/category/query-categories.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "postCount": {
+            "type": "integer"
+          },
+          "url": {
+            "$ref": "#/components/schemas/PageUrl"
+          },
+          "description": {
+            "type": "string"
+          },
+          "displayPosition": {
+            "type": "integer"
+          },
+          "translationId": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "seoData": {
+            "$ref": "#/components/schemas/SeoSchema"
+          },
+          "coverImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "updatedDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "slug"
+        ]
+      },
+      "QueryPostsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/PagingMetadataV2"
+          }
+        },
+        "required": [
+          "posts"
+        ]
+      },
+      "RicosLink": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "anchor": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "SELF",
+              "BLANK",
+              "PARENT",
+              "TOP"
+            ]
+          },
+          "rel": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "RicosDecoration": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "linkData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "link": {
+                "$ref": "#/components/schemas/RicosLink"
+              }
+            }
+          },
+          "italicData": {
+            "type": "boolean"
+          },
+          "underlineData": {
+            "type": "boolean"
+          },
+          "fontWeightValue": {
+            "type": "integer"
+          },
+          "colorData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "fontSizeData": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "RicosNode": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RicosNode"
+            }
+          },
+          "style": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "textData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "decorations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RicosDecoration"
+                }
+              }
+            }
+          },
+          "paragraphData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "headingData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "level": {
+                "type": "integer"
+              },
+              "textStyle": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "indentation": {
+                "type": "integer"
+              }
+            }
+          },
+          "imageData": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "containerData": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "image": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+                "properties": {
+                  "src": {
+                    "type": "object",
+                    "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+                    "properties": {
+                      "url": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "private": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "width": {
+                    "type": "integer"
+                  },
+                  "height": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "link": {
+                "$ref": "#/components/schemas/RicosLink"
+              },
+              "altText": {
+                "type": "string"
+              },
+              "disableExpand": {
+                "type": "boolean"
+              }
+            }
+          },
+          "bulletedListData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "orderedListData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "blockquoteData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "codeBlockData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "dividerData": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "listItemData": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "Post": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "contentText": {
+            "type": "string"
+          },
+          "firstPublishedDate": {
+            "type": "string"
+          },
+          "lastPublishedDate": {
+            "type": "string"
+          },
+          "url": {
+            "$ref": "#/components/schemas/PageUrl"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "featured": {
+            "type": "boolean"
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "memberId": {
+            "type": "string"
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commentingEnabled": {
+            "type": "boolean"
+          },
+          "minutesToRead": {
+            "type": "integer"
+          },
+          "heroImage": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relatedPostIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pricingPlanIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "translationId": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "seoData": {
+            "$ref": "#/components/schemas/SeoSchema"
+          },
+          "contactId": {
+            "type": "string"
+          },
+          "richContent": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "nodes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/RicosNode"
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "documentStyle": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          },
+          "preview": {
+            "type": "boolean"
+          },
+          "moderationDetails": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "media": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+            "properties": {
+              "wixMedia": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/blog/posts-stats/query-posts.md",
+                "properties": {
+                  "image": {
+                    "$ref": "#/components/schemas/Image"
+                  },
+                  "videoV2": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "embedMedia": {
+                "type": "object",
+                "additionalProperties": true
+              },
+              "displayed": {
+                "type": "boolean"
+              },
+              "custom": {
+                "type": "boolean"
+              },
+              "altText": {
+                "type": "string"
+              }
+            }
+          },
+          "hasUnpublishedChanges": {
+            "type": "boolean"
+          },
+          "referenceId": {
+            "type": "string"
+          },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "slug"
+        ]
+      },
+      "ListRedirectsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/seo/redirects/redirect-v1/list-redirects.md",
+        "properties": {
+          "redirects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Redirect"
+            }
+          }
+        },
+        "required": [
+          "redirects"
+        ]
+      },
+      "Redirect": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/seo/redirects/redirect-v1/list-redirects.md",
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "options": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-management/seo/redirects/redirect-v1/list-redirects.md",
+            "properties": {
+              "groupRedirect": {
+                "type": "boolean"
+              }
+            }
+          },
+          "language": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "id"
+        ]
+      },
+      "QueryReviewsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+        "properties": {
+          "metadata": {
+            "$ref": "#/components/schemas/PagingMetadataV2"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        },
+        "required": [
+          "reviews"
+        ]
+      },
+      "Review": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "content": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              },
+              "media": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "rating": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "rating"
+            ]
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "author": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+            "properties": {
+              "contactId": {
+                "type": "string"
+              },
+              "authorName": {
+                "type": "string"
+              }
+            }
+          },
+          "reply": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "createdDate": {
+                "type": "string"
+              },
+              "updatedDate": {
+                "type": "string"
+              }
+            }
+          },
+          "foundHelpful": {
+            "type": "integer"
+          },
+          "foundUnhelpful": {
+            "type": "integer"
+          },
+          "helpfulness": {
+            "type": "integer"
+          },
+          "moderation": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+            "properties": {
+              "moderationStatus": {
+                "type": "string",
+                "enum": [
+                  "UNKNOWN",
+                  "APPROVED",
+                  "IN_MODERATION",
+                  "REJECTED",
+                  "SUBMITTED",
+                  "SKIPPED"
+                ]
+              }
+            }
+          },
+          "revision": {
+            "type": "string"
+          },
+          "verified": {
+            "type": "boolean"
+          },
+          "origin": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/community/feedback-moderation/reviews/reviews/query-reviews.md",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "UNKNOWN",
+                  "ORGANIC",
+                  "APP"
+                ]
+              },
+              "appId": {
+                "type": "string"
+              }
+            }
+          },
+          "reviewDate": {
+            "type": "string"
+          },
+          "relevanceScore": {
+            "type": "number"
+          },
+          "publishCount": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "entityId",
+          "content"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "request": {
+    "path": "/1.0/commerce/orders/6d4000000000000000000031"
+  },
+  "response": {
+    "id": "6d4000000000000000000031",
+    "orderNumber": "1001",
+    "createdOn": "2026-09-03T14:00:00.000Z",
+    "modifiedOn": "2026-09-05T11:00:00.000Z",
+    "channel": "web",
+    "customerEmail": "Marin@Example.com",
+    "billingAddress": {
+      "firstName": "Marin",
+      "lastName": "Boudreau",
+      "address1": "14 Harbour Street",
+      "city": "Lunenburg",
+      "state": "NS",
+      "postalCode": "B0J 2C0",
+      "countryCode": "CA",
+      "phone": "+1 902-555-0131"
+    },
+    "shippingAddress": {
+      "firstName": "Marin",
+      "lastName": "Boudreau",
+      "address1": "14 Harbour Street",
+      "city": "Lunenburg",
+      "state": "NS",
+      "postalCode": "B0J 2C0",
+      "countryCode": "CA",
+      "phone": "+1 902-555-0131"
+    },
+    "fulfillmentStatus": "FULFILLED",
+    "paymentState": "PAID",
+    "lineItems": [
+      {
+        "id": "6f6000000000000000000301",
+        "productId": "6b2000000000000000000011",
+        "productName": "Cedar cutting board",
+        "quantity": 2,
+        "unitPricePaid": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 48
+        },
+        "lineItemType": "PHYSICAL_PRODUCT",
+        "imageUrl": "http://squarespace-fake:8080/img/SQS-BOARD-1.png",
+        "variantOptions": [],
+        "customizations": [
+          {
+            "label": "Engraving",
+            "value": "M.B."
+          }
+        ],
+        "weight": 0,
+        "width": 0,
+        "length": 0,
+        "height": 0,
+        "variantId": "a1b2c3d4-0000-4000-8000-000000000111",
+        "sku": "SQS-BOARD-1"
+      },
+      {
+        "id": "6f6000000000000000000302",
+        "productId": "6b2000000000000000000012",
+        "productName": "Merino scarf",
+        "quantity": 1,
+        "unitPricePaid": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 55
+        },
+        "lineItemType": "PHYSICAL_PRODUCT",
+        "imageUrl": "http://squarespace-fake:8080/img/SQS-SCARF-CHAR.png",
+        "variantOptions": [
+          {
+            "optionName": "Colour",
+            "value": "Charcoal"
+          }
+        ],
+        "customizations": [],
+        "weight": 0,
+        "width": 0,
+        "length": 0,
+        "height": 0,
+        "variantId": "a1b2c3d4-0000-4000-8000-000000000121",
+        "sku": "SQS-SCARF-CHAR"
+      }
+    ],
+    "internalNotes": [
+      {
+        "content": "Gift-wrap the board."
+      }
+    ],
+    "shippingLines": [
+      {
+        "method": "Canada Post Expedited",
+        "amount": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 12
+        }
+      }
+    ],
+    "discountLines": [
+      {
+        "name": "Five off fifty",
+        "description": "$5 off orders over $50",
+        "promoCode": "SQS-FIVEOFF",
+        "amount": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 5
+        }
+      }
+    ],
+    "formSubmission": [
+      {
+        "label": "How did you hear about us?",
+        "value": "A friend"
+      }
+    ],
+    "fulfillments": [
+      {
+        "carrierName": "Canada Post",
+        "service": "Expedited Parcel",
+        "trackingNumber": "SQS1234567890CA",
+        "trackingUrl": "https://www.canadapost-postescanada.ca/track/SQS1234567890CA",
+        "shipDate": "2026-09-05T11:00:00.000Z"
+      }
+    ],
+    "subtotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 151
+    },
+    "shippingTotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 12
+    },
+    "discountTotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 5
+    },
+    "taxTotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 7.9
+    },
+    "refundedTotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 0
+    },
+    "grandTotal": {
+      "currency": {
+        "currencyCode": "CAD"
+      },
+      "value": 165.9
+    },
+    "priceTaxInterpretation": "EXCLUSIVE",
+    "testmode": false,
+    "customerId": "6c3000000000000000000021",
+    "fulfilledOn": "2026-09-05T11:00:00.000Z"
+  }
+}

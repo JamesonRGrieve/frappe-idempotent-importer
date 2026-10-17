@@ -1,0 +1,25 @@
+{
+  "request": {
+    "path": "/rest/default/V1/store/storeConfigs"
+  },
+  "response": [
+    {
+      "id": 1,
+      "code": "default",
+      "website_id": 1,
+      "locale": "en_CA",
+      "base_currency_code": "CAD",
+      "default_display_currency_code": "CAD",
+      "timezone": "America/Vancouver",
+      "weight_unit": "kgs",
+      "base_url": "http://magento-fake:8080/",
+      "base_link_url": "http://magento-fake:8080/",
+      "base_static_url": "http://magento-fake:8080/static/",
+      "base_media_url": "http://magento-fake:8080/media/",
+      "secure_base_url": "http://magento-fake:8080/",
+      "secure_base_link_url": "http://magento-fake:8080/",
+      "secure_base_static_url": "http://magento-fake:8080/static/",
+      "secure_base_media_url": "http://magento-fake:8080/media/"
+    }
+  ]
+}

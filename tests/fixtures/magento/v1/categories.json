@@ -1,0 +1,161 @@
+{
+  "request": {
+    "path": "/rest/default/V1/categories/list",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "level",
+      "searchCriteria[filterGroups][0][filters][0][value]": "1",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "gt",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "id": 3,
+        "parent_id": 2,
+        "name": "Galley",
+        "is_active": true,
+        "position": 1,
+        "level": 2,
+        "children": "",
+        "created_at": "2026-09-01 08:00:00",
+        "updated_at": "2026-09-01 08:00:00",
+        "path": "1/2/3",
+        "available_sort_by": [],
+        "include_in_menu": true,
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "galley"
+          },
+          {
+            "attribute_code": "url_path",
+            "value": "galley"
+          },
+          {
+            "attribute_code": "display_mode",
+            "value": "PRODUCTS"
+          },
+          {
+            "attribute_code": "is_anchor",
+            "value": "1"
+          },
+          {
+            "attribute_code": "children_count",
+            "value": "0"
+          },
+          {
+            "attribute_code": "description",
+            "value": "<p>Cookware for the galley and the camp stove.</p>"
+          },
+          {
+            "attribute_code": "image",
+            "value": "/media/catalog/category/galley.png"
+          },
+          {
+            "attribute_code": "meta_title",
+            "value": "Galley | Harbourside Goods"
+          },
+          {
+            "attribute_code": "meta_description",
+            "value": "Copper and enamel cookware."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "parent_id": 2,
+        "name": "Outerwear",
+        "is_active": true,
+        "position": 2,
+        "level": 2,
+        "children": "",
+        "created_at": "2026-09-01 08:00:00",
+        "updated_at": "2026-09-01 08:00:00",
+        "path": "1/2/4",
+        "available_sort_by": [],
+        "include_in_menu": true,
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "outerwear"
+          },
+          {
+            "attribute_code": "url_path",
+            "value": "outerwear"
+          },
+          {
+            "attribute_code": "display_mode",
+            "value": "PRODUCTS"
+          },
+          {
+            "attribute_code": "is_anchor",
+            "value": "1"
+          },
+          {
+            "attribute_code": "children_count",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "parent_id": 4,
+        "name": "Rain jackets",
+        "is_active": true,
+        "position": 1,
+        "level": 3,
+        "children": "",
+        "created_at": "2026-09-01 08:00:00",
+        "updated_at": "2026-09-01 08:00:00",
+        "path": "1/2/4/5",
+        "available_sort_by": [],
+        "include_in_menu": true,
+        "custom_attributes": [
+          {
+            "attribute_code": "url_key",
+            "value": "rain-jackets"
+          },
+          {
+            "attribute_code": "url_path",
+            "value": "outerwear/rain-jackets"
+          },
+          {
+            "attribute_code": "display_mode",
+            "value": "PRODUCTS"
+          },
+          {
+            "attribute_code": "is_anchor",
+            "value": "1"
+          },
+          {
+            "attribute_code": "children_count",
+            "value": "0"
+          }
+        ]
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [
+        {
+          "filters": [
+            {
+              "field": "level",
+              "value": "1",
+              "condition_type": "gt"
+            }
+          ]
+        }
+      ],
+      "page_size": 100,
+      "current_page": 1,
+      "sort_orders": [
+        {
+          "field": "entity_id",
+          "direction": "ASC"
+        }
+      ]
+    },
+    "total_count": 3
+  }
+}

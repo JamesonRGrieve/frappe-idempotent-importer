@@ -1,0 +1,25 @@
+{
+  "request": {
+    "path": "/en/redirects.json"
+  },
+  "response": {
+    "redirects": [
+      {
+        "id": 1401,
+        "createdAt": "2026-08-05T09:00:00+00:00",
+        "updatedAt": "2026-08-05T09:00:00+00:00",
+        "isPermanent": true,
+        "url": "/harbour-mug",
+        "target": "https://www.harbourlane.example/stoneware-mug.html"
+      },
+      {
+        "id": 1402,
+        "createdAt": "2026-08-05T09:00:00+00:00",
+        "updatedAt": "2026-08-05T09:00:00+00:00",
+        "isPermanent": true,
+        "url": "/harbour-clearance",
+        "target": "https://sale.example.com/harbour"
+      }
+    ]
+  }
+}

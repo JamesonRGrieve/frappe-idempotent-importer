@@ -1,0 +1,257 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores-reader/v1/products/query",
+    "body": {
+      "query": {
+        "paging": {
+          "offset": 0
+        }
+      },
+      "includeVariants": true,
+      "includeHiddenProducts": true
+    }
+  },
+  "response": {
+    "products": [
+      {
+        "id": "6b5a4c30-1001-4d2e-8f1a-9b0c1d2e1001",
+        "name": "Stoneware planter",
+        "slug": "stoneware-planter",
+        "visible": true,
+        "productType": "physical",
+        "description": "<p>A planter with a drainage hole.</p>",
+        "sku": "WIX-PLANTER-1",
+        "weight": 1.2,
+        "stock": {
+          "trackInventory": true,
+          "quantity": 4,
+          "inventoryStatus": "IN_STOCK"
+        },
+        "priceData": {
+          "currency": "CAD",
+          "price": 34.0,
+          "discountedPrice": 29.5,
+          "formatted": {
+            "price": "C$34.00",
+            "discountedPrice": "C$29.50"
+          }
+        },
+        "costAndProfitData": {
+          "itemCost": 11.0,
+          "formattedItemCost": "C$11.00"
+        },
+        "media": {
+          "mainMedia": {
+            "image": {
+              "url": "http://wix-fake:8080/media/planter.png",
+              "width": 1000,
+              "height": 1000,
+              "altText": "Stoneware planter"
+            },
+            "mediaType": "image",
+            "id": "planter.png",
+            "title": "Stoneware planter"
+          },
+          "items": [
+            {
+              "image": {
+                "url": "http://wix-fake:8080/media/planter.png",
+                "width": 1000,
+                "height": 1000,
+                "altText": "Stoneware planter"
+              },
+              "mediaType": "image",
+              "id": "planter.png",
+              "title": "Stoneware planter"
+            }
+          ]
+        },
+        "customTextFields": [],
+        "manageVariants": false,
+        "productOptions": [],
+        "productPageUrl": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/product-page/stoneware-planter"
+        },
+        "numericId": 1001,
+        "inventoryItemId": "inv-1001",
+        "discount": {
+          "type": "AMOUNT",
+          "value": 4.5
+        },
+        "collectionIds": [
+          "00000000-000000-000000-000000000001",
+          "c01e0000-1001-4a5b-8c9d-0e1f2a3b1001"
+        ],
+        "variants": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "choices": {},
+            "variant": {
+              "priceData": {
+                "currency": "CAD",
+                "price": 34.0,
+                "discountedPrice": 29.5,
+                "formatted": {
+                  "price": "C$34.00",
+                  "discountedPrice": "C$29.50"
+                }
+              },
+              "weight": 1.2,
+              "sku": "WIX-PLANTER-1",
+              "visible": true
+            },
+            "stock": {
+              "trackQuantity": true,
+              "quantity": 4,
+              "inStock": true
+            }
+          }
+        ],
+        "lastUpdated": "2026-08-21T10:00:00.000Z",
+        "createdDate": "2026-07-01T10:00:00.000Z",
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Stoneware planter",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "A stoneware planter."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "ribbon": "New",
+        "brand": "Prairie Pottery"
+      },
+      {
+        "id": "6b5a4c30-1002-4d2e-8f1a-9b0c1d2e1002",
+        "name": "Glazed tumbler",
+        "slug": "glazed-tumbler",
+        "visible": true,
+        "productType": "physical",
+        "description": "<p>For water or whisky.</p>",
+        "priceData": {
+          "currency": "CAD",
+          "price": 16.0,
+          "discountedPrice": 16.0,
+          "formatted": {
+            "price": "C$16.00",
+            "discountedPrice": "C$16.00"
+          }
+        },
+        "media": {
+          "items": [
+            {
+              "image": {
+                "url": "http://wix-fake:8080/media/tumbler.png",
+                "width": 1000,
+                "height": 1000,
+                "altText": "Glazed tumbler"
+              },
+              "mediaType": "image",
+              "id": "tumbler.png",
+              "title": "Glazed tumbler"
+            }
+          ]
+        },
+        "manageVariants": true,
+        "productOptions": [
+          {
+            "optionType": "drop_down",
+            "name": "Size",
+            "choices": [
+              {
+                "value": "Small",
+                "description": "Small"
+              },
+              {
+                "value": "Large",
+                "description": "Large"
+              }
+            ]
+          }
+        ],
+        "productPageUrl": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/product-page/glazed-tumbler"
+        },
+        "numericId": 1002,
+        "collectionIds": [
+          "00000000-000000-000000-000000000001"
+        ],
+        "variants": [
+          {
+            "id": "8a7b6c50-1002-4e3f-9a0b-1c2d3e4f0001",
+            "choices": {
+              "Size": "Small"
+            },
+            "variant": {
+              "priceData": {
+                "currency": "CAD",
+                "price": 16.0,
+                "discountedPrice": 16.0,
+                "formatted": {
+                  "price": "C$16.00",
+                  "discountedPrice": "C$16.00"
+                }
+              },
+              "costAndProfitData": {
+                "itemCost": 5.0
+              },
+              "sku": "WIX-TUMBLER-S",
+              "visible": true
+            },
+            "stock": {
+              "trackQuantity": true,
+              "quantity": 9,
+              "inStock": true
+            }
+          },
+          {
+            "id": "8a7b6c50-1002-4e3f-9a0b-1c2d3e4f0002",
+            "choices": {
+              "Size": "Large"
+            },
+            "variant": {
+              "priceData": {
+                "currency": "CAD",
+                "price": 19.0,
+                "discountedPrice": 19.0,
+                "formatted": {
+                  "price": "C$19.00",
+                  "discountedPrice": "C$19.00"
+                }
+              },
+              "sku": "WIX-TUMBLER-L",
+              "visible": true
+            },
+            "stock": {
+              "trackQuantity": false,
+              "inStock": false
+            }
+          }
+        ],
+        "createdDate": "2026-07-02T10:00:00.000Z"
+      }
+    ],
+    "metadata": {
+      "items": 100,
+      "offset": 0
+    },
+    "totalResults": 2
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products/111/reviews"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 301,
+        "title": "Great mug",
+        "text": "Keeps coffee hot on cold mornings.",
+        "status": "approved",
+        "rating": 5,
+        "email": "Ingrid@Example.com",
+        "name": "Ingrid J.",
+        "date_reviewed": "2026-09-02T12:00:00+00:00",
+        "date_created": "2026-09-02T12:00:00+00:00",
+        "date_modified": "2026-09-02T12:00:00+00:00"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 1,
+        "count": 1,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

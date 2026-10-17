@@ -1,0 +1,1174 @@
+{
+  "request": {
+    "path": "/rest/default/V1/orders",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "store_id",
+      "searchCriteria[filterGroups][0][filters][0][value]": "1",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "in",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "base_currency_code": "CAD",
+        "base_discount_amount": -5,
+        "base_grand_total": 258.82,
+        "base_shipping_amount": 12,
+        "base_subtotal": 239.49,
+        "base_tax_amount": 12.33,
+        "base_to_global_rate": 1,
+        "base_to_order_rate": 1,
+        "base_total_paid": 258.82,
+        "created_at": "2026-09-03 14:00:00",
+        "customer_email": "maeve@example.com",
+        "customer_firstname": "Maeve",
+        "customer_lastname": "Doucet",
+        "customer_group_id": 1,
+        "customer_is_guest": 0,
+        "customer_note_notify": 1,
+        "discount_amount": -5,
+        "entity_id": 501,
+        "global_currency_code": "CAD",
+        "grand_total": 258.82,
+        "increment_id": "000000501",
+        "is_virtual": 0,
+        "order_currency_code": "CAD",
+        "remote_ip": "203.0.113.7",
+        "shipping_amount": 12,
+        "shipping_description": "Flat Rate - Fixed",
+        "shipping_incl_tax": 12.6,
+        "shipping_tax_amount": 0.6,
+        "state": "complete",
+        "status": "complete",
+        "store_currency_code": "CAD",
+        "store_id": 1,
+        "store_name": "Main Website\nHarbourside Goods\nDefault Store View",
+        "subtotal": 239.49,
+        "subtotal_incl_tax": 251.46,
+        "tax_amount": 12.33,
+        "total_due": 0,
+        "total_item_count": 2,
+        "total_paid": 258.82,
+        "total_qty_ordered": 2,
+        "total_refunded": 10,
+        "updated_at": "2026-09-08 11:00:00",
+        "weight": 2,
+        "items": [
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 1.67,
+            "base_price": 79.99,
+            "base_row_total": 79.99,
+            "base_tax_amount": 3.92,
+            "created_at": "2026-09-03 14:00:00",
+            "discount_amount": 1.67,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1001,
+            "name": "Copper kettle",
+            "no_discount": 0,
+            "order_id": 501,
+            "original_price": 79.99,
+            "price": 79.99,
+            "price_incl_tax": 83.99,
+            "product_id": 11,
+            "product_type": "simple",
+            "qty_canceled": 0,
+            "qty_invoiced": 1,
+            "qty_ordered": 1,
+            "qty_refunded": 0,
+            "qty_shipped": 1,
+            "row_total": 79.99,
+            "row_total_incl_tax": 83.91,
+            "sku": "MAG-KETTLE-1",
+            "store_id": 1,
+            "tax_amount": 3.92,
+            "tax_percent": 5,
+            "updated_at": "2026-09-03 14:00:00",
+            "weight": 1
+          },
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 3.33,
+            "base_price": 159.5,
+            "base_row_total": 159.5,
+            "base_tax_amount": 7.81,
+            "created_at": "2026-09-03 14:00:00",
+            "discount_amount": 3.33,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1002,
+            "name": "Storm shell jacket",
+            "no_discount": 0,
+            "order_id": 501,
+            "original_price": 159.5,
+            "price": 159.5,
+            "price_incl_tax": 167.47,
+            "product_id": 12,
+            "product_type": "configurable",
+            "qty_canceled": 0,
+            "qty_invoiced": 1,
+            "qty_ordered": 1,
+            "qty_refunded": 0,
+            "qty_shipped": 1,
+            "row_total": 159.5,
+            "row_total_incl_tax": 167.31,
+            "sku": "MAG-JACKET-NAVY",
+            "store_id": 1,
+            "tax_amount": 7.81,
+            "tax_percent": 5,
+            "updated_at": "2026-09-03 14:00:00",
+            "weight": 1,
+            "product_option": {
+              "extension_attributes": {
+                "configurable_item_options": [
+                  {
+                    "option_id": "93",
+                    "option_value": 50
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 0.0,
+            "base_price": 0,
+            "base_row_total": 0,
+            "base_tax_amount": 0.0,
+            "created_at": "2026-09-03 14:00:00",
+            "discount_amount": 0.0,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1003,
+            "name": "Storm shell jacket-Navy",
+            "no_discount": 0,
+            "order_id": 501,
+            "original_price": 0,
+            "price": 0,
+            "price_incl_tax": 0,
+            "product_id": 122,
+            "product_type": "simple",
+            "qty_canceled": 0,
+            "qty_invoiced": 1,
+            "qty_ordered": 1,
+            "qty_refunded": 0,
+            "qty_shipped": 1,
+            "row_total": 0,
+            "row_total_incl_tax": 0.0,
+            "sku": "MAG-JACKET-NAVY",
+            "store_id": 1,
+            "tax_amount": 0.0,
+            "tax_percent": 0,
+            "updated_at": "2026-09-03 14:00:00",
+            "weight": 1,
+            "parent_item_id": 1002,
+            "parent_item": {
+              "amount_refunded": 0,
+              "base_amount_refunded": 0,
+              "base_discount_amount": 3.33,
+              "base_price": 159.5,
+              "base_row_total": 159.5,
+              "base_tax_amount": 7.81,
+              "created_at": "2026-09-03 14:00:00",
+              "discount_amount": 3.33,
+              "discount_percent": 0,
+              "free_shipping": 0,
+              "is_qty_decimal": 0,
+              "is_virtual": 0,
+              "item_id": 1002,
+              "name": "Storm shell jacket",
+              "no_discount": 0,
+              "order_id": 501,
+              "original_price": 159.5,
+              "price": 159.5,
+              "price_incl_tax": 167.47,
+              "product_id": 12,
+              "product_type": "configurable",
+              "qty_canceled": 0,
+              "qty_invoiced": 1,
+              "qty_ordered": 1,
+              "qty_refunded": 0,
+              "qty_shipped": 0,
+              "row_total": 159.5,
+              "row_total_incl_tax": 167.31,
+              "sku": "MAG-JACKET-NAVY",
+              "store_id": 1,
+              "tax_amount": 7.81,
+              "tax_percent": 5,
+              "updated_at": "2026-09-03 14:00:00",
+              "weight": 1,
+              "product_option": {
+                "extension_attributes": {
+                  "configurable_item_options": [
+                    {
+                      "option_id": "93",
+                      "option_value": 50
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "billing_address": {
+          "address_type": "billing",
+          "city": "Victoria",
+          "country_id": "CA",
+          "customer_address_id": 41,
+          "email": "maeve@example.com",
+          "entity_id": 5011,
+          "firstname": "Maeve",
+          "lastname": "Doucet",
+          "parent_id": 501,
+          "postcode": "V8W 1T3",
+          "region": "British Columbia",
+          "region_code": "BC",
+          "region_id": 2,
+          "street": [
+            "12 Wharf Street",
+            "Unit 3"
+          ],
+          "telephone": "+1 250-555-0141"
+        },
+        "payment": {
+          "account_status": "",
+          "additional_information": [
+            "Check / Money order"
+          ],
+          "amount_ordered": 258.82,
+          "amount_paid": 258.82,
+          "base_amount_ordered": 258.82,
+          "cc_last4": "",
+          "entity_id": 501,
+          "method": "checkmo",
+          "parent_id": 501
+        },
+        "status_histories": [
+          {
+            "comment": "Left at the side door.",
+            "created_at": "2026-09-04 16:30:00",
+            "entity_id": 3001,
+            "entity_name": "shipment",
+            "is_customer_notified": 0,
+            "is_visible_on_front": 0,
+            "parent_id": 501,
+            "status": "complete"
+          },
+          {
+            "comment": "We refunded offline CA$10.00.",
+            "created_at": "2026-09-08 11:00:00",
+            "entity_id": 3002,
+            "entity_name": "creditmemo",
+            "is_customer_notified": 1,
+            "is_visible_on_front": 0,
+            "parent_id": 501,
+            "status": "complete"
+          }
+        ],
+        "extension_attributes": {
+          "shipping_assignments": [
+            {
+              "shipping": {
+                "address": {
+                  "address_type": "shipping",
+                  "city": "Victoria",
+                  "country_id": "CA",
+                  "customer_address_id": 41,
+                  "email": "maeve@example.com",
+                  "entity_id": 5012,
+                  "firstname": "Maeve",
+                  "lastname": "Doucet",
+                  "parent_id": 501,
+                  "postcode": "V8W 1T3",
+                  "region": "British Columbia",
+                  "region_code": "BC",
+                  "region_id": 2,
+                  "street": [
+                    "12 Wharf Street",
+                    "Unit 3"
+                  ],
+                  "telephone": "+1 250-555-0141"
+                },
+                "method": "flatrate_flatrate",
+                "total": {
+                  "shipping_amount": 12,
+                  "base_shipping_amount": 12,
+                  "shipping_tax_amount": 0.6,
+                  "shipping_incl_tax": 12.6
+                }
+              },
+              "items": [
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 1.67,
+                  "base_price": 79.99,
+                  "base_row_total": 79.99,
+                  "base_tax_amount": 3.92,
+                  "created_at": "2026-09-03 14:00:00",
+                  "discount_amount": 1.67,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1001,
+                  "name": "Copper kettle",
+                  "no_discount": 0,
+                  "order_id": 501,
+                  "original_price": 79.99,
+                  "price": 79.99,
+                  "price_incl_tax": 83.99,
+                  "product_id": 11,
+                  "product_type": "simple",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 1,
+                  "qty_ordered": 1,
+                  "qty_refunded": 0,
+                  "qty_shipped": 1,
+                  "row_total": 79.99,
+                  "row_total_incl_tax": 83.91,
+                  "sku": "MAG-KETTLE-1",
+                  "store_id": 1,
+                  "tax_amount": 3.92,
+                  "tax_percent": 5,
+                  "updated_at": "2026-09-03 14:00:00",
+                  "weight": 1
+                },
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 3.33,
+                  "base_price": 159.5,
+                  "base_row_total": 159.5,
+                  "base_tax_amount": 7.81,
+                  "created_at": "2026-09-03 14:00:00",
+                  "discount_amount": 3.33,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1002,
+                  "name": "Storm shell jacket",
+                  "no_discount": 0,
+                  "order_id": 501,
+                  "original_price": 159.5,
+                  "price": 159.5,
+                  "price_incl_tax": 167.47,
+                  "product_id": 12,
+                  "product_type": "configurable",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 1,
+                  "qty_ordered": 1,
+                  "qty_refunded": 0,
+                  "qty_shipped": 1,
+                  "row_total": 159.5,
+                  "row_total_incl_tax": 167.31,
+                  "sku": "MAG-JACKET-NAVY",
+                  "store_id": 1,
+                  "tax_amount": 7.81,
+                  "tax_percent": 5,
+                  "updated_at": "2026-09-03 14:00:00",
+                  "weight": 1,
+                  "product_option": {
+                    "extension_attributes": {
+                      "configurable_item_options": [
+                        {
+                          "option_id": "93",
+                          "option_value": 50
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 0.0,
+                  "base_price": 0,
+                  "base_row_total": 0,
+                  "base_tax_amount": 0.0,
+                  "created_at": "2026-09-03 14:00:00",
+                  "discount_amount": 0.0,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1003,
+                  "name": "Storm shell jacket-Navy",
+                  "no_discount": 0,
+                  "order_id": 501,
+                  "original_price": 0,
+                  "price": 0,
+                  "price_incl_tax": 0,
+                  "product_id": 122,
+                  "product_type": "simple",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 1,
+                  "qty_ordered": 1,
+                  "qty_refunded": 0,
+                  "qty_shipped": 1,
+                  "row_total": 0,
+                  "row_total_incl_tax": 0.0,
+                  "sku": "MAG-JACKET-NAVY",
+                  "store_id": 1,
+                  "tax_amount": 0.0,
+                  "tax_percent": 0,
+                  "updated_at": "2026-09-03 14:00:00",
+                  "weight": 1,
+                  "parent_item_id": 1002,
+                  "parent_item": {
+                    "amount_refunded": 0,
+                    "base_amount_refunded": 0,
+                    "base_discount_amount": 3.33,
+                    "base_price": 159.5,
+                    "base_row_total": 159.5,
+                    "base_tax_amount": 7.81,
+                    "created_at": "2026-09-03 14:00:00",
+                    "discount_amount": 3.33,
+                    "discount_percent": 0,
+                    "free_shipping": 0,
+                    "is_qty_decimal": 0,
+                    "is_virtual": 0,
+                    "item_id": 1002,
+                    "name": "Storm shell jacket",
+                    "no_discount": 0,
+                    "order_id": 501,
+                    "original_price": 159.5,
+                    "price": 159.5,
+                    "price_incl_tax": 167.47,
+                    "product_id": 12,
+                    "product_type": "configurable",
+                    "qty_canceled": 0,
+                    "qty_invoiced": 1,
+                    "qty_ordered": 1,
+                    "qty_refunded": 0,
+                    "qty_shipped": 0,
+                    "row_total": 159.5,
+                    "row_total_incl_tax": 167.31,
+                    "sku": "MAG-JACKET-NAVY",
+                    "store_id": 1,
+                    "tax_amount": 7.81,
+                    "tax_percent": 5,
+                    "updated_at": "2026-09-03 14:00:00",
+                    "weight": 1,
+                    "product_option": {
+                      "extension_attributes": {
+                        "configurable_item_options": [
+                          {
+                            "option_id": "93",
+                            "option_value": 50
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "payment_additional_info": [
+            {
+              "key": "method_title",
+              "value": "Check / Money order"
+            }
+          ],
+          "applied_taxes": [
+            {
+              "code": "GST",
+              "title": "GST",
+              "percent": 5,
+              "amount": 12.33,
+              "base_amount": 12.33
+            }
+          ],
+          "item_applied_taxes": [
+            {
+              "type": "product",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 3.92,
+                  "base_amount": 3.92
+                }
+              ],
+              "item_id": 1001
+            },
+            {
+              "type": "product",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 7.81,
+                  "base_amount": 7.81
+                }
+              ],
+              "item_id": 1002
+            },
+            {
+              "type": "shipping",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 0.6,
+                  "base_amount": 0.6
+                }
+              ]
+            }
+          ]
+        },
+        "customer_id": 41,
+        "coupon_code": "MAG-WELCOME5",
+        "discount_description": "MAG-WELCOME5",
+        "applied_rule_ids": "61",
+        "base_total_refunded": 10,
+        "total_offline_refunded": 10
+      },
+      {
+        "base_currency_code": "CAD",
+        "base_discount_amount": 0,
+        "base_grand_total": 178.48,
+        "base_shipping_amount": 10,
+        "base_subtotal": 159.98,
+        "base_tax_amount": 8.5,
+        "base_to_global_rate": 1,
+        "base_to_order_rate": 1,
+        "base_total_paid": 0,
+        "created_at": "2026-09-05 14:00:00",
+        "customer_email": "rowan@example.com",
+        "customer_firstname": "Rowan",
+        "customer_lastname": "Guest",
+        "customer_group_id": 0,
+        "customer_is_guest": 1,
+        "customer_note_notify": 1,
+        "discount_amount": 0,
+        "entity_id": 502,
+        "global_currency_code": "CAD",
+        "grand_total": 178.48,
+        "increment_id": "000000502",
+        "is_virtual": 0,
+        "order_currency_code": "CAD",
+        "remote_ip": "203.0.113.7",
+        "shipping_amount": 10,
+        "shipping_description": "Flat Rate - Fixed",
+        "shipping_incl_tax": 10.5,
+        "shipping_tax_amount": 0.5,
+        "state": "new",
+        "status": "pending",
+        "store_currency_code": "CAD",
+        "store_id": 1,
+        "store_name": "Main Website\nHarbourside Goods\nDefault Store View",
+        "subtotal": 159.98,
+        "subtotal_incl_tax": 167.98,
+        "tax_amount": 8.5,
+        "total_due": 178.48,
+        "total_item_count": 1,
+        "total_paid": 0,
+        "total_qty_ordered": 2,
+        "total_refunded": 0,
+        "updated_at": "2026-09-05 15:00:00",
+        "weight": 2,
+        "items": [
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 0,
+            "base_price": 79.99,
+            "base_row_total": 159.98,
+            "base_tax_amount": 8.0,
+            "created_at": "2026-09-05 14:00:00",
+            "discount_amount": 0,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1004,
+            "name": "Copper kettle",
+            "no_discount": 0,
+            "order_id": 502,
+            "original_price": 79.99,
+            "price": 79.99,
+            "price_incl_tax": 83.99,
+            "product_id": 11,
+            "product_type": "simple",
+            "qty_canceled": 0,
+            "qty_invoiced": 0,
+            "qty_ordered": 2,
+            "qty_refunded": 0,
+            "qty_shipped": 0,
+            "row_total": 159.98,
+            "row_total_incl_tax": 167.98,
+            "sku": "MAG-KETTLE-1",
+            "store_id": 1,
+            "tax_amount": 8.0,
+            "tax_percent": 5,
+            "updated_at": "2026-09-05 14:00:00",
+            "weight": 1
+          }
+        ],
+        "billing_address": {
+          "address_type": "billing",
+          "city": "Victoria",
+          "country_id": "CA",
+          "customer_address_id": 0,
+          "email": "rowan@example.com",
+          "entity_id": 5021,
+          "firstname": "Rowan",
+          "lastname": "Guest",
+          "parent_id": 502,
+          "postcode": "V8W 1H6",
+          "region": "British Columbia",
+          "region_code": "BC",
+          "region_id": 2,
+          "street": [
+            "5 Fort Street"
+          ],
+          "telephone": "+1 250-555-0150"
+        },
+        "payment": {
+          "account_status": "",
+          "additional_information": [
+            "Check / Money order"
+          ],
+          "amount_ordered": 178.48,
+          "amount_paid": 0,
+          "base_amount_ordered": 178.48,
+          "cc_last4": "",
+          "entity_id": 502,
+          "method": "checkmo",
+          "parent_id": 502
+        },
+        "status_histories": [],
+        "extension_attributes": {
+          "shipping_assignments": [
+            {
+              "shipping": {
+                "address": {
+                  "address_type": "shipping",
+                  "city": "Victoria",
+                  "country_id": "CA",
+                  "customer_address_id": 0,
+                  "email": "rowan@example.com",
+                  "entity_id": 5022,
+                  "firstname": "Rowan",
+                  "lastname": "Guest",
+                  "parent_id": 502,
+                  "postcode": "V8W 1H6",
+                  "region": "British Columbia",
+                  "region_code": "BC",
+                  "region_id": 2,
+                  "street": [
+                    "5 Fort Street"
+                  ],
+                  "telephone": "+1 250-555-0150"
+                },
+                "method": "flatrate_flatrate",
+                "total": {
+                  "shipping_amount": 10,
+                  "base_shipping_amount": 10,
+                  "shipping_tax_amount": 0.5,
+                  "shipping_incl_tax": 10.5
+                }
+              },
+              "items": [
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 0,
+                  "base_price": 79.99,
+                  "base_row_total": 159.98,
+                  "base_tax_amount": 8.0,
+                  "created_at": "2026-09-05 14:00:00",
+                  "discount_amount": 0,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1004,
+                  "name": "Copper kettle",
+                  "no_discount": 0,
+                  "order_id": 502,
+                  "original_price": 79.99,
+                  "price": 79.99,
+                  "price_incl_tax": 83.99,
+                  "product_id": 11,
+                  "product_type": "simple",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 0,
+                  "qty_ordered": 2,
+                  "qty_refunded": 0,
+                  "qty_shipped": 0,
+                  "row_total": 159.98,
+                  "row_total_incl_tax": 167.98,
+                  "sku": "MAG-KETTLE-1",
+                  "store_id": 1,
+                  "tax_amount": 8.0,
+                  "tax_percent": 5,
+                  "updated_at": "2026-09-05 14:00:00",
+                  "weight": 1
+                }
+              ]
+            }
+          ],
+          "payment_additional_info": [
+            {
+              "key": "method_title",
+              "value": "Check / Money order"
+            }
+          ],
+          "applied_taxes": [
+            {
+              "code": "GST",
+              "title": "GST",
+              "percent": 5,
+              "amount": 8.5,
+              "base_amount": 8.5
+            }
+          ],
+          "item_applied_taxes": [
+            {
+              "type": "product",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 8.0,
+                  "base_amount": 8.0
+                }
+              ],
+              "item_id": 1004
+            },
+            {
+              "type": "shipping",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 0.5,
+                  "base_amount": 0.5
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "base_currency_code": "CAD",
+        "base_discount_amount": 0,
+        "base_grand_total": 169.05,
+        "base_shipping_amount": 12,
+        "base_subtotal": 149,
+        "base_tax_amount": 8.05,
+        "base_to_global_rate": 1,
+        "base_to_order_rate": 1,
+        "base_total_paid": 169.05,
+        "created_at": "2026-09-09 14:00:00",
+        "customer_email": "priya@example.com",
+        "customer_firstname": "Priya",
+        "customer_lastname": "Natarajan",
+        "customer_group_id": 1,
+        "customer_is_guest": 0,
+        "customer_note_notify": 1,
+        "discount_amount": 0,
+        "entity_id": 503,
+        "global_currency_code": "CAD",
+        "grand_total": 169.05,
+        "increment_id": "000000503",
+        "is_virtual": 0,
+        "order_currency_code": "CAD",
+        "remote_ip": "203.0.113.7",
+        "shipping_amount": 12,
+        "shipping_description": "Flat Rate - Fixed",
+        "shipping_incl_tax": 12.6,
+        "shipping_tax_amount": 0.6,
+        "state": "processing",
+        "status": "processing",
+        "store_currency_code": "CAD",
+        "store_id": 1,
+        "store_name": "Main Website\nHarbourside Goods\nDefault Store View",
+        "subtotal": 149,
+        "subtotal_incl_tax": 156.45,
+        "tax_amount": 8.05,
+        "total_due": 0,
+        "total_item_count": 1,
+        "total_paid": 169.05,
+        "total_qty_ordered": 1,
+        "total_refunded": 0,
+        "updated_at": "2026-09-09 15:00:00",
+        "weight": 2,
+        "items": [
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 0,
+            "base_price": 149,
+            "base_row_total": 149,
+            "base_tax_amount": 7.45,
+            "created_at": "2026-09-09 14:00:00",
+            "discount_amount": 0,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1006,
+            "name": "Storm shell jacket",
+            "no_discount": 0,
+            "order_id": 503,
+            "original_price": 149,
+            "price": 149,
+            "price_incl_tax": 156.45,
+            "product_id": 12,
+            "product_type": "configurable",
+            "qty_canceled": 0,
+            "qty_invoiced": 1,
+            "qty_ordered": 1,
+            "qty_refunded": 0,
+            "qty_shipped": 0,
+            "row_total": 149,
+            "row_total_incl_tax": 156.45,
+            "sku": "MAG-JACKET-RED",
+            "store_id": 1,
+            "tax_amount": 7.45,
+            "tax_percent": 5,
+            "updated_at": "2026-09-09 14:00:00",
+            "weight": 1
+          },
+          {
+            "amount_refunded": 0,
+            "base_amount_refunded": 0,
+            "base_discount_amount": 0.0,
+            "base_price": 0,
+            "base_row_total": 0,
+            "base_tax_amount": 0.0,
+            "created_at": "2026-09-09 14:00:00",
+            "discount_amount": 0.0,
+            "discount_percent": 0,
+            "free_shipping": 0,
+            "is_qty_decimal": 0,
+            "is_virtual": 0,
+            "item_id": 1007,
+            "name": "Storm shell jacket-Red",
+            "no_discount": 0,
+            "order_id": 503,
+            "original_price": 0,
+            "price": 0,
+            "price_incl_tax": 0,
+            "product_id": 121,
+            "product_type": "simple",
+            "qty_canceled": 0,
+            "qty_invoiced": 1,
+            "qty_ordered": 1,
+            "qty_refunded": 0,
+            "qty_shipped": 0,
+            "row_total": 0,
+            "row_total_incl_tax": 0.0,
+            "sku": "MAG-JACKET-RED",
+            "store_id": 1,
+            "tax_amount": 0.0,
+            "tax_percent": 0,
+            "updated_at": "2026-09-09 14:00:00",
+            "weight": 1,
+            "parent_item_id": 1006,
+            "parent_item": {
+              "amount_refunded": 0,
+              "base_amount_refunded": 0,
+              "base_discount_amount": 0,
+              "base_price": 149,
+              "base_row_total": 149,
+              "base_tax_amount": 7.45,
+              "created_at": "2026-09-09 14:00:00",
+              "discount_amount": 0,
+              "discount_percent": 0,
+              "free_shipping": 0,
+              "is_qty_decimal": 0,
+              "is_virtual": 0,
+              "item_id": 1006,
+              "name": "Storm shell jacket",
+              "no_discount": 0,
+              "order_id": 503,
+              "original_price": 149,
+              "price": 149,
+              "price_incl_tax": 156.45,
+              "product_id": 12,
+              "product_type": "configurable",
+              "qty_canceled": 0,
+              "qty_invoiced": 1,
+              "qty_ordered": 1,
+              "qty_refunded": 0,
+              "qty_shipped": 0,
+              "row_total": 149,
+              "row_total_incl_tax": 156.45,
+              "sku": "MAG-JACKET-RED",
+              "store_id": 1,
+              "tax_amount": 7.45,
+              "tax_percent": 5,
+              "updated_at": "2026-09-09 14:00:00",
+              "weight": 1
+            }
+          }
+        ],
+        "billing_address": {
+          "address_type": "billing",
+          "city": "Victoria",
+          "country_id": "CA",
+          "customer_address_id": 43,
+          "email": "priya@example.com",
+          "entity_id": 5031,
+          "firstname": "Priya",
+          "lastname": "Natarajan",
+          "parent_id": 503,
+          "postcode": "V8R 1G2",
+          "region": "British Columbia",
+          "region_code": "BC",
+          "region_id": 2,
+          "street": [
+            "88 Oak Bay Avenue"
+          ],
+          "telephone": "+1 250-555-0143"
+        },
+        "payment": {
+          "account_status": "",
+          "additional_information": [
+            "Check / Money order"
+          ],
+          "amount_ordered": 169.05,
+          "amount_paid": 169.05,
+          "base_amount_ordered": 169.05,
+          "cc_last4": "",
+          "entity_id": 503,
+          "method": "checkmo",
+          "parent_id": 503
+        },
+        "status_histories": [],
+        "extension_attributes": {
+          "shipping_assignments": [
+            {
+              "shipping": {
+                "address": {
+                  "address_type": "shipping",
+                  "city": "Victoria",
+                  "country_id": "CA",
+                  "customer_address_id": 43,
+                  "email": "priya@example.com",
+                  "entity_id": 5032,
+                  "firstname": "Priya",
+                  "lastname": "Natarajan",
+                  "parent_id": 503,
+                  "postcode": "V8R 1G2",
+                  "region": "British Columbia",
+                  "region_code": "BC",
+                  "region_id": 2,
+                  "street": [
+                    "88 Oak Bay Avenue"
+                  ],
+                  "telephone": "+1 250-555-0143"
+                },
+                "method": "flatrate_flatrate",
+                "total": {
+                  "shipping_amount": 12,
+                  "base_shipping_amount": 12,
+                  "shipping_tax_amount": 0.6,
+                  "shipping_incl_tax": 12.6
+                }
+              },
+              "items": [
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 0,
+                  "base_price": 149,
+                  "base_row_total": 149,
+                  "base_tax_amount": 7.45,
+                  "created_at": "2026-09-09 14:00:00",
+                  "discount_amount": 0,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1006,
+                  "name": "Storm shell jacket",
+                  "no_discount": 0,
+                  "order_id": 503,
+                  "original_price": 149,
+                  "price": 149,
+                  "price_incl_tax": 156.45,
+                  "product_id": 12,
+                  "product_type": "configurable",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 1,
+                  "qty_ordered": 1,
+                  "qty_refunded": 0,
+                  "qty_shipped": 0,
+                  "row_total": 149,
+                  "row_total_incl_tax": 156.45,
+                  "sku": "MAG-JACKET-RED",
+                  "store_id": 1,
+                  "tax_amount": 7.45,
+                  "tax_percent": 5,
+                  "updated_at": "2026-09-09 14:00:00",
+                  "weight": 1
+                },
+                {
+                  "amount_refunded": 0,
+                  "base_amount_refunded": 0,
+                  "base_discount_amount": 0.0,
+                  "base_price": 0,
+                  "base_row_total": 0,
+                  "base_tax_amount": 0.0,
+                  "created_at": "2026-09-09 14:00:00",
+                  "discount_amount": 0.0,
+                  "discount_percent": 0,
+                  "free_shipping": 0,
+                  "is_qty_decimal": 0,
+                  "is_virtual": 0,
+                  "item_id": 1007,
+                  "name": "Storm shell jacket-Red",
+                  "no_discount": 0,
+                  "order_id": 503,
+                  "original_price": 0,
+                  "price": 0,
+                  "price_incl_tax": 0,
+                  "product_id": 121,
+                  "product_type": "simple",
+                  "qty_canceled": 0,
+                  "qty_invoiced": 1,
+                  "qty_ordered": 1,
+                  "qty_refunded": 0,
+                  "qty_shipped": 0,
+                  "row_total": 0,
+                  "row_total_incl_tax": 0.0,
+                  "sku": "MAG-JACKET-RED",
+                  "store_id": 1,
+                  "tax_amount": 0.0,
+                  "tax_percent": 0,
+                  "updated_at": "2026-09-09 14:00:00",
+                  "weight": 1,
+                  "parent_item_id": 1006,
+                  "parent_item": {
+                    "amount_refunded": 0,
+                    "base_amount_refunded": 0,
+                    "base_discount_amount": 0,
+                    "base_price": 149,
+                    "base_row_total": 149,
+                    "base_tax_amount": 7.45,
+                    "created_at": "2026-09-09 14:00:00",
+                    "discount_amount": 0,
+                    "discount_percent": 0,
+                    "free_shipping": 0,
+                    "is_qty_decimal": 0,
+                    "is_virtual": 0,
+                    "item_id": 1006,
+                    "name": "Storm shell jacket",
+                    "no_discount": 0,
+                    "order_id": 503,
+                    "original_price": 149,
+                    "price": 149,
+                    "price_incl_tax": 156.45,
+                    "product_id": 12,
+                    "product_type": "configurable",
+                    "qty_canceled": 0,
+                    "qty_invoiced": 1,
+                    "qty_ordered": 1,
+                    "qty_refunded": 0,
+                    "qty_shipped": 0,
+                    "row_total": 149,
+                    "row_total_incl_tax": 156.45,
+                    "sku": "MAG-JACKET-RED",
+                    "store_id": 1,
+                    "tax_amount": 7.45,
+                    "tax_percent": 5,
+                    "updated_at": "2026-09-09 14:00:00",
+                    "weight": 1
+                  }
+                }
+              ]
+            }
+          ],
+          "payment_additional_info": [
+            {
+              "key": "method_title",
+              "value": "Check / Money order"
+            }
+          ],
+          "applied_taxes": [
+            {
+              "code": "GST",
+              "title": "GST",
+              "percent": 5,
+              "amount": 8.05,
+              "base_amount": 8.05
+            }
+          ],
+          "item_applied_taxes": [
+            {
+              "type": "product",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 7.45,
+                  "base_amount": 7.45
+                }
+              ],
+              "item_id": 1006
+            },
+            {
+              "type": "shipping",
+              "applied_taxes": [
+                {
+                  "code": "GST",
+                  "title": "GST",
+                  "percent": 5,
+                  "amount": 0.6,
+                  "base_amount": 0.6
+                }
+              ]
+            }
+          ]
+        },
+        "customer_id": 43
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [
+        {
+          "filters": [
+            {
+              "field": "store_id",
+              "value": "1",
+              "condition_type": "in"
+            }
+          ]
+        }
+      ],
+      "page_size": 100,
+      "current_page": 1,
+      "sort_orders": [
+        {
+          "field": "entity_id",
+          "direction": "ASC"
+        }
+      ]
+    },
+    "total_count": 3
+  }
+}

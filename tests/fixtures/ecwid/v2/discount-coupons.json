@@ -1,0 +1,91 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/discount_coupons"
+  },
+  "response": {
+    "total": 5,
+    "count": 5,
+    "offset": 0,
+    "limit": 100,
+    "items": [
+      {
+        "id": 9501,
+        "name": "Welcome $5",
+        "code": "ECW-WELCOME5",
+        "discountType": "ABS",
+        "status": "ACTIVE",
+        "discount": 5,
+        "launchDate": "2026-09-01 00:00:00 +0000",
+        "usesLimit": "UNLIMITED",
+        "applicationLimit": "UNLIMITED",
+        "creationDate": "2026-08-30 10:00:00 +0000",
+        "updateDate": "2026-08-30 10:00:00 +0000",
+        "orderCount": 1,
+        "totalLimit": 30,
+        "expirationDate": "2026-12-31 23:59:59 +0000"
+      },
+      {
+        "id": 9502,
+        "name": "Melts 15% off",
+        "code": "ECW-MELTS15",
+        "discountType": "PERCENT",
+        "status": "ACTIVE",
+        "discount": 15,
+        "launchDate": "2026-09-01 00:00:00 +0000",
+        "usesLimit": "ONCEPERCUSTOMER",
+        "applicationLimit": "UNLIMITED",
+        "creationDate": "2026-08-30 10:05:00 +0000",
+        "updateDate": "2026-08-30 10:05:00 +0000",
+        "orderCount": 0,
+        "catalogLimit": {
+          "products": [
+            9202
+          ],
+          "categories": []
+        }
+      },
+      {
+        "id": 9503,
+        "name": "Free shipping",
+        "code": "ECW-SHIPFREE",
+        "discountType": "SHIPPING",
+        "status": "ACTIVE",
+        "discount": 0,
+        "launchDate": "2026-09-01 00:00:00 +0000",
+        "usesLimit": "SINGLE",
+        "applicationLimit": "UNLIMITED",
+        "creationDate": "2026-08-30 10:10:00 +0000",
+        "updateDate": "2026-08-30 10:10:00 +0000",
+        "orderCount": 0
+      },
+      {
+        "id": 9504,
+        "name": "Summer 10%",
+        "code": "ECW-PAUSED",
+        "discountType": "PERCENT",
+        "status": "PAUSED",
+        "discount": 10,
+        "launchDate": "2026-09-01 00:00:00 +0000",
+        "usesLimit": "UNLIMITED",
+        "applicationLimit": "UNLIMITED",
+        "creationDate": "2026-06-01 10:00:00 +0000",
+        "updateDate": "2026-06-01 10:00:00 +0000",
+        "orderCount": 0
+      },
+      {
+        "id": 9505,
+        "name": "First order $10",
+        "code": "ECW-NEWONLY",
+        "discountType": "ABS",
+        "status": "ACTIVE",
+        "discount": 10,
+        "launchDate": "2026-09-01 00:00:00 +0000",
+        "usesLimit": "UNLIMITED",
+        "applicationLimit": "NEW_CUSTOMER_ONLY",
+        "creationDate": "2026-08-30 10:15:00 +0000",
+        "updateDate": "2026-08-30 10:15:00 +0000",
+        "orderCount": 0
+      }
+    ]
+  }
+}

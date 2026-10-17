@@ -1,0 +1,48 @@
+{
+  "request": {
+    "path": "/en/categories/products.json",
+    "query": {
+      "product": "502"
+    }
+  },
+  "response": {
+    "categoriesProducts": [
+      {
+        "id": 5605020,
+        "sortOrder": 0,
+        "category": {
+          "resource": {
+            "id": 402,
+            "url": "categories/402",
+            "link": "https://api.shoplightspeed.com/en/categories/402.json"
+          }
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        }
+      },
+      {
+        "id": 5605021,
+        "sortOrder": 1,
+        "category": {
+          "resource": {
+            "id": 401,
+            "url": "categories/401",
+            "link": "https://api.shoplightspeed.com/en/categories/401.json"
+          }
+        },
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        }
+      }
+    ]
+  }
+}

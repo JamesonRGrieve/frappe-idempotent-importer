@@ -1,0 +1,366 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/search",
+    "body": {
+      "object_types": [
+        "ITEM"
+      ]
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "ITEM",
+        "id": "ITEM_MUG",
+        "updated_at": "2026-09-02T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_data": {
+          "name": "Ocean mug",
+          "is_taxable": true,
+          "variations": [
+            {
+              "type": "ITEM_VARIATION",
+              "id": "VAR_MUG",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_variation_data": {
+                "item_id": "ITEM_MUG",
+                "name": "Regular",
+                "ordinal": 0,
+                "pricing_type": "FIXED_PRICING",
+                "price_money": {
+                  "amount": 3200,
+                  "currency": "CAD"
+                },
+                "track_inventory": true,
+                "sellable": true,
+                "stockable": true,
+                "sku": "PP-MUG-OCEAN",
+                "upc": "0629104150021"
+              }
+            }
+          ],
+          "product_type": "REGULAR",
+          "is_archived": false,
+          "tax_ids": [
+            "TAX_GST"
+          ],
+          "channels": [
+            "CH_SITE1"
+          ],
+          "categories": [
+            {
+              "id": "CAT_MUGS",
+              "ordinal": 0
+            }
+          ],
+          "reporting_category": {
+            "id": "CAT_MUGS"
+          },
+          "image_ids": [
+            "IMG_MUG_1",
+            "IMG_MUG_2"
+          ],
+          "description_html": "<p>Wheel-thrown stoneware.</p><p>Dishwasher safe.</p>",
+          "description_plaintext": "Wheel-thrown stoneware.\nDishwasher safe.",
+          "ecom_seo_data": {
+            "permalink": "ocean-mug",
+            "page_title": "Ocean mug | Prairie Pottery"
+          },
+          "ecom_uri": "https://prairiepottery.square.site/product/ocean-mug/ITEM_MUG"
+        }
+      },
+      {
+        "type": "ITEM",
+        "id": "ITEM_APRON",
+        "updated_at": "2026-09-02T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_data": {
+          "name": "Linen apron",
+          "is_taxable": true,
+          "variations": [
+            {
+              "type": "ITEM_VARIATION",
+              "id": "VAR_APRON_NAT",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_variation_data": {
+                "item_id": "ITEM_APRON",
+                "name": "Natural",
+                "ordinal": 0,
+                "pricing_type": "FIXED_PRICING",
+                "price_money": {
+                  "amount": 4500,
+                  "currency": "CAD"
+                },
+                "track_inventory": true,
+                "sellable": true,
+                "stockable": true,
+                "sku": "PP-APRON-NAT",
+                "item_option_values": [
+                  {
+                    "item_option_id": "OPT_COLOR",
+                    "item_option_value_id": "VAL_NATURAL"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "ITEM_VARIATION",
+              "id": "VAR_APRON_CHAR",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_variation_data": {
+                "item_id": "ITEM_APRON",
+                "name": "Charcoal",
+                "ordinal": 1,
+                "pricing_type": "FIXED_PRICING",
+                "price_money": {
+                  "amount": 4500,
+                  "currency": "CAD"
+                },
+                "track_inventory": true,
+                "sellable": true,
+                "stockable": true,
+                "sku": "PP-APRON-CHAR",
+                "item_option_values": [
+                  {
+                    "item_option_id": "OPT_COLOR",
+                    "item_option_value_id": "VAL_CHARCOAL"
+                  }
+                ],
+                "image_ids": [
+                  "IMG_APRON_CHAR"
+                ],
+                "location_overrides": [
+                  {
+                    "location_id": "LOCMAIN1",
+                    "price_money": {
+                      "amount": 4800,
+                      "currency": "CAD"
+                    },
+                    "pricing_type": "FIXED_PRICING",
+                    "track_inventory": true,
+                    "sold_out": true
+                  }
+                ]
+              }
+            }
+          ],
+          "product_type": "REGULAR",
+          "is_archived": false,
+          "tax_ids": [
+            "TAX_GST"
+          ],
+          "channels": [
+            "CH_SITE1"
+          ],
+          "categories": [
+            {
+              "id": "CAT_LINEN",
+              "ordinal": 0
+            }
+          ],
+          "reporting_category": {
+            "id": "CAT_LINEN"
+          },
+          "image_ids": [
+            "IMG_APRON"
+          ],
+          "description_html": "<p>Heavy linen, adjustable straps.</p>",
+          "description_plaintext": "Heavy linen, adjustable straps.",
+          "ecom_seo_data": {
+            "permalink": "linen-apron",
+            "page_title": "Linen apron | Prairie Pottery"
+          },
+          "ecom_uri": "https://prairiepottery.square.site/product/linen-apron/ITEM_APRON",
+          "item_options": [
+            {
+              "item_option_id": "OPT_COLOR"
+            }
+          ]
+        }
+      },
+      {
+        "type": "ITEM",
+        "id": "ITEM_SAMPLE",
+        "updated_at": "2026-09-02T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_data": {
+          "name": "Glaze sample",
+          "is_taxable": true,
+          "variations": [
+            {
+              "type": "ITEM_VARIATION",
+              "id": "VAR_SAMPLE",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_variation_data": {
+                "item_id": "ITEM_SAMPLE",
+                "name": "Regular",
+                "ordinal": 0,
+                "pricing_type": "FIXED_PRICING",
+                "price_money": {
+                  "amount": 500,
+                  "currency": "CAD"
+                },
+                "track_inventory": false,
+                "sellable": true,
+                "stockable": true
+              }
+            }
+          ],
+          "product_type": "REGULAR",
+          "is_archived": true,
+          "tax_ids": [
+            "TAX_GST"
+          ],
+          "channels": [
+            "CH_SITE1"
+          ]
+        }
+      },
+      {
+        "type": "ITEM",
+        "id": "ITEM_GIFT",
+        "updated_at": "2026-09-02T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_data": {
+          "name": "Gift card",
+          "is_taxable": true,
+          "variations": [
+            {
+              "type": "ITEM_VARIATION",
+              "id": "VAR_GIFT",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_variation_data": {
+                "item_id": "ITEM_GIFT",
+                "name": "Regular",
+                "ordinal": 0,
+                "pricing_type": "FIXED_PRICING",
+                "price_money": {
+                  "amount": 2500,
+                  "currency": "CAD"
+                },
+                "track_inventory": false,
+                "sellable": true,
+                "stockable": true
+              }
+            }
+          ],
+          "product_type": "GIFT_CARD",
+          "is_archived": false,
+          "tax_ids": [
+            "TAX_GST"
+          ],
+          "channels": [
+            "CH_SITE1"
+          ]
+        }
+      }
+    ],
+    "related_objects": [
+      {
+        "type": "IMAGE",
+        "id": "IMG_MUG_1",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Mug from above",
+          "url": "http://square_online-fake:8080/img/img_mug_1.png",
+          "caption": "Ocean mug from above"
+        }
+      },
+      {
+        "type": "IMAGE",
+        "id": "IMG_MUG_2",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Mug from the side",
+          "url": "http://square_online-fake:8080/img/img_mug_2.png",
+          "caption": null
+        }
+      },
+      {
+        "type": "IMAGE",
+        "id": "IMG_APRON",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Apron",
+          "url": "http://square_online-fake:8080/img/img_apron.png",
+          "caption": "Linen apron"
+        }
+      },
+      {
+        "type": "CATEGORY",
+        "id": "CAT_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "category_data": {
+          "name": "Mugs",
+          "image_ids": [
+            "IMG_CAT_MUGS"
+          ],
+          "category_type": "REGULAR_CATEGORY",
+          "is_top_level": true,
+          "online_visibility": true,
+          "ecom_seo_data": {
+            "permalink": "mugs",
+            "page_title": "Mugs | Prairie Pottery"
+          },
+          "root_category": "CAT_MUGS"
+        }
+      },
+      {
+        "type": "CATEGORY",
+        "id": "CAT_LINEN",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "category_data": {
+          "name": "Kitchen linen",
+          "image_ids": [],
+          "category_type": "REGULAR_CATEGORY",
+          "is_top_level": true,
+          "online_visibility": true,
+          "ecom_seo_data": {
+            "permalink": "kitchen-linen"
+          },
+          "root_category": "CAT_LINEN"
+        }
+      }
+    ],
+    "latest_time": "2026-09-09T10:00:00.000Z"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "path": "/en/shop/website.json"
+  },
+  "response": {
+    "shopWebsite": {
+      "name": "Harbour Lane Goods",
+      "title": "Harbour Lane Goods | Halifax",
+      "description": "Kitchen and linen goods made in Nova Scotia.",
+      "keywords": "kitchen, linen, halifax"
+    }
+  }
+}

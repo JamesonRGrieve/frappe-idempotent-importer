@@ -1,0 +1,23 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/502/taxes"
+  },
+  "response": [
+    {
+      "id": 4,
+      "order_id": 502,
+      "order_address_id": 5020,
+      "tax_rate_id": 1,
+      "sales_tax_id": "",
+      "tax_class_id": 0,
+      "name": "GST",
+      "class": "Default Tax Class",
+      "rate": "5.0000",
+      "priority": 0,
+      "priority_amount": "1.5000",
+      "line_amount": "1.5000",
+      "order_product_id": "5021",
+      "line_item_type": "item"
+    }
+  ]
+}

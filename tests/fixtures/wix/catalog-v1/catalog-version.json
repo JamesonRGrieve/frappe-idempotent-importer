@@ -1,0 +1,8 @@
+{
+  "request": {
+    "path": "/stores/v3/provision/version"
+  },
+  "response": {
+    "catalogVersion": "V1_CATALOG"
+  }
+}

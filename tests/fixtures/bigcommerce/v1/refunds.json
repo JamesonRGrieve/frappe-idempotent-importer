@@ -1,0 +1,12 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/orders/payment_actions/refunds",
+    "query": {
+      "order_id:in": "501,502"
+    }
+  },
+  "response": {
+    "data": [],
+    "meta": {}
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/content/pages",
+    "query": {
+      "include": "body",
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 81,
+        "channel_id": 1,
+        "name": "About us",
+        "is_visible": true,
+        "parent_id": 0,
+        "sort_order": 0,
+        "type": "page",
+        "is_homepage": false,
+        "is_customers_only": false,
+        "url": "/about-us/",
+        "search_keywords": "",
+        "body": "<p>Outfitting Canadian trails since 2019.</p>",
+        "content_type": "text/html"
+      },
+      {
+        "id": 82,
+        "channel_id": 1,
+        "name": "Size guide",
+        "is_visible": false,
+        "parent_id": 81,
+        "sort_order": 1,
+        "type": "raw",
+        "is_homepage": false,
+        "is_customers_only": false,
+        "url": "/size-guide/",
+        "search_keywords": "",
+        "body": "<table><tr><td>S</td><td>54 cm</td></tr></table>",
+        "content_type": "text/html"
+      },
+      {
+        "id": 83,
+        "channel_id": 1,
+        "name": "Trail Journal",
+        "is_visible": true,
+        "parent_id": 0,
+        "sort_order": 2,
+        "type": "blog",
+        "is_homepage": false,
+        "is_customers_only": false,
+        "url": "/blog/",
+        "meta_title": null,
+        "meta_keywords": null,
+        "meta_description": null,
+        "search_keywords": null
+      },
+      {
+        "id": 84,
+        "channel_id": 1,
+        "name": "Contact us",
+        "is_visible": true,
+        "parent_id": 0,
+        "sort_order": 3,
+        "type": "contact_form",
+        "is_homepage": false,
+        "is_customers_only": false,
+        "url": "/contact-us/",
+        "meta_title": null,
+        "meta_keywords": null,
+        "meta_description": null,
+        "search_keywords": null,
+        "email": "hello@northerntrail.example",
+        "contact_fields": "fullname,phone,orderno"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 4,
+        "count": 4,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores-reader/v1/products/query",
+    "body": {
+      "query": {
+        "filter": "{\"id\":\"6b5a4c30-1001-4d2e-8f1a-9b0c1d2e1001\"}"
+      }
+    }
+  },
+  "response": {
+    "products": [
+      {
+        "id": "6b5a4c30-1001-4d2e-8f1a-9b0c1d2e1001",
+        "name": "Stoneware planter",
+        "slug": "stoneware-planter",
+        "visible": true,
+        "productType": "physical",
+        "description": "<p>A planter with a drainage hole.</p>",
+        "sku": "WIX-PLANTER-1",
+        "weight": 1.2,
+        "stock": {
+          "trackInventory": true,
+          "quantity": 4,
+          "inventoryStatus": "IN_STOCK"
+        },
+        "priceData": {
+          "currency": "CAD",
+          "price": 34.0,
+          "discountedPrice": 29.5,
+          "formatted": {
+            "price": "C$34.00",
+            "discountedPrice": "C$29.50"
+          }
+        },
+        "costAndProfitData": {
+          "itemCost": 11.0,
+          "formattedItemCost": "C$11.00"
+        },
+        "media": {
+          "mainMedia": {
+            "image": {
+              "url": "http://wix-fake:8080/media/planter.png",
+              "width": 1000,
+              "height": 1000,
+              "altText": "Stoneware planter"
+            },
+            "mediaType": "image",
+            "id": "planter.png",
+            "title": "Stoneware planter"
+          },
+          "items": [
+            {
+              "image": {
+                "url": "http://wix-fake:8080/media/planter.png",
+                "width": 1000,
+                "height": 1000,
+                "altText": "Stoneware planter"
+              },
+              "mediaType": "image",
+              "id": "planter.png",
+              "title": "Stoneware planter"
+            }
+          ]
+        },
+        "customTextFields": [],
+        "manageVariants": false,
+        "productOptions": [],
+        "productPageUrl": {
+          "base": "https://www.prairiepottery.example",
+          "path": "/product-page/stoneware-planter"
+        },
+        "numericId": 1001,
+        "inventoryItemId": "inv-1001",
+        "discount": {
+          "type": "AMOUNT",
+          "value": 4.5
+        },
+        "collectionIds": [
+          "00000000-000000-000000-000000000001",
+          "c01e0000-1001-4a5b-8c9d-0e1f2a3b1001"
+        ],
+        "variants": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "choices": {},
+            "variant": {
+              "priceData": {
+                "currency": "CAD",
+                "price": 34.0,
+                "discountedPrice": 29.5,
+                "formatted": {
+                  "price": "C$34.00",
+                  "discountedPrice": "C$29.50"
+                }
+              },
+              "weight": 1.2,
+              "sku": "WIX-PLANTER-1",
+              "visible": true
+            },
+            "stock": {
+              "trackQuantity": true,
+              "quantity": 4,
+              "inStock": true
+            }
+          }
+        ],
+        "lastUpdated": "2026-08-21T10:00:00.000Z",
+        "createdDate": "2026-07-01T10:00:00.000Z",
+        "seoData": {
+          "tags": [
+            {
+              "type": "title",
+              "children": "Stoneware planter",
+              "custom": false,
+              "disabled": false
+            },
+            {
+              "type": "meta",
+              "props": {
+                "name": "description",
+                "content": "A stoneware planter."
+              },
+              "custom": false,
+              "disabled": false
+            }
+          ],
+          "settings": {
+            "preventAutoRedirect": false,
+            "keywords": []
+          }
+        },
+        "ribbon": "New",
+        "brand": "Prairie Pottery"
+      }
+    ],
+    "metadata": {
+      "items": 100,
+      "offset": 0
+    },
+    "totalResults": 1
+  }
+}

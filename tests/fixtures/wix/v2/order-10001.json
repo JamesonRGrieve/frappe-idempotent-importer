@@ -1,0 +1,344 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/ecom/v1/orders/search",
+    "body": {
+      "search": {
+        "filter": {
+          "id": {
+            "$eq": "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001"
+          }
+        }
+      }
+    }
+  },
+  "response": {
+    "orders": [
+      {
+        "id": "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
+        "number": 10001,
+        "createdDate": "2026-09-02T17:30:00.000Z",
+        "updatedDate": "2026-09-04T09:00:00.000Z",
+        "lineItems": [
+          {
+            "id": "6a5b4c30-0001-4d2e-8f1a-9b0c1d2e0001",
+            "productName": {
+              "original": "Linen tea towel"
+            },
+            "catalogReference": {
+              "catalogItemId": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+              "appId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+              "options": {
+                "variantId": "7c1d3e20-0001-4f8a-a3b2-1d9c4e5f0001"
+              }
+            },
+            "quantity": 2,
+            "totalDiscount": {
+              "amount": "3.60",
+              "formattedAmount": "$3.60"
+            },
+            "descriptionLines": [
+              {
+                "name": {
+                  "original": "Colour"
+                },
+                "plainText": {
+                  "original": "Sage"
+                }
+              }
+            ],
+            "physicalProperties": {
+              "sku": "WIX-TOWEL-SAGE",
+              "shippable": true,
+              "weight": 0.45
+            },
+            "itemType": {
+              "preset": "PHYSICAL"
+            },
+            "refundQuantity": 1,
+            "price": {
+              "amount": "16.20",
+              "formattedAmount": "$16.20"
+            },
+            "priceBeforeDiscounts": {
+              "amount": "18.00",
+              "formattedAmount": "$18.00"
+            },
+            "totalPriceBeforeTax": {
+              "amount": "32.40",
+              "formattedAmount": "$32.40"
+            },
+            "totalPriceAfterTax": {
+              "amount": "34.02",
+              "formattedAmount": "$34.02"
+            },
+            "paymentOption": "FULL_PAYMENT_ONLINE",
+            "taxInfo": {
+              "taxAmount": {
+                "amount": "1.62",
+                "formattedAmount": "$1.62"
+              },
+              "taxRate": "0.05",
+              "taxIncludedInPrice": false,
+              "taxBreakdown": [
+                {
+                  "taxName": "GST",
+                  "jurisdiction": "Canada",
+                  "jurisdictionType": "COUNTRY",
+                  "rate": "0.05",
+                  "taxAmount": {
+                    "amount": "1.62",
+                    "formattedAmount": "$1.62"
+                  },
+                  "taxType": "GST"
+                }
+              ],
+              "taxableAmount": {
+                "amount": "32.40",
+                "formattedAmount": "$32.40"
+              }
+            }
+          },
+          {
+            "id": "6a5b4c30-0002-4d2e-8f1a-9b0c1d2e0002",
+            "productName": {
+              "original": "Speckled clay mug"
+            },
+            "catalogReference": {
+              "catalogItemId": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+              "appId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+              "options": {
+                "variantId": "00000000-0000-0000-0000-000000000000"
+              }
+            },
+            "quantity": 1,
+            "totalDiscount": {
+              "amount": "2.80",
+              "formattedAmount": "$2.80"
+            },
+            "descriptionLines": [],
+            "physicalProperties": {
+              "sku": "WIX-MUG-1",
+              "shippable": true,
+              "weight": 0.45
+            },
+            "itemType": {
+              "preset": "PHYSICAL"
+            },
+            "refundQuantity": 0,
+            "price": {
+              "amount": "25.20",
+              "formattedAmount": "$25.20"
+            },
+            "priceBeforeDiscounts": {
+              "amount": "28.00",
+              "formattedAmount": "$28.00"
+            },
+            "totalPriceBeforeTax": {
+              "amount": "25.20",
+              "formattedAmount": "$25.20"
+            },
+            "totalPriceAfterTax": {
+              "amount": "26.46",
+              "formattedAmount": "$26.46"
+            },
+            "paymentOption": "FULL_PAYMENT_ONLINE",
+            "taxInfo": {
+              "taxAmount": {
+                "amount": "1.26",
+                "formattedAmount": "$1.26"
+              },
+              "taxRate": "0.05",
+              "taxIncludedInPrice": false,
+              "taxBreakdown": [
+                {
+                  "taxName": "GST",
+                  "jurisdiction": "Canada",
+                  "jurisdictionType": "COUNTRY",
+                  "rate": "0.05",
+                  "taxAmount": {
+                    "amount": "1.26",
+                    "formattedAmount": "$1.26"
+                  },
+                  "taxType": "GST"
+                }
+              ],
+              "taxableAmount": {
+                "amount": "25.20",
+                "formattedAmount": "$25.20"
+              }
+            }
+          }
+        ],
+        "buyerInfo": {
+          "memberId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+          "contactId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+          "email": "Maya.Thunderchild@example.com"
+        },
+        "paymentStatus": "PARTIALLY_REFUNDED",
+        "fulfillmentStatus": "FULFILLED",
+        "buyerLanguage": "en",
+        "weightUnit": "KG",
+        "currency": "CAD",
+        "taxIncludedInPrices": false,
+        "siteLanguage": "en",
+        "priceSummary": {
+          "subtotal": {
+            "amount": "64.00",
+            "formattedAmount": "$64.00"
+          },
+          "shipping": {
+            "amount": "9.00",
+            "formattedAmount": "$9.00"
+          },
+          "tax": {
+            "amount": "3.33",
+            "formattedAmount": "$3.33"
+          },
+          "discount": {
+            "amount": "6.40",
+            "formattedAmount": "$6.40"
+          },
+          "total": {
+            "amount": "69.93",
+            "formattedAmount": "$69.93"
+          }
+        },
+        "billingInfo": {
+          "address": {
+            "country": "CA",
+            "subdivision": "CA-SK",
+            "city": "Regina",
+            "postalCode": "S4R 2R4",
+            "addressLine": "1200 Albert Street",
+            "addressLine2": "Suite 4"
+          },
+          "contactDetails": {
+            "firstName": "Maya",
+            "lastName": "Thunderchild",
+            "phone": "+1 306 555 0177"
+          }
+        },
+        "shippingInfo": {
+          "code": "canada-post-regular",
+          "title": "Canada Post Regular Parcel",
+          "logistics": {
+            "shippingDestination": {
+              "address": {
+                "country": "CA",
+                "subdivision": "CA-SK",
+                "city": "Moose Jaw",
+                "postalCode": "S6H 5C9",
+                "addressLine": "88 Coteau Street West"
+              },
+              "contactDetails": {
+                "firstName": "Maya",
+                "lastName": "Thunderchild",
+                "phone": "+1 306 555 0177"
+              }
+            }
+          },
+          "cost": {
+            "price": {
+              "amount": "9.00",
+              "formattedAmount": "$9.00"
+            },
+            "totalPriceBeforeTax": {
+              "amount": "9.00",
+              "formattedAmount": "$9.00"
+            },
+            "totalPriceAfterTax": {
+              "amount": "9.45",
+              "formattedAmount": "$9.45"
+            },
+            "taxInfo": {
+              "taxAmount": {
+                "amount": "0.45",
+                "formattedAmount": "$0.45"
+              },
+              "taxRate": "0.05",
+              "taxIncludedInPrice": false,
+              "taxBreakdown": [
+                {
+                  "taxName": "GST",
+                  "jurisdiction": "Canada",
+                  "jurisdictionType": "COUNTRY",
+                  "rate": "0.05",
+                  "taxAmount": {
+                    "amount": "0.45",
+                    "formattedAmount": "$0.45"
+                  },
+                  "taxType": "GST"
+                }
+              ],
+              "taxableAmount": {
+                "amount": "9.00",
+                "formattedAmount": "$9.00"
+              }
+            }
+          }
+        },
+        "buyerNote": "Please wrap the mug well.",
+        "status": "APPROVED",
+        "archived": false,
+        "taxInfo": {
+          "totalTax": {
+            "amount": "3.33",
+            "formattedAmount": "$3.33"
+          },
+          "taxBreakdown": [
+            {
+              "taxName": "GST",
+              "taxType": "GST",
+              "jurisdiction": "Canada",
+              "jurisdictionType": "COUNTRY",
+              "rate": "0.05",
+              "aggregatedTaxAmount": {
+                "amount": "3.33",
+                "formattedAmount": "$3.33"
+              }
+            }
+          ]
+        },
+        "appliedDiscounts": [
+          {
+            "coupon": {
+              "id": "c0000000-0000-4000-8000-000000000001",
+              "code": "WIX-WELCOME10",
+              "name": "Welcome 10%",
+              "amount": {
+                "amount": "6.40",
+                "formattedAmount": "$6.40"
+              }
+            },
+            "discountType": "GLOBAL",
+            "id": "d0000000-0000-4000-8000-000000000001",
+            "lineItemDiscounts": [
+              {
+                "id": "6a5b4c30-0001-4d2e-8f1a-9b0c1d2e0001",
+                "totalDiscount": {
+                  "amount": "3.60",
+                  "formattedAmount": "$3.60"
+                }
+              },
+              {
+                "id": "6a5b4c30-0002-4d2e-8f1a-9b0c1d2e0002",
+                "totalDiscount": {
+                  "amount": "2.80",
+                  "formattedAmount": "$2.80"
+                }
+              }
+            ]
+          }
+        ],
+        "seenByAHuman": true,
+        "checkoutId": "e0000000-0000-4000-8000-000000000001"
+      }
+    ],
+    "metadata": {
+      "count": 1,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

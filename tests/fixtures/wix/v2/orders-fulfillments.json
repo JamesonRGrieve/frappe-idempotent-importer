@@ -1,0 +1,51 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/ecom/v1/fulfillments/list-by-ids",
+    "body": {
+      "orderIds": [
+        "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
+        "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002",
+        "8f1e2d30-0003-4c5b-a69d-7e8f9a0b0003"
+      ]
+    }
+  },
+  "response": {
+    "ordersWithFulfillments": [
+      {
+        "orderId": "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
+        "fulfillments": [
+          {
+            "id": "ff000000-0000-4000-8000-000000000001",
+            "createdDate": "2026-09-03T15:00:00.000Z",
+            "lineItems": [
+              {
+                "id": "6a5b4c30-0001-4d2e-8f1a-9b0c1d2e0001",
+                "quantity": 2
+              },
+              {
+                "id": "6a5b4c30-0002-4d2e-8f1a-9b0c1d2e0002",
+                "quantity": 1
+              }
+            ],
+            "trackingInfo": {
+              "trackingNumber": "7023210039414604",
+              "shippingProvider": "Canada Post",
+              "trackingLink": "https://www.canadapost-postescanada.ca/track-reperage/en#/details/7023210039414604"
+            },
+            "status": "Fulfilled",
+            "completed": true
+          }
+        ]
+      },
+      {
+        "orderId": "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002",
+        "fulfillments": []
+      },
+      {
+        "orderId": "8f1e2d30-0003-4c5b-a69d-7e8f9a0b0003",
+        "fulfillments": []
+      }
+    ]
+  }
+}

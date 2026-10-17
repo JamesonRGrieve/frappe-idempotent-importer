@@ -1,0 +1,2847 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ecwid REST API v3 responses read by wp-woo-idempotent-importer",
+    "version": "2026-10-16",
+    "description": "Ecwid publishes no OpenAPI document. This subset is transcribed by hand from the field tables (and, where a field appears only there, the example responses) of the official reference at https://docs.ecwid.com/api-reference/rest-api/ (fetched 2026-10-16; each schema and operation cites its page): only the responses the Ecwid adapter reads. Paths are relative to `https://app.ecwid.com/api/v3/{storeId}`. Nested objects the adapter never reads are plain objects. Required properties are the identifiers and the fields the adapter cannot do without."
+  },
+  "servers": [
+    {
+      "url": "https://app.ecwid.com/api/v3/{storeId}"
+    }
+  ],
+  "paths": {
+    "/profile": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Profile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/categories/search-categories"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{categoryId}": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/categories/get-category"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/products/search-products"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/products/get-product"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/customers/search-customers"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customerId}": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/customers/get-customer"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discount_coupons": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/discounts/discount-coupons/search-discount-coupons"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountCouponList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/orders/search-orders"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{orderId}": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/orders/get-order"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instant-site/redirects": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/instant-site/instant-site-redirects/search-instant-site-redirects"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.ecwid.com/api-reference/rest-api/products/product-reviews/search-product-reviews"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewList"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Translations": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products (\"translations\": a text per ISO 639-1 language code)"
+      },
+      "Profile": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "generalInfo": {
+            "$ref": "#/components/schemas/GeneralInfo"
+          },
+          "account": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Settings"
+          },
+          "mailNotifications": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "phoneNotifications": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "company": {
+            "$ref": "#/components/schemas/Company"
+          },
+          "formatsAndUnits": {
+            "$ref": "#/components/schemas/FormatsAndUnits"
+          },
+          "languages": {
+            "$ref": "#/components/schemas/Languages"
+          },
+          "shipping": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "zones": {
+            "type": "array"
+          },
+          "taxes": {
+            "type": "array"
+          },
+          "taxSettings": {
+            "$ref": "#/components/schemas/TaxSettings"
+          },
+          "businessRegistrationID": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "payment": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "featureToggles": {
+            "type": "array"
+          },
+          "legalPagesSettings": {
+            "$ref": "#/components/schemas/LegalPagesSettings"
+          },
+          "designSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "productFiltersSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "verticalSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "fbMessengerSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "mailchimpSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "tipsSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "giftCardSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "orderInvoiceSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "registrationAnswers": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "socialLinksSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "generalInfo",
+          "formatsAndUnits"
+        ]
+      },
+      "GeneralInfo": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "storeId": {
+            "type": "integer"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "storeUrl": {
+            "type": "string"
+          },
+          "starterSite": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "websitePlatform": {
+            "type": "string"
+          },
+          "instantSiteV2Enabled": {
+            "type": "boolean"
+          },
+          "storefrontUrlFormat": {
+            "type": "string"
+          },
+          "storefrontUrlSlugFormat": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "storeId"
+        ]
+      },
+      "Settings": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "closed": {
+            "type": "boolean"
+          },
+          "storeName": {
+            "type": "string"
+          },
+          "storeDescription": {
+            "type": "string"
+          },
+          "invoiceLogoUrl": {
+            "type": "string"
+          },
+          "emailLogoUrl": {
+            "type": "string"
+          },
+          "orderCommentsEnabled": {
+            "type": "boolean"
+          },
+          "orderCommentsCaption": {
+            "type": "string"
+          },
+          "askZipCode": {
+            "type": "boolean"
+          },
+          "showPricePerUnit": {
+            "type": "boolean"
+          },
+          "hideOutOfStockProductsInStorefront": {
+            "type": "boolean"
+          },
+          "askCompanyName": {
+            "type": "boolean"
+          },
+          "favoritesEnabled": {
+            "type": "boolean"
+          },
+          "productReviewsFeatureEnabled": {
+            "type": "boolean"
+          },
+          "defaultProductSortOrder": {
+            "type": "string"
+          },
+          "abandonedSales": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "salePrice": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "allowPreordersForOutOfStockProducts": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "companyName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "stateOrProvinceCode": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "FormatsAndUnits": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "currencyPrefix": {
+            "type": "string"
+          },
+          "currencySuffix": {
+            "type": "string"
+          },
+          "currencyPrecision": {
+            "type": "integer"
+          },
+          "currencyGroupSeparator": {
+            "type": "string"
+          },
+          "currencyDecimalSeparator": {
+            "type": "string"
+          },
+          "currencyTruncateZeroFractional": {
+            "type": "boolean"
+          },
+          "currencyRate": {
+            "type": "number"
+          },
+          "weightUnit": {
+            "type": "string"
+          },
+          "weightPrecision": {
+            "type": "integer"
+          },
+          "weightGroupSeparator": {
+            "type": "string"
+          },
+          "weightDecimalSeparator": {
+            "type": "string"
+          },
+          "weightTruncateZeroFractional": {
+            "type": "boolean"
+          },
+          "dateFormat": {
+            "type": "string"
+          },
+          "timeFormat": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "dimensionsUnit": {
+            "type": "string"
+          },
+          "orderNumberPrefix": {
+            "type": "string"
+          },
+          "orderNumberSuffix": {
+            "type": "string"
+          },
+          "orderNumberMinDigitsAmount": {
+            "type": "integer"
+          },
+          "orderNumberNextNumber": {
+            "type": "integer"
+          },
+          "addressFormat": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "currency"
+        ]
+      },
+      "Languages": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "enabledLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "facebookPreferredLocale": {
+            "type": "string"
+          },
+          "defaultLanguage": {
+            "type": "string"
+          }
+        }
+      },
+      "TaxSettings": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "automaticTaxEnabled": {
+            "type": "boolean"
+          },
+          "taxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreTax"
+            }
+          },
+          "pricesIncludeTax": {
+            "type": "boolean"
+          },
+          "taxExemptBusiness": {
+            "type": "boolean"
+          },
+          "ukVatRegistered": {
+            "type": "boolean"
+          },
+          "euIossEnabled": {
+            "type": "boolean"
+          },
+          "taxOnShippingCalculationScheme": {
+            "type": "string"
+          }
+        }
+      },
+      "StoreTax": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "includeInPrice": {
+            "type": "boolean"
+          },
+          "useShippingAddress": {
+            "type": "boolean"
+          },
+          "taxShipping": {
+            "type": "boolean"
+          },
+          "appliedByDefault": {
+            "type": "boolean"
+          },
+          "defaultTax": {
+            "type": "number"
+          },
+          "rules": {
+            "type": "array"
+          }
+        }
+      },
+      "LegalPagesSettings": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "requireTermsAgreementAtCheckout": {
+            "type": "boolean"
+          },
+          "legalPages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegalPage"
+            }
+          }
+        }
+      },
+      "LegalPage": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/store-profile/get-store-profile",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "titleTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "display": {
+            "type": "string"
+          },
+          "displayTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "text": {
+            "type": "string"
+          },
+          "textTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "externalUrl": {
+            "type": "string"
+          },
+          "externalUrlTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "SizedImage": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/categories/search-categories",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "width": {
+            "type": "integer"
+          },
+          "height": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      },
+      "Alt": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "main": {
+            "type": "string"
+          },
+          "translations": {
+            "$ref": "#/components/schemas/Translations"
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/categories/search-categories (and https://docs.ecwid.com/api-reference/rest-api/categories/get-category)",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "parentId": {
+            "type": "integer"
+          },
+          "orderBy": {
+            "type": "integer"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "smallThumbnailUrl": {
+            "type": "string"
+          },
+          "hdThumbnailUrl": {
+            "type": "string"
+          },
+          "originalImageUrl": {
+            "type": "string"
+          },
+          "imageExternalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "originalImage": {
+            "$ref": "#/components/schemas/SizedImage"
+          },
+          "thumbnail": {
+            "$ref": "#/components/schemas/SizedImage"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "autogeneratedSlug": {
+            "type": "string"
+          },
+          "customSlug": {
+            "type": "string"
+          },
+          "productCount": {
+            "type": "integer"
+          },
+          "enabledProductCount": {
+            "type": "integer"
+          },
+          "description": {
+            "type": "string"
+          },
+          "descriptionTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "seoTitle": {
+            "type": "string"
+          },
+          "seoTitleTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "seoDescription": {
+            "type": "string"
+          },
+          "seoDecriptionTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "alt": {
+            "$ref": "#/components/schemas/Alt"
+          },
+          "externalReferenceId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "ProductTax": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "taxable": {
+            "type": "boolean"
+          },
+          "defaultLocationIncludedTaxRate": {
+            "type": "number"
+          },
+          "enabledManualTaxes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "taxClassCode": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductOption": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionChoice"
+            }
+          },
+          "defaultChoice": {
+            "type": "integer"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "useImageAsSwatchSelector": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "OptionChoice": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "textTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "priceModifier": {
+            "type": "number"
+          },
+          "priceModifierType": {
+            "type": "string"
+          },
+          "hexCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "changeTime": {
+            "type": "integer"
+          },
+          "imageId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "MediaImage": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "alt": {
+            "$ref": "#/components/schemas/Alt"
+          },
+          "orderBy": {
+            "type": "integer"
+          },
+          "isMain": {
+            "type": "boolean"
+          },
+          "image160pxUrl": {
+            "type": "string"
+          },
+          "image400pxUrl": {
+            "type": "string"
+          },
+          "image800pxUrl": {
+            "type": "string"
+          },
+          "image1500pxUrl": {
+            "type": "string"
+          },
+          "imageOriginalUrl": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalImageUrlInfo": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "imageOriginalUrl"
+        ]
+      },
+      "Media": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MediaImage"
+            }
+          },
+          "videos": {
+            "type": "array"
+          }
+        }
+      },
+      "ProductCategory": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ProductAttribute": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "value": {
+            "type": "string"
+          },
+          "valueTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "type": {
+            "type": "string"
+          },
+          "show": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ProductFile": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "adminUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "RelatedProducts": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "productIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "relatedCategory": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        }
+      },
+      "Dimensions": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "length": {
+            "type": "number"
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          }
+        }
+      },
+      "WholesalePrice": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "quantity": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "quantity",
+          "price"
+        ]
+      },
+      "VariationOption": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "value": {
+            "type": "string"
+          },
+          "valueTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ]
+      },
+      "Combination": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "combinationNumber": {
+            "type": "integer"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariationOption"
+            }
+          },
+          "sku": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "smallThumbnailUrl": {
+            "type": "string"
+          },
+          "hdThumbnailUrl": {
+            "type": "string"
+          },
+          "originalImageUrl": {
+            "type": "string"
+          },
+          "instock": {
+            "type": "boolean"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "unlimited": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "number"
+          },
+          "defaultDisplayedPrice": {
+            "type": "number"
+          },
+          "defaultDisplayedPriceFormatted": {
+            "type": "string"
+          },
+          "lowestPrice": {
+            "type": "number"
+          },
+          "lowestPriceSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "defaultDisplayedLowestPrice": {
+            "type": "number"
+          },
+          "defaultDisplayedLowestPriceFormatted": {
+            "type": "string"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          },
+          "wholesalePrices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WholesalePrice"
+            }
+          },
+          "weight": {
+            "type": "number"
+          },
+          "volume": {
+            "type": "number"
+          },
+          "warningLimit": {
+            "type": "integer"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductAttribute"
+            }
+          },
+          "compareToPrice": {
+            "type": "number"
+          },
+          "minPurchaseQuantity": {
+            "type": "integer"
+          },
+          "maxPurchaseQuantity": {
+            "type": "integer"
+          },
+          "outOfStockVisibilityBehaviour": {
+            "type": "string",
+            "description": "The page types it boolean but lists the string values SHOW and ALLOW_PREORDER."
+          },
+          "alt": {
+            "$ref": "#/components/schemas/Alt"
+          }
+        },
+        "required": [
+          "id",
+          "options"
+        ]
+      },
+      "Product": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products (and https://docs.ecwid.com/api-reference/rest-api/products/get-product)",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "unlimited": {
+            "type": "boolean"
+          },
+          "inStock": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "price": {
+            "type": "number"
+          },
+          "priceInProductList": {
+            "type": "number"
+          },
+          "defaultDisplayedPrice": {
+            "type": "number"
+          },
+          "defaultDisplayedPriceFormatted": {
+            "type": "string"
+          },
+          "costPrice": {
+            "type": "number"
+          },
+          "tax": {
+            "$ref": "#/components/schemas/ProductTax"
+          },
+          "wholesalePrices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WholesalePrice"
+            }
+          },
+          "compareToPrice": {
+            "type": "number"
+          },
+          "compareToPriceFormatted": {
+            "type": "string"
+          },
+          "compareToPriceDiscount": {
+            "type": "number"
+          },
+          "compareToPriceDiscountFormatted": {
+            "type": "string"
+          },
+          "compareToPriceDiscountPercent": {
+            "type": "number"
+          },
+          "compareToPriceDiscountPercentFormatted": {
+            "type": "string"
+          },
+          "defaultDisplayedCompareToPrice": {
+            "type": "number"
+          },
+          "defaultDisplayedCompareToPriceFormatted": {
+            "type": "string"
+          },
+          "lowestPriceSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "isShippingRequired": {
+            "type": "boolean"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string"
+          },
+          "autogeneratedSlug": {
+            "type": "string"
+          },
+          "customSlug": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "createTimestamp": {
+            "type": "integer"
+          },
+          "updateTimestamp": {
+            "type": "integer"
+          },
+          "productClassId": {
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductOption"
+            }
+          },
+          "warningLimit": {
+            "type": "integer"
+          },
+          "fixedShippingRateOnly": {
+            "type": "boolean"
+          },
+          "fixedShippingRate": {
+            "type": "number"
+          },
+          "shipping": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "defaultCombinationId": {
+            "type": "integer"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "smallThumbnailUrl": {
+            "type": "string"
+          },
+          "hdThumbnailUrl": {
+            "type": "string"
+          },
+          "originalImageUrl": {
+            "type": "string"
+          },
+          "originalImage": {
+            "$ref": "#/components/schemas/SizedImage"
+          },
+          "galleryImages": {
+            "type": "array"
+          },
+          "description": {
+            "type": "string"
+          },
+          "descriptionTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "media": {
+            "$ref": "#/components/schemas/Media"
+          },
+          "categoryIds": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductCategory"
+            }
+          },
+          "defaultCategoryId": {
+            "type": "integer"
+          },
+          "seoTitle": {
+            "type": "string"
+          },
+          "seoTitleTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "seoDescription": {
+            "type": "string"
+          },
+          "seoDescriptionTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "favorites": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductAttribute"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProductFile"
+            }
+          },
+          "relatedProducts": {
+            "$ref": "#/components/schemas/RelatedProducts"
+          },
+          "combinations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Combination"
+            }
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          },
+          "volume": {
+            "type": "number"
+          },
+          "showOnFrontpage": {
+            "type": "integer"
+          },
+          "subscriptionSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "isSampleProduct": {
+            "type": "boolean"
+          },
+          "isGiftCard": {
+            "type": "boolean"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "subtitleTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "discountsAllowed": {
+            "type": "boolean"
+          },
+          "externalReferenceId": {
+            "type": "string"
+          },
+          "inStoreReceivedDate": {
+            "type": "string"
+          },
+          "outOfStockVisibilityBehaviour": {
+            "type": "string",
+            "description": "The page types it boolean but lists the string values SHOW, HIDE and ALLOW_PREORDER."
+          },
+          "minPurchaseQuantity": {
+            "type": "integer"
+          },
+          "maxPurchaseQuantity": {
+            "type": "integer"
+          },
+          "reviewsCollectingAllowed": {
+            "type": "boolean"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "reviewsPublished": {
+            "type": "integer"
+          },
+          "reviewsModerated": {
+            "type": "integer"
+          },
+          "compositeParents": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "compositeComponents": {
+            "type": "array"
+          },
+          "batteryIncluded": {
+            "type": "boolean"
+          },
+          "euGuaranteeLabelSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "price"
+        ]
+      },
+      "Person": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/customers/search-customers (billingPerson; an order's billingPerson and shippingPerson (https://docs.ecwid.com/api-reference/rest-api/orders/get-order) have the same fields, its example adds firstName and lastName)",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "countryName": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "stateOrProvinceCode": {
+            "type": "string"
+          },
+          "stateOrProvinceName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          }
+        }
+      },
+      "SavedAddress": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/customers/search-customers",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "street": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "countryCode": {
+            "type": "string"
+          },
+          "countryName": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "stateOrProvinceCode": {
+            "type": "string"
+          },
+          "stateOrProvinceName": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "addressFormatted": {
+            "type": "string"
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/customers/search-customers",
+        "properties": {
+          "contact": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "default": {
+            "type": "boolean"
+          },
+          "orderBy": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "contact",
+          "type"
+        ]
+      },
+      "Customer": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/customers/search-customers (and https://docs.ecwid.com/api-reference/rest-api/customers/get-customer)",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "email": {
+            "type": "string"
+          },
+          "totalOrderCount": {
+            "type": "integer"
+          },
+          "registered": {
+            "type": "string"
+          },
+          "updated": {
+            "type": "string"
+          },
+          "billingPerson": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "shippingAddresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedAddress"
+            }
+          },
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
+          "customerGroupName": {
+            "type": "string"
+          },
+          "customerGroupId": {
+            "type": "integer"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "taxIdValid": {
+            "type": "boolean"
+          },
+          "taxExempt": {
+            "type": "boolean"
+          },
+          "acceptMarketing": {
+            "type": "boolean"
+          },
+          "lang": {
+            "type": "string"
+          },
+          "stats": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "privateAdminNotes": {
+            "type": "string"
+          },
+          "favorites": {
+            "type": "array"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "CatalogLimit": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/discounts/discount-coupons/search-discount-coupons",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "ShippingLimit": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/discounts/discount-coupons/search-discount-coupons",
+        "properties": {
+          "shippingMethods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DiscountCoupon": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/discounts/discount-coupons/search-discount-coupons (and an order's discountCoupon, https://docs.ecwid.com/api-reference/rest-api/orders/get-order)",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "discountType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "discount": {
+            "type": "number"
+          },
+          "launchDate": {
+            "type": "string"
+          },
+          "expirationDate": {
+            "type": "string"
+          },
+          "totalLimit": {
+            "type": "number"
+          },
+          "usesLimit": {
+            "type": "string"
+          },
+          "applicationLimit": {
+            "type": "string"
+          },
+          "creationDate": {
+            "type": "string"
+          },
+          "updateDate": {
+            "type": "string"
+          },
+          "orderCount": {
+            "type": "integer"
+          },
+          "catalogLimit": {
+            "$ref": "#/components/schemas/CatalogLimit"
+          },
+          "shippingLimit": {
+            "$ref": "#/components/schemas/ShippingLimit"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "discountType",
+          "status"
+        ]
+      },
+      "OrderTax": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order (an item's taxes, a surcharge's taxes and the order's taxesOnShipping (name, value, total))",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "taxOnDiscountedSubtotal": {
+            "type": "number"
+          },
+          "taxOnShipping": {
+            "type": "number"
+          },
+          "sourceTaxRateId": {
+            "type": "integer"
+          },
+          "sourceTaxRateType": {
+            "type": "string"
+          },
+          "taxType": {
+            "type": "string"
+          },
+          "taxClassCode": {
+            "type": "string"
+          },
+          "taxClassName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "total"
+        ]
+      },
+      "Selection": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "selectionTitle": {
+            "type": "string"
+          },
+          "selectionModifier": {
+            "type": "number"
+          },
+          "selectionModifierType": {
+            "type": "string"
+          }
+        }
+      },
+      "SelectedOption": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "valuesArray": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "files": {
+            "type": "array"
+          },
+          "selections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Selection"
+            }
+          },
+          "hexCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "changedTime": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ItemDiscount": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "discountInfo": {
+            "type": "array"
+          },
+          "total": {
+            "type": "number"
+          }
+        }
+      },
+      "OrderItem": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "productId": {
+            "type": "integer"
+          },
+          "subscriptionId": {
+            "type": "integer"
+          },
+          "recurringChargeSettings": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "categoryId": {
+            "type": "integer"
+          },
+          "price": {
+            "type": "number"
+          },
+          "priceWithoutTax": {
+            "type": "number"
+          },
+          "productPrice": {
+            "type": "number"
+          },
+          "costPrice": {
+            "type": "number"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "sku": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "integer"
+          },
+          "shortDescription": {
+            "type": "string"
+          },
+          "shortDescriptionTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "shipping": {
+            "type": "number"
+          },
+          "quantityInStock": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "nameTranslated": {
+            "$ref": "#/components/schemas/Translations"
+          },
+          "isShippingRequired": {
+            "type": "boolean"
+          },
+          "trackQuantity": {
+            "type": "boolean"
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "fixedShippingRateOnly": {
+            "type": "boolean"
+          },
+          "fixedShippingRate": {
+            "type": "number"
+          },
+          "couponApplied": {
+            "type": "boolean"
+          },
+          "selectedOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SelectedOption"
+            }
+          },
+          "taxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderTax"
+            }
+          },
+          "combinationId": {
+            "type": "integer"
+          },
+          "digital": {
+            "type": "boolean"
+          },
+          "files": {
+            "type": "array"
+          },
+          "dimensions": {
+            "$ref": "#/components/schemas/Dimensions"
+          },
+          "couponAmount": {
+            "type": "number"
+          },
+          "discounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDiscount"
+            }
+          },
+          "taxesOnShipping": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderTax"
+            }
+          },
+          "taxAlreadyDeductedFromPrice": {
+            "type": "boolean"
+          },
+          "isCustomerSetPrice": {
+            "type": "boolean"
+          },
+          "selectedPrice": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "isPreorder": {
+            "type": "boolean"
+          },
+          "attributes": {
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "price",
+          "quantity"
+        ]
+      },
+      "Refund": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "ShippingOption": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "shippingCarrierName": {
+            "type": "string"
+          },
+          "shippingMethodName": {
+            "type": "string"
+          },
+          "shippingMethodId": {
+            "type": "string"
+          },
+          "shippingRate": {
+            "type": "number"
+          },
+          "shippingRateWithoutTax": {
+            "type": "number"
+          },
+          "discountedShippingRate": {
+            "type": "number"
+          },
+          "estimatedTransitTime": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          },
+          "isPickup": {
+            "type": "boolean"
+          },
+          "pickupInstruction": {
+            "type": "string"
+          },
+          "fulfillmentType": {
+            "type": "string"
+          },
+          "timeSlotLengthInMinutes": {
+            "type": "integer"
+          },
+          "discount": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        }
+      },
+      "HandlingFee": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "Surcharge": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "type": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          },
+          "totalWithoutTax": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "descriptionTranslated": {
+            "type": "string"
+          },
+          "taxable": {
+            "type": "boolean"
+          },
+          "taxes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderTax"
+            }
+          }
+        }
+      },
+      "Shipment": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "shipTo": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "shipFrom": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "parcel": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "shippingService": {
+            "$ref": "#/components/schemas/ShippingService"
+          },
+          "tracking": {
+            "$ref": "#/components/schemas/Tracking"
+          },
+          "shippingLabel": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ShippingService": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "carrier": {
+            "type": "string"
+          },
+          "carrierName": {
+            "type": "string"
+          },
+          "carrierServiceName": {
+            "type": "string"
+          },
+          "carrierServiceCode": {
+            "type": "string"
+          }
+        }
+      },
+      "Tracking": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "tracking_number": {
+            "type": "string"
+          },
+          "tracking_url": {
+            "type": "string"
+          },
+          "estimatedDays": {
+            "type": "integer"
+          }
+        }
+      },
+      "Invoice": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order",
+        "properties": {
+          "internalId": {
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/get-order (and https://docs.ecwid.com/api-reference/rest-api/orders/search-orders)",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "internalId": {
+            "type": "integer",
+            "description": "In the page's example response (not its field table)."
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "subtotalWithoutTax": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "totalWithoutTax": {
+            "type": "number"
+          },
+          "refundedAmount": {
+            "type": "number"
+          },
+          "giftCardRedemption": {
+            "type": "number"
+          },
+          "totalBeforeGiftCardRedemption": {
+            "type": "number"
+          },
+          "email": {
+            "type": "string"
+          },
+          "paymentModule": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "tax": {
+            "type": "number"
+          },
+          "customerTaxExempt": {
+            "type": "boolean"
+          },
+          "customerTaxId": {
+            "type": "string"
+          },
+          "customerTaxIdValid": {
+            "type": "boolean"
+          },
+          "reversedTaxApplied": {
+            "type": "boolean"
+          },
+          "b2b_b2c": {
+            "type": "string"
+          },
+          "customerRequestedInvoice": {
+            "type": "boolean"
+          },
+          "customerFiscalCode": {
+            "type": "string"
+          },
+          "electronicInvoicePecEmail": {
+            "type": "string"
+          },
+          "electronicInvoiceSdiCode": {
+            "type": "string"
+          },
+          "ipAddress": {
+            "type": "string"
+          },
+          "paymentStatus": {
+            "type": "string"
+          },
+          "fulfillmentStatus": {
+            "type": "string"
+          },
+          "refererUrl": {
+            "type": "string"
+          },
+          "orderComments": {
+            "type": "string"
+          },
+          "volumeDiscount": {
+            "type": "number"
+          },
+          "membershipBasedDiscount": {
+            "type": "number"
+          },
+          "totalAndMembershipBasedDiscount": {
+            "type": "number"
+          },
+          "customDiscount": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "discount": {
+            "type": "number"
+          },
+          "couponDiscount": {
+            "type": "number"
+          },
+          "discountInfo": {
+            "type": "array"
+          },
+          "discountCoupon": {
+            "$ref": "#/components/schemas/DiscountCoupon"
+          },
+          "customerId": {
+            "type": "integer"
+          },
+          "customSurcharges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Surcharge"
+            }
+          },
+          "usdTotal": {
+            "type": "number"
+          },
+          "globalReferer": {
+            "type": "string"
+          },
+          "createDate": {
+            "type": "string"
+          },
+          "updateDate": {
+            "type": "string"
+          },
+          "createTimestamp": {
+            "type": "integer"
+          },
+          "updateTimestamp": {
+            "type": "integer"
+          },
+          "customerGroup": {
+            "type": "string"
+          },
+          "customerGroupId": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            }
+          },
+          "refunds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Refund"
+            }
+          },
+          "shippingPerson": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "billingPerson": {
+            "$ref": "#/components/schemas/Person"
+          },
+          "shippingOption": {
+            "$ref": "#/components/schemas/ShippingOption"
+          },
+          "handlingFee": {
+            "$ref": "#/components/schemas/HandlingFee"
+          },
+          "predictedPackages": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "shippingLabelAvailableForShipment": {
+            "type": "boolean"
+          },
+          "shipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Shipment"
+            }
+          },
+          "additionalInfo": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "paymentParams": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "extraFields": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "orderExtraFields": {
+            "type": "array"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "trackingNumber": {
+            "type": "string"
+          },
+          "paymentMessage": {
+            "type": "string"
+          },
+          "externalTransactionId": {
+            "type": "string"
+          },
+          "affiliateId": {
+            "type": "string"
+          },
+          "creditCardStatus": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "privateAdminNotes": {
+            "type": "string"
+          },
+          "pickupTime": {
+            "type": "string"
+          },
+          "taxesOnShipping": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderTax"
+            }
+          },
+          "acceptMarketing": {
+            "type": "boolean"
+          },
+          "refererId": {
+            "type": "string"
+          },
+          "disableAllCustomerNotifications": {
+            "type": "boolean"
+          },
+          "externalFulfillment": {
+            "type": "boolean"
+          },
+          "externalOrderId": {
+            "type": "string"
+          },
+          "invoices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Invoice"
+            }
+          },
+          "pricesIncludeTax": {
+            "type": "boolean"
+          },
+          "paymentSubtype": {
+            "type": "string"
+          },
+          "utmData": {
+            "type": "array"
+          },
+          "utmDataSets": {
+            "type": "array"
+          },
+          "loyalty": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "storeCredit": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          },
+          "lang": {
+            "type": "string"
+          },
+          "customerUserAgent": {
+            "type": "string"
+          },
+          "externalOrderData": {
+            "type": "object",
+            "description": "Not read by the adapter; its properties are not transcribed."
+          }
+        },
+        "required": [
+          "id",
+          "paymentStatus",
+          "createDate",
+          "items"
+        ]
+      },
+      "Redirect": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/instant-site/instant-site-redirects/search-instant-site-redirects",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "fromUrl": {
+            "type": "string"
+          },
+          "toUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "fromUrl",
+          "toUrl"
+        ]
+      },
+      "ReviewerInfo": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/product-reviews/search-product-reviews",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "orders": {
+            "type": "integer"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/product-reviews/search-product-reviews",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "orderId": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "integer"
+          },
+          "customerId": {
+            "type": "integer"
+          },
+          "review": {
+            "type": "string"
+          },
+          "reviewerInfo": {
+            "$ref": "#/components/schemas/ReviewerInfo"
+          },
+          "createDate": {
+            "type": "string"
+          },
+          "updateDate": {
+            "type": "string"
+          },
+          "createTimestamp": {
+            "type": "integer"
+          },
+          "updateTimestamp": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "rating",
+          "productId",
+          "createDate"
+        ]
+      },
+      "CategoryList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/categories/search-categories (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "ProductList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/search-products (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "CustomerList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/customers/search-customers (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "DiscountCouponList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/discounts/discount-coupons/search-discount-coupons (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountCoupon"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "OrderList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/orders/search-orders (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "RedirectList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/instant-site/instant-site-redirects/search-instant-site-redirects (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Redirect"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      },
+      "ReviewList": {
+        "type": "object",
+        "description": "Transcribed from https://docs.ecwid.com/api-reference/rest-api/products/product-reviews/search-product-reviews (the paged list every search returns)",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "count",
+          "offset",
+          "limit",
+          "items"
+        ]
+      }
+    }
+  }
+}

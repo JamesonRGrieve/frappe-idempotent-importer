@@ -1,0 +1,33 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/blog/posts",
+    "query": {
+      "page": 1
+    }
+  },
+  "response": [
+    {
+      "id": 91,
+      "title": "Packing for a winter hike",
+      "url": "/blog/packing-for-a-winter-hike/",
+      "preview_url": "/blog/packing-for-a-winter-hike/",
+      "body": "<p>Layers, a thermos and a <strong>good toque</strong>.</p>",
+      "tags": [
+        "winter",
+        "hiking"
+      ],
+      "summary": "<p>Packing for a winter hike.</p>",
+      "is_published": true,
+      "published_date": {
+        "timezone_type": 1,
+        "date": "2026-09-03T09:00:00+00:00",
+        "timezone": "+00:00"
+      },
+      "published_date_iso8601": "2026-09-03T09:00:00+00:00",
+      "meta_description": "Packing for a winter hike on the Trail Journal.",
+      "meta_keywords": "hiking",
+      "author": "Ingrid Johansson",
+      "thumbnail_path": "uploaded_images/winter-hike.png"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "request": {
+    "path": "/en/orders/703/products.json"
+  },
+  "response": {
+    "orderProducts": [
+      {
+        "id": 7031,
+        "supplierTitle": "Harbour Lane",
+        "brandTitle": "Harbour Lane",
+        "productTitle": "Stoneware mug",
+        "variantTitle": "Default",
+        "taxRate": 0.05,
+        "taxRates": [
+          {
+            "name": "GST",
+            "rate": 0.05,
+            "amount": 1.3
+          }
+        ],
+        "quantityOrdered": 1,
+        "quantityInvoiced": 1,
+        "quantityShipped": 0,
+        "quantityRefunded": 0,
+        "quantityReturned": 0,
+        "articleCode": "ls-mug-1",
+        "ean": "",
+        "sku": "LS-MUG-1",
+        "weight": 0,
+        "volume": 0,
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "priceCost": 0,
+        "customExcl": 0,
+        "customIncl": 0,
+        "basePriceExcl": 26,
+        "basePriceIncl": 27.3,
+        "priceExcl": 26,
+        "priceIncl": 27.3,
+        "discountExcl": 0,
+        "discountIncl": 0,
+        "customFields": false,
+        "product": {
+          "resource": {
+            "id": 501,
+            "url": "products/501",
+            "link": "https://api.shoplightspeed.com/en/products/501.json"
+          }
+        },
+        "variant": {
+          "resource": {
+            "id": 5011,
+            "url": "variants/5011",
+            "link": "https://api.shoplightspeed.com/en/variants/5011.json"
+          }
+        }
+      }
+    ]
+  }
+}

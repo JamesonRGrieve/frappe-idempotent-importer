@@ -3,8 +3,8 @@
 #
 # End-to-end suite on a real bench (tests/e2e/bench.sh): ERPNext v16 + HRMS + the blog app + the Webshop
 # fork + the Public Site router + this app, importing from a fake store that serves the recorded fixtures
-# for two WooCommerce connections (each bound to its own Public Site and company) and a Shopify
-# connection. It proves the first import, that unchanged full and incremental re-runs write nothing
+# for two WooCommerce connections and one connection to every other built source, each bound to its own
+# Public Site and company. It proves the first import, that unchanged full and incremental re-runs write nothing
 # (every content table byte-identical), that changes and deletions land, that one connection's runs never
 # touch another's records, that a rate-limited source pauses the run in place and rejected credentials
 # hold scheduled runs, that Sync Now runs on the background queue, and that nothing sends mail.
@@ -40,9 +40,27 @@ store_state() {
 	echo "== $1 serves fixture state $2"
 }
 
+# Every source besides WooCommerce, one connection each: <connection>:<fake host>:<its check>. Each serves
+# its own v1 fixtures, then v2 (its changes and deletions).
+SOURCES=(
+	shop-s:shopify-fake:assert_shopify
+	etsy-e:etsy-fake:assert_etsy
+)
+CONNECTIONS=(woo-a woo-b)
+for source in "${SOURCES[@]}"; do
+	CONNECTIONS+=("${source%%:*}")
+done
+
 run_all() {
-	for connection in woo-a woo-b shop-s; do
+	for connection in "${CONNECTIONS[@]}"; do
 		step run "$connection" "$1"
+	done
+}
+
+# Each source's check against fixture state $1.
+assert_sources() {
+	for source in "${SOURCES[@]}"; do
+		step "${source##*:}" "$1"
 	done
 }
 
@@ -52,7 +70,7 @@ suite() {
 	for host in "${FAKE_HOSTS[@]}"; do
 		echo v1 > "$E2E_STATE_DIR/$host-state"
 	done
-	echo "== Standing up the bench (image build, site with every app, three businesses)"
+	echo "== Standing up the bench (image build, site with every app, a business per connection)"
 	bench_up
 	podman exec -d -w /home/frappe/frappe-bench "$E2E_BENCH" bench worker --queue long
 
@@ -60,7 +78,8 @@ suite() {
 	run_all full
 	step assert_woocommerce woo-a v1
 	step assert_woocommerce woo-b v1
-	step assert_shopify v1
+	assert_sources v1
+	step assert_etsy_connect etsy-e
 	step assert_shared_coupon_codes welcome10 woo-a woo-b
 
 	echo "== Unchanged sources: full and incremental re-runs must write nothing"
@@ -70,14 +89,19 @@ suite() {
 	step assert_unchanged v1
 
 	store_state woo-a-fake v2
-	store_state shopify-fake v2
+	for source in "${SOURCES[@]}"; do
+		host="${source#*:}"
+		store_state "${host%%:*}" v2
+	done
 	echo "== Changed: a price, stock, a deleted product, a renamed category, a refund, a payment, new orders,"
 	echo "   an edited and a deleted page, a new post and review, a deleted coupon and redirect (woo-a);"
-	echo "   a deleted product and a new order (shop-s). woo-b is unchanged."
+	echo "   each other source's own changes and deletions. woo-b is unchanged."
 	step run woo-a full
-	step run shop-s full
+	for source in "${SOURCES[@]}"; do
+		step run "${source%%:*}" full
+	done
 	step assert_woocommerce woo-a v2
-	step assert_shopify v2
+	assert_sources v2
 	step assert_woocommerce woo-b v1
 	step assert_connection_untouched v1 woo-b
 

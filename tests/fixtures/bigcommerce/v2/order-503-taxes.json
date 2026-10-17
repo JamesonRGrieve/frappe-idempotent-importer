@@ -1,0 +1,39 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/503/taxes"
+  },
+  "response": [
+    {
+      "id": 5,
+      "order_id": 503,
+      "order_address_id": 5030,
+      "tax_rate_id": 1,
+      "sales_tax_id": "",
+      "tax_class_id": 0,
+      "name": "GST",
+      "class": "Default Tax Class",
+      "rate": "5.0000",
+      "priority": 0,
+      "priority_amount": "1.3000",
+      "line_amount": "1.3000",
+      "order_product_id": "5031",
+      "line_item_type": "item"
+    },
+    {
+      "id": 6,
+      "order_id": 503,
+      "order_address_id": 5030,
+      "tax_rate_id": 1,
+      "sales_tax_id": "",
+      "tax_class_id": 2,
+      "name": "GST",
+      "class": "Default Tax Class",
+      "rate": "5.0000",
+      "priority": 0,
+      "priority_amount": "0.4000",
+      "line_amount": "0.4000",
+      "order_product_id": "",
+      "line_item_type": "shipping"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "request": {
+    "path": "/en/products/502/images.json"
+  },
+  "response": {
+    "productImages": [
+      {
+        "id": 5201,
+        "sortOrder": 1,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "extension": "png",
+        "size": 2048,
+        "title": "ls-towel",
+        "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-towel.png",
+        "src": "http://lightspeed-fake:8080/files/ls-towel.png"
+      }
+    ]
+  }
+}

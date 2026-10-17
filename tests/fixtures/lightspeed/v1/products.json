@@ -1,0 +1,370 @@
+{
+  "request": {
+    "path": "/en/products.json"
+  },
+  "response": {
+    "products": [
+      {
+        "id": 501,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "isVisible": true,
+        "visibility": "visible",
+        "hasMatrix": false,
+        "data01": "",
+        "data02": "",
+        "data03": "",
+        "url": "stoneware-mug",
+        "title": "Stoneware mug",
+        "fulltitle": "Stoneware mug by Harbour Lane",
+        "description": "Stoneware mug short description",
+        "content": "<p>A hand-thrown stoneware mug.</p>",
+        "set": false,
+        "brand": {
+          "resource": {
+            "id": 601,
+            "url": "brands/601",
+            "link": "https://api.shoplightspeed.com/en/brands/601.json"
+          }
+        },
+        "categories": {
+          "resource": {
+            "id": false,
+            "url": "categories/products?product=501",
+            "link": "https://api.shoplightspeed.com/en/categories/products.json?product=501"
+          }
+        },
+        "deliverydate": {
+          "resource": {
+            "id": 6488,
+            "url": "deliverydates/6488",
+            "link": "https://api.shoplightspeed.com/en/deliverydates/6488.json"
+          }
+        },
+        "image": {
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "extension": "png",
+          "size": 2048,
+          "title": "ls-mug",
+          "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-mug.png",
+          "src": "http://lightspeed-fake:8080/files/ls-mug.png"
+        },
+        "images": {
+          "resource": {
+            "id": false,
+            "url": "products/501/images",
+            "link": "https://api.shoplightspeed.com/en/products/501/images.json"
+          }
+        },
+        "relations": {
+          "resource": {
+            "id": false,
+            "url": "products/501/relations",
+            "link": "https://api.shoplightspeed.com/en/products/501/relations.json"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "products/501/metafields",
+            "link": "https://api.shoplightspeed.com/en/products/501/metafields.json"
+          }
+        },
+        "reviews": {
+          "resource": {
+            "id": false,
+            "url": "reviews?product=501",
+            "link": "https://api.shoplightspeed.com/en/reviews.json?product=501"
+          }
+        },
+        "type": false,
+        "attributes": {
+          "resource": {
+            "id": false,
+            "url": "products/501/attributes",
+            "link": "https://api.shoplightspeed.com/en/products/501/attributes.json"
+          }
+        },
+        "supplier": {
+          "resource": {
+            "id": 78794,
+            "url": "suppliers/78794",
+            "link": "https://api.shoplightspeed.com/en/suppliers/78794.json"
+          }
+        },
+        "tags": {
+          "resource": {
+            "id": false,
+            "url": "tags/products?product=501",
+            "link": "https://api.shoplightspeed.com/en/tags/products.json?product=501"
+          }
+        },
+        "variants": {
+          "resource": {
+            "id": false,
+            "url": "variants?product=501",
+            "link": "https://api.shoplightspeed.com/en/variants.json?product=501"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?product=501",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?product=501"
+          }
+        },
+        "templateDataFields": {
+          "data01": "",
+          "data02": "",
+          "data03": "",
+          "data04": ""
+        }
+      },
+      {
+        "id": 502,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "isVisible": true,
+        "visibility": "visible",
+        "hasMatrix": true,
+        "data01": "",
+        "data02": "",
+        "data03": "",
+        "url": "waffle-dish-towel",
+        "title": "Waffle dish towel",
+        "fulltitle": "Waffle dish towel by Harbour Lane",
+        "description": "Waffle dish towel short description",
+        "content": "<p>Washed linen.</p>",
+        "set": {
+          "id": 2785,
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "name": "Towels",
+          "options": [
+            {
+              "id": 76,
+              "sortOrder": 1,
+              "name": "Colour",
+              "values": [
+                {
+                  "id": 9001,
+                  "sortOrder": 1,
+                  "name": "Sand"
+                },
+                {
+                  "id": 9002,
+                  "sortOrder": 2,
+                  "name": "Slate"
+                }
+              ]
+            }
+          ]
+        },
+        "brand": {
+          "resource": {
+            "id": 601,
+            "url": "brands/601",
+            "link": "https://api.shoplightspeed.com/en/brands/601.json"
+          }
+        },
+        "categories": {
+          "resource": {
+            "id": false,
+            "url": "categories/products?product=502",
+            "link": "https://api.shoplightspeed.com/en/categories/products.json?product=502"
+          }
+        },
+        "deliverydate": {
+          "resource": {
+            "id": 6488,
+            "url": "deliverydates/6488",
+            "link": "https://api.shoplightspeed.com/en/deliverydates/6488.json"
+          }
+        },
+        "image": {
+          "createdAt": "2026-09-01T09:00:00+00:00",
+          "updatedAt": "2026-09-01T09:00:00+00:00",
+          "extension": "png",
+          "size": 2048,
+          "title": "ls-towel",
+          "thumb": "http://lightspeed-fake:8080/files/50x50x2/ls-towel.png",
+          "src": "http://lightspeed-fake:8080/files/ls-towel.png"
+        },
+        "images": {
+          "resource": {
+            "id": false,
+            "url": "products/502/images",
+            "link": "https://api.shoplightspeed.com/en/products/502/images.json"
+          }
+        },
+        "relations": {
+          "resource": {
+            "id": false,
+            "url": "products/502/relations",
+            "link": "https://api.shoplightspeed.com/en/products/502/relations.json"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "products/502/metafields",
+            "link": "https://api.shoplightspeed.com/en/products/502/metafields.json"
+          }
+        },
+        "reviews": {
+          "resource": {
+            "id": false,
+            "url": "reviews?product=502",
+            "link": "https://api.shoplightspeed.com/en/reviews.json?product=502"
+          }
+        },
+        "type": false,
+        "attributes": {
+          "resource": {
+            "id": false,
+            "url": "products/502/attributes",
+            "link": "https://api.shoplightspeed.com/en/products/502/attributes.json"
+          }
+        },
+        "supplier": {
+          "resource": {
+            "id": 78794,
+            "url": "suppliers/78794",
+            "link": "https://api.shoplightspeed.com/en/suppliers/78794.json"
+          }
+        },
+        "tags": {
+          "resource": {
+            "id": false,
+            "url": "tags/products?product=502",
+            "link": "https://api.shoplightspeed.com/en/tags/products.json?product=502"
+          }
+        },
+        "variants": {
+          "resource": {
+            "id": false,
+            "url": "variants?product=502",
+            "link": "https://api.shoplightspeed.com/en/variants.json?product=502"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?product=502",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?product=502"
+          }
+        },
+        "templateDataFields": {
+          "data01": "",
+          "data02": "",
+          "data03": "",
+          "data04": ""
+        }
+      },
+      {
+        "id": 503,
+        "createdAt": "2026-09-01T09:00:00+00:00",
+        "updatedAt": "2026-09-01T09:00:00+00:00",
+        "isVisible": false,
+        "visibility": "hidden",
+        "hasMatrix": false,
+        "data01": "",
+        "data02": "",
+        "data03": "",
+        "url": "prototype-jug",
+        "title": "Prototype jug",
+        "fulltitle": "Prototype jug by Harbour Lane",
+        "description": "Prototype jug short description",
+        "content": "",
+        "set": false,
+        "brand": false,
+        "categories": {
+          "resource": {
+            "id": false,
+            "url": "categories/products?product=503",
+            "link": "https://api.shoplightspeed.com/en/categories/products.json?product=503"
+          }
+        },
+        "deliverydate": {
+          "resource": {
+            "id": 6488,
+            "url": "deliverydates/6488",
+            "link": "https://api.shoplightspeed.com/en/deliverydates/6488.json"
+          }
+        },
+        "image": false,
+        "images": {
+          "resource": {
+            "id": false,
+            "url": "products/503/images",
+            "link": "https://api.shoplightspeed.com/en/products/503/images.json"
+          }
+        },
+        "relations": {
+          "resource": {
+            "id": false,
+            "url": "products/503/relations",
+            "link": "https://api.shoplightspeed.com/en/products/503/relations.json"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "products/503/metafields",
+            "link": "https://api.shoplightspeed.com/en/products/503/metafields.json"
+          }
+        },
+        "reviews": {
+          "resource": {
+            "id": false,
+            "url": "reviews?product=503",
+            "link": "https://api.shoplightspeed.com/en/reviews.json?product=503"
+          }
+        },
+        "type": false,
+        "attributes": {
+          "resource": {
+            "id": false,
+            "url": "products/503/attributes",
+            "link": "https://api.shoplightspeed.com/en/products/503/attributes.json"
+          }
+        },
+        "supplier": {
+          "resource": {
+            "id": 78794,
+            "url": "suppliers/78794",
+            "link": "https://api.shoplightspeed.com/en/suppliers/78794.json"
+          }
+        },
+        "tags": {
+          "resource": {
+            "id": false,
+            "url": "tags/products?product=503",
+            "link": "https://api.shoplightspeed.com/en/tags/products.json?product=503"
+          }
+        },
+        "variants": {
+          "resource": {
+            "id": false,
+            "url": "variants?product=503",
+            "link": "https://api.shoplightspeed.com/en/variants.json?product=503"
+          }
+        },
+        "movements": {
+          "resource": {
+            "id": false,
+            "url": "variants/movements?product=503",
+            "link": "https://api.shoplightspeed.com/en/variants/movements.json?product=503"
+          }
+        },
+        "templateDataFields": {
+          "data01": "",
+          "data02": "",
+          "data03": "",
+          "data04": ""
+        }
+      }
+    ]
+  }
+}

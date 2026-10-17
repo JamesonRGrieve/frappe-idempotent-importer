@@ -18,7 +18,8 @@ stores can import into two businesses at once and never touch each other's recor
 |---|---|---|
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
 | Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
-| Etsy, Square Online, BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
+| Square Online, BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -91,6 +92,11 @@ This is the operator's decision to confirm (see below).
      Credentials** and enter the app's client ID and client secret: the importer exchanges them for a
      24-hour token and renews it itself. A legacy custom app (made in the store admin before 2026) can use
      **Access Token** with its Admin API access token instead.
+   - **Etsy:** register an app at etsy.com/developers with this site's
+     `/api/method/idempotent_importer.api.etsy_callback` as its callback URL; enter the shop's URL, the app's
+     keystring as the user and its shared secret as the secret, save, then click **Connect to Etsy** and
+     approve read access as the shop owner. The refresh token Etsy issues (and replaces on every refresh)
+     is kept on the connection.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands
@@ -108,17 +114,21 @@ bench --site <site> idempotent-import reset-cursors --connection <id>
 uv sync --group dev                    # the pure-layer toolchain (Frappe comes from the bench)
 git config core.hooksPath .githooks    # the pre-commit gate
 scripts/check.sh                       # lock, SPDX, ruff, mypy --strict, pytest + coverage ratchet, schema proofs
-tests/e2e/run.sh                       # a real bench in podman, against a fake store of both sources
+python -m tools.specs                  # fetch the REST sources' pinned API documents (the proofs fetch them too)
+tests/e2e/run.sh                       # a real bench in podman, against a fake store of every source
 ```
 
-The pure layers (the engine, both adapters, the field contract, naming) are tested without a bench over
+The pure layers (the engine, every adapter, the field contract, naming) are tested without a bench over
 recorded fixtures. Every Shopify operation is validated against Shopify's published Admin schema, priced
 by a static cost estimate that must match what a live store charged for it, and every fixture is executed
 against the schema; every WooCommerce fixture validates against
 [tests/schemas/woocommerce.json](tests/schemas/woocommerce.json), transcribed from the official
-WooCommerce, WordPress and Redirection documentation. The end-to-end suite builds the official ERPNext v16
-image with HRMS, the blog app, the Webshop fork, the router and this app, sets up three businesses, and
-imports two WooCommerce stores and a Shopify store at once: the first import, unchanged re-runs that leave
+WooCommerce, WordPress and Redirection documentation; every other REST source's fixtures validate,
+strictly (no undeclared field), against the source's published API document pinned in `tools/specs.py`
+(by version, commit or SHA-256), or for Wix, Lightspeed and Ecwid the schema transcribed from their
+references. The end-to-end suite builds the official ERPNext v16 image with HRMS, the blog app, the
+Webshop fork, the router and this app, sets up a business per connection, and imports two WooCommerce
+stores and one store of every other built source at once: the first import, unchanged re-runs that leave
 every content table byte-identical, changes and deletions, connections that never touch each other's
 records, a rate-limited run that pauses in place, rejected credentials that hold scheduled runs, Sync Now
 on the background queue, and no mail. It then runs the writers' unit tests on the same bench (`bench

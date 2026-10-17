@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """The recorded source responses in tests/fixtures/<source>/<state>/*.json, answered as the source would.
 
-A REST fixture is ``{"request": {"method"?, "path", "query"?}, "headers"?: {...}, "status"?: int,
+A REST fixture is ``{"request": {"method"?, "path", "query"?, "body"?}, "headers"?: {...}, "status"?: int,
 "response": ...}``: the response the source gives a request to that path (GET unless named) whose query
-includes those parameters (others, like page sizes, are ignored). A Shopify fixture is ``{"operation",
-"variables", "data"}``: the ``data`` Shopify returns for that operation, matched by its ``after`` and
-``id`` variables. Each store state (v1, v2, …) is a complete snapshot of a store. Shared by the unit tests'
-transport and the end-to-end fake store."""
+includes those parameters (others, like page sizes, are ignored) and, for a JSON POST query, whose body has
+those values (an object matches when every key it names matches, a list when it has as many items and each
+matches, anything else when equal). A Shopify fixture is ``{"operation", "variables", "data"}``: the
+``data`` Shopify returns for that operation, matched by its ``after`` and ``id`` variables. Each store
+state (v1, v2, …) is a complete snapshot of a store. Shared by the unit tests' transport and the
+end-to-end fake store."""
 
 from __future__ import annotations
 
@@ -31,6 +33,7 @@ class RestFixture:
 	status: int
 	headers: dict[str, str]
 	response: Any
+	body: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -74,6 +77,7 @@ def rest_fixtures(source: str, state: str) -> list[RestFixture]:
 				int(raw.get("status", HTTP_OK)),
 				{str(k): str(v) for k, v in raw.get("headers", {}).items()},
 				raw["response"],
+				dict(request.get("body") or {}),
 			)
 		)
 	if not fixtures:
@@ -91,20 +95,36 @@ def graphql_fixtures(state: str) -> list[GraphQlFixture]:
 	return fixtures
 
 
+def value_matches(recorded: Any, sent: Any) -> bool:
+	if isinstance(recorded, dict):
+		return isinstance(sent, dict) and all(
+			name in sent and value_matches(value, sent[name]) for name, value in recorded.items()
+		)
+	if isinstance(recorded, list) and recorded:
+		return (
+			isinstance(sent, list)
+			and len(sent) == len(recorded)
+			and all(value_matches(item, other) for item, other in zip(recorded, sent, strict=True))
+		)
+	return bool(recorded == sent)
+
+
 class RestResponder:
 	"""Answers a REST source's requests from one store state's fixtures; unknown requests get a 404."""
 
 	def __init__(self, source: str, state: str) -> None:
 		self.fixtures = rest_fixtures(source, state)
 
-	def answer(self, method: str, url: str) -> Answer:
+	def answer(self, method: str, url: str, body: bytes = b"") -> Answer:
 		parts = urlsplit(url)
 		sent = parse_qs(parts.query, keep_blank_values=True)
+		decoded = json.loads(body) if body.strip() else {}
 		for fixture in self.fixtures:
 			if (
 				fixture.method == method
 				and fixture.path == parts.path
 				and all(sent.get(k) == [v] for k, v in fixture.query.items())
+				and value_matches(fixture.body, decoded)
 			):
 				return Answer(fixture.status, json.dumps(fixture.response).encode(), fixture.headers)
 		return Answer(HTTP_NOT_FOUND, b'{"code":"rest_no_route","message":"No route was found."}')

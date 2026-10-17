@@ -1,0 +1,38 @@
+{
+  "request": {
+    "path": "/rest/default/V1/products/attributes/93"
+  },
+  "response": {
+    "attribute_id": 93,
+    "attribute_code": "color",
+    "frontend_input": "select",
+    "entity_type_id": "4",
+    "is_required": false,
+    "default_frontend_label": "Color",
+    "frontend_labels": [],
+    "is_user_defined": true,
+    "scope": "global",
+    "backend_type": "int",
+    "is_visible": true,
+    "is_unique": "0",
+    "validation_rules": [],
+    "options": [
+      {
+        "label": " ",
+        "value": ""
+      },
+      {
+        "label": "Red",
+        "value": "49",
+        "sort_order": 1,
+        "is_default": false
+      },
+      {
+        "label": "Navy",
+        "value": "50",
+        "sort_order": 2,
+        "is_default": false
+      }
+    ]
+  }
+}

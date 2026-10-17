@@ -26,8 +26,10 @@ from referencing.jsonschema import DRAFT202012
 from idempotent_importer.sources.shopify.page_sizes import MAX_QUERY_COST, SMALLEST_SIZE, TARGET_SHARE
 from idempotent_importer.sources.shopify.queries import QueryLibrary
 from tests.support.fixtures import graphql_fixtures, rest_fixtures, states
+from tools.openapi import OpenApiValidator
 from tools.query_cost import QueryCost, recorded_costs
 from tools.schemas import openapi
+from tools.specs import for_source
 
 OPENAPI_ID = "urn:openapi"
 PLACEHOLDER = re.compile(r"\{[^/]+\}")
@@ -120,6 +122,25 @@ def first_difference(expected: Any, actual: Any, path: str = "$") -> str | None:
 	):
 		return None
 	return f"{path}: the fixture has {expected!r}, the schema serialises {actual!r}"
+
+
+def invalid_source_fixtures(source: str) -> Iterator[str]:
+	"""Every recorded response of a source in tools/specs.py's catalog against its pinned documents: the
+	request must be an operation one of them defines, and the response must match its 200 schema strictly
+	(tools/openapi.py)."""
+	documents = [(document.load(), document.complete_objects) for document in for_source(source)]
+	for state in states(source):
+		for fixture in rest_fixtures(source, state):
+			name = f"{source}/{state}/{fixture.file.name}"
+			for spec, complete in documents:
+				schema = spec.response_schema(fixture.method, fixture.path)
+				if schema is None:
+					continue
+				validator = OpenApiValidator(spec.schemas, spec.ref_prefix, complete)
+				yield from (f"{name}: {error}" for error in validator.validate(fixture.response, schema))
+				break
+			else:
+				yield f"{name}: {fixture.method} {fixture.path} is not an operation in the {source} spec"
 
 
 def response_schema_pointer(document: dict[str, Any], method: str, path: str) -> str | None:

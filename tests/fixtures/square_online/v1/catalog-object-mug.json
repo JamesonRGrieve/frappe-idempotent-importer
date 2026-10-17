@@ -1,0 +1,126 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/v2/catalog/object/ITEM_MUG",
+    "query": {
+      "include_related_objects": true
+    }
+  },
+  "response": {
+    "object": {
+      "type": "ITEM",
+      "id": "ITEM_MUG",
+      "updated_at": "2026-09-02T10:00:00.000Z",
+      "version": 1,
+      "is_deleted": false,
+      "present_at_all_locations": true,
+      "item_data": {
+        "name": "Ocean mug",
+        "is_taxable": true,
+        "variations": [
+          {
+            "type": "ITEM_VARIATION",
+            "id": "VAR_MUG",
+            "updated_at": "2026-09-01T10:00:00.000Z",
+            "version": 1,
+            "is_deleted": false,
+            "present_at_all_locations": true,
+            "item_variation_data": {
+              "item_id": "ITEM_MUG",
+              "name": "Regular",
+              "ordinal": 0,
+              "pricing_type": "FIXED_PRICING",
+              "price_money": {
+                "amount": 3200,
+                "currency": "CAD"
+              },
+              "track_inventory": true,
+              "sellable": true,
+              "stockable": true,
+              "sku": "PP-MUG-OCEAN",
+              "upc": "0629104150021"
+            }
+          }
+        ],
+        "product_type": "REGULAR",
+        "is_archived": false,
+        "tax_ids": [
+          "TAX_GST"
+        ],
+        "channels": [
+          "CH_SITE1"
+        ],
+        "categories": [
+          {
+            "id": "CAT_MUGS",
+            "ordinal": 0
+          }
+        ],
+        "reporting_category": {
+          "id": "CAT_MUGS"
+        },
+        "image_ids": [
+          "IMG_MUG_1",
+          "IMG_MUG_2"
+        ],
+        "description_html": "<p>Wheel-thrown stoneware.</p><p>Dishwasher safe.</p>",
+        "description_plaintext": "Wheel-thrown stoneware.\nDishwasher safe.",
+        "ecom_seo_data": {
+          "permalink": "ocean-mug",
+          "page_title": "Ocean mug | Prairie Pottery"
+        },
+        "ecom_uri": "https://prairiepottery.square.site/product/ocean-mug/ITEM_MUG"
+      }
+    },
+    "related_objects": [
+      {
+        "type": "IMAGE",
+        "id": "IMG_MUG_1",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Mug from above",
+          "url": "http://square_online-fake:8080/img/img_mug_1.png",
+          "caption": "Ocean mug from above"
+        }
+      },
+      {
+        "type": "IMAGE",
+        "id": "IMG_MUG_2",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Mug from the side",
+          "url": "http://square_online-fake:8080/img/img_mug_2.png",
+          "caption": null
+        }
+      },
+      {
+        "type": "CATEGORY",
+        "id": "CAT_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "category_data": {
+          "name": "Mugs",
+          "image_ids": [
+            "IMG_CAT_MUGS"
+          ],
+          "category_type": "REGULAR_CATEGORY",
+          "is_top_level": true,
+          "online_visibility": true,
+          "ecom_seo_data": {
+            "permalink": "mugs",
+            "page_title": "Mugs | Prairie Pottery"
+          },
+          "root_category": "CAT_MUGS"
+        }
+      }
+    ]
+  }
+}

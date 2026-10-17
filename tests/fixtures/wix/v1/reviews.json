@@ -1,0 +1,73 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/reviews/v1/reviews/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "reviews": [
+      {
+        "namespace": "stores",
+        "entityId": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+        "id": "aa000000-0000-4000-8000-000000000001",
+        "content": {
+          "title": "Perfect morning mug",
+          "body": "Holds heat & feels great.",
+          "rating": 5
+        },
+        "createdDate": "2026-09-04T12:00:00.000Z",
+        "updatedDate": "2026-09-04T12:00:00.000Z",
+        "reviewDate": "2026-09-04T12:00:00.000Z",
+        "author": {
+          "contactId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+          "authorName": "Maya T."
+        },
+        "reply": {
+          "message": "Thank you, Maya!",
+          "createdDate": "2026-09-05T08:00:00.000Z"
+        },
+        "foundHelpful": 3,
+        "foundUnhelpful": 0,
+        "helpfulness": 3,
+        "moderation": {
+          "moderationStatus": "APPROVED"
+        },
+        "verified": true,
+        "origin": {
+          "type": "ORGANIC"
+        }
+      },
+      {
+        "namespace": "stores",
+        "entityId": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+        "id": "aa000000-0000-4000-8000-000000000002",
+        "content": {
+          "body": "Shrank a little.",
+          "rating": 3
+        },
+        "createdDate": "2026-09-05T12:00:00.000Z",
+        "author": {
+          "contactId": "2c4e6a80-0002-4b3d-9e1f-5a6b7c8d0002",
+          "authorName": "Owen"
+        },
+        "moderation": {
+          "moderationStatus": "IN_MODERATION"
+        },
+        "verified": false
+      }
+    ],
+    "metadata": {
+      "count": 2,
+      "cursors": {}
+    }
+  }
+}

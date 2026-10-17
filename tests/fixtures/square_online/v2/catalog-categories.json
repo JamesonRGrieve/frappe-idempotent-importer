@@ -1,0 +1,72 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/search",
+    "body": {
+      "object_types": [
+        "CATEGORY"
+      ]
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "CATEGORY",
+        "id": "CAT_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "category_data": {
+          "name": "Mugs",
+          "image_ids": [
+            "IMG_CAT_MUGS"
+          ],
+          "category_type": "REGULAR_CATEGORY",
+          "is_top_level": true,
+          "online_visibility": true,
+          "ecom_seo_data": {
+            "permalink": "mugs",
+            "page_title": "Mugs | Prairie Pottery"
+          },
+          "root_category": "CAT_MUGS"
+        }
+      },
+      {
+        "type": "CATEGORY",
+        "id": "CAT_LINEN",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "category_data": {
+          "name": "Kitchen linen",
+          "image_ids": [],
+          "category_type": "REGULAR_CATEGORY",
+          "is_top_level": true,
+          "online_visibility": true,
+          "ecom_seo_data": {
+            "permalink": "kitchen-linen"
+          },
+          "root_category": "CAT_LINEN"
+        }
+      }
+    ],
+    "related_objects": [
+      {
+        "type": "IMAGE",
+        "id": "IMG_CAT_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Mugs",
+          "url": "http://square_online-fake:8080/img/img_cat_mugs.png",
+          "caption": "A row of mugs"
+        }
+      }
+    ],
+    "latest_time": "2026-09-09T10:00:00.000Z"
+  }
+}

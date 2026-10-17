@@ -23,9 +23,11 @@ dev = [
     "mypy>=1.19,<2",
     "pytest>=9.0,<10",
     "pytest-cov>=7.0,<8",
+    "pyyaml>=6.0,<7",
     "requests>=2.32,<3",
     "ruff>=0.17,<0.18",
     "types-jsonschema>=4.25,<5",
+    "types-pyyaml>=6.0,<7",
     "types-requests>=2.32,<3",
 ]
 

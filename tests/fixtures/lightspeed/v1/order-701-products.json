@@ -1,0 +1,115 @@
+{
+  "request": {
+    "path": "/en/orders/701/products.json"
+  },
+  "response": {
+    "orderProducts": [
+      {
+        "id": 7011,
+        "supplierTitle": "Harbour Lane",
+        "brandTitle": "Harbour Lane",
+        "productTitle": "Stoneware mug",
+        "variantTitle": "Default",
+        "taxRate": 0.05,
+        "taxRates": [
+          {
+            "name": "GST",
+            "rate": 0.05,
+            "amount": 2.25
+          }
+        ],
+        "quantityOrdered": 2,
+        "quantityInvoiced": 2,
+        "quantityShipped": 0,
+        "quantityRefunded": 0,
+        "quantityReturned": 0,
+        "articleCode": "ls-mug-1",
+        "ean": "",
+        "sku": "LS-MUG-1",
+        "weight": 0,
+        "volume": 0,
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "priceCost": 0,
+        "customExcl": 0,
+        "customIncl": 0,
+        "basePriceExcl": 25,
+        "basePriceIncl": 26.25,
+        "priceExcl": 45,
+        "priceIncl": 47.25,
+        "discountExcl": 5,
+        "discountIncl": 5.25,
+        "customFields": false,
+        "product": {
+          "resource": {
+            "id": 501,
+            "url": "products/501",
+            "link": "https://api.shoplightspeed.com/en/products/501.json"
+          }
+        },
+        "variant": {
+          "resource": {
+            "id": 5011,
+            "url": "variants/5011",
+            "link": "https://api.shoplightspeed.com/en/variants/5011.json"
+          }
+        }
+      },
+      {
+        "id": 7012,
+        "supplierTitle": "Harbour Lane",
+        "brandTitle": "Harbour Lane",
+        "productTitle": "Waffle dish towel",
+        "variantTitle": "Colour Slate",
+        "taxRate": 0.05,
+        "taxRates": [
+          {
+            "name": "GST",
+            "rate": 0.05,
+            "amount": 1
+          }
+        ],
+        "quantityOrdered": 1,
+        "quantityInvoiced": 1,
+        "quantityShipped": 0,
+        "quantityRefunded": 0,
+        "quantityReturned": 0,
+        "articleCode": "ls-towel-slate",
+        "ean": "",
+        "sku": "LS-TOWEL-SLATE",
+        "weight": 0,
+        "volume": 0,
+        "colli": 0,
+        "sizeX": 0,
+        "sizeY": 0,
+        "sizeZ": 0,
+        "priceCost": 0,
+        "customExcl": 0,
+        "customIncl": 0,
+        "basePriceExcl": 20,
+        "basePriceIncl": 21,
+        "priceExcl": 20,
+        "priceIncl": 21,
+        "discountExcl": 0,
+        "discountIncl": 0,
+        "customFields": false,
+        "product": {
+          "resource": {
+            "id": 502,
+            "url": "products/502",
+            "link": "https://api.shoplightspeed.com/en/products/502.json"
+          }
+        },
+        "variant": {
+          "resource": {
+            "id": 5022,
+            "url": "variants/5022",
+            "link": "https://api.shoplightspeed.com/en/variants/5022.json"
+          }
+        }
+      }
+    ]
+  }
+}

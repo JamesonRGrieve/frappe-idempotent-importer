@@ -55,7 +55,8 @@ truth for what each source mirrors and what is a gap. Python rules:
 
 `scripts/check.sh` is the pre-commit gate (lockfile, SPDX, ruff format + lint, mypy --strict, pytest over
 the recorded fixtures with the pure layers' coverage ratchet in `.coverage-baseline`, `python -m
-tools.prove` against Shopify's schema and the transcribed WooCommerce OpenAPI document). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman, then runs the writers' unit tests
+tools.prove` against Shopify's schema and its live query costs, the transcribed WooCommerce OpenAPI
+document, and every other REST source's pinned published spec (`tools/specs.py`, `tools/openapi.py`)). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman, then runs the writers' unit tests
 there (`idempotent_importer/tests/test_writers.py`, with the writer-coverage ratchet in
 `.writer-coverage-baseline`) (two WooCommerce
 connections bound to two Public Sites plus Shopify): first import, zero-write re-runs (content tables

@@ -1,0 +1,28 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/promotions/71/codes"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 7101,
+        "code": "BC-FALL15",
+        "current_uses": 0,
+        "max_uses_per_customer": 1,
+        "created": "2026-09-01T00:00:00+00:00"
+      }
+    ],
+    "meta": {
+      "cursor_pagination": {
+        "count": 1,
+        "per_page": 250,
+        "start_cursor": "7101",
+        "end_cursor": "7101",
+        "links": {
+          "previous": "",
+          "next": ""
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "request": {
+    "path": "/v2/commerce/products"
+  },
+  "response": {
+    "pagination": {
+      "hasNextPage": true,
+      "nextPageCursor": "eyJwcm9kdWN0cyI6IjIifQ",
+      "nextPageUrl": "/v2/commerce/products?cursor=eyJwcm9kdWN0cyI6IjIifQ"
+    },
+    "products": [
+      {
+        "id": "6b2000000000000000000011",
+        "type": "PHYSICAL",
+        "storePageId": "6a1000000000000000000001",
+        "name": "Cedar cutting board",
+        "description": "<p>Hand-oiled Nova Scotia cedar.</p>",
+        "url": "https://harbourpine.example/kitchen/p/cedar-cutting-board",
+        "urlSlug": "cedar-cutting-board",
+        "tags": [
+          "kitchen",
+          "cedar"
+        ],
+        "isVisible": true,
+        "images": [
+          {
+            "id": "img-board-side",
+            "url": "http://squarespace-fake:8080/img/board-side.png",
+            "orderIndex": 1,
+            "availableFormats": [
+              "100w",
+              "300w",
+              "500w",
+              "750w",
+              "1000w",
+              "1500w",
+              "2500w"
+            ],
+            "originalSize": {
+              "width": 1200,
+              "height": 1200
+            }
+          },
+          {
+            "id": "img-board",
+            "url": "http://squarespace-fake:8080/img/board.png",
+            "orderIndex": 0,
+            "availableFormats": [
+              "100w",
+              "300w",
+              "500w",
+              "750w",
+              "1000w",
+              "1500w",
+              "2500w"
+            ],
+            "originalSize": {
+              "width": 1200,
+              "height": 1200
+            },
+            "altText": "Cedar cutting board"
+          }
+        ],
+        "createdOn": "2026-09-01T09:00:00.000Z",
+        "modifiedOn": "2026-09-09T09:00:00.000Z",
+        "seoOptions": {
+          "title": "Cedar cutting board | Harbour & Pine",
+          "description": "A cedar board for every kitchen."
+        },
+        "variantAttributes": [],
+        "variants": [
+          {
+            "id": "a1b2c3d4-0000-4000-8000-000000000111",
+            "sku": "SQS-BOARD-1",
+            "attributes": {},
+            "pricing": {
+              "basePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 52
+              },
+              "onSale": false,
+              "salePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 0
+              }
+            },
+            "stock": {
+              "quantity": 9,
+              "unlimited": false
+            },
+            "shippingMeasurements": {
+              "weight": {
+                "unit": "KILOGRAM",
+                "value": 1.2
+              },
+              "dimensions": {
+                "unit": "CENTIMETER",
+                "length": 40,
+                "width": 25,
+                "height": 2
+              }
+            },
+            "gtin": "0662233440017",
+            "mpn": "HP-CB-01"
+          }
+        ]
+      },
+      {
+        "id": "6b2000000000000000000012",
+        "type": "PHYSICAL",
+        "storePageId": "6a1000000000000000000002",
+        "name": "Merino scarf",
+        "description": "<p>Soft merino, knit in Halifax.</p>",
+        "url": "https://harbourpine.example/apparel/p/merino-scarf",
+        "urlSlug": "merino-scarf",
+        "tags": [
+          "wool"
+        ],
+        "isVisible": true,
+        "images": [
+          {
+            "id": "img-scarf",
+            "url": "http://squarespace-fake:8080/img/scarf.png",
+            "orderIndex": 0,
+            "availableFormats": [
+              "100w",
+              "300w",
+              "500w",
+              "750w",
+              "1000w",
+              "1500w",
+              "2500w"
+            ],
+            "originalSize": {
+              "width": 1200,
+              "height": 1200
+            }
+          }
+        ],
+        "createdOn": "2026-09-01T10:00:00.000Z",
+        "modifiedOn": "2026-09-01T10:00:00.000Z",
+        "variantAttributes": [
+          "Colour"
+        ],
+        "variants": [
+          {
+            "id": "a1b2c3d4-0000-4000-8000-000000000121",
+            "sku": "SQS-SCARF-CHAR",
+            "attributes": {
+              "Colour": "Charcoal"
+            },
+            "pricing": {
+              "basePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 65
+              },
+              "onSale": true,
+              "salePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 55
+              }
+            },
+            "stock": {
+              "quantity": 4,
+              "unlimited": false
+            },
+            "shippingMeasurements": {
+              "weight": {
+                "unit": "KILOGRAM",
+                "value": 0.2
+              },
+              "dimensions": {
+                "unit": "CENTIMETER",
+                "length": 40,
+                "width": 25,
+                "height": 2
+              }
+            },
+            "gtin": "0662233440024"
+          },
+          {
+            "id": "a1b2c3d4-0000-4000-8000-000000000122",
+            "sku": "SQS-SCARF-MOSS",
+            "attributes": {
+              "Colour": "Moss"
+            },
+            "pricing": {
+              "basePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 65
+              },
+              "onSale": false,
+              "salePrice": {
+                "currency": {
+                  "currencyCode": "CAD"
+                },
+                "value": 0
+              }
+            },
+            "stock": {
+              "quantity": 0,
+              "unlimited": false
+            },
+            "shippingMeasurements": {
+              "weight": {
+                "unit": "KILOGRAM",
+                "value": 0.2
+              },
+              "dimensions": {
+                "unit": "CENTIMETER",
+                "length": 40,
+                "width": 25,
+                "height": 2
+              }
+            },
+            "gtin": "0662233440031",
+            "image": {
+              "id": "img-scarf-moss",
+              "url": "http://squarespace-fake:8080/img/scarf-moss.png",
+              "orderIndex": 1,
+              "availableFormats": [
+                "100w",
+                "300w",
+                "500w",
+                "750w",
+                "1000w",
+                "1500w",
+                "2500w"
+              ],
+              "originalSize": {
+                "width": 1200,
+                "height": 1200
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

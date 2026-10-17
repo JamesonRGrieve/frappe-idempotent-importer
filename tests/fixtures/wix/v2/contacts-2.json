@@ -1,0 +1,47 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/contacts/v5/contacts/query",
+    "body": {
+      "query": {
+        "cursorPaging": {
+          "cursor": "contacts-page-2"
+        }
+      }
+    }
+  },
+  "response": {
+    "contacts": [
+      {
+        "id": "2c4e6a80-0003-4b3d-9e1f-5a6b7c8d0003",
+        "revision": "4",
+        "createdDate": "2026-09-03T12:00:00.000Z",
+        "updatedDate": "2026-08-27T10:00:00.000Z",
+        "name": {
+          "first": "Lena",
+          "last": "Okafor"
+        },
+        "email": {
+          "email": "lena.okafor@example.com",
+          "subscriptionStatus": {
+            "status": "SUBSCRIBED"
+          },
+          "deliverabilityStatus": "VALID"
+        },
+        "locale": "en-CA",
+        "addresses": [],
+        "source": {
+          "appId": "215238eb-22a5-4c36-9e7b-e7c08025e04e"
+        },
+        "lastActivity": {
+          "date": "2026-09-01T10:00:00.000Z"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 1,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

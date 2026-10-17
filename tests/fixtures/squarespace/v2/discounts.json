@@ -1,0 +1,166 @@
+{
+  "request": {
+    "path": "/v1/commerce/discounts",
+    "query": {
+      "status": "ALL",
+      "sortBy": "CREATED_ON",
+      "sortDirection": "ASCENDING",
+      "offset": 0
+    }
+  },
+  "response": {
+    "discounts": [
+      {
+        "id": "6e5000000000000000000041",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Welcome 10%",
+        "trigger": {
+          "type": "CODE",
+          "promoCode": "SQS-WELCOME10"
+        },
+        "template": {
+          "type": "PERCENTAGE",
+          "percentage": 10
+        },
+        "criteria": {
+          "type": "ANY_ORDER"
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": true,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        },
+        "validTo": "2026-12-31T23:59:59.000Z"
+      },
+      {
+        "id": "6e5000000000000000000042",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Five off fifty",
+        "trigger": {
+          "type": "CODE",
+          "promoCode": "SQS-FIVEOFF"
+        },
+        "template": {
+          "type": "FIXED_AMOUNT",
+          "discountAmount": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 5
+          }
+        },
+        "criteria": {
+          "type": "CART_TOTAL",
+          "minimumCartTotal": {
+            "currency": {
+              "currencyCode": "CAD"
+            },
+            "value": 50
+          }
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": true,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        },
+        "maxUsesAllowed": 100
+      },
+      {
+        "id": "6e5000000000000000000043",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Free shipping",
+        "trigger": {
+          "type": "CODE",
+          "promoCode": "SQS-SHIPFREE"
+        },
+        "template": {
+          "type": "FREE_SHIPPING",
+          "appliesToFulfillmentOptionType": "SHIPPING"
+        },
+        "criteria": {
+          "type": "ANY_ORDER"
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        }
+      },
+      {
+        "id": "6e5000000000000000000044",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Scarf 15%",
+        "trigger": {
+          "type": "CODE",
+          "promoCode": "SQS-SCARF15"
+        },
+        "template": {
+          "type": "PERCENTAGE",
+          "percentage": 15
+        },
+        "criteria": {
+          "type": "PRODUCT",
+          "productId": "6b2000000000000000000012",
+          "productName": "Merino scarf"
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        }
+      },
+      {
+        "id": "6e5000000000000000000045",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Autumn auto 5%",
+        "trigger": {
+          "type": "AUTO"
+        },
+        "template": {
+          "type": "PERCENTAGE",
+          "percentage": 5
+        },
+        "criteria": {
+          "type": "ANY_ORDER"
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        }
+      }
+    ],
+    "hasNextPage": false,
+    "hasPreviousPage": false
+  }
+}

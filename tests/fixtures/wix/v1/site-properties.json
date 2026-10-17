@@ -1,0 +1,37 @@
+{
+  "request": {
+    "path": "/site-properties/v4/properties"
+  },
+  "response": {
+    "version": "42",
+    "properties": {
+      "categories": {
+        "primary": "ecommerce",
+        "secondary": []
+      },
+      "locale": {
+        "languageCode": "en",
+        "country": "CA"
+      },
+      "language": "en",
+      "paymentCurrency": "CAD",
+      "timeZone": "America/Regina",
+      "email": "hello@prairiepottery.example",
+      "phone": "+1 306 555 0142",
+      "address": {
+        "street": "Railway Street",
+        "streetNumber": "214",
+        "city": "Moose Jaw",
+        "state": "SK",
+        "zip": "S6H 1A1",
+        "country": "CA",
+        "isPhysical": true
+      },
+      "siteDisplayName": "Prairie Pottery",
+      "businessName": "Prairie Pottery Co.",
+      "logo": "prairie-logo.png",
+      "description": "Wheel-thrown stoneware from Saskatchewan.",
+      "businessConfig": "STORE"
+    }
+  }
+}

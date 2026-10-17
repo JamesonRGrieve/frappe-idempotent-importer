@@ -1,0 +1,8 @@
+{
+  "request": {
+    "path": "/en/products/503/images.json"
+  },
+  "response": {
+    "productImages": []
+  }
+}

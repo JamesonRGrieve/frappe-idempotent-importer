@@ -1,0 +1,222 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products",
+    "query": {
+      "include": "images,custom_fields",
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 111,
+        "name": "Enamel trail mug",
+        "type": "physical",
+        "sku": "BC-MUG-1",
+        "description": "<p>A tough enamel mug for the trail.</p>",
+        "weight": "0.4",
+        "width": "0",
+        "depth": "0",
+        "height": "0",
+        "price": "26.0000",
+        "cost_price": "0.0000",
+        "retail_price": "0.0000",
+        "sale_price": "0.0000",
+        "map_price": 0,
+        "tax_class_id": 0,
+        "product_tax_code": "",
+        "categories": [
+          21
+        ],
+        "brand_id": 5,
+        "inventory_level": 12,
+        "inventory_warning_level": 2,
+        "inventory_tracking": "product",
+        "fixed_cost_shipping_price": "0.0000",
+        "is_free_shipping": false,
+        "is_visible": true,
+        "is_featured": true,
+        "related_products": [
+          -1
+        ],
+        "warranty": "",
+        "bin_picking_number": "",
+        "layout_file": "product.html",
+        "upc": "",
+        "search_keywords": "",
+        "availability_description": "",
+        "availability": "available",
+        "gift_wrapping_options_type": "any",
+        "gift_wrapping_options_list": [],
+        "sort_order": 0,
+        "condition": "New",
+        "is_condition_shown": false,
+        "order_quantity_minimum": 0,
+        "order_quantity_maximum": 0,
+        "page_title": "Enamel trail mug | Northern Trail",
+        "meta_keywords": [],
+        "meta_description": "Enamel trail mug from Northern Trail.",
+        "view_count": 12,
+        "preorder_release_date": null,
+        "preorder_message": "",
+        "is_preorder_only": false,
+        "is_price_hidden": false,
+        "price_hidden_label": "",
+        "custom_url": {
+          "url": "/enamel-trail-mug/",
+          "is_customized": false
+        },
+        "open_graph_type": "product",
+        "open_graph_title": "",
+        "open_graph_description": "",
+        "open_graph_use_meta_description": true,
+        "open_graph_use_product_name": true,
+        "open_graph_use_image": true,
+        "gtin": "0778899100018",
+        "mpn": "",
+        "reviews_rating_sum": 5,
+        "reviews_count": 1,
+        "total_sold": 3,
+        "custom_fields": [
+          {
+            "id": 1,
+            "name": "Material",
+            "value": "Enamel steel"
+          }
+        ],
+        "images": [
+          {
+            "id": 502,
+            "product_id": 111,
+            "is_thumbnail": false,
+            "sort_order": 1,
+            "description": "",
+            "url_zoom": "http://bigcommerce-fake:8080/img/mug-side-zoom.png",
+            "url_standard": "http://bigcommerce-fake:8080/img/mug-side-std.png",
+            "url_thumbnail": "http://bigcommerce-fake:8080/img/mug-side-thumb.png",
+            "url_tiny": "http://bigcommerce-fake:8080/img/mug-side-tiny.png",
+            "date_modified": "2026-09-01T10:00:00+00:00"
+          },
+          {
+            "id": 501,
+            "product_id": 111,
+            "is_thumbnail": true,
+            "sort_order": 0,
+            "description": "Enamel trail mug",
+            "url_zoom": "http://bigcommerce-fake:8080/img/mug-zoom.png",
+            "url_standard": "http://bigcommerce-fake:8080/img/mug-std.png",
+            "url_thumbnail": "http://bigcommerce-fake:8080/img/mug-thumb.png",
+            "url_tiny": "http://bigcommerce-fake:8080/img/mug-tiny.png",
+            "date_modified": "2026-09-01T10:00:00+00:00"
+          }
+        ],
+        "date_created": "2026-09-01T09:00:00+00:00",
+        "date_modified": "2026-09-09T09:00:00+00:00",
+        "base_variant_id": 1110,
+        "calculated_price": "26.0000"
+      },
+      {
+        "id": 112,
+        "name": "Wool toque",
+        "type": "physical",
+        "sku": "",
+        "description": "<p>Merino wool, made in Canada.</p>",
+        "weight": "0.15",
+        "width": "0",
+        "depth": "0",
+        "height": "0",
+        "price": "30.0000",
+        "cost_price": "0.0000",
+        "retail_price": "0.0000",
+        "sale_price": "0.0000",
+        "map_price": 0,
+        "tax_class_id": 0,
+        "product_tax_code": "",
+        "categories": [
+          22,
+          21
+        ],
+        "brand_id": 5,
+        "inventory_level": 0,
+        "inventory_warning_level": 2,
+        "inventory_tracking": "variant",
+        "fixed_cost_shipping_price": "0.0000",
+        "is_free_shipping": false,
+        "is_visible": true,
+        "is_featured": false,
+        "related_products": [
+          -1
+        ],
+        "warranty": "",
+        "bin_picking_number": "",
+        "layout_file": "product.html",
+        "upc": "",
+        "search_keywords": "",
+        "availability_description": "",
+        "availability": "available",
+        "gift_wrapping_options_type": "any",
+        "gift_wrapping_options_list": [],
+        "sort_order": 0,
+        "condition": "New",
+        "is_condition_shown": false,
+        "order_quantity_minimum": 0,
+        "order_quantity_maximum": 0,
+        "page_title": "Wool toque | Northern Trail",
+        "meta_keywords": [],
+        "meta_description": "Wool toque from Northern Trail.",
+        "view_count": 12,
+        "preorder_release_date": null,
+        "preorder_message": "",
+        "is_preorder_only": false,
+        "is_price_hidden": false,
+        "price_hidden_label": "",
+        "custom_url": {
+          "url": "/wool-toque/",
+          "is_customized": false
+        },
+        "open_graph_type": "product",
+        "open_graph_title": "",
+        "open_graph_description": "",
+        "open_graph_use_meta_description": true,
+        "open_graph_use_product_name": true,
+        "open_graph_use_image": true,
+        "gtin": "",
+        "mpn": "",
+        "reviews_rating_sum": 10,
+        "reviews_count": 2,
+        "total_sold": 3,
+        "custom_fields": [],
+        "images": [
+          {
+            "id": 511,
+            "product_id": 112,
+            "is_thumbnail": true,
+            "sort_order": 0,
+            "description": "Wool toque",
+            "url_zoom": "http://bigcommerce-fake:8080/img/toque-zoom.png",
+            "url_standard": "http://bigcommerce-fake:8080/img/toque-std.png",
+            "url_thumbnail": "http://bigcommerce-fake:8080/img/toque-thumb.png",
+            "url_tiny": "http://bigcommerce-fake:8080/img/toque-tiny.png",
+            "date_modified": "2026-09-01T10:00:00+00:00"
+          }
+        ],
+        "date_created": "2026-09-01T09:00:00+00:00",
+        "date_modified": "2026-09-01T09:00:00+00:00",
+        "base_variant_id": null,
+        "calculated_price": "30.0000"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

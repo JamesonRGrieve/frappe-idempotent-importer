@@ -1,0 +1,112 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/orders/CW-1002"
+  },
+  "response": {
+    "id": "CW-1002",
+    "internalId": 96002,
+    "refundedAmount": 0,
+    "giftCardRedemption": 0,
+    "paymentMethod": "Pay at pickup",
+    "customerTaxExempt": false,
+    "customerTaxId": "",
+    "customerTaxIdValid": false,
+    "reversedTaxApplied": false,
+    "b2b_b2c": "b2c",
+    "paymentStatus": "AWAITING_PAYMENT",
+    "fulfillmentStatus": "AWAITING_PROCESSING",
+    "orderComments": "",
+    "volumeDiscount": 0,
+    "membershipBasedDiscount": 0,
+    "totalAndMembershipBasedDiscount": 0,
+    "customDiscount": [],
+    "discount": 0,
+    "couponDiscount": 0,
+    "customSurcharges": [],
+    "createDate": "2026-09-05 10:00:00 +0000",
+    "updateDate": "2026-09-05 10:00:00 +0000",
+    "createTimestamp": 1788602400,
+    "updateTimestamp": 1788602400,
+    "items": [
+      {
+        "id": 960201,
+        "productId": 9201,
+        "categoryId": 9101,
+        "price": 28,
+        "priceWithoutTax": 28,
+        "productPrice": 28,
+        "sku": "ECW-CANDLE-1",
+        "quantity": 1,
+        "shortDescription": "",
+        "tax": 1.4,
+        "shipping": 0,
+        "quantityInStock": 12,
+        "name": "Cedar candle",
+        "nameTranslated": {
+          "en": "Cedar candle"
+        },
+        "isShippingRequired": true,
+        "trackQuantity": true,
+        "imageUrl": "http://ecwid-fake:8080/images/ecw-candle-1.png",
+        "fixedShippingRateOnly": false,
+        "fixedShippingRate": 0,
+        "digital": false,
+        "couponApplied": false,
+        "couponAmount": 0,
+        "selectedOptions": [],
+        "taxes": [
+          {
+            "name": "GST",
+            "value": 5,
+            "total": 1.4,
+            "taxOnDiscountedSubtotal": 1.4,
+            "taxOnShipping": 0,
+            "sourceTaxRateId": 9301,
+            "sourceTaxRateType": "MANUAL",
+            "taxClassCode": "default",
+            "taxClassName": "Standard rate"
+          }
+        ],
+        "discounts": [],
+        "attributes": []
+      }
+    ],
+    "refunds": [],
+    "shipments": [],
+    "taxesOnShipping": [],
+    "hidden": false,
+    "acceptMarketing": false,
+    "disableAllCustomerNotifications": false,
+    "externalFulfillment": false,
+    "invoices": [],
+    "pricesIncludeTax": false,
+    "lang": "en",
+    "refererUrl": "https://cedarwick.example/products/",
+    "subtotal": 28,
+    "subtotalWithoutTax": 28,
+    "total": 29.4,
+    "totalWithoutTax": 28,
+    "tax": 1.4,
+    "totalBeforeGiftCardRedemption": 29.4,
+    "email": "jun.okafor@example.com",
+    "billingPerson": {
+      "name": "Jun Okafor",
+      "firstName": "Jun",
+      "lastName": "Okafor",
+      "companyName": "",
+      "phone": "+1 587-555-0123",
+      "countryCode": "CA",
+      "countryName": "Canada"
+    },
+    "shippingOption": {
+      "shippingMethodName": "Pickup at the studio",
+      "shippingMethodId": "pickup-1",
+      "shippingRate": 0,
+      "shippingRateWithoutTax": 0,
+      "isPickup": true,
+      "pickupInstruction": "Ring the studio bell.",
+      "fulfillmentType": "pickup"
+    },
+    "pickupTime": "2026-09-06 17:00:00 +0000"
+  }
+}

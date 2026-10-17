@@ -1,0 +1,237 @@
+{
+  "request": {
+    "path": "/en/customers.json"
+  },
+  "response": {
+    "customers": [
+      {
+        "id": 801,
+        "createdAt": "2026-09-01T10:00:00+00:00",
+        "updatedAt": "2026-09-01T10:00:00+00:00",
+        "isConfirmed": true,
+        "type": "registered",
+        "lastOnlineAt": null,
+        "remoteIp": false,
+        "userAgent": false,
+        "referralId": false,
+        "gender": false,
+        "birthDate": false,
+        "nationalId": "",
+        "email": "Marguerite@example.com",
+        "firstname": "Marguerite",
+        "middlename": "",
+        "lastname": "Leblanc",
+        "phone": "+1 902-555-0141",
+        "mobile": "",
+        "isCompany": false,
+        "companyName": "",
+        "companyCoCNumber": "",
+        "companyVatNumber": "",
+        "addressBillingName": "Marguerite Leblanc",
+        "addressBillingStreet": "Spring Garden Road",
+        "addressBillingStreet2": "",
+        "addressBillingNumber": "12",
+        "addressBillingExtension": "",
+        "addressBillingZipcode": "B3H 1X3",
+        "addressBillingCity": "Halifax",
+        "addressBillingRegion": "Nova Scotia",
+        "addressBillingCountry": {
+          "id": 38,
+          "code": "ca",
+          "code3": "can",
+          "title": "Canada"
+        },
+        "addressShippingCompany": false,
+        "addressShippingName": "Marguerite Leblanc",
+        "addressShippingStreet": "Spring Garden Road",
+        "addressShippingStreet2": "",
+        "addressShippingNumber": "12",
+        "addressShippingExtension": "",
+        "addressShippingZipcode": "B3H 1X3",
+        "addressShippingCity": "Halifax",
+        "addressShippingRegion": "Nova Scotia",
+        "addressShippingCountry": {
+          "id": 38,
+          "code": "ca",
+          "code3": "can",
+          "title": "Canada"
+        },
+        "memo": "Prefers email.",
+        "doNotifyRegistered": false,
+        "doNotifyConfirmed": false,
+        "doNotifyPassword": false,
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "groups": {
+          "resource": {
+            "id": false,
+            "url": "groups/customers?customer=801",
+            "link": "https://api.shoplightspeed.com/en/groups/customers.json?customer=801"
+          }
+        },
+        "invoices": {
+          "resource": {
+            "id": false,
+            "url": "invoices?customer=801",
+            "link": "https://api.shoplightspeed.com/en/invoices.json?customer=801"
+          }
+        },
+        "orders": {
+          "resource": {
+            "id": false,
+            "url": "orders?customer=801",
+            "link": "https://api.shoplightspeed.com/en/orders.json?customer=801"
+          }
+        },
+        "reviews": {
+          "resource": {
+            "id": false,
+            "url": "reviews?customer=801",
+            "link": "https://api.shoplightspeed.com/en/reviews.json?customer=801"
+          }
+        },
+        "shipments": {
+          "resource": {
+            "id": false,
+            "url": "shipments?customer=801",
+            "link": "https://api.shoplightspeed.com/en/shipments.json?customer=801"
+          }
+        },
+        "tickets": {
+          "resource": {
+            "id": false,
+            "url": "tickets?customer=801",
+            "link": "https://api.shoplightspeed.com/en/tickets.json?customer=801"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "customers/801/metafields",
+            "link": "https://api.shoplightspeed.com/en/customers/801/metafields.json"
+          }
+        },
+        "login": {
+          "resource": {
+            "id": false,
+            "url": "customers/801/login",
+            "link": "https://api.shoplightspeed.com/en/customers/801/login.json"
+          }
+        }
+      },
+      {
+        "id": 802,
+        "createdAt": "2026-09-01T10:00:00+00:00",
+        "updatedAt": "2026-09-01T10:00:00+00:00",
+        "isConfirmed": true,
+        "type": "registered",
+        "lastOnlineAt": null,
+        "remoteIp": false,
+        "userAgent": false,
+        "referralId": false,
+        "gender": false,
+        "birthDate": false,
+        "nationalId": "",
+        "email": "owen@example.com",
+        "firstname": "Owen",
+        "middlename": "",
+        "lastname": "Price",
+        "phone": "",
+        "mobile": "",
+        "isCompany": false,
+        "companyName": "",
+        "companyCoCNumber": "",
+        "companyVatNumber": "",
+        "addressBillingName": "",
+        "addressBillingStreet": "",
+        "addressBillingStreet2": "",
+        "addressBillingNumber": "",
+        "addressBillingExtension": "",
+        "addressBillingZipcode": "",
+        "addressBillingCity": "",
+        "addressBillingRegion": "",
+        "addressBillingCountry": false,
+        "addressShippingCompany": false,
+        "addressShippingName": "",
+        "addressShippingStreet": "",
+        "addressShippingStreet2": "",
+        "addressShippingNumber": "",
+        "addressShippingExtension": "",
+        "addressShippingZipcode": "",
+        "addressShippingCity": "",
+        "addressShippingRegion": "",
+        "addressShippingCountry": false,
+        "memo": "",
+        "doNotifyRegistered": false,
+        "doNotifyConfirmed": false,
+        "doNotifyPassword": false,
+        "language": {
+          "id": 1,
+          "code": "en",
+          "locale": "en_GB",
+          "title": "English"
+        },
+        "groups": {
+          "resource": {
+            "id": false,
+            "url": "groups/customers?customer=802",
+            "link": "https://api.shoplightspeed.com/en/groups/customers.json?customer=802"
+          }
+        },
+        "invoices": {
+          "resource": {
+            "id": false,
+            "url": "invoices?customer=802",
+            "link": "https://api.shoplightspeed.com/en/invoices.json?customer=802"
+          }
+        },
+        "orders": {
+          "resource": {
+            "id": false,
+            "url": "orders?customer=802",
+            "link": "https://api.shoplightspeed.com/en/orders.json?customer=802"
+          }
+        },
+        "reviews": {
+          "resource": {
+            "id": false,
+            "url": "reviews?customer=802",
+            "link": "https://api.shoplightspeed.com/en/reviews.json?customer=802"
+          }
+        },
+        "shipments": {
+          "resource": {
+            "id": false,
+            "url": "shipments?customer=802",
+            "link": "https://api.shoplightspeed.com/en/shipments.json?customer=802"
+          }
+        },
+        "tickets": {
+          "resource": {
+            "id": false,
+            "url": "tickets?customer=802",
+            "link": "https://api.shoplightspeed.com/en/tickets.json?customer=802"
+          }
+        },
+        "metafields": {
+          "resource": {
+            "id": false,
+            "url": "customers/802/metafields",
+            "link": "https://api.shoplightspeed.com/en/customers/802/metafields.json"
+          }
+        },
+        "login": {
+          "resource": {
+            "id": false,
+            "url": "customers/802/login",
+            "link": "https://api.shoplightspeed.com/en/customers/802/login.json"
+          }
+        }
+      }
+    ]
+  }
+}

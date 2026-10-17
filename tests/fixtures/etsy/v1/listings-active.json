@@ -1,0 +1,347 @@
+{
+  "request": {
+    "path": "/v3/application/shops/5001/listings",
+    "query": {
+      "state": "active",
+      "offset": 0
+    }
+  },
+  "response": {
+    "count": 2,
+    "results": [
+      {
+        "listing_id": 601,
+        "user_id": 7001,
+        "shop_id": 5001,
+        "title": "Hand-thrown mug &quot;Ocean&quot;",
+        "description": "Wheel-thrown stoneware.\nDishwasher safe.\n\nEach one is unique.",
+        "state": "active",
+        "creation_timestamp": 1788000000,
+        "created_timestamp": 1788000000,
+        "ending_timestamp": 1798368000,
+        "original_creation_timestamp": 1788000000,
+        "last_modified_timestamp": 1788000000,
+        "updated_timestamp": 1788000000,
+        "state_timestamp": 1788000000,
+        "quantity": 4,
+        "shop_section_id": 51,
+        "featured_rank": 0,
+        "url": "https://www.etsy.com/listing/601",
+        "num_favorers": 0,
+        "non_taxable": false,
+        "is_taxable": true,
+        "is_customizable": false,
+        "is_personalizable": false,
+        "listing_type": "physical",
+        "tags": [
+          "mug",
+          "ceramic"
+        ],
+        "materials": [
+          "stoneware"
+        ],
+        "shipping_profile_id": null,
+        "return_policy_id": null,
+        "processing_min": null,
+        "processing_max": null,
+        "who_made": "i_did",
+        "when_made": "made_to_order",
+        "is_supply": false,
+        "item_weight": 350,
+        "item_weight_unit": "g",
+        "item_length": null,
+        "item_width": null,
+        "item_height": null,
+        "item_dimensions_unit": null,
+        "is_private": false,
+        "style": [],
+        "file_data": null,
+        "has_variations": false,
+        "should_auto_renew": false,
+        "language": "en-US",
+        "price": {
+          "amount": 3200,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "converted_price": null,
+        "taxonomy_id": null,
+        "readiness_state_id": null,
+        "suggested_title": null,
+        "ecgt_garan_brand": null,
+        "ecgt_garan_years": null,
+        "ecgt_garan_model": null,
+        "ecgt_garan_guarantee_details": null,
+        "ecgt_other_commercial_guarantee_details": null,
+        "ecgt_after_sales_service_info": null,
+        "ecgt_software_update_details": null,
+        "ecgt_commercial_guarantee_enabled": null,
+        "shipping_profile": null,
+        "user": null,
+        "shop": null,
+        "images": [
+          {
+            "listing_id": 601,
+            "listing_image_id": 6012,
+            "hex_code": null,
+            "red": null,
+            "green": null,
+            "blue": null,
+            "hue": null,
+            "saturation": null,
+            "brightness": null,
+            "is_black_and_white": null,
+            "creation_tsz": 1788000000,
+            "created_timestamp": 1788000000,
+            "rank": 2,
+            "url_75x75": "http://etsy-fake:8080/il/6012.png",
+            "url_170x135": "http://etsy-fake:8080/il/6012.png",
+            "url_570xN": "http://etsy-fake:8080/il/6012.png",
+            "url_fullxfull": "http://etsy-fake:8080/il/6012.png",
+            "full_height": 800,
+            "full_width": 800,
+            "alt_text": "Mug from the side"
+          },
+          {
+            "listing_id": 601,
+            "listing_image_id": 6011,
+            "hex_code": null,
+            "red": null,
+            "green": null,
+            "blue": null,
+            "hue": null,
+            "saturation": null,
+            "brightness": null,
+            "is_black_and_white": null,
+            "creation_tsz": 1788000000,
+            "created_timestamp": 1788000000,
+            "rank": 1,
+            "url_75x75": "http://etsy-fake:8080/il/6011.png",
+            "url_170x135": "http://etsy-fake:8080/il/6011.png",
+            "url_570xN": "http://etsy-fake:8080/il/6011.png",
+            "url_fullxfull": "http://etsy-fake:8080/il/6011.png",
+            "full_height": 800,
+            "full_width": 800,
+            "alt_text": "Mug from above"
+          }
+        ],
+        "videos": [],
+        "inventory": {
+          "products": [
+            {
+              "product_id": 9101,
+              "sku": "MUG-OCEAN",
+              "is_deleted": false,
+              "offerings": [
+                {
+                  "offering_id": 91010,
+                  "quantity": 4,
+                  "is_enabled": true,
+                  "is_deleted": false,
+                  "price": {
+                    "amount": 3200,
+                    "divisor": 100,
+                    "currency_code": "CAD"
+                  },
+                  "readiness_state_id": null
+                }
+              ],
+              "property_values": []
+            }
+          ],
+          "price_on_property": [],
+          "quantity_on_property": [],
+          "sku_on_property": [],
+          "readiness_state_on_property": []
+        },
+        "production_partners": [],
+        "skus": [
+          "MUG-OCEAN"
+        ],
+        "translations": {
+          "de": null,
+          "en-GB": null,
+          "en-IN": null,
+          "en-US": null,
+          "es": null,
+          "fr": null,
+          "it": null,
+          "ja": null,
+          "nl": null,
+          "pl": null,
+          "pt": null,
+          "ru": null,
+          "sv": null
+        },
+        "views": 0,
+        "personalization": null,
+        "buyer_price": null
+      },
+      {
+        "listing_id": 602,
+        "user_id": 7001,
+        "shop_id": 5001,
+        "title": "Linen apron",
+        "description": "Heavy linen, adjustable straps.",
+        "state": "active",
+        "creation_timestamp": 1788000000,
+        "created_timestamp": 1788000000,
+        "ending_timestamp": 1798368000,
+        "original_creation_timestamp": 1788000000,
+        "last_modified_timestamp": 1788000000,
+        "updated_timestamp": 1788000000,
+        "state_timestamp": 1788000000,
+        "quantity": 3,
+        "shop_section_id": 52,
+        "featured_rank": 0,
+        "url": "https://www.etsy.com/listing/602",
+        "num_favorers": 0,
+        "non_taxable": false,
+        "is_taxable": true,
+        "is_customizable": false,
+        "is_personalizable": false,
+        "listing_type": "physical",
+        "tags": [],
+        "materials": [],
+        "shipping_profile_id": null,
+        "return_policy_id": null,
+        "processing_min": null,
+        "processing_max": null,
+        "who_made": "i_did",
+        "when_made": "made_to_order",
+        "is_supply": false,
+        "item_weight": 0.4,
+        "item_weight_unit": "kg",
+        "item_length": null,
+        "item_width": null,
+        "item_height": null,
+        "item_dimensions_unit": null,
+        "is_private": false,
+        "style": [],
+        "file_data": null,
+        "has_variations": true,
+        "should_auto_renew": false,
+        "language": "en-US",
+        "price": {
+          "amount": 4800,
+          "divisor": 100,
+          "currency_code": "CAD"
+        },
+        "converted_price": null,
+        "taxonomy_id": null,
+        "readiness_state_id": null,
+        "suggested_title": null,
+        "ecgt_garan_brand": null,
+        "ecgt_garan_years": null,
+        "ecgt_garan_model": null,
+        "ecgt_garan_guarantee_details": null,
+        "ecgt_other_commercial_guarantee_details": null,
+        "ecgt_after_sales_service_info": null,
+        "ecgt_software_update_details": null,
+        "ecgt_commercial_guarantee_enabled": null,
+        "shipping_profile": null,
+        "user": null,
+        "shop": null,
+        "images": [],
+        "videos": [],
+        "inventory": {
+          "products": [
+            {
+              "product_id": 9201,
+              "sku": "APRON-NAT",
+              "is_deleted": false,
+              "offerings": [
+                {
+                  "offering_id": 92010,
+                  "quantity": 3,
+                  "is_enabled": true,
+                  "is_deleted": false,
+                  "price": {
+                    "amount": 4800,
+                    "divisor": 100,
+                    "currency_code": "CAD"
+                  },
+                  "readiness_state_id": null
+                }
+              ],
+              "property_values": [
+                {
+                  "property_id": 200,
+                  "property_name": "Color",
+                  "scale_id": null,
+                  "scale_name": null,
+                  "value_ids": [
+                    1001
+                  ],
+                  "values": [
+                    "Natural"
+                  ]
+                }
+              ]
+            },
+            {
+              "product_id": 9202,
+              "sku": "APRON-CHA",
+              "is_deleted": false,
+              "offerings": [
+                {
+                  "offering_id": 92020,
+                  "quantity": 0,
+                  "is_enabled": true,
+                  "is_deleted": false,
+                  "price": {
+                    "amount": 4800,
+                    "divisor": 100,
+                    "currency_code": "CAD"
+                  },
+                  "readiness_state_id": null
+                }
+              ],
+              "property_values": [
+                {
+                  "property_id": 200,
+                  "property_name": "Color",
+                  "scale_id": null,
+                  "scale_name": null,
+                  "value_ids": [
+                    1002
+                  ],
+                  "values": [
+                    "Charcoal"
+                  ]
+                }
+              ]
+            }
+          ],
+          "price_on_property": [],
+          "quantity_on_property": [],
+          "sku_on_property": [],
+          "readiness_state_on_property": []
+        },
+        "production_partners": [],
+        "skus": [
+          "APRON-NAT",
+          "APRON-CHA"
+        ],
+        "translations": {
+          "de": null,
+          "en-GB": null,
+          "en-IN": null,
+          "en-US": null,
+          "es": null,
+          "fr": null,
+          "it": null,
+          "ja": null,
+          "nl": null,
+          "pl": null,
+          "pt": null,
+          "ru": null,
+          "sv": null
+        },
+        "views": 0,
+        "personalization": null,
+        "buyer_price": null
+      }
+    ]
+  }
+}

@@ -40,6 +40,21 @@ SHOPIFY_CLIENT_GRANT = {
 	"client_id": ["e2e-client-id"],
 	"client_secret": ["e2e-client-secret"],
 }
+ETSY_TOKEN_PATH = "/v3/public/oauth/token"
+# Etsy's grant for the connected shop owner (user 7001), with a new refresh token every time.
+ETSY_GRANT = {
+	"access_token": "7001.fixture-access-token",
+	"token_type": "Bearer",
+	"expires_in": 3600,
+	"refresh_token": "fixture-refresh-token",
+}
+# The REST sources besides WooCommerce, by host: their fixtures, and the headers every request must carry.
+REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
+	"etsy-fake": (
+		"etsy",
+		{"x-api-key": "e2e-keystring:e2e-shared-secret", "Authorization": "Bearer 7001.fixture-access-token"},
+	),
+}
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400
 HTTP_UNAUTHORIZED = 401
@@ -78,9 +93,8 @@ class FakeStore(BaseHTTPRequestHandler):
 			self.send(Answer(HTTP_UNAUTHORIZED, b'{"code":"rest_forbidden"}'))
 			return
 		state = self.read_state(f"{host}-state")
+		body = self.rfile.read(int(self.headers.get("Content-Length") or 0))
 		if host == "shopify-fake":
-			length = int(self.headers.get("Content-Length") or 0)
-			body = self.rfile.read(length)
 			if method == "POST" and self.path == SHOPIFY_TOKEN_PATH:
 				self.send(shopify_grant(body))
 				return
@@ -89,10 +103,14 @@ class FakeStore(BaseHTTPRequestHandler):
 				return
 			self.send(ShopifyResponder(state).answer(body))
 			return
-		if self.headers.get("Authorization") != WOO_AUTHORIZATION:
+		if host == "etsy-fake" and method == "POST" and self.path == ETSY_TOKEN_PATH:
+			self.send(Answer(200, json.dumps(ETSY_GRANT).encode()))
+			return
+		source, headers = REST_SOURCES.get(host, ("woocommerce", {"Authorization": WOO_AUTHORIZATION}))
+		if any(self.headers.get(name) != value for name, value in headers.items()):
 			self.send(Answer(HTTP_UNAUTHORIZED, b'{"code":"rest_not_logged_in"}'))
 			return
-		self.send(RestResponder("woocommerce", state).answer(method, self.path))
+		self.send(RestResponder(source, state).answer(method, self.path, body))
 
 	def read_state(self, name: str) -> str:
 		path = self.state_dir / name

@@ -1,0 +1,58 @@
+{
+  "request": {
+    "path": "/api/v3/7400100/customers/9401"
+  },
+  "response": {
+    "id": 9401,
+    "email": "Rowan.Pike@example.com",
+    "registered": "2026-09-01 15:00:00 +0000",
+    "updated": "2026-09-01 15:00:00 +0000",
+    "billingPerson": {
+      "name": "Rowan Pike",
+      "firstName": "Rowan",
+      "lastName": "Pike",
+      "companyName": "",
+      "street": "14 Spray Avenue\nApt 2",
+      "city": "Banff",
+      "countryCode": "CA",
+      "countryName": "Canada",
+      "postalCode": "T1L 1A1",
+      "stateOrProvinceCode": "AB",
+      "stateOrProvinceName": "Alberta",
+      "phone": "+1 403-555-0190"
+    },
+    "shippingAddresses": [
+      {
+        "id": 1,
+        "name": "Rowan Pike",
+        "companyName": "",
+        "street": "14 Spray Avenue\nApt 2",
+        "city": "Banff",
+        "countryCode": "CA",
+        "countryName": "Canada",
+        "postalCode": "T1L 1A1",
+        "stateOrProvinceCode": "AB",
+        "stateOrProvinceName": "Alberta",
+        "phone": "+1 403-555-0190",
+        "addressFormatted": "14 Spray Avenue, Apt 2, Banff AB T1L 1A1, Canada"
+      }
+    ],
+    "contacts": [
+      {
+        "contact": "Rowan.Pike@example.com",
+        "type": "EMAIL",
+        "default": true,
+        "orderBy": 0,
+        "timestamp": "2026-09-01 15:00:00 +0000"
+      }
+    ],
+    "customerGroupName": "General",
+    "customerGroupId": 0,
+    "taxId": "",
+    "taxIdValid": false,
+    "taxExempt": false,
+    "acceptMarketing": true,
+    "lang": "en",
+    "privateAdminNotes": "Prefers unscented gift wrap."
+  }
+}

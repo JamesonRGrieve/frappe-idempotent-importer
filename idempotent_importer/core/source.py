@@ -4,6 +4,7 @@ mapping (identity, hashing, writers, retirement, redirects) is shared by every a
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Protocol
@@ -34,6 +35,12 @@ class ConnectionConfig:
 	api_user: str = ""
 	api_secret: str = field(default="", repr=False)
 	auth_method: str = ""
+	# The account the credentials open, where a source needs one (a store hash, a site or store id).
+	account: str = ""
+	# An OAuth refresh token the source replaces on every refresh (Etsy): each new one is handed to
+	# ``save_refresh_token``, which keeps it before the access token is used.
+	refresh_token: str = field(default="", repr=False)
+	save_refresh_token: Callable[[str], None] | None = field(default=None, repr=False, compare=False)
 	# Test harness only (site config, never the desk): where a fake store answers for this connection.
 	endpoint_override: str | None = None
 

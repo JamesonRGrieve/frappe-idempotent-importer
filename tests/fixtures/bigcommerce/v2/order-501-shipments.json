@@ -1,0 +1,63 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/orders/501/shipments"
+  },
+  "response": [
+    {
+      "id": 1,
+      "order_id": 501,
+      "customer_id": 41,
+      "order_address_id": 5010,
+      "date_created": "Thu, 03 Sep 2026 11:00:00 +0000",
+      "tracking_number": "CP123456789CA",
+      "merchant_shipping_cost": "9.0000",
+      "shipping_method": "Canada Post Expedited",
+      "shipping_provider": "canadapost",
+      "tracking_carrier": "canada-post",
+      "tracking_link": "",
+      "comments": "",
+      "billing_address": {
+        "first_name": "Ingrid",
+        "last_name": "Johansson",
+        "company": "",
+        "street_1": "12 Spruce Lane",
+        "street_2": "",
+        "city": "Canmore",
+        "state": "Alberta",
+        "zip": "T1W 2B2",
+        "country": "Canada",
+        "country_iso2": "CA",
+        "phone": "+1 403-555-0141",
+        "email": "Ingrid@Example.com"
+      },
+      "shipping_address": {
+        "first_name": "Ingrid",
+        "last_name": "Johansson",
+        "company": "",
+        "street_1": "12 Spruce Lane",
+        "street_2": "",
+        "city": "Canmore",
+        "state": "Alberta",
+        "zip": "T1W 2B2",
+        "country": "Canada",
+        "country_iso2": "CA",
+        "phone": "+1 403-555-0141",
+        "email": "Ingrid@Example.com"
+      },
+      "items": [
+        {
+          "order_product_id": 5011,
+          "product_id": 111,
+          "quantity": 2
+        },
+        {
+          "order_product_id": 5012,
+          "product_id": 112,
+          "quantity": 1
+        }
+      ],
+      "shipping_provider_display_name": "Canada Post",
+      "generated_tracking_link": "https://www.canadapost-postescanada.ca/track/CP123456789CA"
+    }
+  ]
+}

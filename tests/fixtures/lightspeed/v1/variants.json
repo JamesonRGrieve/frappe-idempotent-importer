@@ -1,0 +1,8 @@
+{
+  "request": {
+    "path": "/en/variants.json"
+  },
+  "response": {
+    "variants": []
+  }
+}

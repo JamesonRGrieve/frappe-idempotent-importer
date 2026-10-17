@@ -1,0 +1,71 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/batch-retrieve",
+    "body": {
+      "object_ids": [
+        "IMG_APRON_CHAR",
+        "OPT_COLOR"
+      ],
+      "include_related_objects": false
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "ITEM_OPTION",
+        "id": "OPT_COLOR",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_option_data": {
+          "name": "Apron colour",
+          "display_name": "Colour",
+          "show_colors": false,
+          "values": [
+            {
+              "type": "ITEM_OPTION_VAL",
+              "id": "VAL_NATURAL",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_option_value_data": {
+                "item_option_id": "OPT_COLOR",
+                "name": "Natural",
+                "ordinal": 0
+              }
+            },
+            {
+              "type": "ITEM_OPTION_VAL",
+              "id": "VAL_CHARCOAL",
+              "updated_at": "2026-09-01T10:00:00.000Z",
+              "version": 1,
+              "is_deleted": false,
+              "present_at_all_locations": true,
+              "item_option_value_data": {
+                "item_option_id": "OPT_COLOR",
+                "name": "Charcoal",
+                "ordinal": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "IMAGE",
+        "id": "IMG_APRON_CHAR",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "image_data": {
+          "name": "Charcoal apron",
+          "url": "http://square_online-fake:8080/img/img_apron_char.png",
+          "caption": "Charcoal linen apron"
+        }
+      }
+    ]
+  }
+}

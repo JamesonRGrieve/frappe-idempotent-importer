@@ -1,0 +1,192 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/stores/v3/products/query-variants",
+    "body": {
+      "query": {
+        "filter": {
+          "productData.productId": {
+            "$in": [
+              "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+              "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+              "1a7e5c10-0003-4c2e-9b41-6f0d2a1e0003"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "response": {
+    "variants": [
+      {
+        "variantId": "00000000-0000-0000-0000-000000000000",
+        "visible": true,
+        "sku": "WIX-MUG-1",
+        "optionChoices": [],
+        "price": {
+          "actualPrice": {
+            "amount": "28.00",
+            "formattedAmount": "$28.00"
+          }
+        },
+        "physicalProperties": {
+          "weight": 0.45
+        },
+        "inventoryStatus": {
+          "inStock": true,
+          "preorderEnabled": false
+        },
+        "productData": {
+          "productId": "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001",
+          "name": "Speckled clay mug",
+          "productType": "PHYSICAL",
+          "slug": "speckled-clay-mug",
+          "visible": true,
+          "currency": "CAD"
+        },
+        "revenueDetails": {
+          "cost": {
+            "amount": "9.50",
+            "formattedAmount": "$9.50"
+          }
+        },
+        "barcode": "0845511200019"
+      },
+      {
+        "variantId": "7c1d3e20-0001-4f8a-a3b2-1d9c4e5f0001",
+        "visible": true,
+        "sku": "WIX-TOWEL-SAGE",
+        "optionChoices": [
+          {
+            "optionChoiceIds": {
+              "optionId": "5e2a1b30-0001-4c7d-9f0e-3a4b5c6d0001",
+              "choiceId": "5e2a1b30-0011-4c7d-9f0e-3a4b5c6d0011"
+            },
+            "optionChoiceNames": {
+              "optionName": "Colour",
+              "choiceName": "Sage",
+              "renderType": "TEXT_CHOICES"
+            }
+          }
+        ],
+        "price": {
+          "actualPrice": {
+            "amount": "18.00",
+            "formattedAmount": "$18.00"
+          },
+          "compareAtPrice": {
+            "amount": "22.00",
+            "formattedAmount": "$22.00"
+          }
+        },
+        "physicalProperties": {
+          "weight": 0.1
+        },
+        "inventoryStatus": {
+          "inStock": true,
+          "preorderEnabled": false
+        },
+        "productData": {
+          "productId": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+          "name": "Linen tea towel",
+          "productType": "PHYSICAL",
+          "slug": "linen-tea-towel",
+          "visible": true,
+          "currency": "CAD"
+        },
+        "revenueDetails": {
+          "cost": {
+            "amount": "6.00",
+            "formattedAmount": "$6.00"
+          }
+        },
+        "barcode": "0845511200026",
+        "media": {
+          "id": "towel-sage.png",
+          "image": {
+            "url": "http://wix-fake:8080/media/towel-sage.png",
+            "altText": "Linen tea towel variant"
+          },
+          "mediaType": "IMAGE"
+        }
+      },
+      {
+        "variantId": "7c1d3e20-0002-4f8a-a3b2-1d9c4e5f0002",
+        "visible": true,
+        "sku": "WIX-TOWEL-RUST",
+        "optionChoices": [
+          {
+            "optionChoiceIds": {
+              "optionId": "5e2a1b30-0001-4c7d-9f0e-3a4b5c6d0001",
+              "choiceId": "5e2a1b30-0012-4c7d-9f0e-3a4b5c6d0012"
+            },
+            "optionChoiceNames": {
+              "optionName": "Colour",
+              "choiceName": "Rust",
+              "renderType": "TEXT_CHOICES"
+            }
+          }
+        ],
+        "price": {
+          "actualPrice": {
+            "amount": "22.00",
+            "formattedAmount": "$22.00"
+          }
+        },
+        "physicalProperties": {
+          "weight": 0.1
+        },
+        "inventoryStatus": {
+          "inStock": true,
+          "preorderEnabled": false
+        },
+        "productData": {
+          "productId": "1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002",
+          "name": "Linen tea towel",
+          "productType": "PHYSICAL",
+          "slug": "linen-tea-towel",
+          "visible": true,
+          "currency": "CAD"
+        },
+        "revenueDetails": {
+          "cost": {
+            "amount": "6.00",
+            "formattedAmount": "$6.00"
+          }
+        }
+      },
+      {
+        "variantId": "00000000-0000-0000-0000-000000000000",
+        "visible": true,
+        "sku": "WIX-BOWL-2ND",
+        "optionChoices": [],
+        "price": {
+          "actualPrice": {
+            "amount": "12.00",
+            "formattedAmount": "$12.00"
+          }
+        },
+        "physicalProperties": {
+          "weight": 0.6
+        },
+        "inventoryStatus": {
+          "inStock": true,
+          "preorderEnabled": false
+        },
+        "productData": {
+          "productId": "1a7e5c10-0003-4c2e-9b41-6f0d2a1e0003",
+          "name": "Seconds bowl",
+          "productType": "PHYSICAL",
+          "slug": "seconds-bowl",
+          "visible": true,
+          "currency": "CAD"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 4,
+      "hasNext": false,
+      "cursors": {}
+    }
+  }
+}

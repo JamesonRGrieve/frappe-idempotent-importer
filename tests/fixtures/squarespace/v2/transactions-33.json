@@ -1,0 +1,133 @@
+{
+  "request": {
+    "path": "/1.0/commerce/transactions",
+    "query": {
+      "orderId": "6d4000000000000000000033"
+    }
+  },
+  "response": {
+    "pagination": {
+      "hasNextPage": false
+    },
+    "documents": [
+      {
+        "id": "c1d2e3f4-0000-4000-8000-000000000503",
+        "salesOrderId": "6d4000000000000000000033",
+        "createdOn": "2026-09-10T09:00:00.000Z",
+        "modifiedOn": "2026-09-10T09:00:00.000Z",
+        "customerEmail": "oscar@example.com",
+        "voided": false,
+        "total": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 12.6
+        },
+        "totalSales": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 12
+        },
+        "totalNetSales": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 12
+        },
+        "totalNetShipping": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 0
+        },
+        "totalTaxes": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 0.6
+        },
+        "totalNetPayment": {
+          "currency": {
+            "currencyCode": "CAD"
+          },
+          "value": 12.6
+        },
+        "discounts": [],
+        "salesLineItems": [
+          {
+            "id": "s-321",
+            "discountAmount": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 0
+            },
+            "totalSales": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 12
+            },
+            "totalNetSales": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 12
+            },
+            "total": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 12.6
+            },
+            "taxes": [
+              {
+                "amount": {
+                  "currency": {
+                    "currencyCode": "CAD"
+                  },
+                  "value": 0.6
+                },
+                "rate": "5.0",
+                "name": "GST",
+                "jurisdiction": "COUNTRY:CA"
+              }
+            ]
+          }
+        ],
+        "shippingLineItems": [],
+        "payments": [
+          {
+            "id": "p-0000-000000000503",
+            "amount": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 12.6
+            },
+            "netAmount": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 12.6
+            },
+            "refundedAmount": {
+              "currency": {
+                "currencyCode": "CAD"
+              },
+              "value": 0
+            },
+            "creditCardType": "VISA",
+            "provider": "STRIPE",
+            "externalTransactionId": "ch_000503",
+            "paidOn": "2026-09-10T09:02:00.000Z",
+            "processingFees": [],
+            "externalTransactionProperties": [],
+            "refunds": []
+          }
+        ]
+      }
+    ]
+  }
+}

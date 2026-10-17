@@ -23,6 +23,17 @@ frappe.ui.form.on("Importer Connection", {
 					}),
 				__("Sync")
 			);
+		if (frm.doc.source === "Etsy") {
+			frm.add_custom_button(__("Connect to Etsy"), () =>
+				frappe.call({
+					method: "idempotent_importer.api.etsy_connect",
+					args: { connection: frm.doc.name },
+					callback: (r) => {
+						window.location.href = r.message;
+					},
+				})
+			);
+		}
 		run(0, 0, __("Sync Now"));
 		run(1, 0, __("Full Run"));
 		run(1, 1, __("Dry Run"));

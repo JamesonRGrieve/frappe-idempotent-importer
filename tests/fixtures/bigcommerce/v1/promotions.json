@@ -1,0 +1,111 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/promotions",
+    "query": {
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "coupon_overrides_automatic_when_offering_higher_discounts": false,
+        "coupon_type": "SINGLE",
+        "id": 71,
+        "redemption_type": "COUPON",
+        "name": "Fall 15% off",
+        "display_name": "Fall 15% off",
+        "channels": [
+          {
+            "id": 1
+          }
+        ],
+        "customer": {
+          "group_ids": [],
+          "minimum_order_count": 0,
+          "excluded_group_ids": []
+        },
+        "rules": [
+          {
+            "action": {
+              "cart_value": {
+                "discount": {
+                  "percentage_amount": "15"
+                }
+              }
+            },
+            "apply_once": true,
+            "stop": false,
+            "condition": {
+              "cart": {
+                "minimum_spend": "40"
+              }
+            }
+          }
+        ],
+        "current_uses": 0,
+        "status": "ENABLED",
+        "start_date": "2026-09-01T00:00:00+00:00",
+        "end_date": "2026-12-31T23:59:59+00:00",
+        "stop": false,
+        "can_be_used_with_other_promotions": true,
+        "currency_code": "CAD",
+        "notifications": [],
+        "is_featured_promotion": false,
+        "featured_promotion_callout_message": "",
+        "created_from": "react_ui"
+      },
+      {
+        "id": 72,
+        "redemption_type": "AUTOMATIC",
+        "name": "Five dollars off everything",
+        "display_name": "Five dollars off everything",
+        "channels": [
+          {
+            "id": 1
+          }
+        ],
+        "customer": {
+          "group_ids": [],
+          "minimum_order_count": 0,
+          "excluded_group_ids": []
+        },
+        "rules": [
+          {
+            "action": {
+              "cart_value": {
+                "discount": {
+                  "fixed_amount": "5"
+                }
+              }
+            },
+            "apply_once": true,
+            "stop": false
+          }
+        ],
+        "current_uses": 0,
+        "status": "ENABLED",
+        "start_date": "2026-09-01T00:00:00+00:00",
+        "end_date": "2026-12-31T23:59:59+00:00",
+        "stop": false,
+        "can_be_used_with_other_promotions": true,
+        "currency_code": "CAD",
+        "notifications": [],
+        "is_featured_promotion": false,
+        "featured_promotion_callout_message": "",
+        "created_from": "react_ui"
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

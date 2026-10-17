@@ -24,7 +24,9 @@ stores can import into two businesses at once and never touch each other's recor
 | Squarespace | Built | Store pages, products with variants, prices, sales, stock, images and tags, customer profiles, promo codes, and orders with payments, refunds and fulfillments — [coverage/squarespace.md](coverage/squarespace.md) |
 | Wix | Built | Stores categories or collections, V3 and V1 catalog products with variants, prices, sales, stock and images, contacts, Stores coupons, orders with payments, refunds and fulfillments, the blog's categories and posts (rich content and its images), reviews and redirects — [coverage/wix.md](coverage/wix.md) |
 | Magento / Adobe Commerce | Built | Categories, simple, virtual, downloadable and configurable products with prices, special prices, stock and images, customers, cart price rules with coupons, orders (other currencies too) with payments, credit memos, shipments and comments, and CMS pages — [coverage/magento.md](coverage/magento.md) |
-| Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Lightspeed eCom (C-Series) | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, discount codes, orders with payments, credit notes and shipments, text pages, blogs and articles, reviews and redirects — [coverage/lightspeed.md](coverage/lightspeed.md) |
+| Ecwid | Built | Categories, products with variations, prices, sales, stock and images, customers, discount coupons, orders with payments, refunds and shipping labels, reviews and Instant Site redirects — [coverage/ecwid.md](coverage/ecwid.md) |
+| Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -117,6 +119,11 @@ This is the operator's decision to confirm (see below).
      [coverage/magento.md](coverage/magento.md) and allow integration tokens as bearer tokens; enter the
      store's URL, the store view code as the account (blank for `default`) and the integration's access
      token as the secret.
+   - **Lightspeed eCom (C-Series):** create an API key with read permissions; enter the shop's URL, the
+     cluster and shop language as the account (e.g. `us1/en`), the key as the user and its secret as the
+     secret.
+   - **Ecwid:** create a custom app with the read scopes in [coverage/ecwid.md](coverage/ecwid.md); enter the
+     store's URL, its store ID as the account and the app's secret access token as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands
@@ -228,13 +235,9 @@ Each of these is the operator's call.
 
 Still to do:
 
-1. **Port the storefront adapters already built in wp-woo-idempotent-importer:** Etsy (OAuth with a
-   rotating refresh token kept in a Password field and committed on every refresh), Square Online,
-   BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom and Ecwid: readers, cited
-   rate limits, fixtures (copied with a provenance note), spec validation (published specs pinned as the
-   PHP repo pins them; the Wix, Lightspeed and Ecwid schemas copied), mappers onto the ERPNext targets, a
-   coverage page each, and an e2e connection each with zero-write re-runs and isolation. The e2e's
-   listed-source check then moves to a source that is still listed (e.g. Odoo).
+1. **Tax-inclusive orders beyond Shopify:** Squarespace, Wix and Ecwid orders whose prices include tax
+   are reported, not mirrored (their coverage pages say why for each); each needs the per-line rates the
+   Shopify mapping backs out, where the source gives them.
 2. **Menus** need a per-site menu in the router: Website Settings' top bar and footer are global.
 3. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source

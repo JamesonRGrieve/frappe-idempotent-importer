@@ -50,6 +50,8 @@ SOURCES=(
 	squarespace-p:squarespace-fake:assert_squarespace
 	wix-x:wix-fake:assert_wix
 	magento-m:magento-fake:assert_magento
+	lightspeed-l:lightspeed-fake:assert_lightspeed
+	ecwid-c:ecwid-fake:assert_ecwid
 )
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do

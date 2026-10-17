@@ -65,6 +65,11 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 	),
 	"wix-fake": ("wix", {"Authorization": "e2e-wix-key", "wix-site-id": "e2e-wix-site"}),
 	"magento-fake": ("magento", {"Authorization": "Bearer e2e-magento-token"}),
+	"lightspeed-fake": (
+		"lightspeed",
+		{"Authorization": "Basic " + base64.b64encode(b"e2e-lightspeed-key:e2e-lightspeed-secret").decode()},
+	),
+	"ecwid-fake": ("ecwid", {"Authorization": "Bearer e2e-ecwid-token"}),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400

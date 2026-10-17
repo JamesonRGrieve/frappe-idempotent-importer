@@ -102,7 +102,7 @@
    "fieldtype": "Data",
    "label": "Store URL",
    "reqd": 1,
-   "description": "WooCommerce: the site's https:// address. Shopify: the store's <name>.myshopify.com domain."
+   "description": "The storefront's https:// address (its old URLs redirect to the mirrored records). Shopify: the store's <name>.myshopify.com domain. Magento: the store's base URL, which its REST API is under."
   },
   {
    "fieldname": "auth_method",
@@ -117,7 +117,7 @@
    "fieldname": "api_user",
    "fieldtype": "Data",
    "label": "User, Key or Client ID",
-   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID."
+   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key."
   },
   {
    "fieldname": "api_secret",
@@ -129,7 +129,7 @@
    "fieldname": "api_account",
    "fieldtype": "Data",
    "label": "Account",
-   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code, Lightspeed shop language (e.g. en), Ecwid store ID."
+   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code (blank for default), Lightspeed eCom cluster and shop language (e.g. us1/en), Ecwid store ID."
   },
   {
    "fieldname": "refresh_token",
@@ -452,7 +452,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-16 12:00:00.000000",
+ "modified": "2026-10-17 09:00:00.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

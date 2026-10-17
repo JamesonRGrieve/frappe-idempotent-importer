@@ -173,6 +173,26 @@ BUSINESSES = (
 		"http://magento-fake:8080",
 		{"api_secret": "e2e-magento-token"},
 	),
+	Business(
+		"LS",
+		"Store L",
+		"lightspeed-l",
+		"Lightspeed eCom (C-Series)",
+		"lightspeed",
+		"lightspeed-fake",
+		"https://harbourlane.example",
+		{"api_account": "us1/en", "api_user": "e2e-lightspeed-key", "api_secret": "e2e-lightspeed-secret"},
+	),
+	Business(
+		"EC",
+		"Store W",
+		"ecwid-c",
+		"Ecwid",
+		"ecwid",
+		"ecwid-fake",
+		"https://cedarwick.example",
+		{"api_account": "7400100", "api_secret": "e2e-ecwid-token"},
+	),
 )
 
 
@@ -418,6 +438,8 @@ def main() -> None:
 		"assert_squarespace": assert_squarespace,
 		"assert_wix": assert_wix,
 		"assert_magento": assert_magento,
+		"assert_lightspeed": assert_lightspeed,
+		"assert_ecwid": assert_ecwid,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -1413,6 +1435,140 @@ def assert_magento(state: str) -> None:
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "customer"),
 		target(connection, "customer", "Customer", "43"),
 		"new order 503, linked to the new customer",
+	)
+
+
+def assert_invoice(
+	connection: str, order_id: str, wanted: tuple[int, str, str, str | None], what: str
+) -> str:
+	"""An order's invoice: its docstatus, grand total, discount and customer; returns its name."""
+	order = target(connection, "order", "Order", order_id)
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	docstatus, total, discount, customer = wanted
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(docstatus, amount(total), amount(discount), customer),
+		what,
+	)
+	return str(order)
+
+
+@check
+def assert_lightspeed(state: str) -> None:
+	connection = "lightspeed-l"
+	mug = target(connection, "product", "Product", "501")
+	expect(
+		(mug, frappe.db.get_value("Item", mug, "item_group"), frappe.db.get_value("Item", mug, "brand")),
+		("LS-LS-MUG-1", "Tableware - LS", "Harbour Lane"),
+		"the mug: its SKU, category and brand",
+	)
+	expect(stock_of(connection, mug), amount("14"), "the mug's stock, not reduced by orders")
+	slate = part(connection, "variant", "Variant/5022")
+	expect(
+		(item_price(connection, slate), stock_of(connection, slate)),
+		(amount("21"), amount("0")),
+		"the slate towel",
+	)
+	customer = target(connection, "customer", "Customer", "801")
+	order = assert_invoice(connection, "701", (1, "78.75", "5.00", customer), "order ORD00001's invoice")
+	expect(
+		frappe.db.count(
+			"Comment",
+			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
+		),
+		2,
+		"order ORD00001's shipment and staff memo",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "702"), "docstatus"),
+		0,
+		"unpaid guest order",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		2,
+		"the amount-off and towel codes (not the shipping or inactive ones)",
+	)
+	expect(
+		frappe.db.get_value("Web Page", target(connection, "page", "Textpage", "1102"), "published"),
+		0,
+		"a hidden page",
+	)
+	expect(
+		frappe.db.get_value("Blog Post", target(connection, "article", "Article", "1301"), "blog_category"),
+		target(connection, "blog", "Blog", "1201"),
+		"the article in its blog",
+	)
+	if state == "v1":
+		expect(item_price(connection, mug), amount("26.25"), "the mug's price, with tax (a retail shop)")
+		expect(published(target(connection, "product", "Product", "503")), 0, "a hidden product")
+		return
+	expect(item_price(connection, mug), amount("27.3"), "the mug's new price")
+	credit = part(connection, "refund", "CreditNote/9102")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-26.25"),
+		"the credit note",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "703"), "customer"),
+		target(connection, "customer", "Customer", "803"),
+		"new order ORD00003, linked to the new customer",
+	)
+
+
+@check
+def assert_ecwid(state: str) -> None:
+	connection = "ecwid-c"
+	candle = target(connection, "product", "Product", "9201")
+	expect(
+		(
+			candle,
+			frappe.db.get_value("Item", candle, "item_group"),
+			frappe.db.get_value("Item", candle, "brand"),
+		),
+		("EC-ECW-CANDLE-1", "Candles - EC", "Cedarwick"),
+		"the candle: its SKU, category and brand",
+	)
+	expect(stock_of(connection, candle), amount("12"), "the candle's stock, not reduced by orders")
+	fir = part(connection, "variant", "Variant/920201")
+	expect(
+		(item_price(connection, fir), stock_of(connection, fir)), (amount("16"), amount("20")), "the fir melt"
+	)
+	customer = target(connection, "customer", "Customer", "9401")
+	assert_invoice(connection, "CW-1001", (1, "80.85", "5.00", customer), "order CW-1001's invoice")
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "CW-1002"), "docstatus"),
+		0,
+		"unpaid order",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		1,
+		"the amount-off coupon (not once-per-customer, shipping, paused or new-customer ones)",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
+		1 if state == "v1" else 2,
+		"published reviews",
+	)
+	if state == "v1":
+		expect(item_price(connection, candle), amount("28"), "the candle's price")
+		expect(published(target(connection, "product", "Product", "9203")), 0, "a disabled product")
+		return
+	expect(item_price(connection, candle), amount("29.5"), "the candle's new price")
+	credit = part(connection, "refund", "Refund/CW-1001-1")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-29.4"),
+		"order CW-1001's refund",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "CW-1003"), "customer"),
+		target(connection, "customer", "Customer", "9403"),
+		"new order CW-1003, linked to the new customer",
 	)
 
 

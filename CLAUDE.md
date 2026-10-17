@@ -16,14 +16,15 @@ truth for what each source mirrors and what is a gap. Python rules:
   map → hash → write path, and the LinkStore/Writer/WriteScope/Redirects protocols), `run` (Runner,
   RunState, PausePolicy, and its store protocols).
 - `contract.py` — the shared field contract every mapper produces and every writer reads; `naming.py` —
-  how globally named ERPNext records and routes are scoped to a connection.
+  how globally named ERPNext records and routes are scoped to a connection; `html.py` — the source-hosted
+  images embedded in page and post HTML, and pointing the HTML at their copies.
 - `sources/<source>/` — one adapter: `adapter`, `reader`, `mapping` (one mapper per kind), and for
   Shopify `auth` (client credentials or a legacy token), `client`, `page_sizes` (shrinking queries Shopify
   refuses as too costly), `queries` + `graphql/{fragments,operations}`. `sources/registry.py` is the single list of sources;
   listed-but-unbuilt ones are `ListedAdapter`s that refuse to run.
 - `erpnext/` — the Frappe side: `stores` (Importer Link/Seen/Run, cursors, lock, credential hold),
   `context` (a connection's targets), `media`, `writers/` (one writer per kind: catalog, parties,
-  discounts, sales, content), `engine` (builds and drives a run), `jobs` (scheduler + step jobs).
+  discounts, sales (invoices and quotations), shipping, content), `engine` (builds and drives a run), `jobs` (scheduler + step jobs).
 - `api.py` (Sync Now), `commands.py` (`bench idempotent-import`), `hooks.py`, doctypes under
   `idempotent_importer/doctype/` (Importer Connection, Importer Link, Importer Run, Importer Seen).
 
@@ -54,7 +55,9 @@ truth for what each source mirrors and what is a gap. Python rules:
 
 `scripts/check.sh` is the pre-commit gate (lockfile, SPDX, ruff format + lint, mypy --strict, pytest over
 the recorded fixtures with the pure layers' coverage ratchet in `.coverage-baseline`, `python -m
-tools.prove` against Shopify's schema and the transcribed WooCommerce OpenAPI document). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman (two WooCommerce
+tools.prove` against Shopify's schema and the transcribed WooCommerce OpenAPI document). `tests/e2e/run.sh` proves the Frappe side on a real bench in podman, then runs the writers' unit tests
+there (`idempotent_importer/tests/test_writers.py`, with the writer-coverage ratchet in
+`.writer-coverage-baseline`) (two WooCommerce
 connections bound to two Public Sites plus Shopify): first import, zero-write re-runs (content tables
 byte-identical), changes and deletions, isolation between connections, lockout pause and hold, Sync Now on
 the job queue, no mail. Every change to a writer is proven there; every pure change gets a unit test.

@@ -1,13 +1,18 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Orders as the books record a sale: a Sales Invoice (lines at their prices before discounts, the order's
-discount on the net total, its taxes, shipping and fees as "Actual" charges), a Payment Entry for the
-payment into the connection's deposit account, a credit note (a Sales Invoice return) and a refund Payment
-Entry per refund, and the order's notes as comments. An unpaid order is a draft invoice, submitted once
-paid.
+discount, its taxes, shipping and fees as charges), a Payment Entry for the payment into the connection's
+deposit account, a credit note (a Sales Invoice return) and a refund Payment Entry per refund, and the
+order's notes as comments. An unpaid order is a draft invoice, submitted once paid. A draft order (a
+proposal sent to a customer) is a draft Quotation, never booked.
+
+Taxes are "Actual" amounts, unless the source's line prices include tax: then each included tax is an "On
+Net Total" row at its rate, included in the line rates, and every row ERPNext computes must equal the
+source's amount. An order in another currency than the company's is booked in its own currency at the
+exchange rate the source recorded, and its total in the company's currency must equal the source's too.
 
 Invoices never update stock: the source's stock levels are mirrored absolutely (see ``catalog``), so a
-sale that moved stock as well would count it twice. Every submitted invoice's grand total is compared with
-the source's total, exactly; an order whose books wouldn't match is rolled back and reported, never kept
+sale that moved stock as well would count it twice. Every invoice's grand total is compared with the
+source's total, exactly; an order whose books wouldn't match is rolled back and reported, never kept
 approximately. A submitted invoice that changes at the source is cancelled and amended (ERPNext's own
 correction), its payment with it."""
 
@@ -19,7 +24,15 @@ from typing import Any
 import frappe
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 
-from idempotent_importer.contract import booked, order_remarks
+from idempotent_importer.contract import (
+	FEE,
+	INCLUDED_TAX,
+	SHIPPING,
+	SHIPPING_TAX,
+	TAX,
+	booked,
+	order_remarks,
+)
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import UnresolvedDependency, Unsupported
 from idempotent_importer.core.fields import Field, Values
@@ -30,10 +43,12 @@ from idempotent_importer.erpnext.context import money, quantity, system_datetime
 from idempotent_importer.erpnext.writers.base import Writer
 
 INVOICE = "Sales Invoice"
+QUOTATION = "Quotation"
 PAYMENT = "Payment Entry"
 DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 UOM = "Nos"
 ITEM_NAME_LENGTH = 140
+TITLE_LENGTH = 140
 INVOICE_FIELDS = (
 	"number",
 	"currency",
@@ -48,110 +63,73 @@ INVOICE_FIELDS = (
 	"total",
 	"remarks",
 )
+# Booked only when set, so the books of an order that has none of them (most) never change.
+OPTIONAL_INVOICE_FIELDS = ("taxes_included", "exchange_rate", "base_total")
 RETIRED_REMARK = "Retired: the order was cancelled at the source."
+RETIRED_MARK = "[Removed at source] "
 
 
 class OrderMismatch(Exception):
 	"""ERPNext's totals for an invoice differ from the source's, so it isn't kept."""
 
 
-class OrderWriter(Writer):
-	def write(self, desired: Desired, link: Link | None) -> Target:
-		values = desired.values()
-		if values.string("currency") != self.context.currency:
+class SalesDocuments(Writer):
+	"""What an invoice, a credit note and a quotation share: their lines, charges, currency and the exact
+	check of their totals."""
+
+	def currency(self, values: Values) -> dict[str, Any]:
+		"""The document's currency fields: the company's, or the order's own at the source's rate."""
+		currency = values.string("currency")
+		if currency == self.context.currency:
+			return {"currency": currency, "conversion_rate": 1}
+		rate = values.optional_decimal("exchange_rate")
+		if rate is None or values.optional_decimal("base_total") is None:
 			raise Unsupported(
-				f"the order is in {values.string('currency')}, the company books in {self.context.currency}"
+				f"the order is in {currency}, the company books in {self.context.currency}, and the source "
+				"recorded no exchange rate and total in it"
 			)
-		invoice = self._invoice(desired.gid, values)
-		if invoice.docstatus == SUBMITTED:
-			self._payment(desired.gid, values, invoice)
-			self._refunds(desired.gid, values, invoice)
-		self._notes(values, invoice)
-		return Target(INVOICE, invoice.name)
-
-	def retire(self, link: Link) -> None:
-		for kind in (Kind.REFUND_PAYMENT, Kind.REFUND, Kind.PAYMENT):
-			for part in self.links.children(kind, f"{link.gid}#"):
-				cancel(part.target.doctype, part.target.name)
-				self.links.retire(kind, part.gid)
-		invoice = frappe.get_doc(INVOICE, link.target.name)
-		if invoice.docstatus == SUBMITTED:
-			invoice.cancel()
-		elif invoice.docstatus == DRAFT and RETIRED_REMARK not in (invoice.remarks or ""):
-			frappe.db.set_value(
-				INVOICE, invoice.name, "remarks", f"{RETIRED_REMARK}\n{invoice.remarks or ''}".strip()
-			)
-		self.links.retire(Kind.INVOICE, f"{link.gid}#invoice")
-
-	# -- invoice ---------------------------------------------------------------------------------------
-
-	def _invoice(self, gid: str, values: Values) -> Any:
-		key = f"{gid}#invoice"
-		content: dict[str, Field] = {field: values.all().get(field) for field in INVOICE_FIELDS}
-		wanted = part_hash(booked(content))
-		part = self.links.find(Kind.INVOICE, key)
-		invoice = self.existing(part) if part and not part.retired else None
-		if invoice is None or invoice.docstatus == CANCELLED:
-			invoice = frappe.new_doc(INVOICE)
-			self._fill(invoice, values)
-			invoice.insert(ignore_permissions=True)
-		elif part is not None and part.hash != wanted:
-			if invoice.docstatus == SUBMITTED:
-				invoice = self._amend(gid, invoice, values)
-			else:
-				self._fill(invoice, values)
-				invoice.save(ignore_permissions=True)
-		self._check_total(invoice, values.decimal("total"))
-		if values.flag("submitted") and invoice.docstatus == DRAFT:
-			invoice.submit()
-		self.links.save(Kind.INVOICE, key, Target(INVOICE, invoice.name), wanted, 1)
-		return invoice
-
-	def _amend(self, gid: str, invoice: Any, values: Values) -> Any:
-		"""A submitted invoice changed at the source: cancel it (and its payment) and amend it."""
-		for part in self.links.children(Kind.PAYMENT, f"{gid}#"):
-			cancel(PAYMENT, part.target.name)
-			self.links.retire(Kind.PAYMENT, part.gid)
-		invoice = frappe.get_doc(INVOICE, invoice.name)
-		invoice.cancel()
-		amended = frappe.copy_doc(invoice)
-		amended.amended_from = invoice.name
-		self._fill(amended, values)
-		amended.insert(ignore_permissions=True)
-		return amended
-
-	def _fill(self, invoice: Any, values: Values) -> None:
-		posted = system_datetime(values.string("created_at"))
-		customer = values.optional_string("customer")
-		invoice.update(
+		# ERPNext books a customer's invoices in the currency of its receivable account.
+		receivable = frappe.db.get_value(
+			"Account",
 			{
 				"company": self.context.company,
-				"customer": self.dependency(Kind.CUSTOMER, customer)
-				if customer
-				else self.context.guest_customer,
-				"currency": self.context.currency,
-				"conversion_rate": 1,
-				"selling_price_list": self.context.price_list,
-				"price_list_currency": self.context.currency,
-				"plc_conversion_rate": 1,
-				"set_posting_time": 1,
-				"posting_date": posted.date(),
-				"posting_time": posted.time(),
-				"due_date": posted.date(),
-				"update_stock": 0,
-				"ignore_pricing_rule": 1,
-				"disable_rounded_total": 1,
-				"cost_center": self.context.cost_center,
-				"po_no": values.string("number"),
-				"remarks": order_remarks(values),
-				"apply_discount_on": "Net Total",
+				"account_type": "Receivable",
+				"account_currency": currency,
+				"is_group": 0,
+			},
+		)
+		if not receivable:
+			raise Unsupported(f"{self.context.company} has no receivable account in {currency} for the order")
+		return {"currency": currency, "conversion_rate": float(rate), "debit_to": receivable}
+
+	def common(self, values: Values, posted_at: str) -> dict[str, Any]:
+		posted = system_datetime(posted_at)
+		return {
+			"company": self.context.company,
+			**self.currency(values),
+			"selling_price_list": self.context.price_list,
+			"price_list_currency": self.context.currency,
+			"plc_conversion_rate": 1,
+			"ignore_pricing_rule": 1,
+			"disable_rounded_total": 1,
+			"cost_center": self.context.cost_center,
+			"taxes_and_charges": None,
+			"transaction_date": posted.date(),
+			"posting_date": posted.date(),
+			"posting_time": posted.time(),
+		}
+
+	def fill_lines(self, doc: Any, values: Values) -> None:
+		included = values.has("taxes_included") and values.flag("taxes_included")
+		doc.update(
+			{
+				"apply_discount_on": "Grand Total" if included else "Net Total",
 				"additional_discount_percentage": 0,
-				"discount_amount": money(values.decimal("discount")),
-				"taxes_and_charges": None,
+				"discount_amount": money(values.decimal("discount")) if values.has("discount") else 0,
 			}
 		)
-		invoice.set("items", [self._line(line) for line in values.records("lines")])
-		invoice.set("taxes", [self._charge(charge) for charge in values.records("charges")])
+		doc.set("items", [self._line(line) for line in values.records("lines")])
+		doc.set("taxes", self.charges(values.records("charges")))
 
 	def _line(self, line: Values) -> dict[str, Any]:
 		product = line.optional_string("product")
@@ -177,31 +155,166 @@ class OrderWriter(Writer):
 			"cost_center": self.context.cost_center,
 		}
 
-	def _charge(self, charge: Values) -> dict[str, Any]:
+	def charges(self, charges: list[Values]) -> list[dict[str, Any]]:
+		"""The Sales Taxes and Charges rows: amounts as "Actual" rows; a tax included in the line prices
+		as an "On Net Total" row at its rate; a tax on shipping at its rate of the shipping row before it
+		(ERPNext keys a document's tax rates by account, so the shipping tax can't be an "Actual" row on
+		the tax account an included rate uses)."""
 		accounts = {
-			"tax": self.context.tax_account,
-			"shipping": self.context.shipping_account,
-			"fee": self.context.fee_account,
+			TAX: self.context.tax_account,
+			INCLUDED_TAX: self.context.tax_account,
+			SHIPPING_TAX: self.context.tax_account,
+			SHIPPING: self.context.shipping_account,
+			FEE: self.context.fee_account,
 		}
-		account = accounts[charge.string("kind")]
-		if account is None:
-			raise Unsupported(
-				f'its {charge.string("kind")} "{charge.string("description")}" needs the connection\'s Fee Account'
-			)
-		return {
-			"charge_type": "Actual",
-			"account_head": account,
-			"description": charge.string("description"),
-			"tax_amount": money(charge.decimal("amount")),
-			"cost_center": self.context.cost_center,
-		}
+		rows: list[dict[str, Any]] = []
+		for charge in charges:
+			kind = charge.string("kind")
+			account = accounts[kind]
+			if account is None:
+				raise Unsupported(
+					f'its {kind} "{charge.string("description")}" needs the connection\'s Fee Account'
+				)
+			row: dict[str, Any] = {
+				"charge_type": "Actual",
+				"account_head": account,
+				"description": charge.string("description"),
+				"tax_amount": money(charge.decimal("amount")),
+				"cost_center": self.context.cost_center,
+			}
+			if kind == INCLUDED_TAX:
+				row |= {
+					"charge_type": "On Net Total",
+					"rate": float(charge.decimal("rate")),
+					"included_in_print_rate": 1,
+					"tax_amount": 0,
+				}
+			elif kind == SHIPPING_TAX:
+				if not rows or rows[-1]["charge_type"] != "Actual":
+					raise Unsupported(
+						f'its shipping tax "{charge.string("description")}" follows no shipping'
+					)
+				row |= {
+					"charge_type": "On Previous Row Amount",
+					"row_id": str(len(rows)),
+					"rate": float(charge.decimal("rate")),
+					"tax_amount": 0,
+				}
+			rows.append(row)
+		return rows
+
+	@classmethod
+	def check_order(cls, doc: Any, values: Values) -> None:
+		cls.check_totals(
+			doc, values.decimal("total"), values.records("charges"), values.optional_decimal("base_total")
+		)
 
 	@staticmethod
-	def _check_total(invoice: Any, total: Decimal) -> None:
-		precision = int(invoice.precision("grand_total") or 2)
-		booked = Decimal(str(invoice.grand_total)).quantize(Decimal(1).scaleb(-precision))
-		if booked != total.quantize(Decimal(1).scaleb(-precision)):
-			raise OrderMismatch(f"{invoice.doctype} would total {booked}; the source's total is {total}")
+	def check_totals(
+		doc: Any, total: Decimal, charges: list[Values], base_total: Decimal | None = None
+	) -> None:
+		"""The document's grand total (and, in another currency, its total in the company's currency, and
+		any tax included in its prices) must be exactly the source's."""
+		precision = int(doc.precision("grand_total") or 2)
+		quantum = Decimal(1).scaleb(-precision)
+
+		def same(booked_value: Any, source: Decimal, what: str) -> None:
+			booked_amount = Decimal(str(booked_value)).quantize(quantum)
+			if booked_amount != source.quantize(quantum):
+				raise OrderMismatch(
+					f"{doc.doctype}'s {what} would be {booked_amount}; the source's is {source}"
+				)
+
+		same(doc.grand_total, total, "total")
+		if base_total is not None:
+			same(doc.base_grand_total, base_total, "total in the company's currency")
+		for row, charge in zip(doc.taxes, charges, strict=True):
+			if charge.has("rate"):
+				same(row.tax_amount, charge.decimal("amount"), f'"{charge.string("description")}"')
+
+
+class OrderWriter(SalesDocuments):
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		self.currency(values)
+		invoice = self._invoice(desired.gid, values)
+		if invoice.docstatus == SUBMITTED:
+			self._payment(desired.gid, values, invoice)
+			self._refunds(desired.gid, values, invoice)
+		self._notes(values, invoice)
+		return Target(INVOICE, invoice.name)
+
+	def retire(self, link: Link) -> None:
+		for kind in (Kind.REFUND_PAYMENT, Kind.REFUND, Kind.PAYMENT):
+			for part in self.links.children(kind, f"{link.gid}#"):
+				cancel(part.target.doctype, part.target.name)
+				self.links.retire(kind, part.gid)
+		invoice = frappe.get_doc(INVOICE, link.target.name)
+		if invoice.docstatus == SUBMITTED:
+			invoice.cancel()
+		elif invoice.docstatus == DRAFT and RETIRED_REMARK not in (invoice.remarks or ""):
+			frappe.db.set_value(
+				INVOICE, invoice.name, "remarks", f"{RETIRED_REMARK}\n{invoice.remarks or ''}".strip()
+			)
+		self.links.retire(Kind.INVOICE, f"{link.gid}#invoice")
+
+	# -- invoice ---------------------------------------------------------------------------------------
+
+	def _invoice(self, gid: str, values: Values) -> Any:
+		key = f"{gid}#invoice"
+		fields = values.all()
+		content: dict[str, Field] = {field: fields.get(field) for field in INVOICE_FIELDS}
+		content |= {field: fields[field] for field in OPTIONAL_INVOICE_FIELDS if fields.get(field)}
+		wanted = part_hash(booked(content))
+		part = self.links.find(Kind.INVOICE, key)
+		invoice = self.existing(part) if part and not part.retired else None
+		if invoice is None or invoice.docstatus == CANCELLED:
+			invoice = frappe.new_doc(INVOICE)
+			self._fill(invoice, values)
+			invoice.insert(ignore_permissions=True)
+		elif part is not None and part.hash != wanted:
+			if invoice.docstatus == SUBMITTED:
+				invoice = self._amend(gid, invoice, values)
+			else:
+				self._fill(invoice, values)
+				invoice.save(ignore_permissions=True)
+		self.check_order(invoice, values)
+		if values.flag("submitted") and invoice.docstatus == DRAFT:
+			invoice.submit()
+		self.links.save(Kind.INVOICE, key, Target(INVOICE, invoice.name), wanted, 1)
+		return invoice
+
+	def _amend(self, gid: str, invoice: Any, values: Values) -> Any:
+		"""A submitted invoice changed at the source: cancel it (and its payment) and amend it."""
+		for part in self.links.children(Kind.PAYMENT, f"{gid}#"):
+			cancel(PAYMENT, part.target.name)
+			self.links.retire(Kind.PAYMENT, part.gid)
+		invoice = frappe.get_doc(INVOICE, invoice.name)
+		invoice.cancel()
+		amended = frappe.copy_doc(invoice)
+		amended.docstatus = DRAFT
+		amended.amended_from = invoice.name
+		self._fill(amended, values)
+		amended.insert(ignore_permissions=True)
+		return amended
+
+	def _fill(self, invoice: Any, values: Values) -> None:
+		customer = values.optional_string("customer")
+		posted = system_datetime(values.string("created_at"))
+		invoice.update(
+			{
+				**self.common(values, values.string("created_at")),
+				"customer": self.dependency(Kind.CUSTOMER, customer)
+				if customer
+				else self.context.guest_customer,
+				"set_posting_time": 1,
+				"due_date": posted.date(),
+				"update_stock": 0,
+				"po_no": values.string("number"),
+				"remarks": order_remarks(values),
+			}
+		)
+		self.fill_lines(invoice, values)
 
 	# -- payment ----------------------------------------------------------------------------------------
 
@@ -236,6 +349,9 @@ class OrderWriter(Writer):
 				"cost_center": self.context.cost_center,
 			}
 		)
+		if invoice.currency != self.context.currency:
+			# The order's own rate, not a rate of the day: the payment settles the invoice exactly.
+			entry.source_exchange_rate = invoice.conversion_rate
 		entry.setup_party_account_field()
 		entry.set_missing_values()
 		entry.set_amounts()
@@ -256,7 +372,7 @@ class OrderWriter(Writer):
 				continue
 			if part is not None and not part.retired:
 				self._cancel_refund(key, part)
-			note = self._credit_note(invoice, refund)
+			note = self._credit_note(invoice, values, refund)
 			self.links.save(Kind.REFUND, key, Target(INVOICE, note.name), wanted, 1)
 			entry = self._pay(note, refund.string("date"), None)
 			self.links.save(Kind.REFUND_PAYMENT, f"{key}#payment", Target(PAYMENT, entry.name), wanted, 1)
@@ -272,39 +388,29 @@ class OrderWriter(Writer):
 		cancel(INVOICE, part.target.name)
 		self.links.retire(Kind.REFUND, key)
 
-	def _credit_note(self, invoice: Any, refund: Values) -> Any:
+	def _credit_note(self, invoice: Any, order: Values, refund: Values) -> Any:
 		"""A credit note for one refund, against the same customer: the returned lines (negative quantities,
-		any amount refunded beyond them as an adjustment line) and the refunded charges."""
+		any amount refunded beyond them as an adjustment line) and the refunded charges, in the order's
+		currency at its rate."""
 		posted = system_datetime(refund.string("date"))
 		note = frappe.new_doc(INVOICE)
 		note.update(
 			{
-				"company": self.context.company,
+				**self.common(order, refund.string("date")),
 				"customer": invoice.customer,
 				"is_return": 1,
-				"currency": self.context.currency,
-				"conversion_rate": 1,
-				"selling_price_list": self.context.price_list,
-				"price_list_currency": self.context.currency,
-				"plc_conversion_rate": 1,
 				"set_posting_time": 1,
-				"posting_date": posted.date(),
-				"posting_time": posted.time(),
 				"due_date": posted.date(),
 				"update_stock": 0,
-				"ignore_pricing_rule": 1,
-				"disable_rounded_total": 1,
-				"cost_center": self.context.cost_center,
 				"po_no": invoice.po_no,
 				"remarks": f"Refund of {invoice.name}"
 				+ (f": {refund.optional_string('reason')}" if refund.has("reason") else ""),
-				"taxes_and_charges": None,
 			}
 		)
 		note.set("items", [self._line(line) for line in refund.records("lines")])
-		note.set("taxes", [self._charge(charge) for charge in refund.records("charges")])
+		note.set("taxes", self.charges(refund.records("charges")))
 		note.insert(ignore_permissions=True)
-		self._check_total(note, -refund.decimal("amount"))
+		self.check_totals(note, -refund.decimal("amount"), refund.records("charges"))
 		note.submit()
 		return note
 
@@ -331,6 +437,40 @@ class OrderWriter(Writer):
 			)
 			comment.save(ignore_permissions=True)
 			self.links.save(Kind.ORDER_NOTE, key, Target("Comment", comment.name), wanted, 1)
+
+
+class DraftOrderWriter(SalesDocuments):
+	"""A draft order (a proposal the merchant sent or kept open) as a draft Quotation to its customer. It
+	is never submitted: a completed draft became an order, which is mirrored as such, so the draft's copy
+	is retired (its title marked; a draft Quotation has no closed state)."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		quotation = self.existing(link) or frappe.new_doc(QUOTATION)
+		if quotation.docstatus != DRAFT:
+			quotation = frappe.new_doc(QUOTATION)
+		customer = values.optional_string("customer")
+		quotation.update(
+			{
+				**self.common(values, values.string("created_at")),
+				"quotation_to": "Customer",
+				"party_name": self.dependency(Kind.CUSTOMER, customer)
+				if customer
+				else self.context.guest_customer,
+				"order_type": "Sales",
+				"title": f"Draft order {values.string('number')}"[:TITLE_LENGTH],
+				"valid_till": None,
+			}
+		)
+		self.fill_lines(quotation, values)
+		quotation.save(ignore_permissions=True)
+		self.check_order(quotation, values)
+		return Target(QUOTATION, quotation.name)
+
+	def retire(self, link: Link) -> None:
+		title = str(frappe.db.get_value(QUOTATION, link.target.name, "title") or "")
+		if not title.startswith(RETIRED_MARK):
+			frappe.db.set_value(QUOTATION, link.target.name, "title", f"{RETIRED_MARK}{title}"[:TITLE_LENGTH])
 
 
 def cancel(doctype: str, name: str) -> None:

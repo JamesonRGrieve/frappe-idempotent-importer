@@ -2,13 +2,14 @@
 """The shared field contract between every source's mappers and the ERPNext writers. Mappers translate
 their platform's vocabulary into these fields; writers read only these. Per kind (``Desired.fields``):
 
+asset        url, alt (a file of the store's own, as a File)
 collection   name, slug, parent (identity | None), description (HTML | None), image (URL | None)
 product      type ("simple" | "variable"), name, slug, description, short_description, sku, barcode,
              brand, collections (identities; the first is the Item Group), images ([{url, alt}]),
              published, is_stock_item, weight ({value, unit} | None), price (Decimal | None),
              sale ({price, from, to} | None), stock_qty (Decimal | None), attributes ([{name, values}]),
              specifications ([{label, value}]), variants ([{gid, sku, barcode, attributes {name: value},
-             price, sale, stock_qty, weight, image, enabled}])
+             price, sale, stock_qty, weight, image, enabled}]), tags
 customer     name, type ("Individual" | "Company"), first_name, last_name, company, email, phone,
              addresses ([address])
 discount     codes, description, discount ("percentage" | "amount"), applies ("transaction" | "items" |
@@ -17,11 +18,17 @@ discount     codes, description, discount ("percentage" | "amount"), applies ("t
 order        number, currency, created_at, submitted, customer (identity | None), guest ({name, email,
              phone} | None), billing, shipping (address | None), lines ([line]), discount, charges
              ([charge]), total, payment ({method, reference, date} | None), refunds ([{gid, date, reason,
-             amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks
-page         title, slug, parent (identity | None), published, html
+             amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks;
+             optionally taxes_included (line prices include the "included_tax" charges), and for an order
+             in another currency than the company's, exchange_rate (company currency per order currency)
+             and base_total (the total in the company's currency, as the source booked it)
+draft_order  number, currency, created_at, customer, guest, billing, shipping, lines, discount, charges,
+             total, remarks, taxes_included (as for an order: a proposal, never booked)
+page         title, slug, parent (identity | None), published, html, images (source-hosted URLs it embeds)
 blog         title, slug, description
 article      title, slug, category (identity), author ({key, name}), published, published_on (date),
-             html, intro
+             html, intro, images, tags
+delivery_profile  name, rules ([{gid, label, countries (ISO codes), amount, enabled}]): flat shipping rates
 comment      article (identity), author_name, author_email, html, published_on (date)
 review       product (identity), author_name, author_email, text, rating (0..1), published_on (date)
 url_redirect source (path), target (path or URL), status (HTTP code)
@@ -111,15 +118,26 @@ def line_fields(line: OrderLine) -> Fields:
 
 @dataclass(frozen=True)
 class Charge:
-	"""An order-level amount on top of its lines: a tax, a shipping line or a fee."""
+	"""An order-level amount on top of its lines: a tax, a shipping line or a fee. In an order whose line
+	prices include tax, a tax already in them is ``included_tax`` (``rate`` percent of the lines' net
+	amount), and a tax on shipping is ``shipping_tax`` (``rate`` percent of the shipping charge just
+	before it); either comes to ``amount``, which ERPNext must compute exactly."""
 
 	kind: str
 	description: str
 	amount: Decimal
+	rate: Decimal | None = None
+
+
+TAX, SHIPPING, FEE = "tax", "shipping", "fee"
+INCLUDED_TAX, SHIPPING_TAX = "included_tax", "shipping_tax"
 
 
 def charge_fields(charge: Charge) -> Fields:
-	return {"kind": charge.kind, "description": charge.description, "amount": charge.amount}
+	fields: Fields = {"kind": charge.kind, "description": charge.description, "amount": charge.amount}
+	if charge.rate is not None:
+		fields["rate"] = charge.rate
+	return fields
 
 
 def order_remarks(values: Values) -> str:

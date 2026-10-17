@@ -8,6 +8,8 @@ FROM ${ERPNEXT_IMAGE}
 ARG HRMS_REF
 ARG BLOG_REF
 ARG PAYMENTS_REF
+# For `bench run-tests --coverage` (the writers' coverage ratchet).
+ARG COVERAGE_VERSION
 USER frappe
 WORKDIR /home/frappe/frappe-bench
 RUN git clone --quiet https://github.com/frappe/hrms apps/hrms \
@@ -16,7 +18,7 @@ RUN git clone --quiet https://github.com/frappe/hrms apps/hrms \
 	&& git -C apps/blog checkout --quiet "${BLOG_REF}" \
 	&& git clone --quiet https://github.com/frappe/payments apps/payments \
 	&& git -C apps/payments checkout --quiet "${PAYMENTS_REF}" \
-	&& env/bin/pip install --quiet -e apps/hrms -e apps/blog -e apps/payments
+	&& env/bin/pip install --quiet -e apps/hrms -e apps/blog -e apps/payments "coverage==${COVERAGE_VERSION}"
 COPY --chown=frappe:frappe webshop apps/webshop
 COPY --chown=frappe:frappe public_site_router apps/public_site_router
 RUN env/bin/pip install --quiet -e apps/webshop -e apps/public_site_router

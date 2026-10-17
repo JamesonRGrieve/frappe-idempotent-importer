@@ -27,7 +27,7 @@
     "rendered": "About us"
    },
    "content": {
-    "rendered": "<p>We knit in Alberta, since 2019.</p>",
+    "rendered": "<p>We knit in Alberta, since 2019.</p><p><img src=\"http://woo-fake:8080/wp-content/uploads/2026/08/workshop.png\" alt=\"Our workshop\"></p>",
     "protected": false
    },
    "excerpt": {

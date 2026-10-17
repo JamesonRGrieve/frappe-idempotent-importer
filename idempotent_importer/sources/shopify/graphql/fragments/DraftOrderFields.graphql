@@ -1,0 +1,57 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment DraftOrderFields on DraftOrder {
+  id
+  legacyResourceId
+  name
+  status
+  email
+  phone
+  note2
+  tags
+  currencyCode
+  taxesIncluded
+  createdAt
+  updatedAt
+  completedAt
+  customer {
+    id
+  }
+  customAttributes {
+    key
+    value
+  }
+  billingAddress {
+    ...MailingAddressFields
+  }
+  shippingAddress {
+    ...MailingAddressFields
+  }
+  discountCodes
+  subtotalPriceSet {
+    ...MoneyBagFields
+  }
+  totalDiscountsSet {
+    ...MoneyBagFields
+  }
+  totalShippingPriceSet {
+    ...MoneyBagFields
+  }
+  totalTaxSet {
+    ...MoneyBagFields
+  }
+  totalPriceSet {
+    ...MoneyBagFields
+  }
+  taxLines {
+    ...TaxLineFields
+  }
+  shippingLine {
+    ...ShippingLineFields
+  }
+  lineItems(first: $lineItemsFirst) {
+    ...DraftOrderLineItemConnectionFields
+  }
+  metafields(first: $metafieldsFirst) {
+    ...MetafieldConnectionFields
+  }
+}

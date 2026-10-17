@@ -1,0 +1,56 @@
+{
+  "operation": "DeliveryProfileList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "deliveryProfiles": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "profiles-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/DeliveryProfile/1601",
+          "name": "General profile",
+          "default": true,
+          "profileLocationGroups": [
+            {
+              "locationGroupZones": {
+                "pageInfo": {"hasNextPage": false, "endCursor": null},
+                "nodes": [
+                  {
+                    "zone": {
+                      "id": "gid://shopify/DeliveryZone/16011",
+                      "name": "Canada",
+                      "countries": [{"code": {"countryCode": "CA", "restOfWorld": false}, "provinces": [{"code": "AB"}, {"code": "BC"}]}]
+                    },
+                    "methodDefinitions": {
+                      "pageInfo": {"hasNextPage": false, "endCursor": null},
+                      "nodes": [
+                        {
+                          "id": "gid://shopify/DeliveryMethodDefinition/160111", "name": "Standard", "active": true, "description": null,
+                          "rateProvider": {"__typename": "DeliveryRateDefinition", "price": {"amount": "10.0"}},
+                          "methodConditions": []
+                        },
+                        {
+                          "id": "gid://shopify/DeliveryMethodDefinition/160112", "name": "Free over $100", "active": true, "description": null,
+                          "rateProvider": {"__typename": "DeliveryRateDefinition", "price": {"amount": "0.0"}},
+                          "methodConditions": [
+                            {"field": "TOTAL_PRICE", "operator": "GREATER_THAN_OR_EQUAL_TO", "conditionCriteria": {"__typename": "MoneyV2", "amount": "100.0"}}
+                          ]
+                        },
+                        {
+                          "id": "gid://shopify/DeliveryMethodDefinition/160113", "name": "Heavy parcel", "active": true, "description": null,
+                          "rateProvider": {"__typename": "DeliveryRateDefinition", "price": {"amount": "25.0"}},
+                          "methodConditions": [
+                            {"field": "TOTAL_WEIGHT", "operator": "GREATER_THAN_OR_EQUAL_TO", "conditionCriteria": {"__typename": "Weight", "unit": "KILOGRAMS", "value": 5.0}}
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

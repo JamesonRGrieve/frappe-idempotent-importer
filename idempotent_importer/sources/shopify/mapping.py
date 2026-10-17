@@ -6,9 +6,15 @@ connection (see ShopifyReader)."""
 
 from __future__ import annotations
 
+import re
 from decimal import Decimal
 
 from idempotent_importer.contract import (
+	FEE,
+	INCLUDED_TAX,
+	SHIPPING,
+	SHIPPING_TAX,
+	TAX,
 	Address,
 	Charge,
 	OrderLine,
@@ -25,8 +31,13 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target
 from idempotent_importer.core.source import ConnectionConfig
+from idempotent_importer.html import absolute, embedded_images
 
 ACTIVE = "ACTIVE"
+# Where Shopify serves a store's media: its CDN, the store's myshopify domain, or /cdn/shop on its own.
+SHOPIFY_MEDIA = re.compile(r"^https?://(?:cdn\.shopify\.com|[^/]+\.myshopify\.com|[^/]+/cdn/shop)/", re.I)
+COMPLETED = "COMPLETED"
+RATE_DEFINITION = "DeliveryRateDefinition"
 DEFAULT_OPTION = "Title"
 WEIGHT_UNITS = {"GRAMS": "g", "KILOGRAMS": "kg", "OUNCES": "oz", "POUNDS": "lbs"}
 # Financial statuses of an order whose payment Shopify has taken.
@@ -46,6 +57,20 @@ def money(node: Node | None, field: str) -> Decimal:
 	return shop.decimal("amount") if shop else Decimal(0)
 
 
+def shopify_hosted(url: str) -> bool:
+	return SHOPIFY_MEDIA.match(url) is not None
+
+
+def media_url(url: str) -> str:
+	"""A Shopify media URL as one file: absolute, without its cache-busting query."""
+	return absolute(url).split("?", 1)[0]
+
+
+def html_images(fragment: str) -> list[Field]:
+	"""The Shopify-hosted images a rich-text field embeds."""
+	return list(embedded_images(fragment, shopify_hosted))
+
+
 def shopify_address(address_type: str, node: Node | None) -> Address | None:
 	if node is None or not node.text("address1") or not node.text("city"):
 		return None
@@ -62,6 +87,113 @@ def shopify_address(address_type: str, node: Node | None) -> Address | None:
 		email=None,
 		phone=node.optional_string("phone"),
 	)
+
+
+def sale_line(line: Node, currency: str) -> OrderLine:
+	"""An order's or draft order's line at its price before discounts."""
+	product = line.child("product")
+	variant = line.child("variant")
+	quantity = Decimal(line.integer("quantity"))
+	return order_line(
+		line.id(),
+		product.id() if product else None,
+		variant.id() if variant else None,
+		line.string("name"),
+		quantity,
+		money(line, "originalUnitPriceSet") * quantity,
+		currency,
+	)
+
+
+type TaxKey = tuple[str, Decimal]
+
+
+def tax_lines(node: Node) -> dict[TaxKey, Decimal]:
+	"""A node's tax lines by (title, rate as a fraction), summed."""
+	taxes: dict[TaxKey, Decimal] = {}
+	for tax in node.children("taxLines"):
+		key = (tax.string("title"), tax.decimal("rate"))
+		taxes[key] = taxes.get(key, Decimal(0)) + money(tax, "priceSet")
+	return taxes
+
+
+def sale_charges(node: Node, lines: list[Node], shipping: list[Node], fees: list[Charge]) -> list[Charge]:
+	"""Taxes, shipping and fees. When the line prices include tax (``taxesIncluded``), each tax on the
+	lines is an included tax at its rate, which ERPNext must compute to Shopify's amount; shipping is its
+	price less its own taxes, each followed by those taxes at their rates. Lines taxed differently can't
+	share one set of rates, so such an order is Unsupported."""
+	if not node.flag("taxesIncluded"):
+		charges = [Charge(TAX, title, amount) for (title, _), amount in tax_lines(node).items()]
+		charges += [Charge(SHIPPING, s.string("title"), money(s, "discountedPriceSet")) for s in shipping]
+		return [charge for charge in [*charges, *fees] if charge.amount != 0]
+	on_lines = tax_lines(node)
+	shipping_charges: list[Charge] = []
+	for line in shipping:
+		taxes = tax_lines(line)
+		net = money(line, "discountedPriceSet") - sum(taxes.values(), Decimal(0))
+		if net == 0:
+			continue
+		shipping_charges.append(Charge(SHIPPING, line.string("title"), net))
+		for (title, rate), amount in taxes.items():
+			on_lines[(title, rate)] = on_lines.get((title, rate), Decimal(0)) - amount
+			shipping_charges.append(Charge(SHIPPING_TAX, f"{title} (shipping)", amount, rate * 100))
+	rates = {key for key, amount in on_lines.items() if amount != 0}
+	if any(set(tax_lines(line)) != rates for line in lines):
+		raise Unsupported(
+			"its tax-inclusive lines are taxed at different rates (ERPNext includes one set of rates)"
+		)
+	included = [
+		Charge(INCLUDED_TAX, title, on_lines[(title, rate)], rate * 100) for title, rate in sorted(rates)
+	]
+	return [charge for charge in [*included, *shipping_charges, *fees] if charge.amount != 0]
+
+
+def sale_fields(node: Node, lines: list[Node], shipping: list[Node], fees: list[Charge]) -> Fields:
+	"""What an order and a draft order share: its customer (or guest), addresses, lines, discount,
+	charges and total."""
+	currency = node.string("currencyCode")
+	customer = node.child("customer")
+	fields: Fields = {
+		"number": node.string("name"),
+		"currency": currency,
+		"created_at": node.time("createdAt"),
+		"customer": customer.id() if customer else None,
+		"guest": None
+		if customer
+		else {"name": None, "email": node.optional_string("email"), "phone": node.optional_string("phone")},
+		"billing": address_fields(a)
+		if (a := shopify_address("Billing", node.child("billingAddress")))
+		else None,
+		"shipping": address_fields(a)
+		if (a := shopify_address("Shipping", node.child("shippingAddress")))
+		else None,
+		"lines": [line_fields(sale_line(line, currency)) for line in lines],
+		"discount": money(node, "totalDiscountsSet"),
+		"charges": [charge_fields(c) for c in sale_charges(node, lines, shipping, fees)],
+		"total": money(node, "totalPriceSet"),
+	}
+	if node.flag("taxesIncluded"):
+		fields["taxes_included"] = True
+	return fields
+
+
+class AssetMapper:
+	"""A file from Shopify's Files section (an image, a video, a PDF, …) as a File."""
+
+	kind = Kind.ASSET
+	version = 1
+
+	def map(self, node: Node) -> Desired | None:
+		image = node.child("image")
+		source = node.child("originalSource")
+		url = (
+			(image.optional_string("url") if image else None)
+			or (source.optional_string("url") if source else None)
+			or node.optional_string("url")
+		)
+		if url is None:
+			raise Unsupported("the file has no downloadable URL yet (still processing in Shopify)")
+		return Desired(self.kind, node.id(), {"url": media_url(url), "alt": node.optional_string("alt")})
 
 
 class CollectionMapper:
@@ -88,7 +220,7 @@ class CollectionMapper:
 
 class ProductMapper:
 	kind = Kind.PRODUCT
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		if node.flag("isGiftCard"):
@@ -140,6 +272,7 @@ class ProductMapper:
 			],
 			"specifications": [{"label": "Product type", "value": product_type}] if product_type else [],
 			"variants": [] if simple else [self._variant(v) for v in variants],
+			"tags": list(node.strings("tags")),
 		}
 		legacy = path_of(f"/products/{node.string('handle')}")
 		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else (), warnings)
@@ -305,45 +438,27 @@ class DiscountMapper:
 
 class OrderMapper:
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		status = node.string("displayFinancialStatus")
 		if node.has("cancelledAt") or status not in PAID | UNPAID:
 			return None
-		if node.flag("taxesIncluded"):
-			raise Unsupported("tax-inclusive prices can't be split into ERPNext's tax rows exactly")
 		if money(node, "originalTotalDutiesSet"):
 			raise Unsupported("duties have no ERPNext sales tax and charge type")
 		currency = node.string("currencyCode")
 		submitted = status in PAID
-		customer = node.child("customer")
 		lines = {line.id(): line for line in node.children("lineItems")}
+		fees = [Charge(FEE, f.string("name"), money(f, "price")) for f in node.children("additionalFees")]
+		tip = money(node, "totalTipReceivedSet")
+		if tip:
+			fees.append(Charge(FEE, "Tip", tip))
+		included = node.flag("taxesIncluded")
 		fields: Fields = {
-			"number": node.string("name"),
-			"currency": currency,
-			"created_at": node.time("createdAt"),
+			**sale_fields(node, list(lines.values()), node.children("shippingLines"), fees),
 			"submitted": submitted,
-			"customer": customer.id() if customer else None,
-			"guest": None
-			if customer
-			else {
-				"name": None,
-				"email": node.optional_string("email"),
-				"phone": node.optional_string("phone"),
-			},
-			"billing": address_fields(a)
-			if (a := shopify_address("Billing", node.child("billingAddress")))
-			else None,
-			"shipping": address_fields(a)
-			if (a := shopify_address("Shipping", node.child("shippingAddress")))
-			else None,
-			"lines": [line_fields(self._line(line, currency)) for line in lines.values()],
-			"discount": money(node, "totalDiscountsSet"),
-			"charges": [charge_fields(c) for c in self._charges(node)],
-			"total": money(node, "totalPriceSet"),
 			"payment": self._payment(node) if submitted else None,
-			"refunds": [self._refund(r, lines, currency) for r in node.children("refunds")]
+			"refunds": [self._refund(r, lines, currency, included) for r in node.children("refunds")]
 			if submitted
 			else [],
 			"notes": [
@@ -364,38 +479,6 @@ class OrderMapper:
 		return Desired(self.kind, node.id(), fields)
 
 	@staticmethod
-	def _line(line: Node, currency: str) -> OrderLine:
-		product = line.child("product")
-		variant = line.child("variant")
-		quantity = Decimal(line.integer("quantity"))
-		return order_line(
-			line.id(),
-			product.id() if product else None,
-			variant.id() if variant else None,
-			line.string("name"),
-			quantity,
-			money(line, "originalUnitPriceSet") * quantity,
-			currency,
-		)
-
-	@staticmethod
-	def _charges(node: Node) -> list[Charge]:
-		charges = [
-			Charge("tax", tax.string("title"), money(tax, "priceSet")) for tax in node.children("taxLines")
-		]
-		charges += [
-			Charge("shipping", s.string("title"), money(s, "discountedPriceSet"))
-			for s in node.children("shippingLines")
-		]
-		charges += [
-			Charge("fee", f.string("name"), money(f, "price")) for f in node.children("additionalFees")
-		]
-		tip = money(node, "totalTipReceivedSet")
-		if tip:
-			charges.append(Charge("fee", "Tip", tip))
-		return [charge for charge in charges if charge.amount != 0]
-
-	@staticmethod
 	def _payment(node: Node) -> Field:
 		payments = [
 			t
@@ -409,7 +492,9 @@ class OrderMapper:
 			"date": first.time("processedAt") if first else node.time("processedAt"),
 		}
 
-	def _refund(self, refund: Node, lines: dict[str, Node], currency: str) -> Field:
+	def _refund(self, refund: Node, lines: dict[str, Node], currency: str, included: bool) -> Field:
+		"""One refund as a credit note. In an order whose prices include tax the returned lines carry
+		their tax, so no tax row is added (any difference is the adjustment line)."""
 		returned: list[OrderLine] = []
 		taxes = Decimal(0)
 		for item in refund.children("refundLineItems"):
@@ -431,7 +516,7 @@ class OrderMapper:
 			)
 			taxes += money(item, "totalTaxSet")
 		total = money(refund, "totalRefundedSet")
-		charges = [Charge("tax", "Tax refunded", -taxes)] if taxes else []
+		charges = [Charge(TAX, "Tax refunded", -taxes)] if taxes and not included else []
 		balance = refund_balance(f"{refund.id()}#adjustment", total, returned, charges, currency)
 		credit_lines: list[Field] = [
 			line_fields(line) for line in [*returned, *([balance] if balance else [])]
@@ -446,9 +531,90 @@ class OrderMapper:
 		}
 
 
+class DraftOrderMapper:
+	"""An open draft order (a proposal, an invoice sent) as a draft Quotation. A completed draft became an
+	order, mirrored as such, so the draft's copy is retired."""
+
+	kind = Kind.DRAFT_ORDER
+	version = 1
+
+	def map(self, node: Node) -> Desired | None:
+		if node.string("status") == COMPLETED:
+			return None
+		shipping = node.child("shippingLine")
+		fields: Fields = {
+			**sale_fields(node, node.children("lineItems"), [shipping] if shipping else [], []),
+			"remarks": node.optional_string("note2"),
+		}
+		return Desired(self.kind, node.id(), fields)
+
+
+class DeliveryProfileMapper:
+	"""The store's general delivery profile as Shipping Rules: each flat rate of a zone made of whole
+	countries is a fixed Shipping Rule for them. ERPNext's rules apply by country, charge outside a price or
+	weight band as if free, and have no carrier rates, so a zone limited to provinces or "rest of world", a
+	rate with conditions and a carrier-calculated rate are gaps (warnings), never approximated."""
+
+	kind = Kind.DELIVERY_PROFILE
+	version = 1
+
+	def map(self, node: Node) -> Desired | None:
+		name = node.string("name")
+		if not node.flag("default"):
+			raise Unsupported(
+				f'the delivery profile "{name}" applies to some products only; Shipping Rules are store-wide'
+			)
+		rules: list[Field] = []
+		warnings: list[str] = []
+		for group in node.children("profileLocationGroups"):
+			for group_zone in group.children("locationGroupZones"):
+				zone = group_zone.required_child("zone")
+				zone_name = zone.string("name")
+				countries, gap = self._countries(zone)
+				for method in group_zone.children("methodDefinitions"):
+					reason = gap or self._gap(method)
+					if reason:
+						warnings.append(
+							f'shipping "{method.string("name")}" to {zone_name} not mirrored: {reason}'
+						)
+						continue
+					rules.append(
+						{
+							"gid": method.id(),
+							"label": f"{method.string('name')} ({zone_name})",
+							"countries": list[Field](countries),
+							"amount": method.required_child("rateProvider")
+							.required_child("price")
+							.decimal("amount"),
+							"enabled": method.flag("active"),
+						}
+					)
+		return Desired(self.kind, node.id(), {"name": name, "rules": rules}, warnings=tuple(warnings))
+
+	@staticmethod
+	def _countries(zone: Node) -> tuple[list[str], str | None]:
+		codes: list[str] = []
+		for country in zone.children("countries"):
+			code = country.required_child("code")
+			if code.flag("restOfWorld"):
+				return [], "a rest-of-world zone has no ERPNext equivalent"
+			if country.children("provinces"):
+				return [], "ERPNext's Shipping Rules apply to whole countries, not provinces"
+			codes.append(code.string("countryCode"))
+		return codes, None
+
+	@staticmethod
+	def _gap(method: Node) -> str | None:
+		if method.required_child("rateProvider").typename() != RATE_DEFINITION:
+			return "carrier-calculated rates have no ERPNext equivalent"
+		if method.children("methodConditions"):
+			return "ERPNext charges nothing outside a rule's price or weight band instead of not offering it"
+		return None
+
+
 class PageMapper:
 	kind = Kind.PAGE
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		fields: Fields = {
@@ -457,6 +623,7 @@ class PageMapper:
 			"parent": None,
 			"published": node.flag("isPublished"),
 			"html": node.text("body"),
+			"images": html_images(node.text("body")),
 		}
 		legacy = path_of(f"/pages/{node.string('handle')}")
 		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else ())
@@ -476,6 +643,7 @@ class PolicyMapper:
 			"parent": None,
 			"published": True,
 			"html": node.text("body"),
+			"images": html_images(node.text("body")),
 		}
 		legacy = path_of(f"/{slug}")
 		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else ())
@@ -493,7 +661,7 @@ class BlogMapper:
 
 class ArticleMapper:
 	kind = Kind.ARTICLE
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		blog = node.required_child("blog")
@@ -507,6 +675,8 @@ class ArticleMapper:
 			"published": node.flag("isPublished"),
 			"published_on": (node.optional_time("publishedAt") or node.time("createdAt"))[:10],
 			"html": node.text("body"),
+			"images": html_images(node.text("body")),
+			"tags": list(node.strings("tags")),
 			"intro": node.optional_string("summary"),
 		}
 		legacy = path_of(f"/blogs/{blog.string('handle')}/{node.string('handle')}")
@@ -548,15 +718,18 @@ class UrlRedirectMapper:
 
 def mappers(config: ConnectionConfig) -> list[Mapper]:
 	return [
+		AssetMapper(),
 		CollectionMapper(),
 		ProductMapper(),
 		CustomerMapper(),
 		DiscountMapper(),
 		OrderMapper(),
+		DraftOrderMapper(),
 		PageMapper(),
 		PolicyMapper(),
 		BlogMapper(),
 		ArticleMapper(),
 		CommentMapper(),
 		UrlRedirectMapper(config.store_url.strip().lower() or None),
+		DeliveryProfileMapper(),
 	]

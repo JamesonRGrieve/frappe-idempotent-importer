@@ -8,6 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 import frappe
+from frappe.desk.doctype.tag.tag import DocTags
 
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import UnresolvedDependency
@@ -16,6 +17,9 @@ from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import ConnectionContext
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
+
+# The hash of a part whose content is its identity (a tag, a coupon code): it is there, or it isn't.
+PART_HASH = "part"
 
 
 class Writer(ABC):
@@ -47,6 +51,20 @@ class Writer(ABC):
 		if link is None or not frappe.db.exists(link.target.doctype, link.target.name):
 			return None
 		return frappe.get_doc(link.target.doctype, link.target.name)
+
+	def tags(self, gid: str, doctype: str, name: str, tags: list[str]) -> None:
+		"""The source's tags on a record as Frappe document tags. Each mirrored tag is its own part, so a tag
+		the source drops is removed while tags a person added are kept."""
+		doc_tags = DocTags(doctype)
+		for tag in tags:
+			key = f"{gid}#tag:{tag}"
+			if self.links.target(Kind.TAG, key) is None:
+				doc_tags.add(name, tag)
+				self.links.save(Kind.TAG, key, Target("Tag", tag), PART_HASH, 1)
+		for link in self.links.children(Kind.TAG, f"{gid}#tag:"):
+			if link.target.name not in tags:
+				doc_tags.remove(name, link.target.name)
+				self.links.retire(Kind.TAG, link.gid)
 
 	@staticmethod
 	def save(doc: Any, name: str | None = None) -> None:

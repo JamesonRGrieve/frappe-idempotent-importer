@@ -109,6 +109,12 @@ CONTENT_DOCTYPES = (
 	"Blog Post",
 	"Blogger",
 	"Website Route Redirect",
+	"Quotation",
+	"Quotation Item",
+	"Shipping Rule",
+	"Shipping Rule Country",
+	"Tag",
+	"Tag Link",
 )
 # Columns that change without anything being mirrored (Frappe's bookkeeping of reads and caches).
 VOLATILE_COLUMNS = frozenset({"_seen", "_liked_by", "_comments"})
@@ -423,6 +429,12 @@ def part(connection: str, kind: str, gid_suffix: str) -> str:
 	return str(name)
 
 
+def tags_of(doctype: str, name: str) -> list[str]:
+	return sorted(
+		frappe.get_all("Tag Link", filters={"document_type": doctype, "document_name": name}, pluck="tag")
+	)
+
+
 def expect(actual: Any, wanted: Any, what: str) -> None:
 	if actual != wanted:
 		raise AssertionError(f"{what}: {actual!r}, expected {wanted!r}")
@@ -508,6 +520,17 @@ def assert_woocommerce(connection: str, state: str) -> None:
 		frappe.db.get_value("Importer Link", {"connection": connection, "gid": ["like", "%/Product/104"]}),
 		None,
 		"the grouped product",
+	)
+	expect(tags_of("Item", toque), ["wool"], "the toque's tags")
+	post = target(connection, "article", "Post", "901")
+	expect(tags_of("Blog Post", post), ["Knitting"], "the post's tags, by name")
+	about = str(
+		frappe.db.get_value("Web Page", target(connection, "page", "Page", "701"), "main_section_html")
+	)
+	expect(
+		("woo-fake" in about, '<img src="/files/workshop' in about),
+		(False, True),
+		"the page's localised image",
 	)
 	if state == "v1":
 		expect(amount(price), amount("25"), "the toque's price")
@@ -685,13 +708,56 @@ def assert_shopify(state: str) -> None:
 		1,
 		"the article's published comment",
 	)
+	for type_, file_id, name in (
+		("MediaImage", "501", "storefront.png"),
+		("GenericFile", "502", "size-guide.pdf"),
+	):
+		expect(
+			frappe.db.get_value(
+				"File", target(connection, "asset", type_, file_id), ["file_name", "is_private"]
+			),
+			(name, 0),
+			f"Shopify file {file_id}",
+		)
+	about = str(
+		frappe.db.get_value("Web Page", target(connection, "page", "Page", "1001"), "main_section_html")
+	)
+	expect(
+		("/cdn/shop/" in about, 'src="/files/storefront' in about),
+		(False, True),
+		"the page's localised image",
+	)
+	expect(
+		frappe.db.get_value(
+			"Importer Link", {"connection": connection, "kind": "delivery_profile"}, "target_doctype"
+		),
+		"Company",
+		"the delivery profile, mirrored onto the company",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "shipping_rule"}),
+		0,
+		"no rate of a zone limited to provinces",
+	)
+	draft = target(connection, "draft_order", "DraftOrder", "901")
+	quotation = frappe.db.get_value("Quotation", draft, ["docstatus", "grand_total", "title"], as_dict=True)
 	if state == "v1":
 		expect(
 			frappe.db.get_value("Item", target(connection, "product", "Product", "302"), "disabled"),
 			0,
 			"the bra",
 		)
+		expect(
+			(quotation.docstatus, amount(quotation.grand_total), quotation.title),
+			(0, amount("75.6"), "Draft order #D1"),
+			"open draft order #D1",
+		)
 		return
+	expect(
+		(quotation.docstatus, quotation.title),
+		(0, "[Removed at source] Draft order #D1"),
+		"the completed draft order, left to its order",
+	)
 	expect(
 		frappe.db.get_value("Item", target(connection, "product", "Product", "302"), "disabled"),
 		1,

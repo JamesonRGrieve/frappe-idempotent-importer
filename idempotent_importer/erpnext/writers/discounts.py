@@ -17,9 +17,8 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
 
-PART_HASH = "part"
 APPLY_ON = {"transaction": "Transaction", "items": "Item Code", "groups": "Item Group"}
 RATE_OR_DISCOUNT = {"percentage": "Discount Percentage", "amount": "Discount Amount"}
 TITLE_LENGTH = 140

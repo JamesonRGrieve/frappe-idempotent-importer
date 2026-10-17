@@ -48,17 +48,20 @@ class ShopifyAdapter:
 
 	def kinds(self) -> tuple[Kind, ...]:
 		return (
+			Kind.ASSET,
 			Kind.COLLECTION,
 			Kind.PRODUCT,
 			Kind.CUSTOMER,
 			Kind.DISCOUNT,
 			Kind.ORDER,
+			Kind.DRAFT_ORDER,
 			Kind.PAGE,
 			Kind.POLICY,
 			Kind.BLOG,
 			Kind.ARTICLE,
 			Kind.COMMENT,
 			Kind.URL_REDIRECT,
+			Kind.DELIVERY_PROFILE,
 		)
 
 	def mappers(self, config: ConnectionConfig) -> list[Mapper]:

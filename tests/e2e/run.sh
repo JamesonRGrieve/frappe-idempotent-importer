@@ -100,6 +100,13 @@ suite() {
 	step assert_unchanged v2
 
 	step assert_no_side_effects
+
+	echo "== The writers' unit tests (bench run-tests, each test rolled back) and their coverage ratchet"
+	site set-config allow_tests true
+	site run-tests --app idempotent_importer --module idempotent_importer.tests.test_writers \
+		--coverage --skip-before-tests
+	podman exec -w /home/frappe/frappe-bench/apps/idempotent_importer "$E2E_BENCH" \
+		../../env/bin/python -m tools.writer_coverage /home/frappe/frappe-bench/sites/coverage.xml
 	echo "E2E PASSED"
 }
 

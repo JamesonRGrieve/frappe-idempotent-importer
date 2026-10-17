@@ -1,0 +1,26 @@
+{
+  "operation": "FileList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "files": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "files-1"},
+      "nodes": [
+        {
+          "__typename": "MediaImage",
+          "id": "gid://shopify/MediaImage/501",
+          "alt": "Shop front",
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "image": {"url": "http://shopify-fake:8080/cdn/shop/files/storefront.png?v=1", "altText": "Shop front"}
+        },
+        {
+          "__typename": "GenericFile",
+          "id": "gid://shopify/GenericFile/502",
+          "alt": null,
+          "updatedAt": "2026-09-01T12:00:00Z",
+          "url": "http://shopify-fake:8080/cdn/shop/files/size-guide.pdf?v=1",
+          "mimeType": "application/pdf"
+        }
+      ]
+    }
+  }
+}

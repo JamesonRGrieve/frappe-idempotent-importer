@@ -1,0 +1,41 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Draft-order line items are their own type; the selection mirrors LineItemFields field for field so one
+# mapper reads both.
+fragment DraftOrderLineItemConnectionFields on DraftOrderLineItemConnection {
+  pageInfo {
+    ...PageInfoFields
+  }
+  nodes {
+    id
+    name
+    title
+    variantTitle
+    sku
+    quantity
+    taxable
+    requiresShipping
+    isGiftCard
+    product {
+      id
+    }
+    variant {
+      id
+    }
+    originalUnitPriceSet {
+      ...MoneyBagFields
+    }
+    originalTotalSet {
+      ...MoneyBagFields
+    }
+    discountedTotalSet {
+      ...MoneyBagFields
+    }
+    taxLines {
+      ...TaxLineFields
+    }
+    customAttributes {
+      key
+      value
+    }
+  }
+}

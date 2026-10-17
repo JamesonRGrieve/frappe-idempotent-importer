@@ -16,8 +16,8 @@ stores can import into two businesses at once and never touch each other's recor
 
 | Source | Status | What it mirrors |
 |---|---|---|
-| WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images and brands, customers, coupons, orders with payments, refunds and notes, pages, post categories and posts, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
-| Shopify | Built | Collections, products with variants, prices, stock and images, customers, basic code discounts, orders with payments, refunds and timeline comments, pages, shop policies, blogs, articles, comments and URL redirects — [coverage/shopify.md](coverage/shopify.md) |
+| WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
+| Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy, Square Online, BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
@@ -121,11 +121,14 @@ image with HRMS, the blog app, the Webshop fork, the router and this app, sets u
 imports two WooCommerce stores and a Shopify store at once: the first import, unchanged re-runs that leave
 every content table byte-identical, changes and deletions, connections that never touch each other's
 records, a rate-limited run that pauses in place, rejected credentials that hold scheduled runs, Sync Now
-on the background queue, and no mail.
+on the background queue, and no mail. It then runs the writers' unit tests on the same bench (`bench
+run-tests --module idempotent_importer.tests.test_writers`: each writer's create, skip, update and retire
+paths, and that an update writes only mapped fields, every test rolled back) and holds their line coverage
+to the ratchet in `.writer-coverage-baseline`.
 
 ## Decisions to confirm
 
-These were decided to finish phase 1; each is the operator's call.
+Each of these is the operator's call.
 
 1. **History in the books:** paid orders as submitted Sales Invoices + Payment Entries, unpaid ones as
    draft invoices, refunds as credit notes (Sales Invoice returns, not against the original, so an
@@ -164,46 +167,48 @@ These were decided to finish phase 1; each is the operator's call.
     and the order's addresses are kept in the invoice's remarks.
 11. **A product deleted at the source** leaves the invoices that sold it as booked; lines that never named
     a product use the fallback item.
-12. **Currency:** orders in another currency than the company's are not mirrored (no exchange rate of the
-    day at the source).
+12. **Currency:** an order in another currency than the company's is mirrored only when the source
+    recorded its exchange rate and its total in the company's currency (BigCommerce, Magento): the invoice
+    is in the order's currency at that rate, on the company's receivable account in that currency (create
+    one per currency; ERPNext books a customer in one currency), and its total in the company's currency
+    must equal the source's exactly. Without a recorded rate (WooCommerce, Shopify's other currencies) it
+    is a gap: a rate of the day would make the books inexact.
 13. **Required apps:** the app requires ERPNext, Webshop, the blog app and the Public Site router (every
     connection belongs to a Public Site). HRMS is needed only by the HR sources of later phases.
 14. **Schedule:** incremental hourly, full daily, a five-minute tick for paused runs. Times are UTC in the
     engine and the site's system time zone on posting dates.
+15. **Tax-inclusive prices** (Shopify's `taxesIncluded`): the invoice's taxes are "On Net Total" rows
+    included in the line rates, shipping's tax a row on the shipping charge; an order is kept only when
+    ERPNext computes every tax row and the total to the source's amounts, and one whose lines are taxed
+    at different rates is a gap (Item Tax Templates would be inventing the source's tax setup).
+16. **Draft orders** are draft Quotations, never submitted; a completed draft is left to its order and its
+    Quotation's title marked "[Removed at source]" (a draft Quotation has no closed state).
+17. **Shipping rates** are mirrored only where a Shipping Rule is exact: flat rates to whole countries.
+    ERPNext charges nothing outside a price or weight band rather than withholding the rate, so banded and
+    minimum-order rates, province-level zones and carrier rates are gaps.
+18. **Files and embedded images** stay when removed at the source (a File has no disabled state, and pages
+    may still show them); only images the source hosts are copied, so the HTML no longer depends on the
+    old store.
+19. **Tags** are Frappe document tags; a tag the source drops is removed, tags a person added are kept.
+20. **A kind the credentials may not read** (Shopify's policies without `read_legal_policies`) is skipped
+    with a warning: its existing copies stay, and the run still completes.
 
 ## Next steps
 
-Phase 2 made the end-to-end suite reliable (its own podman store; the bench, fake store and suite script
-run from one snapshot taken at the start) and scoped mirrored Coupon Codes to the connection's Webshop
-Store. Still to do, from the phase-2 brief:
+Still to do:
 
-1. **Unit tests for the Frappe writers** on the bench (`bench run-tests`): each writer's create, update,
-   skip and retire paths, that only mapped fields are written, and the store-less coupon refusal at
-   writer level; run in the e2e job with a writer-coverage ratchet.
-2. **Gaps with a first-party home:**
-   - images embedded in page and post HTML, localised to Files (the HTML rewritten to the File URLs);
-   - product and article tags as Frappe document tags (Tag Link);
-   - Shopify draft orders as draft **Quotations** (proposals sent to a customer; completed drafts are
-     left to their order), files as **File**, delivery profiles as **Shipping Rule** (flat and
-     price- or weight-banded rates per zone; carrier-calculated rates stay a gap);
-   - orders in another currency as multi-currency invoices, where the source gives the rate and both
-     totals (BigCommerce `currency_exchange_rate`, Magento `base_to_order_rate`): invoice in the order's
-     currency, base totals checked exactly against the source's;
-   - Shopify tax-inclusive orders with "Is this Tax included in Basic Rate" (On Net Total rows at the
-     line tax rates; shipping taxes as their own rows), kept only when every row and the total match.
-   Menus stay a gap: Website Settings' top bar and footer are global, and a Public Site has no menu of
-   its own; the router would need a per-site menu to scope them.
-3. **Port the storefront adapters already built in wp-woo-idempotent-importer:** Etsy (OAuth with a
+1. **Port the storefront adapters already built in wp-woo-idempotent-importer:** Etsy (OAuth with a
    rotating refresh token kept in a Password field and committed on every refresh), Square Online,
    BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom and Ecwid: readers, cited
    rate limits, fixtures (copied with a provenance note), spec validation (published specs pinned as the
    PHP repo pins them; the Wix, Lightspeed and Ecwid schemas copied), mappers onto the ERPNext targets, a
    coverage page each, and an e2e connection each with zero-write re-runs and isolation. The e2e's
    listed-source check then moves to a source that is still listed (e.g. Odoo).
-4. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
+2. **Menus** need a per-site menu in the router: Website Settings' top bar and footer are global.
+3. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-5. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
+4. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
 
 ## License
 

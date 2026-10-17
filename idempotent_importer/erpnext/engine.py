@@ -40,6 +40,7 @@ from idempotent_importer.erpnext.writers.base import Writer
 from idempotent_importer.erpnext.writers.catalog import CollectionWriter, ProductWriter
 from idempotent_importer.erpnext.writers.content import (
 	ArticleWriter,
+	AssetWriter,
 	BlogCategoryWriter,
 	CommentWriter,
 	LegacyRedirects,
@@ -50,7 +51,8 @@ from idempotent_importer.erpnext.writers.content import (
 )
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 from idempotent_importer.erpnext.writers.parties import CustomerWriter
-from idempotent_importer.erpnext.writers.sales import OrderWriter
+from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
+from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
 from idempotent_importer.sources.registry import by_label
 
 LOGGER = "idempotent_importer"
@@ -60,11 +62,13 @@ TEST_ENDPOINTS = "idempotent_importer_test_endpoints"
 JOB_BUDGET_SECONDS = 20 * 60
 FOREGROUND_BUDGET_SECONDS = 60.0
 WRITERS: dict[Kind, type[Writer]] = {
+	Kind.ASSET: AssetWriter,
 	Kind.COLLECTION: CollectionWriter,
 	Kind.PRODUCT: ProductWriter,
 	Kind.CUSTOMER: CustomerWriter,
 	Kind.DISCOUNT: DiscountWriter,
 	Kind.ORDER: OrderWriter,
+	Kind.DRAFT_ORDER: DraftOrderWriter,
 	Kind.PAGE: PageWriter,
 	Kind.POLICY: PageWriter,
 	Kind.BLOG: BlogCategoryWriter,
@@ -72,14 +76,17 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.COMMENT: CommentWriter,
 	Kind.REVIEW: ReviewWriter,
 	Kind.URL_REDIRECT: RedirectWriter,
+	Kind.DELIVERY_PROFILE: DeliveryProfileWriter,
 }
 # The connection's "What to Mirror" switch for each kind.
 SWITCHES: dict[Kind, str] = {
+	Kind.ASSET: "import_files",
 	Kind.COLLECTION: "import_collections",
 	Kind.PRODUCT: "import_products",
 	Kind.CUSTOMER: "import_customers",
 	Kind.DISCOUNT: "import_discounts",
 	Kind.ORDER: "import_orders",
+	Kind.DRAFT_ORDER: "import_draft_orders",
 	Kind.PAGE: "import_pages",
 	Kind.POLICY: "import_policies",
 	Kind.BLOG: "import_blogs",
@@ -87,6 +94,7 @@ SWITCHES: dict[Kind, str] = {
 	Kind.COMMENT: "import_comments",
 	Kind.REVIEW: "import_reviews",
 	Kind.URL_REDIRECT: "import_redirects",
+	Kind.DELIVERY_PROFILE: "import_shipping",
 }
 
 

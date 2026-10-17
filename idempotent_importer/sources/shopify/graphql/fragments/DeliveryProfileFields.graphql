@@ -1,0 +1,61 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment DeliveryProfileFields on DeliveryProfile {
+  id
+  name
+  default
+  profileLocationGroups {
+    locationGroupZones(first: 250) {
+      pageInfo {
+        ...PageInfoFields
+      }
+      nodes {
+        zone {
+          id
+          name
+          countries {
+            code {
+              countryCode
+              restOfWorld
+            }
+            provinces {
+              code
+            }
+          }
+        }
+        methodDefinitions(first: 250) {
+          pageInfo {
+            ...PageInfoFields
+          }
+          nodes {
+            id
+            name
+            active
+            description
+            rateProvider {
+              __typename
+              ... on DeliveryRateDefinition {
+                price {
+                  amount
+                }
+              }
+            }
+            methodConditions {
+              field
+              operator
+              conditionCriteria {
+                __typename
+                ... on MoneyV2 {
+                  amount
+                }
+                ... on Weight {
+                  unit
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

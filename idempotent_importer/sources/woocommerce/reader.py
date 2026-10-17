@@ -13,6 +13,7 @@ WooCommerce authenticates only its own ``wc/`` routes, so WordPress content is r
 
 from __future__ import annotations
 
+import html
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from urllib.parse import urlsplit
@@ -40,6 +41,7 @@ WORDPRESS_LOGIN = "Application Password"
 CONSUMER_KEY = "Consumer Key"
 VARIABLE = "variable"
 WEIGHT_UNIT_SETTING = "/wc/v3/settings/products/woocommerce_weight_unit"
+TAGS_PATH = "/wp/v2/tags"
 INCREMENTAL = frozenset({Kind.PRODUCT, Kind.DISCOUNT, Kind.ORDER, Kind.PAGE, Kind.ARTICLE})
 TYPES: Mapping[Kind, str] = {
 	Kind.COLLECTION: "ProductCategory",
@@ -74,6 +76,7 @@ class WooCommerceReader:
 		# WordPress content when the credentials are a WooCommerce consumer key (see the module docstring).
 		self._wordpress = client if config.auth_method == WORDPRESS_LOGIN else anonymous
 		self._authors: dict[int, str] = {}
+		self._tags: dict[int, str] = {}
 		self._store_weight_unit: str | None = None
 
 	@classmethod
@@ -205,8 +208,19 @@ class WooCommerceReader:
 
 	def _content(self, kind: Kind, item: Node) -> Node:
 		if kind is Kind.ARTICLE:
-			item = item.with_fields(author_name=self._author(item.integer("author")))
+			tags: list[JsonValue] = list(self._tag_names(item.integers("tags")))
+			item = item.with_fields(author_name=self._author(item.integer("author")), tag_names=tags)
 		return self._identified(kind, item)
+
+	def _tag_names(self, ids: list[int]) -> list[str]:
+		"""A post's tags by name (a post lists only their ids), in the post's order."""
+		missing = [tag for tag in ids if tag not in self._tags]
+		if missing:
+			include = [str(tag) for tag in missing]
+			result = self._wordpress.get(TAGS_PATH, {"include": include, "per_page": len(include)})
+			for tag in result.node.children(LIST_KEY) if result else []:
+				self._tags[tag.integer("id")] = html.unescape(tag.string("name"))
+		return [self._tags[tag] for tag in ids if tag in self._tags]
 
 	def _author(self, user_id: int) -> str | None:
 		if user_id not in self._authors:

@@ -40,6 +40,8 @@ read in full every run (they have no such filter).
 | Pages | **Web Page** routed `<prefix>/<parent>/<slug>`, published when published | |
 | Post categories | **Blog Category** `<name> - <abbr>` | |
 | Posts | **Blog Post** routed `<prefix>/<slug>` in its first category, by a **Blogger** per author | |
+| Product tags, post tags | Frappe document tags on the **Item** and **Blog Post** (post tags read by name from `wp/v2/tags`) | A tag the source drops is removed; tags a person added are kept. |
+| Images embedded in pages and posts (the store's own host or its `wp-content/uploads`) | **File**; the HTML points at the copy | Images on other hosts are left as they are. |
 | Product reviews (approved) | **Item Review** on the product's Website Item, rating as a fraction of 5 | |
 | Redirection plugin redirects (plain URL redirects) | **Website Route Redirect** (source and target under the Public Site's prefix) | |
 | Old product, category, page, post and category URLs | **Website Route Redirect** (301) to the new route | |
@@ -56,9 +58,7 @@ read in full every run (they have no such filter).
 | Taxes per rate (several tax accounts) | Taxes land in the connection's one tax account, labelled per rate. |
 | Shipment tracking | WooCommerce core has none (plugins add it); Delivery Notes would also move stock twice (see README). |
 | Downloadable products' files and download permissions | No first-party home. |
-| Product tags | ERPNext has no item tags (Frappe's document tags are a later phase). |
-| Images embedded in page and post HTML | Still point at the old site (localising them is a later phase). |
-| Post tags, sticky posts, comments on posts | Later phase (the blog app has no tags). |
+| Sticky posts, comments on posts | Not read yet (Blog Post comments have a home; WooCommerce's adapter doesn't read `wp/v2/comments`). |
 | Regular-expression redirects | Can't be scoped to one site's prefix. |
 | Reviews removed at the source | Item Review has no unpublished state; the review stays, marked "[Removed at source]". |
 | Customer passwords, saved payment methods | Not exportable. |

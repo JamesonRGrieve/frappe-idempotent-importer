@@ -21,8 +21,11 @@ Token**).
 | `read_discounts` | Code discounts |
 | `read_orders` | Orders, refunds, transactions, the order timeline (last 60 days) |
 | `read_all_orders` | Orders older than 60 days. Granted by Shopify on request only; the Dev Dashboard doesn't offer it |
+| `read_draft_orders` | Draft orders |
+| `read_files` | Files |
 | `read_content` | Pages, blogs, articles, comments |
 | `read_online_store_navigation` | URL redirects |
+| `read_shipping` | Delivery profiles |
 | `read_legal_policies` | Shop policies. Read on their own: without the scope everything else mirrors, the run warns that the policies weren't read, and the policy pages already mirrored stay as they are |
 
 Rate limits: Shopify meters a query-cost bucket and reports it on every response; before each query the
@@ -38,8 +41,9 @@ that every operation fits at page size 1 and that its static cost estimate match
 charged for it (`tests/fixtures/shopify-query-cost.json`, recorded by wp-woo-idempotent-importer's
 `tools/calibrate-query-cost.php` against a development store).
 
-Incremental runs read everything that has `updated_at` (collections, products, customers, discounts,
-orders, pages, articles); blogs, comments and redirects are read in full.
+Incremental runs read everything that has `updated_at` (files, collections, products, customers,
+discounts, orders, draft orders, pages, articles); policies, blogs, comments, redirects and delivery
+profiles are read in full.
 
 ## Mirrored
 
@@ -56,9 +60,15 @@ orders, pages, articles); blogs, comments and redirects are read in full.
 | Customers and their addresses | **Customer**, **Contact**, **Address** (default address as billing) | |
 | Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code, on the Public Site's Webshop Store | Another store can hold the same code at once. |
 | Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. A refunded order gets exactly Shopify's refunds: nothing is derived from its status. |
+| Orders with tax-inclusive prices | The same, each tax in the prices an "On Net Total" row at its rate, included in the line rates; shipping at its price less its tax, then that tax at its rate on the shipping row | Kept only when ERPNext computes every tax row and the total to Shopify's amounts; lines taxed at different rates are a gap (one set of rates applies to every line). |
 | Orders awaiting payment | Draft **Sales Invoice** | Voided and cancelled orders aren't mirrored. |
 | Refunds | Credit note + refund **Payment Entry** | Shipping or other amounts refunded beyond the lines become an adjustment line. |
 | Order timeline comments | **Comment** on the invoice | |
+| Draft orders (open, invoice sent) | Draft **Quotation** to the customer (or the guest customer), its lines, discount, taxes and shipping, the total checked exactly | Never submitted. A completed draft became an order (mirrored as such): its Quotation is marked "[Removed at source]". |
+| Files (images, videos, documents) | Public **File** | A file removed at the source stays. |
+| Delivery profile (the general one): flat rates to zones of whole countries | Fixed selling **Shipping Rule** `<method> (<zone>) - <abbr>` per rate, with its countries, on the shipping account | A rate the source drops is disabled. |
+| Product and article tags | Frappe document tags on the **Item** and **Blog Post** | A tag the source drops is removed; tags a person added are kept. |
+| Images embedded in pages, policies and articles (on Shopify's CDN) | **File**; the HTML points at the copy | Images on other hosts are left as they are. |
 | Pages | **Web Page** under the prefix | |
 | Shop policies (refund, privacy, terms, shipping, …) | **Web Page** `<prefix>/policies/<type>` | Read by their own query (`read_legal_policies`). |
 | Blogs, articles | **Blog Category**, **Blog Post** (+ **Blogger**) | |
@@ -71,11 +81,12 @@ orders, pages, articles); blogs, comments and redirects are read in full.
 |---|---|
 | Gift cards and their balances | No first-party gift-card ledger. |
 | Discounts: automatic, Buy X Get Y, free shipping, app discounts, once-per-customer, customer- or segment-specific, minimum quantity, single-variant | ERPNext's coupons can't enforce them exactly. |
-| Orders with tax-inclusive prices | The taxes can't be split out of the prices exactly into ERPNext's tax rows. |
+| Tax-inclusive orders whose lines are taxed at different rates | ERPNext includes one set of rates in every line's price (per-item rates need Item Tax Templates the source doesn't have). |
 | Duties | No sales tax and charge type for them. |
 | Fulfillments and tracking | Delivery Notes would move stock a second time (see README, "Decisions to confirm"). |
-| Draft orders, files, menus, delivery profiles, shop settings, metafields, metaobjects | Later phases (Quotation, File, Website Settings, Shipping Rule have homes; not built yet). |
-| Product tags, article tags and images | Later phase. |
+| Delivery profiles for some products only; zones limited to provinces or "rest of world"; rates with price or weight conditions; carrier-calculated rates | A Shipping Rule is store-wide and per country; outside a rule's band ERPNext charges nothing instead of not offering the rate; ERPNext has no carrier rates. Reported as warnings. |
+| Menus | Website Settings' top bar and footer are global; a Public Site has no menu of its own (the router would need one). |
+| Shop settings, metafields, metaobjects | No first-party home for them as such. |
 | Product reviews | Shopify has no reviews API (the PHP importer reads a review app's CSV export; later phase). |
 | Selling plans, subscriptions, markets, B2B, staff, abandoned checkouts, payouts | No first-party home. |
 | Customer passwords, saved payment methods | Not exportable. |

@@ -82,6 +82,7 @@ def entity_queries() -> dict[Kind, EntityQuery]:
 	updated = INCREMENTAL_SORT_KEY
 	metafields = NestedConnection("metafields", METAFIELDS)
 	queries = (
+		EntityQuery(Kind.ASSET, "File", "files", "FileFields", updated, True),
 		EntityQuery(
 			Kind.COLLECTION, "Collection", "collections", "CollectionFields", updated, True, (metafields,)
 		),
@@ -132,11 +133,28 @@ def entity_queries() -> dict[Kind, EntityQuery]:
 				metafields,
 			),
 		),
+		EntityQuery(
+			Kind.DRAFT_ORDER,
+			"DraftOrder",
+			"draftOrders",
+			"DraftOrderFields",
+			updated,
+			True,
+			(NestedConnection("lineItems", "DraftOrderLineItemConnectionFields"), metafields),
+		),
 		EntityQuery(Kind.PAGE, "Page", "pages", "PageFields", updated, True, (metafields,)),
 		EntityQuery(Kind.BLOG, "Blog", "blogs", "BlogFields", None, True, (metafields,)),
 		EntityQuery(Kind.ARTICLE, "Article", "articles", "ArticleFields", updated, True, (metafields,)),
 		EntityQuery(Kind.COMMENT, "Comment", "comments", "CommentFields", None, True),
 		EntityQuery(Kind.URL_REDIRECT, "UrlRedirect", "urlRedirects", "UrlRedirectFields", None, True),
+		EntityQuery(
+			Kind.DELIVERY_PROFILE,
+			"DeliveryProfile",
+			"deliveryProfiles",
+			"DeliveryProfileFields",
+			None,
+			False,
+		),
 	)
 	return {query.kind: query for query in queries}
 

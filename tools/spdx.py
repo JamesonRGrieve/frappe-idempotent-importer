@@ -13,7 +13,15 @@ HEADER = "SPDX-License-Identifier: AGPL-3.0-or-later"
 EXEMPT_SUFFIXES = frozenset({".json", ".lock", ".pyc"})
 # The licence itself, Frappe's plain-text module lists, and data files with no comment syntax.
 EXEMPT_NAMES = frozenset(
-	{"LICENSE", "modules.txt", "patches.txt", ".gitignore", ".coverage", ".coverage-baseline"}
+	{
+		"LICENSE",
+		"modules.txt",
+		"patches.txt",
+		".gitignore",
+		".coverage",
+		".coverage-baseline",
+		".writer-coverage-baseline",
+	}
 )
 # Generated, cached or third-party trees, never part of the source.
 SKIPPED_DIRS = frozenset(

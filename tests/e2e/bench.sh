@@ -27,6 +27,7 @@ REDIS_IMAGE="docker.io/library/redis:7-alpine"
 HRMS_REF="2478afc7a8f4959d500f6d17522853f0d244e38f"
 BLOG_REF="a88363cb5624f8534c1d5c7a543ab329dfa25d80"
 PAYMENTS_REF="cca07d9f9392e2ea0e521c5975151db9e4b6c321"
+COVERAGE_VERSION="7.10.7"
 WEBSHOP_REPO="${WEBSHOP_REPO:-$E2E_ROOT/../frappe-webshop}"
 ROUTER_REPO="${ROUTER_REPO:-$E2E_ROOT/../frappe-public-site-router}"
 DB_ROOT_PASSWORD="e2e-root"
@@ -73,6 +74,7 @@ build_image() {
 		--build-arg HRMS_REF="$HRMS_REF" \
 		--build-arg BLOG_REF="$BLOG_REF" \
 		--build-arg PAYMENTS_REF="$PAYMENTS_REF" \
+		--build-arg COVERAGE_VERSION="$COVERAGE_VERSION" \
 		--file "$E2E_ROOT/tests/e2e/Containerfile" "$context" >/dev/null
 }
 

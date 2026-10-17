@@ -4,6 +4,7 @@ each kind maps into the shared field contract."""
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import replace
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -107,13 +108,19 @@ class TestReader:
 
 	@pytest.mark.parametrize(
 		("change", "message"),
-		[({"store_url": "http://woo.example"}, "https"), ({"auth_method": ""}, "Application Password")],
+		[
+			(lambda c: replace(c, store_url="http://woo.example"), "https"),
+			(lambda c: replace(c, auth_method=""), "Application Password"),
+		],
 	)
 	def test_configuration_is_checked(
-		self, woo_config: ConnectionConfig, change: dict[str, str], message: str
+		self,
+		woo_config: ConnectionConfig,
+		change: Callable[[ConnectionConfig], ConnectionConfig],
+		message: str,
 	) -> None:
 		with pytest.raises(SourceError, match=message):
-			WooCommerceReader.connect(replace(woo_config, **change), woocommerce("v1"), RecordingSleeper())
+			WooCommerceReader.connect(change(woo_config), woocommerce("v1"), RecordingSleeper())
 
 
 class TestProducts:
@@ -227,7 +234,9 @@ class TestCoupons:
 
 class TestContent:
 	def test_pages(self, woo_config: ConnectionConfig) -> None:
-		assert values(woo_config, Kind.PAGE, "701").flag("published")
+		about = values(woo_config, Kind.PAGE, "701")
+		assert about.flag("published")
+		assert about.strings("images") == ["http://woo-fake:8080/wp-content/uploads/2026/08/workshop.png"]
 		assert not values(woo_config, Kind.PAGE, "702").flag("published")
 
 	def test_posts(self, woo_config: ConnectionConfig) -> None:
@@ -235,6 +244,16 @@ class TestContent:
 		assert post.string("category") == "gid://woocommerce/woo-a/Category/801"
 		assert post.required_record("author").all() == {"key": "1", "name": "Ingrid Admin"}
 		assert post.string("published_on") == "2026-08-20"
+		assert post.strings("tags") == ["Knitting"], "a post's tag ids, read by name"
+
+	def test_product_tags(self, woo_config: ConnectionConfig) -> None:
+		assert values(woo_config, Kind.PRODUCT, "101").strings("tags") == ["wool"]
+
+	def test_a_posts_tags_are_read_once(self, woo_config: ConnectionConfig) -> None:
+		source, transport = reader(woo_config)
+		source.page(Kind.ARTICLE, None, None, "")
+		source.page(Kind.ARTICLE, None, None, "")
+		assert sum("/wp/v2/tags" in request.url for request in transport.requests) == 1
 
 	def test_reviews(self, woo_config: ConnectionConfig) -> None:
 		assert values(woo_config, Kind.REVIEW, "951").decimal("rating") == Decimal(1)

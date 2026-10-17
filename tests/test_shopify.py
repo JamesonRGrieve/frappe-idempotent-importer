@@ -611,8 +611,78 @@ class TestMappers:
 			"parent": None,
 			"published": True,
 			"html": "<p>Returns within 30 days.</p>",
+			"images": [],
 		}
 		assert refund.legacy_paths == ("/policies/refund-policy",)
+
+	def test_images_shopify_hosts_are_listed_for_localising(self, shopify_config: ConnectionConfig) -> None:
+		about = values(shopify_config, Kind.PAGE, "1001")
+		assert about.strings("images") == ["http://shopify-fake:8080/cdn/shop/files/storefront.png?v=1"]
+
+	def test_tags(self, shopify_config: ConnectionConfig) -> None:
+		node = nodes(shopify_config, Kind.PRODUCT)["301"].with_fields(tags=["silk", "gift"])
+		mapper = {m.kind: m for m in ADAPTER.mappers(shopify_config)}[Kind.PRODUCT]
+		desired = mapper.map(node)
+		assert desired is not None
+		assert desired.values().strings("tags") == ["silk", "gift"]
+		assert isinstance(values(shopify_config, Kind.ARTICLE, "1201").strings("tags"), list)
+
+	def test_files(self, shopify_config: ConnectionConfig) -> None:
+		assert values(shopify_config, Kind.ASSET, "501").all() == {
+			"url": "http://shopify-fake:8080/cdn/shop/files/storefront.png",
+			"alt": "Shop front",
+		}
+		assert values(shopify_config, Kind.ASSET, "502").string("url").endswith("size-guide.pdf")
+		processing = nodes(shopify_config, Kind.ASSET)["502"].with_fields(url=None)
+		with pytest.raises(Unsupported, match="no downloadable URL"):
+			{m.kind: m for m in ADAPTER.mappers(shopify_config)}[Kind.ASSET].map(processing)
+
+	def test_open_draft_orders_and_completed_ones(self, shopify_config: ConnectionConfig) -> None:
+		draft = values(shopify_config, Kind.DRAFT_ORDER, "901")
+		lines = draft.records("lines")
+		assert (draft.string("number"), draft.decimal("total"), draft.optional_string("remarks")) == (
+			"#D1",
+			Decimal("75.6"),
+			"Custom fitting",
+		)
+		assert lines[0].optional_string("variant") == "gid://shopify/shop-s/ProductVariant/3022"
+		assert [c.all() for c in draft.records("charges")] == [
+			{"kind": "tax", "description": "GST", "amount": Decimal("3.6")}
+		]
+		assert mapped(shopify_config, Kind.DRAFT_ORDER, "901", "v2") is None, "completed: left to its order"
+
+	def test_delivery_profiles_mirror_only_flat_rates_to_whole_countries(
+		self, shopify_config: ConnectionConfig
+	) -> None:
+		profile = mapped(shopify_config, Kind.DELIVERY_PROFILE, "1601")
+		assert profile is not None
+		assert profile.values().records("rules") == [], "the recorded zone is limited to provinces"
+		assert len(profile.warnings) == 3
+		assert all("provinces" in warning for warning in profile.warnings)
+		node = nodes(shopify_config, Kind.DELIVERY_PROFILE)["1601"].raw()
+		groups = node["profileLocationGroups"]
+		assert isinstance(groups, list) and isinstance(groups[0], dict)
+		zones = groups[0]["locationGroupZones"]
+		assert isinstance(zones, dict) and isinstance(zones["nodes"], list)
+		zone = zones["nodes"][0]
+		assert isinstance(zone, dict) and isinstance(zone["zone"], dict)
+		zone["zone"]["countries"] = [{"code": {"countryCode": "CA", "restOfWorld": False}, "provinces": []}]
+		mapper = {m.kind: m for m in ADAPTER.mappers(shopify_config)}[Kind.DELIVERY_PROFILE]
+		whole = mapper.map(Node(node))
+		assert whole is not None
+		assert whole.values().records("rules")[0].all() == {
+			"gid": "gid://shopify/shop-s/DeliveryMethodDefinition/160111",
+			"label": "Standard (Canada)",
+			"countries": ["CA"],
+			"amount": Decimal("10.0"),
+			"enabled": True,
+		}
+		assert [w.split(":")[1].strip() for w in whole.warnings] == [
+			"ERPNext charges nothing outside a rule's price or weight band instead of not offering it",
+			"ERPNext charges nothing outside a rule's price or weight band instead of not offering it",
+		]
+		with pytest.raises(Unsupported, match="some products only"):
+			mapper.map(Node({**node, "default": False}))
 
 
 def basic_discount(**discount: JsonValue) -> Node:
@@ -708,9 +778,44 @@ class TestOrderStates:
 		assert not desired.values().flag("submitted")
 		assert desired.values().records("refunds") == []
 
-	def test_tax_inclusive_prices_and_duties_are_unsupported(self, shopify_config: ConnectionConfig) -> None:
-		with pytest.raises(Unsupported, match="tax-inclusive"):
-			self.mapper(shopify_config).map(self.order(shopify_config, taxesIncluded=True))
+	def test_tax_inclusive_prices_are_included_taxes(self, shopify_config: ConnectionConfig) -> None:
+		"""Order 801 as if its prices included GST: the line tax is included at 5%, shipping is its price
+		less its own tax, then that tax at its rate on the shipping row."""
+		desired = self.mapper(shopify_config).map(self.order(shopify_config, taxesIncluded=True))
+		assert desired is not None
+		order = desired.values()
+		assert order.flag("taxes_included")
+		assert [c.all() for c in order.records("charges")] == [
+			{
+				"kind": "included_tax",
+				"description": "GST",
+				"amount": Decimal("6.06"),
+				"rate": Decimal("5.00"),
+			},
+			{"kind": "shipping", "description": "Standard", "amount": Decimal("9.5")},
+			{
+				"kind": "shipping_tax",
+				"description": "GST (shipping)",
+				"amount": Decimal("0.5"),
+				"rate": Decimal("5.00"),
+			},
+		]
+		refund = order.records("refunds")[0]
+		assert refund.records("charges") == [], "a refund's tax is in its returned lines"
+
+	def test_tax_inclusive_lines_taxed_differently_are_unsupported(
+		self, shopify_config: ConnectionConfig
+	) -> None:
+		order = self.order(shopify_config, taxesIncluded=True).raw()
+		items = order["lineItems"]
+		assert isinstance(items, dict) and isinstance(items["nodes"], list)
+		first = items["nodes"][0]
+		assert isinstance(first, dict)
+		first["taxLines"] = []
+		with pytest.raises(Unsupported, match="taxed at different rates"):
+			self.mapper(shopify_config).map(Node(order))
+
+	def test_duties_are_unsupported(self, shopify_config: ConnectionConfig) -> None:
 		duties: JsonObject = {"shopMoney": {"amount": "3.0", "currencyCode": "CAD"}}
 		with pytest.raises(Unsupported, match="duties"):
 			self.mapper(shopify_config).map(self.order(shopify_config, originalTotalDutiesSet=duties))

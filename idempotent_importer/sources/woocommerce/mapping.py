@@ -28,8 +28,10 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target
 from idempotent_importer.core.source import ConnectionConfig
+from idempotent_importer.html import embedded_images, hosted_on
 
 SIMPLE = "simple"
+UPLOADS = "/wp-content/uploads/"
 VARIABLE = "variable"
 PUBLISHED = "publish"
 HIDDEN = "hidden"
@@ -53,6 +55,11 @@ class Context:
 
 	def gid(self, type_: str, id_: int | str) -> str:
 		return self.config.identity(type_, id_)
+
+	def images(self, fragment: str) -> list[Field]:
+		"""The images a page or post embeds from the store: its own host, or WordPress's uploads."""
+		on_store = hosted_on(urlsplit(self.config.store_url).hostname or "")
+		return list(embedded_images(fragment, lambda url: on_store(url) or UPLOADS in urlsplit(url).path))
 
 
 def text(value: str | None) -> str | None:
@@ -83,7 +90,7 @@ class CategoryMapper:
 
 class ProductMapper:
 	kind = Kind.PRODUCT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -143,6 +150,7 @@ class ProductMapper:
 				self._variant(v, node.optional_string("weight_unit"))
 				for v in node.children("variation_nodes")
 			],
+			"tags": [text(tag.string("name")) or tag.string("slug") for tag in node.children("tags")],
 		}
 		if product_type == VARIABLE and not fields["variants"]:
 			raise Unsupported("a variable product with no variations has nothing to sell")
@@ -424,7 +432,7 @@ class OrderMapper:
 
 class PageMapper:
 	kind = Kind.PAGE
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -437,6 +445,7 @@ class PageMapper:
 			"parent": self._context.gid("Page", parent) if parent else None,
 			"published": node.string("status") == PUBLISHED,
 			"html": node.required_child("content").text("rendered"),
+			"images": self._context.images(node.required_child("content").text("rendered")),
 		}
 		legacy = path_of(node.optional_string("link"))
 		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else ())
@@ -458,7 +467,7 @@ class PostCategoryMapper:
 
 class PostMapper:
 	kind = Kind.ARTICLE
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -479,6 +488,8 @@ class PostMapper:
 			"intro": node.required_child("excerpt").optional_string("rendered")
 			if node.child("excerpt")
 			else None,
+			"images": self._context.images(node.required_child("content").text("rendered")),
+			"tags": list(node.strings("tag_names")),
 		}
 		warnings = (
 			(

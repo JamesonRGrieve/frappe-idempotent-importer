@@ -4,7 +4,8 @@ woo-a-fake and woo-b-fake (two WooCommerce stores), shopify-fake (Shopify's Admi
 (the WooCommerce stores' media host). Each store answers from the fixture state run.sh wrote to
 <state dir>/<host>-state, through the responders the unit tests use, and only to the test credentials.
 While <state dir>/<host>-trouble holds "throttle" every API request is rate limited, and while it holds
-"reject" every API request is refused (the lockout-safety checks). Image paths return a 1x1 PNG.
+"reject" every API request is refused (the lockout-safety checks). Media paths (images, PDFs) return a
+1x1 PNG. Shopify grants its Admin API token to the e2e app's client credentials only.
 
 Run as ``python3 -I tests/e2e/fake_store.py <state dir>`` from the repository root."""
 
@@ -29,6 +30,7 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 # Bytes no text encoding takes, as a real image has: Frappe sniffs file content for text.
 BINARY_MARKER = bytes(range(0x80, 0xA0))
 MEDIA_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".webp")
+PDF_SUFFIX = ".pdf"
 WOO_AUTHORIZATION = "Basic " + base64.b64encode(b"e2e:e2e-application-password").decode()
 # The token the fake Shopify issues for the e2e app's client credentials (a Dev Dashboard app's grant).
 SHOPIFY_TOKEN = "e2e-shopify-token"
@@ -55,7 +57,11 @@ class FakeStore(BaseHTTPRequestHandler):
 
 	def answer(self, method: str) -> None:
 		host = (self.headers.get("Host") or "").split(":", 1)[0]
-		if self.path.split("?", 1)[0].lower().endswith(MEDIA_SUFFIXES):
+		media_path = self.path.split("?", 1)[0].lower()
+		if media_path.endswith(PDF_SUFFIX):
+			self.send(Answer(200, pdf(), {"Content-Type": "application/pdf"}))
+			return
+		if media_path.endswith(MEDIA_SUFFIXES):
 			self.send(Answer(200, png(self.path), {"Content-Type": "image/png"}))
 			return
 		trouble = self.read_state(f"{host}-trouble")
@@ -112,6 +118,25 @@ def shopify_grant(body: bytes) -> Answer:
 		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_client"}')
 	grant = {"access_token": SHOPIFY_TOKEN, "scope": "read_products", "expires_in": 86399}
 	return Answer(200, json.dumps(grant).encode())
+
+
+def pdf() -> bytes:
+	"""A one-page PDF with a correct cross-reference table (Frappe reads uploaded PDFs to refuse scripts)."""
+	objects = [
+		b"<< /Type /Catalog /Pages 2 0 R >>",
+		b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+		b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 72 72] >>",
+	]
+	body = b"%PDF-1.4\n"
+	offsets = []
+	for number, content in enumerate(objects, start=1):
+		offsets.append(len(body))
+		body += f"{number} 0 obj\n".encode() + content + b"\nendobj\n"
+	xref = len(body)
+	body += f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode()
+	body += b"".join(f"{offset:010d} 00000 n \n".encode() for offset in offsets)
+	body += f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+	return body
 
 
 def png(path: str) -> bytes:

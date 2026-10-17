@@ -419,6 +419,28 @@
     }
    }
   },
+  "/wp-json/wp/v2/tags": {
+   "get": {
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/tags/#list-tags"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/WpTag"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
   "/wp-json/wp/v2/categories": {
    "get": {
     "externalDocs": {
@@ -2675,6 +2697,47 @@
       "items": {
        "type": "integer"
       }
+     }
+    }
+   },
+   "WpTag": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://developer.wordpress.org/rest-api/reference/tags/#schema"
+    },
+    "required": [
+     "id",
+     "name",
+     "slug"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "count": {
+      "type": "integer"
+     },
+     "description": {
+      "type": "string"
+     },
+     "link": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "type": "string"
+     },
+     "taxonomy": {
+      "type": "string"
+     },
+     "meta": {
+      "type": [
+       "object",
+       "array"
+      ],
+      "description": "An empty JSON array when nothing is registered (WordPress serialises an empty PHP array)."
      }
     }
    },

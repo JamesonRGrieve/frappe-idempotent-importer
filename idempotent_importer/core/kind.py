@@ -11,11 +11,13 @@ class Kind(StrEnum):
 	that what an object refers to is mirrored before it. The other kinds identify parts of a synced
 	object that get their own ERPNext record (a variant's Item, a refund's credit note)."""
 
+	ASSET = "asset"
 	COLLECTION = "collection"
 	PRODUCT = "product"
 	VARIANT = "variant"
 	PRICE = "price"
 	FILE = "file"
+	TAG = "tag"
 	CUSTOMER = "customer"
 	CONTACT = "contact"
 	ADDRESS = "address"
@@ -27,6 +29,7 @@ class Kind(StrEnum):
 	REFUND = "refund"
 	REFUND_PAYMENT = "refund_payment"
 	ORDER_NOTE = "order_note"
+	DRAFT_ORDER = "draft_order"
 	PAGE = "page"
 	POLICY = "policy"
 	BLOG = "blog"
@@ -36,6 +39,8 @@ class Kind(StrEnum):
 	REVIEW = "review"
 	URL_REDIRECT = "url_redirect"
 	LEGACY_REDIRECT = "legacy_redirect"
+	DELIVERY_PROFILE = "delivery_profile"
+	SHIPPING_RULE = "shipping_rule"
 
 	@classmethod
 	def parse(cls, value: str) -> Kind:
@@ -46,11 +51,13 @@ class Kind(StrEnum):
 
 
 SYNC_ORDER: tuple[Kind, ...] = (
+	Kind.ASSET,
 	Kind.COLLECTION,
 	Kind.PRODUCT,
 	Kind.CUSTOMER,
 	Kind.DISCOUNT,
 	Kind.ORDER,
+	Kind.DRAFT_ORDER,
 	Kind.PAGE,
 	Kind.POLICY,
 	Kind.BLOG,
@@ -58,4 +65,5 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.COMMENT,
 	Kind.REVIEW,
 	Kind.URL_REDIRECT,
+	Kind.DELIVERY_PROFILE,
 )

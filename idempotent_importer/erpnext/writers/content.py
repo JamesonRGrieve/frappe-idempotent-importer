@@ -29,6 +29,17 @@ REDIRECT_HASH = "redirect"
 RETIRED_MARK = "[Removed at source] "
 
 
+class AssetWriter(Writer):
+	"""A file of the store's own (its Files section) as a public File. A file removed at the source stays,
+	as every mirrored image does: pages and items may still show it (README, decisions)."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		return Target("File", self.media.file(desired.values().string("url")))
+
+	def retire(self, link: Link) -> None:
+		return None
+
+
 class PageWriter(Writer):
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
@@ -45,7 +56,7 @@ class PageWriter(Writer):
 				"route": self.context.route(*segments),
 				"published": int(values.flag("published")),
 				"content_type": "HTML",
-				"main_section_html": values.string("html"),
+				"main_section_html": self.media.localized(values.string("html"), values.strings("images")),
 			}
 		)
 		self.save(doc, named_after(doc.route))
@@ -88,11 +99,12 @@ class ArticleWriter(Writer):
 				"published": int(values.flag("published")),
 				"published_on": values.string("published_on"),
 				"content_type": "HTML",
-				"content_html": values.string("html"),
+				"content_html": self.media.localized(values.string("html"), values.strings("images")),
 				"blog_intro": plain_text(values.optional_string("intro")) or None,
 			}
 		)
 		self.save(doc, named_after(doc.route))
+		self.tags(desired.gid, "Blog Post", doc.name, values.strings("tags"))
 		return Target("Blog Post", doc.name, doc.route)
 
 	def retire(self, link: Link) -> None:

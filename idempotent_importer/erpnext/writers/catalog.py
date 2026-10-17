@@ -23,13 +23,12 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
 from idempotent_importer.naming import unique_abbr
 
 STOCK_UOM = "Nos"
 # ERPNext's UOM names for the units mappers hand over.
 WEIGHT_UOMS = {"g": "Gram", "kg": "Kg", "oz": "Ounce", "lbs": "Pound"}
-PART_HASH = "part"
 
 
 class CollectionWriter(Writer):
@@ -99,6 +98,7 @@ class ProductWriter(Writer):
 		else:
 			self._barcode(item, values.optional_string("barcode"))
 			self._selling(desired.gid, item.name, values)
+		self.tags(desired.gid, "Item", item.name, values.strings("tags"))
 		route = self._website_item(item, values, groups, images)
 		return Target("Item", item.name, route)
 

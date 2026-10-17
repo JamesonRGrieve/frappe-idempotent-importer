@@ -1,0 +1,62 @@
+{
+  "operation": "DraftOrderList",
+  "variables": {"first": 50, "after": null},
+  "data": {
+    "draftOrders": {
+      "pageInfo": {"hasNextPage": false, "endCursor": "drafts-1"},
+      "nodes": [
+        {
+          "id": "gid://shopify/DraftOrder/901",
+          "legacyResourceId": "901",
+          "name": "#D1",
+          "status": "COMPLETED",
+          "email": "sam@example.com",
+          "phone": null,
+          "note2": "Custom fitting",
+          "tags": [],
+          "currencyCode": "CAD",
+          "taxesIncluded": false,
+          "createdAt": "2026-09-07T10:00:00Z",
+          "updatedAt": "2026-09-11T10:00:00Z",
+          "completedAt": "2026-09-11T10:00:00Z",
+          "customer": {"id": "gid://shopify/Customer/402"},
+          "customAttributes": [],
+          "billingAddress": null,
+          "shippingAddress": null,
+          "discountCodes": [],
+          "subtotalPriceSet": {"shopMoney": {"amount": "72.0", "currencyCode": "CAD"}},
+          "totalDiscountsSet": {"shopMoney": {"amount": "0.0", "currencyCode": "CAD"}},
+          "totalShippingPriceSet": {"shopMoney": {"amount": "0.0", "currencyCode": "CAD"}},
+          "totalTaxSet": {"shopMoney": {"amount": "3.6", "currencyCode": "CAD"}},
+          "totalPriceSet": {"shopMoney": {"amount": "75.6", "currencyCode": "CAD"}},
+          "taxLines": [{"title": "GST", "rate": 0.05, "priceSet": {"shopMoney": {"amount": "3.6", "currencyCode": "CAD"}}}],
+          "shippingLine": null,
+          "lineItems": {
+            "pageInfo": {"hasNextPage": false, "endCursor": null},
+            "nodes": [
+              {
+                "id": "gid://shopify/DraftOrderLineItem/9101",
+                "name": "Everyday Bra - 36C / Beige",
+                "title": "Everyday Bra",
+                "variantTitle": "36C / Beige",
+                "sku": null,
+                "quantity": 1,
+                "taxable": true,
+                "requiresShipping": true,
+                "isGiftCard": false,
+                "product": null,
+                "variant": null,
+                "originalUnitPriceSet": {"shopMoney": {"amount": "72.0", "currencyCode": "CAD"}},
+                "originalTotalSet": {"shopMoney": {"amount": "72.0", "currencyCode": "CAD"}},
+                "discountedTotalSet": {"shopMoney": {"amount": "72.0", "currencyCode": "CAD"}},
+                "taxLines": [{"title": "GST", "rate": 0.05, "priceSet": {"shopMoney": {"amount": "3.6", "currencyCode": "CAD"}}}],
+                "customAttributes": []
+              }
+            ]
+          },
+          "metafields": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": []}
+        }
+      ]
+    }
+  }
+}

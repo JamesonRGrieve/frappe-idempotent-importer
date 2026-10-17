@@ -1,0 +1,22 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+fragment FileFields on File {
+  __typename
+  id
+  alt
+  updatedAt
+  ... on MediaImage {
+    image {
+      ...ImageFields
+    }
+  }
+  ... on Video {
+    originalSource {
+      url
+      mimeType
+    }
+  }
+  ... on GenericFile {
+    url
+    mimeType
+  }
+}

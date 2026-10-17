@@ -12,9 +12,7 @@ from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
-from idempotent_importer.erpnext.writers.base import Writer
-
-PART_HASH = "part"
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
 
 
 def country_of(code: str | None) -> str:

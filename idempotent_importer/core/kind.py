@@ -28,6 +28,7 @@ class Kind(StrEnum):
 	REFUND_PAYMENT = "refund_payment"
 	ORDER_NOTE = "order_note"
 	PAGE = "page"
+	POLICY = "policy"
 	BLOG = "blog"
 	BLOGGER = "blogger"
 	ARTICLE = "article"
@@ -51,6 +52,7 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.DISCOUNT,
 	Kind.ORDER,
 	Kind.PAGE,
+	Kind.POLICY,
 	Kind.BLOG,
 	Kind.ARTICLE,
 	Kind.COMMENT,

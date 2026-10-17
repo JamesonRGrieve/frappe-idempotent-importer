@@ -462,6 +462,25 @@ class PageMapper:
 		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else ())
 
 
+class PolicyMapper:
+	"""A legal policy (refund, privacy, terms, …) as a page at Shopify's own path, ``policies/<type>``."""
+
+	kind = Kind.POLICY
+	version = 1
+
+	def map(self, node: Node) -> Desired | None:
+		slug = f"policies/{node.string('type').lower().replace('_', '-')}"
+		fields: Fields = {
+			"title": node.string("title"),
+			"slug": slug,
+			"parent": None,
+			"published": True,
+			"html": node.text("body"),
+		}
+		legacy = path_of(f"/{slug}")
+		return Desired(self.kind, node.id(), fields, (legacy,) if legacy else ())
+
+
 class BlogMapper:
 	kind = Kind.BLOG
 	version = 1
@@ -535,6 +554,7 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 		DiscountMapper(),
 		OrderMapper(),
 		PageMapper(),
+		PolicyMapper(),
 		BlogMapper(),
 		ArticleMapper(),
 		CommentMapper(),

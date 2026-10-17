@@ -512,6 +512,285 @@
             },
             "nodes": []
           }
+        },
+        {
+          "id": "gid://shopify/Order/804",
+          "legacyResourceId": "804",
+          "name": "#1004",
+          "number": 4,
+          "email": "robin.park@example.com",
+          "phone": null,
+          "note": null,
+          "tags": [
+            "fully-refunded"
+          ],
+          "test": false,
+          "sourceName": "shopify_draft_order",
+          "customerLocale": null,
+          "currencyCode": "CAD",
+          "taxesIncluded": false,
+          "createdAt": "2026-09-10T18:00:00Z",
+          "updatedAt": "2026-09-12T12:00:00Z",
+          "processedAt": "2026-09-10T18:00:00Z",
+          "cancelledAt": null,
+          "cancelReason": null,
+          "closedAt": "2026-09-12T12:00:00Z",
+          "riskLevel": "LOW",
+          "displayFinancialStatus": "REFUNDED",
+          "displayFulfillmentStatus": "FULFILLMENT_NOT_REQUIRED",
+          "paymentGatewayNames": [
+            "manual"
+          ],
+          "customer": null,
+          "customAttributes": [],
+          "billingAddress": {
+            "id": "gid://shopify/MailingAddress/8041",
+            "firstName": "Robin",
+            "lastName": "Park",
+            "company": null,
+            "address1": "20 River Rd",
+            "address2": null,
+            "city": "Toronto",
+            "province": "Ontario",
+            "provinceCode": "ON",
+            "countryCodeV2": "CA",
+            "zip": "M5V 2T6",
+            "phone": null
+          },
+          "shippingAddress": {
+            "id": "gid://shopify/MailingAddress/8042",
+            "firstName": "Robin",
+            "lastName": "Park",
+            "company": null,
+            "address1": "20 River Rd",
+            "address2": null,
+            "city": "Toronto",
+            "province": "Ontario",
+            "provinceCode": "ON",
+            "countryCodeV2": "CA",
+            "zip": "M5V 2T6",
+            "phone": null
+          },
+          "discountCodes": [
+            "TENOFF"
+          ],
+          "subtotalPriceSet": {
+            "shopMoney": {
+              "amount": "95.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalDiscountsSet": {
+            "shopMoney": {
+              "amount": "10.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalShippingPriceSet": {
+            "shopMoney": {
+              "amount": "9.95",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalTaxSet": {
+            "shopMoney": {
+              "amount": "13.64",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalPriceSet": {
+            "shopMoney": {
+              "amount": "118.59",
+              "currencyCode": "CAD"
+            }
+          },
+          "totalTipReceivedSet": {
+            "shopMoney": {
+              "amount": "0.0",
+              "currencyCode": "CAD"
+            }
+          },
+          "originalTotalDutiesSet": null,
+          "taxLines": [
+            {
+              "title": "HST",
+              "rate": 0.13,
+              "priceSet": {
+                "shopMoney": {
+                  "amount": "13.64",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          ],
+          "additionalFees": [],
+          "lineItems": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": [
+              {
+                "id": "gid://shopify/LineItem/8401",
+                "name": "Silk Scarf - 10",
+                "title": "Silk Scarf",
+                "variantTitle": "10",
+                "sku": "SCARF-1",
+                "quantity": 1,
+                "taxable": true,
+                "requiresShipping": true,
+                "isGiftCard": false,
+                "product": {
+                  "id": "gid://shopify/Product/301"
+                },
+                "variant": {
+                  "id": "gid://shopify/ProductVariant/3011"
+                },
+                "originalUnitPriceSet": {
+                  "shopMoney": {
+                    "amount": "105.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "originalTotalSet": {
+                  "shopMoney": {
+                    "amount": "105.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "discountedTotalSet": {
+                  "shopMoney": {
+                    "amount": "105.0",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "taxLines": [
+                  {
+                    "title": "HST",
+                    "rate": 0.13,
+                    "priceSet": {
+                      "shopMoney": {
+                        "amount": "13.64",
+                        "currencyCode": "CAD"
+                      }
+                    }
+                  }
+                ],
+                "customAttributes": []
+              }
+            ]
+          },
+          "shippingLines": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": [
+              {
+                "title": "Standard",
+                "code": "standard",
+                "source": "shopify",
+                "originalPriceSet": {
+                  "shopMoney": {
+                    "amount": "9.95",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "discountedPriceSet": {
+                  "shopMoney": {
+                    "amount": "9.95",
+                    "currencyCode": "CAD"
+                  }
+                },
+                "taxLines": []
+              }
+            ]
+          },
+          "refunds": [
+            {
+              "id": "gid://shopify/Refund/8202",
+              "createdAt": "2026-09-12T12:00:00Z",
+              "note": "Full refund before shipping.",
+              "totalRefundedSet": {
+                "shopMoney": {
+                  "amount": "118.59",
+                  "currencyCode": "CAD"
+                }
+              },
+              "refundLineItems": {
+                "pageInfo": {
+                  "hasNextPage": false,
+                  "endCursor": null
+                },
+                "nodes": [
+                  {
+                    "quantity": 1,
+                    "restockType": "NO_RESTOCK",
+                    "lineItem": {
+                      "id": "gid://shopify/LineItem/8401"
+                    },
+                    "subtotalSet": {
+                      "shopMoney": {
+                        "amount": "95.0",
+                        "currencyCode": "CAD"
+                      }
+                    },
+                    "totalTaxSet": {
+                      "shopMoney": {
+                        "amount": "13.64",
+                        "currencyCode": "CAD"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "fulfillments": [],
+          "transactions": [
+            {
+              "id": "gid://shopify/OrderTransaction/8402",
+              "kind": "SALE",
+              "status": "SUCCESS",
+              "gateway": "manual",
+              "processedAt": "2026-09-10T18:00:00Z",
+              "authorizationCode": null,
+              "amountSet": {
+                "shopMoney": {
+                  "amount": "118.59",
+                  "currencyCode": "CAD"
+                }
+              }
+            },
+            {
+              "id": "gid://shopify/OrderTransaction/8403",
+              "kind": "REFUND",
+              "status": "SUCCESS",
+              "gateway": "manual",
+              "processedAt": "2026-09-12T12:00:00Z",
+              "authorizationCode": null,
+              "amountSet": {
+                "shopMoney": {
+                  "amount": "118.59",
+                  "currencyCode": "CAD"
+                }
+              }
+            }
+          ],
+          "events": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          },
+          "metafields": {
+            "pageInfo": {
+              "hasNextPage": false,
+              "endCursor": null
+            },
+            "nodes": []
+          }
         }
       ]
     }

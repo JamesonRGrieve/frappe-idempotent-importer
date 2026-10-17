@@ -21,7 +21,7 @@ fragment ArticleFields on Article {
   image {
     ...ImageFields
   }
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

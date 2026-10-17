@@ -24,6 +24,12 @@ class CredentialsRejected(SourceError):
 	the operator saves the connection or starts a run by hand (see ``CredentialHold``)."""
 
 
+class KindUnavailable(SourceError):
+	"""The source won't give one kind to these credentials (an access scope the operator may choose not to
+	grant). The kind is skipped with a warning naming what is missing: its copies are left as they are
+	(nothing is retired), its cursor doesn't move, and the rest of the run carries on and can complete."""
+
+
 class Unsupported(Exception):
 	"""A source object ERPNext has no first-party home for (a gap in coverage/<source>.md), or one that
 	can't be represented exactly. Reported and counted, never approximated, never fatal."""

@@ -29,16 +29,16 @@ fragment ProductFields on Product {
       name
     }
   }
-  collections(first: 250) {
+  collections(first: $collectionsFirst) {
     ...CollectionIdConnectionFields
   }
-  media(first: 250) {
+  media(first: $mediaFirst) {
     ...MediaConnectionFields
   }
-  variants(first: 250) {
+  variants(first: $variantsFirst) {
     ...ProductVariantConnectionFields
   }
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

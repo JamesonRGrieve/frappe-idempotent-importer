@@ -33,7 +33,12 @@ def woo_config() -> ConnectionConfig:
 @pytest.fixture
 def shopify_config() -> ConnectionConfig:
 	return ConnectionConfig(
-		source="shopify", connection="shop-s", store_url="e2e-fixture.myshopify.com", api_secret="e2e-token"
+		source="shopify",
+		connection="shop-s",
+		store_url="e2e-fixture.myshopify.com",
+		api_user="e2e-client-id",
+		api_secret="e2e-client-secret",
+		auth_method="Client Credentials",
 	)
 
 

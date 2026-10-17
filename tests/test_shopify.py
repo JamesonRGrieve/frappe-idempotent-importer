@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """The Shopify adapter over the recorded store (tests/fixtures/shopify, ported from
-wp-woo-idempotent-importer): its query library, client throttling, reader and mappers."""
+wp-woo-idempotent-importer): its query library, page sizing, client authentication and throttling, reader
+and mappers."""
 
 from __future__ import annotations
 
@@ -9,30 +10,60 @@ from collections.abc import Mapping
 from dataclasses import replace
 from datetime import UTC, datetime
 from decimal import Decimal
+from urllib.parse import parse_qs
 
 import pytest
 
 from idempotent_importer.core.desired import Desired, Mapper
-from idempotent_importer.core.errors import CredentialsRejected, RetryLater, SourceError, Unsupported
+from idempotent_importer.core.errors import (
+	CredentialsRejected,
+	KindUnavailable,
+	RetryLater,
+	SourceError,
+	Unsupported,
+)
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.http import HttpResponse
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonObject, JsonValue, Node
+from idempotent_importer.core.rest import RequestAuthorizer
 from idempotent_importer.core.source import ConnectionConfig
-from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
-from idempotent_importer.sources.shopify.client import Connection, GraphQlClient, bucket_shortfall
-from idempotent_importer.sources.shopify.queries import NESTED_PAGE_SIZE, QueryLibrary, entity_query
+from idempotent_importer.sources.shopify.adapter import ShopifyAdapter, authorizer
+from idempotent_importer.sources.shopify.auth import ClientCredentialsAuthorizer, ShopifyTokenAuthorizer
+from idempotent_importer.sources.shopify.client import (
+	AccessDenied,
+	Connection,
+	GraphQlClient,
+	bucket_shortfall,
+)
+from idempotent_importer.sources.shopify.page_sizes import PageSizes
+from idempotent_importer.sources.shopify.queries import (
+	NESTED_PAGE_SIZE,
+	PAGE_SIZE,
+	QueryLibrary,
+	entity_query,
+)
 from idempotent_importer.sources.shopify.reader import ShopifyReader, search_query
 from tests.support.transport import FakeTransport, RecordingSleeper, scripted, shopify
 
 ADAPTER = ShopifyAdapter()
 LIBRARY = QueryLibrary.bundled()
 ENDPOINT = "https://fixture.myshopify.com/admin/api/2026-10/graphql.json"
+TOKEN_URL = "https://fixture.myshopify.com/admin/oauth/access_token"
+
+
+def client(transport: FakeTransport, sleeper: RecordingSleeper | None = None) -> GraphQlClient:
+	return GraphQlClient(
+		Connection(ENDPOINT),
+		LIBRARY,
+		ShopifyTokenAuthorizer("token"),
+		transport,
+		sleeper or RecordingSleeper(),
+	)
 
 
 def reader(config: ConnectionConfig, state: str = "v1") -> ShopifyReader:
-	client = GraphQlClient(Connection(ENDPOINT, "token"), LIBRARY, shopify(state), RecordingSleeper())
-	return ShopifyReader(config, client)
+	return ShopifyReader(config, client(shopify(state)))
 
 
 def nodes(config: ConnectionConfig, kind: Kind, state: str = "v1") -> dict[str, Node]:
@@ -56,6 +87,7 @@ class TestQueryLibrary:
 	def test_every_kind_has_list_node_and_nested_page_operations(self) -> None:
 		operations = set(LIBRARY.operations())
 		assert {"ProductList", "ProductNode", "ProductVariantsPage", "OrderLineItemsPage"} <= operations
+		assert "ShopPolicies" in operations, "hand-written operations are loaded too"
 
 	def test_documents_carry_every_fragment_they_spread(self) -> None:
 		document = LIBRARY.document("OrderList")
@@ -69,6 +101,28 @@ class TestQueryLibrary:
 			assert f"fragment {fragment} on" in document
 		assert document.count("fragment MoneyBagFields on") == 1
 
+	def test_every_page_size_is_a_variable_with_a_default(self) -> None:
+		assert LIBRARY.page_sizes("OrderList") == {
+			"first": PAGE_SIZE,
+			"lineItemsFirst": NESTED_PAGE_SIZE,
+			"shippingLinesFirst": NESTED_PAGE_SIZE,
+			"eventsFirst": NESTED_PAGE_SIZE,
+			"metafieldsFirst": NESTED_PAGE_SIZE,
+		}
+		assert LIBRARY.page_sizes("OrderNode") == {
+			"lineItemsFirst": NESTED_PAGE_SIZE,
+			"shippingLinesFirst": NESTED_PAGE_SIZE,
+			"eventsFirst": NESTED_PAGE_SIZE,
+			"metafieldsFirst": NESTED_PAGE_SIZE,
+		}
+		assert LIBRARY.page_sizes("OrderLineItemsPage") == {"first": NESTED_PAGE_SIZE}
+		assert LIBRARY.page_sizes("ShopPolicies") == {}
+		document = LIBRARY.document("OrderList")
+		assert "$lineItemsFirst: Int!" in document
+		assert "lineItems(first: $lineItemsFirst)" in document
+		assert "refunds(first: 250)" in document, "a connection nothing pages through keeps its literal size"
+		assert "variants(first: $first, after: $after)" in LIBRARY.document("ProductVariantsPage")
+
 	def test_list_queries_sort_and_search_where_they_can(self) -> None:
 		assert "sortKey: UPDATED_AT" in LIBRARY.document("ProductList")
 		assert "query: $query" in LIBRARY.document("CommentList")
@@ -78,6 +132,8 @@ class TestQueryLibrary:
 	def test_unknown_operations(self) -> None:
 		with pytest.raises(SourceError):
 			LIBRARY.document("Nope")
+		with pytest.raises(SourceError):
+			LIBRARY.page_sizes("Nope")
 		with pytest.raises(SourceError):
 			entity_query(Kind.REVIEW)
 
@@ -90,8 +146,92 @@ class TestQueryLibrary:
 		assert search_query(None, " ") is None
 
 
+class TestPageSizes:
+	def test_starts_from_the_librarys_defaults(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		assert sizes.sizes("OrderList") == LIBRARY.page_sizes("OrderList")
+		assert sizes.sizes("ShopPolicies") == {}
+
+	def test_a_refusal_shrinks_every_size_in_proportion_and_only_that_operation(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.refused("OrderList", 1800, 1000)
+		assert sizes.sizes("OrderList") == {
+			"first": 25,
+			"lineItemsFirst": 125,
+			"shippingLinesFirst": 125,
+			"eventsFirst": 125,
+			"metafieldsFirst": 125,
+		}, "scaled by 900 / 1800"
+		assert sizes.sizes("ProductList") == LIBRARY.page_sizes("ProductList")
+
+	def test_a_refusal_barely_over_the_limit_still_shrinks_below_the_margin(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.refused("CommentList", 1001, 1000)
+		assert sizes.sizes("CommentList") == {"first": 44}, "50 x 900 / 1001"
+
+	def test_sizes_never_go_below_one(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.refused("ProductList", 1_000_000, 1000)
+		assert set(sizes.sizes("ProductList").values()) == {1}
+		with pytest.raises(SourceError, match="ProductList: one object costs 1500 points even one at a time"):
+			sizes.refused("ProductList", 1500, 1000)
+
+	def test_an_operation_without_page_sizes_cannot_shrink(self) -> None:
+		with pytest.raises(SourceError):
+			PageSizes(LIBRARY).refused("ShopPolicies", 1200, 1000)
+
+	def test_grows_back_toward_the_defaults_but_never_to_a_refused_size(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.refused("CommentList", 1800, 1000)
+		assert sizes.sizes("CommentList") == {"first": 25}
+		sizes.succeeded("CommentList", 300)
+		assert sizes.sizes("CommentList") == {"first": 49}, "capped just under the refused 50"
+		sizes.succeeded("CommentList", 300)
+		assert sizes.sizes("CommentList") == {"first": 49}, "growing further would ask for the refused size"
+
+	def test_does_not_grow_without_room_or_when_at_the_defaults(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.succeeded("CommentList", 10)
+		assert sizes.sizes("CommentList") == {"first": 50}, "never above the default"
+		sizes.refused("CommentList", 1800, 1000)
+		sizes.succeeded("CommentList", 950)
+		assert sizes.sizes("CommentList") == {"first": 25}, "no room under the 900 target"
+
+	def test_the_same_responses_give_the_same_sizes(self) -> None:
+		def run() -> dict[str, int]:
+			sizes = PageSizes(LIBRARY)
+			sizes.refused("ProductList", 1941, 1000)
+			sizes.succeeded("ProductList", 700)
+			sizes.refused("ProductList", 1027, 1000)
+			sizes.succeeded("ProductList", 822)
+			return sizes.sizes("ProductList")
+
+		assert run() == run()
+
+	def test_a_store_with_a_lower_limit_is_targeted_below_it(self) -> None:
+		sizes = PageSizes(LIBRARY)
+		sizes.refused("CommentList", 1000, 500)
+		assert sizes.sizes("CommentList") == {"first": 22}, "50 x 450 / 1000"
+		sizes.succeeded("CommentList", 449)
+		assert sizes.sizes("CommentList") == {"first": 22}, "growth aims under the reported limit"
+
+
 def graphql(body: Mapping[str, object]) -> HttpResponse:
 	return HttpResponse(200, json.dumps(body).encode())
+
+
+def sent(transport: FakeTransport, index: int) -> JsonObject:
+	decoded = json.loads(transport.requests[index].body)
+	assert isinstance(decoded, dict)
+	return decoded
+
+
+def too_costly(cost: int, *, with_numbers: bool = True) -> HttpResponse:
+	extensions: JsonObject = {"code": "MAX_COST_EXCEEDED"}
+	if with_numbers:
+		extensions |= {"cost": cost, "maxCost": 1000}
+	message = f"Query cost is {cost}, which exceeds the single query max cost limit (1000)."
+	return graphql({"errors": [{"message": message, "extensions": extensions}]})
 
 
 class TestClient:
@@ -103,10 +243,9 @@ class TestClient:
 				"throttleStatus": {"currentlyAvailable": 100, "restoreRate": 100},
 			}
 		}
-		transport = scripted(graphql({"data": {"ok": True}, "extensions": bucket}))
-		client = GraphQlClient(Connection(ENDPOINT, "token"), LIBRARY, transport, sleeper)
-		client.query("ProductList", {"first": 1})
-		client.query("ProductList", {"first": 1})
+		graph = client(scripted(graphql({"data": {"ok": True}, "extensions": bucket})), sleeper)
+		graph.query("ProductList")
+		graph.query("ProductList")
 		assert sleeper.waits == [4.0]
 
 	def test_a_throttled_query_is_retried_once_the_bucket_refills(self) -> None:
@@ -120,42 +259,81 @@ class TestClient:
 				}
 			},
 		}
-		transport = scripted(graphql(throttled), graphql({"data": {"ok": True}}))
-		client = GraphQlClient(Connection(ENDPOINT, "token"), LIBRARY, transport, sleeper)
-		assert client.query("ProductList").flag("ok")
+		graph = client(scripted(graphql(throttled), graphql({"data": {"ok": True}})), sleeper)
+		assert graph.query("ProductList").flag("ok")
 		assert sleeper.waits == [4.0]
 
+	def test_page_sizes_are_sent_with_every_query(self) -> None:
+		transport = scripted(graphql({"data": {}}))
+		client(transport).query("OrderList", {"after": "c1"})
+		assert sent(transport, 0)["variables"] == {"after": "c1", **LIBRARY.page_sizes("OrderList")}
+
+	@pytest.mark.parametrize("with_numbers", [True, False])
+	def test_a_query_refused_as_too_costly_is_resent_at_once_with_smaller_pages(
+		self, with_numbers: bool
+	) -> None:
+		sleeper = RecordingSleeper()
+		transport = scripted(too_costly(1941, with_numbers=with_numbers), graphql({"data": {"ok": True}}))
+		assert client(transport, sleeper).query("ProductList").flag("ok")
+		first, second = sent(transport, 0)["variables"], sent(transport, 1)["variables"]
+		assert isinstance(first, dict) and isinstance(second, dict)
+		assert (first["first"], first["variantsFirst"]) == (50, 250)
+		assert (second["first"], second["variantsFirst"]) == (23, 115), "x 900 / 1941"
+		assert sleeper.waits == [], "no retry wait, no pause"
+
+	def test_sizes_that_fit_are_kept_for_the_rest_of_the_run(self) -> None:
+		cost: JsonObject = {"cost": {"requestedQueryCost": 950}}
+		transport = scripted(too_costly(1941), graphql({"data": {}, "extensions": cost}))
+		graph = client(transport)
+		graph.query("ProductList")
+		graph.query("ProductList")
+		assert sent(transport, 2)["variables"] == sent(transport, 1)["variables"]
+
+	def test_a_refusal_without_its_cost_is_an_error(self) -> None:
+		refusal = graphql(
+			{"errors": [{"message": "Too costly", "extensions": {"code": "MAX_COST_EXCEEDED"}}]}
+		)
+		with pytest.raises(SourceError, match="without saying its cost"):
+			client(scripted(refusal)).query("ProductList")
+
+	def test_a_missing_scope_is_access_denied(self) -> None:
+		denied = graphql(
+			{
+				"errors": [
+					{
+						"message": "Access denied for shopPolicies field.",
+						"extensions": {"code": "ACCESS_DENIED"},
+					}
+				]
+			}
+		)
+		with pytest.raises(AccessDenied, match="ShopPolicies: Access denied"):
+			client(scripted(denied)).query("ShopPolicies")
+		mixed = graphql(
+			{"errors": [{"message": "denied", "extensions": {"code": "ACCESS_DENIED"}}, {"message": "bad"}]}
+		)
+		with pytest.raises(SourceError) as error:
+			client(scripted(mixed)).query("ShopPolicies")
+		assert not isinstance(error.value, AccessDenied)
+
 	def test_rejected_tokens_stop_and_errors_fail(self) -> None:
-		client = GraphQlClient(
-			Connection(ENDPOINT, "token"), LIBRARY, scripted(HttpResponse(401, b"{}")), RecordingSleeper()
-		)
 		with pytest.raises(CredentialsRejected):
-			client.query("ProductList")
-		failing = GraphQlClient(
-			Connection(ENDPOINT, "token"),
-			LIBRARY,
-			scripted(graphql({"errors": [{"message": "bad field"}]})),
-			RecordingSleeper(),
-		)
+			client(scripted(HttpResponse(401, b"{}"))).query("ProductList")
 		with pytest.raises(SourceError, match="bad field"):
-			failing.query("ProductList")
+			client(scripted(graphql({"errors": [{"message": "bad field"}]}))).query("ProductList")
 
 	def test_a_struggling_shop_pauses_the_run(self) -> None:
-		client = GraphQlClient(
-			Connection(ENDPOINT, "token"),
-			LIBRARY,
-			scripted(HttpResponse(503, b"", {"retry-after": "90"})),
-			RecordingSleeper(),
-		)
 		with pytest.raises(RetryLater):
-			client.query("ProductList")
+			client(scripted(HttpResponse(503, b"", {"retry-after": "90"}))).query("ProductList")
 
 	def test_the_token_is_sent_and_never_shown(self) -> None:
 		transport = scripted(graphql({"data": {}}))
-		connection = Connection(ENDPOINT, "shpat_secret")
-		GraphQlClient(connection, LIBRARY, transport, RecordingSleeper()).query("ProductList")
+		token = ShopifyTokenAuthorizer("shpat_secret")
+		GraphQlClient(Connection(ENDPOINT), LIBRARY, token, transport, RecordingSleeper()).query(
+			"ProductList"
+		)
 		assert transport.requests[0].headers["X-Shopify-Access-Token"] == "shpat_secret"
-		assert "shpat_secret" not in repr(connection)
+		assert "shpat_secret" not in repr(token)
 
 	def test_bucket_shortfall(self) -> None:
 		assert bucket_shortfall({}) is None
@@ -168,8 +346,91 @@ class TestClient:
 	@pytest.mark.parametrize("store", ["shop.example.com", "https://x.myshopify.com.evil", ""])
 	def test_the_store_must_be_a_myshopify_domain(self, store: str) -> None:
 		with pytest.raises(SourceError, match="myshopify"):
-			Connection.for_store(store, "token")
-		assert Connection.for_store("Fixture.myshopify.com", "t").endpoint == ENDPOINT
+			Connection.for_store(store)
+		assert Connection.for_store("Fixture.myshopify.com").endpoint == ENDPOINT
+
+	def test_the_token_endpoint_is_on_the_stores_host_and_follows_a_test_endpoint(self) -> None:
+		assert Connection(ENDPOINT).token_url() == TOKEN_URL
+		fake = Connection("http://shopify-fake:8080/admin/api/2026-10/graphql.json")
+		assert fake.token_url() == "http://shopify-fake:8080/admin/oauth/access_token"
+		with pytest.raises(SourceError):
+			Connection("not a url").token_url()
+
+
+def granted(token: str) -> HttpResponse:
+	return HttpResponse(200, json.dumps({"access_token": token, "scope": "read_products"}).encode())
+
+
+class TestAuthorizers:
+	def credentials(self, transport: FakeTransport) -> ClientCredentialsAuthorizer:
+		return ClientCredentialsAuthorizer(TOKEN_URL, "client-id", "client-secret", transport)
+
+	def test_client_credentials_are_exchanged_once_and_renewed_when_shopify_rejects_the_token(self) -> None:
+		token_endpoint = scripted(granted("first"), granted("second"))
+		credentials = self.credentials(token_endpoint)
+		api = scripted(HttpResponse(401, b"{}"), graphql({"data": {"ok": True}}))
+		graph = GraphQlClient(Connection(ENDPOINT), LIBRARY, credentials, api, RecordingSleeper())
+		assert graph.query("ProductList").flag("ok")
+		assert [r.headers["X-Shopify-Access-Token"] for r in api.requests] == ["first", "second"]
+		grant = parse_qs(token_endpoint.requests[0].body.decode())
+		assert grant == {
+			"grant_type": ["client_credentials"],
+			"client_id": ["client-id"],
+			"client_secret": ["client-secret"],
+		}
+		assert token_endpoint.requests[0].url == TOKEN_URL
+		credentials.headers()
+		assert len(token_endpoint.requests) == 2, "a token is reused until Shopify rejects it"
+
+	def test_a_token_rejected_twice_stops_the_run(self) -> None:
+		credentials = self.credentials(scripted(granted("t")))
+		api = scripted(HttpResponse(401, b"{}"))
+		graph = GraphQlClient(Connection(ENDPOINT), LIBRARY, credentials, api, RecordingSleeper())
+		with pytest.raises(CredentialsRejected):
+			graph.query("ProductList")
+		assert len(api.requests) == 2
+
+	def test_a_refused_grant_stops_the_run_with_shopifys_reason_but_no_secret(self) -> None:
+		refused = HttpResponse(400, b'{"error":"invalid_client","error_description":"client-secret is bad"}')
+		with pytest.raises(CredentialsRejected) as error:
+			self.credentials(scripted(refused)).headers()
+		assert "invalid_client" in str(error.value)
+		assert "client-secret" not in str(error.value)
+		odd = HttpResponse(401, b'{"error":"Not A Code <script>"}')
+		with pytest.raises(CredentialsRejected) as odd_error:
+			self.credentials(scripted(odd)).headers()
+		assert "script" not in str(odd_error.value)
+
+	def test_a_busy_token_endpoint_pauses_the_run(self) -> None:
+		with pytest.raises(RetryLater):
+			self.credentials(scripted(HttpResponse(503, b"", {"retry-after": "120"}))).headers()
+
+	def test_a_grant_without_a_token_is_an_error(self) -> None:
+		with pytest.raises(SourceError, match="no access token"):
+			self.credentials(scripted(HttpResponse(200, b'{"scope":"x"}'))).headers()
+		with pytest.raises(SourceError, match="no access token"):
+			self.credentials(scripted(HttpResponse(200, b"not json"))).headers()
+
+	def test_missing_credentials_are_a_configuration_error(self) -> None:
+		with pytest.raises(SourceError, match="client ID and client secret"):
+			ClientCredentialsAuthorizer(TOKEN_URL, "", "secret", scripted())
+		with pytest.raises(SourceError, match="access token"):
+			ShopifyTokenAuthorizer("")
+
+	def test_a_legacy_token_has_nothing_to_renew(self) -> None:
+		assert not ShopifyTokenAuthorizer("token").renew()
+
+	def test_secrets_are_never_rendered(self) -> None:
+		assert "client-secret" not in repr(self.credentials(scripted()))
+
+	def test_the_connection_chooses_its_authorizer(self, shopify_config: ConnectionConfig) -> None:
+		connection = Connection(ENDPOINT)
+		chosen: RequestAuthorizer = authorizer(shopify_config, connection, scripted())
+		assert isinstance(chosen, ClientCredentialsAuthorizer)
+		legacy = replace(shopify_config, auth_method="Access Token", api_user="")
+		assert isinstance(authorizer(legacy, connection, scripted()), ShopifyTokenAuthorizer)
+		with pytest.raises(SourceError, match="Client Credentials"):
+			authorizer(replace(shopify_config, auth_method=""), connection, scripted())
 
 
 class TestReader:
@@ -192,16 +453,15 @@ class TestReader:
 		order = {"id": "gid://shopify/Order/9", "lineItems": first}
 		listing = {"orders": {"pageInfo": {"hasNextPage": False, "endCursor": None}, "nodes": [order]}}
 		transport = scripted(graphql({"data": listing}), graphql({"data": {"node": {"lineItems": more}}}))
-		client = GraphQlClient(Connection(ENDPOINT, "token"), LIBRARY, transport, RecordingSleeper())
-		page = ShopifyReader(shopify_config, client).page(Kind.ORDER, None, None, "")
+		page = ShopifyReader(shopify_config, client(transport)).page(Kind.ORDER, None, None, "")
 		assert [line.id() for line in page.nodes[0].children("lineItems")] == [
 			"gid://shopify/shop-s/LineItem/1",
 			"gid://shopify/shop-s/LineItem/2",
 		]
-		second = json.loads(transport.requests[1].body)
+		second = sent(transport, 1)
 		assert (second["operationName"], second["variables"]) == (
 			"OrderLineItemsPage",
-			{"id": "gid://shopify/Order/9", "after": "c1"},
+			{"id": "gid://shopify/Order/9", "after": "c1", "first": NESTED_PAGE_SIZE},
 		)
 
 	def test_a_connection_it_cannot_page_is_an_error(self, shopify_config: ConnectionConfig) -> None:
@@ -210,19 +470,50 @@ class TestReader:
 			"options": {"pageInfo": {"hasNextPage": True}, "nodes": []},
 		}
 		listing = {"products": {"pageInfo": {"hasNextPage": False, "endCursor": None}, "nodes": [truncated]}}
-		client = GraphQlClient(
-			Connection(ENDPOINT, "token"), LIBRARY, scripted(graphql({"data": listing})), RecordingSleeper()
-		)
-		with pytest.raises(SourceError, match=f"more than {NESTED_PAGE_SIZE}"):
-			ShopifyReader(shopify_config, client).page(Kind.PRODUCT, None, None, "")
+		graph = client(scripted(graphql({"data": listing})))
+		with pytest.raises(SourceError, match="more entries than one query returns"):
+			ShopifyReader(shopify_config, graph).page(Kind.PRODUCT, None, None, "")
 
 	def test_single_objects(self, shopify_config: ConnectionConfig) -> None:
 		transport: FakeTransport = scripted(graphql({"data": {"node": None}}))
-		client = GraphQlClient(Connection(ENDPOINT, "token"), LIBRARY, transport, RecordingSleeper())
 		assert (
-			ShopifyReader(shopify_config, client).node(Kind.PRODUCT, "gid://shopify/shop-s/Product/1") is None
+			ShopifyReader(shopify_config, client(transport)).node(
+				Kind.PRODUCT, "gid://shopify/shop-s/Product/1"
+			)
+			is None
 		)
-		assert json.loads(transport.requests[0].body)["variables"] == {"id": "gid://shopify/Product/1"}
+		assert sent(transport, 0)["variables"] == {
+			"id": "gid://shopify/Product/1",
+			**LIBRARY.page_sizes("ProductNode"),
+		}
+
+	def test_policies_are_read_on_their_own(self, shopify_config: ConnectionConfig) -> None:
+		policies = reader(shopify_config).page(Kind.POLICY, None, None, "")
+		assert [p.id() for p in policies.nodes] == [
+			"gid://shopify/shop-s/ShopPolicy/11",
+			"gid://shopify/shop-s/ShopPolicy/12",
+		]
+		assert not policies.has_next_page
+		assert not reader(shopify_config).is_incremental(Kind.POLICY)
+		one = reader(shopify_config).node(Kind.POLICY, "gid://shopify/shop-s/ShopPolicy/12")
+		assert one is not None and one.string("type") == "PRIVACY_POLICY"
+		assert reader(shopify_config).node(Kind.POLICY, "gid://shopify/shop-s/ShopPolicy/99") is None
+
+	def test_without_the_policies_scope_the_kind_is_unavailable(
+		self, shopify_config: ConnectionConfig
+	) -> None:
+		denied = graphql(
+			{
+				"errors": [
+					{
+						"message": "Access denied for shopPolicies field.",
+						"extensions": {"code": "ACCESS_DENIED"},
+					}
+				]
+			}
+		)
+		with pytest.raises(KindUnavailable, match="read_legal_policies"):
+			ShopifyReader(shopify_config, client(scripted(denied))).page(Kind.POLICY, None, None, "")
 
 
 class TestMappers:
@@ -261,6 +552,30 @@ class TestMappers:
 		assert returned + refunded == -refund.decimal("amount") == Decimal("-30.0")
 		assert order.records("notes")[0].string("text") == "Called customer about size."
 
+	def test_a_fully_refunded_order_gets_exactly_shopifys_refunds(
+		self, shopify_config: ConnectionConfig
+	) -> None:
+		"""The live store's fully refunded order (anonymised): one refund of the whole total, shipping and
+		the discounted line's tax included, and nothing derived from its REFUNDED status."""
+		order = values(shopify_config, Kind.ORDER, "804")
+		assert order.flag("submitted")
+		lines = order.records("lines")
+		goods = sum((line.decimal("qty") * line.decimal("rate") for line in lines), Decimal(0))
+		charges = sum((c.decimal("amount") for c in order.records("charges")), Decimal(0))
+		assert goods - order.decimal("discount") + charges == order.decimal("total") == Decimal("118.59")
+		refunds = order.records("refunds")
+		assert [refund.decimal("amount") for refund in refunds] == [Decimal("118.59")]
+		credit = refunds[0]
+		returned = sum(
+			(line.decimal("qty") * line.decimal("rate") for line in credit.records("lines")), Decimal(0)
+		)
+		refunded = sum((c.decimal("amount") for c in credit.records("charges")), Decimal(0))
+		assert returned + refunded == Decimal("-118.59")
+		assert [line.string("name") for line in credit.records("lines")] == [
+			"Silk Scarf - 10",
+			"Refund adjustment",
+		]
+
 	def test_a_voided_order_has_no_invoice(self, shopify_config: ConnectionConfig) -> None:
 		assert mapped(shopify_config, Kind.ORDER, "802") is None
 
@@ -286,6 +601,18 @@ class TestMappers:
 			"target": "/products/silk-scarf",
 			"status": 301,
 		}
+
+	def test_policies_are_pages_at_shopifys_paths(self, shopify_config: ConnectionConfig) -> None:
+		refund = mapped(shopify_config, Kind.POLICY, "11")
+		assert refund is not None
+		assert refund.values().all() == {
+			"title": "Refund policy",
+			"slug": "policies/refund-policy",
+			"parent": None,
+			"published": True,
+			"html": "<p>Returns within 30 days.</p>",
+		}
+		assert refund.legacy_paths == ("/policies/refund-policy",)
 
 
 def basic_discount(**discount: JsonValue) -> Node:
@@ -403,3 +730,7 @@ def test_the_adapter(shopify_config: ConnectionConfig) -> None:
 	assert {mapper.kind for mapper in ADAPTER.mappers(shopify_config)} == set(ADAPTER.kinds())
 	assert ADAPTER.filter_hint()
 	assert isinstance(ADAPTER.reader(shopify_config, scripted(), RecordingSleeper()), ShopifyReader)
+	fake = replace(
+		shopify_config, endpoint_override="http://shopify-fake:8080/admin/api/2026-10/graphql.json"
+	)
+	assert isinstance(ADAPTER.reader(fake, scripted(), RecordingSleeper()), ShopifyReader)

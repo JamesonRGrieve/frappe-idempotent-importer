@@ -12,6 +12,7 @@ import pytest
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import (
 	CredentialsRejected,
+	KindUnavailable,
 	RetryLater,
 	SourceError,
 	UnresolvedDependency,
@@ -289,6 +290,20 @@ class TestRunner:
 		assert harness.hold.reasons == ["HTTP 401"]
 		assert harness.store.finished[-1][1] == "Incomplete"
 		assert harness.lock.holder is None
+
+	def test_a_kind_the_credentials_cannot_read_is_skipped_and_retires_nothing(self) -> None:
+		harness = Harness({Kind.PAGE: [[node(1), node(2)]]})
+		harness.run()
+		cursor = harness.cursors.cursors[Kind.PAGE]
+		harness.clock.now = START + timedelta(hours=1)
+		state = harness.runner.start(Mode.FULL, False)
+		assert state is not None
+		harness.reader.errors = [KindUnavailable("the app lacks a scope")]
+		assert harness.runner.step(60) is True
+		assert harness.store.finished[-1][1] == "Complete"
+		assert state.counts.get(Kind.PAGE, Outcome.UNAVAILABLE) == 1
+		assert harness.engine.writer.retired == [], "its copies are left as they are"
+		assert harness.cursors.cursors[Kind.PAGE] == cursor
 
 	def test_a_source_error_fails_the_kind_and_moves_on(self) -> None:
 		harness = Harness({Kind.PAGE: [[node(1)]]})

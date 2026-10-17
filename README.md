@@ -17,7 +17,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Source | Status | What it mirrors |
 |---|---|---|
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images and brands, customers, coupons, orders with payments, refunds and notes, pages, post categories and posts, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
-| Shopify | Built | Collections, products with variants, prices, stock and images, customers, basic code discounts, orders with payments, refunds and timeline comments, pages, blogs, articles, comments and URL redirects — [coverage/shopify.md](coverage/shopify.md) |
+| Shopify | Built | Collections, products with variants, prices, stock and images, customers, basic code discounts, orders with payments, refunds and timeline comments, pages, shop policies, blogs, articles, comments and URL redirects — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy, Square Online, BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
@@ -85,8 +85,12 @@ This is the operator's decision to confirm (see below).
    - **WooCommerce:** the site's `https://` address, and either a WordPress Application Password (Users →
      Profile; reads drafts and the Redirection plugin's redirects) or a REST API consumer key and secret
      with Read access.
-   - **Shopify:** a custom app with the read scopes in [coverage/shopify.md](coverage/shopify.md); enter
-     the store's `<name>.myshopify.com` domain and the Admin API access token.
+   - **Shopify:** in Shopify's Dev Dashboard (dev.shopify.com, signed in to the store's organization),
+     create an app with the read scopes in [coverage/shopify.md](coverage/shopify.md), release a version
+     and install it on the store. Enter the store's `<name>.myshopify.com` domain, choose **Client
+     Credentials** and enter the app's client ID and client secret: the importer exchanges them for a
+     24-hour token and renews it itself. A legacy custom app (made in the store admin before 2026) can use
+     **Access Token** with its Admin API access token instead.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands
@@ -108,8 +112,9 @@ tests/e2e/run.sh                       # a real bench in podman, against a fake 
 ```
 
 The pure layers (the engine, both adapters, the field contract, naming) are tested without a bench over
-recorded fixtures. Every Shopify operation is validated against Shopify's published Admin schema and every
-fixture is executed against it; every WooCommerce fixture validates against
+recorded fixtures. Every Shopify operation is validated against Shopify's published Admin schema, priced
+by a static cost estimate that must match what a live store charged for it, and every fixture is executed
+against the schema; every WooCommerce fixture validates against
 [tests/schemas/woocommerce.json](tests/schemas/woocommerce.json), transcribed from the official
 WooCommerce, WordPress and Redirection documentation. The end-to-end suite builds the official ERPNext v16
 image with HRMS, the blog app, the Webshop fork, the router and this app, sets up three businesses, and

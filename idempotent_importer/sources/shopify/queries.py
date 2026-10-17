@@ -1,7 +1,14 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Every GraphQL document the Shopify adapter sends. The list, by-id and nested-page operations of each
-EntityQuery are generated from one template each; every fragment an operation spreads (transitively) is
-appended from graphql/fragments/<Name>.graphql. Ported from wp-woo-idempotent-importer's QueryLibrary."""
+"""Every GraphQL document the Shopify adapter sends. Hand-written operations live in graphql/operations; the
+list, by-id and nested-page operations of each EntityQuery are generated from one template each; every
+fragment an operation spreads (transitively) is appended from graphql/fragments/<Name>.graphql. Ported from
+wp-woo-idempotent-importer's QueryLibrary.
+
+Every page size a generated operation requests is an ``Int!`` variable: ``$first`` for the operation's own
+connection and ``NestedConnection.size_variable`` for each nested connection its node fragment pages
+through. ``page_sizes`` gives their defaults; the client shrinks them when Shopify refuses a query as too
+costly (``PageSizes``). Connections nothing pages through keep a literal ``first: 250`` (NESTED_PAGE_SIZE):
+shrinking those would truncate them."""
 
 from __future__ import annotations
 
@@ -15,21 +22,32 @@ from idempotent_importer.core.kind import Kind
 # The Shopify Admin API version every query is written and validated against.
 API_VERSION = "2026-10"
 GRAPHQL_DIR = Path(__file__).parent / "graphql"
-# Must equal the `first:` every fragment gives its nested connections.
+# The default number of objects a list operation asks for.
+PAGE_SIZE = 50
+# Shopify's largest page: the default for nested connections, and the literal size of the unpaged ones.
 NESTED_PAGE_SIZE = 250
+FIRST_VARIABLE = "first"
+SIZE_VARIABLE_SUFFIX = "First"
 INCREMENTAL_SORT_KEY = "UPDATED_AT"
 SPREAD = re.compile(r"\.\.\.\s*([A-Z][A-Za-z0-9_]*)")
 METAFIELDS = "MetafieldConnectionFields"
+SPDX_PREFIX = "# SPDX"
 
 
 @dataclass(frozen=True)
 class NestedConnection:
 	"""A connection on a top-level node that can hold more than one page (e.g. Product.variants). Its
-	selection is a connection-level fragment, shared by the main query and the follow-up page query."""
+	selection is a connection-level fragment, shared by the main query and the follow-up page query. In the
+	node's fragment its page size is the variable ``size_variable`` (e.g. ``variants(first:
+	$variantsFirst)``), so the client can shrink it when Shopify refuses a query as too costly."""
 
 	field: str
 	fragment: str
 	extra_arguments: str = ""
+
+	@property
+	def size_variable(self) -> str:
+		return f"{self.field}{SIZE_VARIABLE_SUFFIX}"
 
 
 @dataclass(frozen=True)
@@ -60,7 +78,7 @@ class EntityQuery:
 
 
 def entity_queries() -> dict[Kind, EntityQuery]:
-	"""The read definition of every kind the adapter mirrors, in SYNC_ORDER."""
+	"""The read definition of every kind the adapter lists, in SYNC_ORDER."""
 	updated = INCREMENTAL_SORT_KEY
 	metafields = NestedConnection("metafields", METAFIELDS)
 	queries = (
@@ -134,12 +152,20 @@ class QueryLibrary:
 	def __init__(self, directory: Path, queries: dict[Kind, EntityQuery]) -> None:
 		self._directory = directory
 		bodies: dict[str, str] = {}
+		sizes: dict[str, dict[str, int]] = {}
+		for path in sorted((directory / "operations").glob("*.graphql")):
+			bodies[path.stem] = self._read(f"operations/{path.name}")
 		for query in queries.values():
-			bodies[query.list_operation()] = self._list_body(query)
-			bodies[query.node_operation()] = self._node_body(query)
+			nested_sizes = {nested.size_variable: NESTED_PAGE_SIZE for nested in query.nested}
 			for nested in query.nested:
 				bodies[query.page_operation(nested)] = self._page_body(query, nested)
+				sizes[query.page_operation(nested)] = {FIRST_VARIABLE: NESTED_PAGE_SIZE}
+			bodies[query.list_operation()] = self._list_body(query)
+			sizes[query.list_operation()] = {FIRST_VARIABLE: PAGE_SIZE, **nested_sizes}
+			bodies[query.node_operation()] = self._node_body(query)
+			sizes[query.node_operation()] = nested_sizes
 		self._bodies = dict(sorted(bodies.items()))
+		self._sizes = sizes
 
 	@classmethod
 	def bundled(cls) -> QueryLibrary:
@@ -147,6 +173,12 @@ class QueryLibrary:
 
 	def operations(self) -> list[str]:
 		return list(self._bodies)
+
+	def page_sizes(self, operation: str) -> dict[str, int]:
+		"""The default page size of every size variable the operation declares (none for hand-written ones)."""
+		if operation not in self._bodies:
+			raise SourceError(f"Unknown GraphQL operation {operation}")
+		return dict(self._sizes.get(operation, {}))
 
 	def document(self, operation: str) -> str:
 		body = self._bodies.get(operation)
@@ -166,8 +198,17 @@ class QueryLibrary:
 		return body + fragments
 
 	@staticmethod
-	def _list_body(query: EntityQuery) -> str:
-		variables = "$first: Int!, $after: String" + (", $query: String" if query.searchable else "")
+	def _nested_size_variables(query: EntityQuery) -> str:
+		"""The ``, $<field>First: Int!`` declarations of the nested connections its node fragment uses."""
+		return "".join(f", ${nested.size_variable}: Int!" for nested in query.nested)
+
+	@classmethod
+	def _list_body(cls, query: EntityQuery) -> str:
+		variables = (
+			"$first: Int!, $after: String"
+			+ (", $query: String" if query.searchable else "")
+			+ cls._nested_size_variables(query)
+		)
 		arguments = "first: $first, after: $after" + (", query: $query" if query.searchable else "")
 		if query.sort_key is not None:
 			arguments += f", sortKey: {query.sort_key}"
@@ -179,10 +220,10 @@ class QueryLibrary:
 			"  }\n}\n"
 		)
 
-	@staticmethod
-	def _node_body(query: EntityQuery) -> str:
+	@classmethod
+	def _node_body(cls, query: EntityQuery) -> str:
 		return (
-			f"query {query.node_operation()}($id: ID!) {{\n"
+			f"query {query.node_operation()}($id: ID!{cls._nested_size_variables(query)}) {{\n"
 			f"  {query.node_field}(id: $id) {{\n    ...{query.fragment}\n  }}\n}}\n"
 		)
 
@@ -190,10 +231,10 @@ class QueryLibrary:
 	def _page_body(query: EntityQuery, nested: NestedConnection) -> str:
 		extra = f", {nested.extra_arguments}" if nested.extra_arguments else ""
 		return (
-			f"query {query.page_operation(nested)}($id: ID!, $after: String) {{\n"
+			f"query {query.page_operation(nested)}($id: ID!, $after: String, $first: Int!) {{\n"
 			"  node(id: $id) {\n"
 			f"    ... on {query.graphql_type} {{\n"
-			f"      {nested.field}(first: {NESTED_PAGE_SIZE}, after: $after{extra}) {{\n"
+			f"      {nested.field}(first: $first, after: $after{extra}) {{\n"
 			f"        ...{nested.fragment}\n      }}\n    }}\n  }}\n}}\n"
 		)
 
@@ -205,5 +246,5 @@ class QueryLibrary:
 		path = self._directory / relative
 		if not path.is_file():
 			raise SourceError(f"Missing GraphQL document {relative}")
-		lines = [line for line in path.read_text().splitlines() if not line.startswith("# SPDX")]
+		lines = [line for line in path.read_text().splitlines() if not line.startswith(SPDX_PREFIX)]
 		return "\n".join(lines).strip() + "\n"

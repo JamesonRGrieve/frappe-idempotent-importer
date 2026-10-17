@@ -70,10 +70,10 @@ fragment OrderFields on Order {
       ...TaxLineFields
     }
   }
-  lineItems(first: 250) {
+  lineItems(first: $lineItemsFirst) {
     ...LineItemConnectionFields
   }
-  shippingLines(first: 250, includeRemovals: false) {
+  shippingLines(first: $shippingLinesFirst, includeRemovals: false) {
     ...ShippingLineConnectionFields
   }
   refunds(first: 250) {
@@ -125,10 +125,10 @@ fragment OrderFields on Order {
       ...MoneyBagFields
     }
   }
-  events(first: 250) {
+  events(first: $eventsFirst) {
     ...EventConnectionFields
   }
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

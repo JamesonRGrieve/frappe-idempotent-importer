@@ -6,7 +6,9 @@ live store:
    recorded Shopify response executes back through its operation unchanged (so each fixture has exactly
    the shape — field names, enums, non-nulls — Shopify returns for it);
 2. every recorded REST response validates against its source's OpenAPI document (WooCommerce's is
-   transcribed from its official documentation, tests/schemas/woocommerce.json).
+   transcribed from its official documentation, tests/schemas/woocommerce.json);
+3. every Shopify operation's static cost estimate (tools/query_cost.py) matches the cost recorded from a
+   live store, and every operation fits under Shopify's single-query limit at page size 1.
 
 Each check returns its failures (empty when everything holds)."""
 
@@ -21,8 +23,10 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 from referencing.jsonschema import DRAFT202012
 
+from idempotent_importer.sources.shopify.page_sizes import MAX_QUERY_COST, SMALLEST_SIZE, TARGET_SHARE
 from idempotent_importer.sources.shopify.queries import QueryLibrary
 from tests.support.fixtures import graphql_fixtures, rest_fixtures, states
+from tools.query_cost import QueryCost, recorded_costs
 from tools.schemas import openapi
 
 OPENAPI_ID = "urn:openapi"
@@ -35,6 +39,33 @@ def invalid_operations(schema: GraphQLSchema, library: QueryLibrary) -> list[str
 		errors = validate(schema, parse(library.document(operation)))
 		failures += [f"{operation}: {error.message}" for error in errors]
 	return failures
+
+
+def mispriced_operations(schema: GraphQLSchema, library: QueryLibrary) -> tuple[list[str], list[str]]:
+	"""The static cost estimate must match every cost recorded from a live store, and every operation must
+	fit under Shopify's single-query limit (with PageSizes' margin) once its page sizes are shrunk to 1: one
+	that can't is unfixable at run time. Returns the failures, and the operations over the limit at their
+	default sizes (the client shrinks those)."""
+	cost = QueryCost(schema)
+	recorded = recorded_costs()
+	limit = MAX_QUERY_COST * TARGET_SHARE
+	failures: list[str] = []
+	shrinking: list[str] = []
+	for operation in library.operations():
+		document = library.document(operation)
+		call = recorded.get(operation)
+		if call is None:
+			failures.append(f"{operation}: no cost recorded from a live store")
+			continue
+		estimate = cost.of(document, call.variables)
+		if estimate != call.cost:
+			failures.append(f"{operation}: estimated cost {estimate}, but Shopify charged {call.cost}")
+		smallest = cost.of(document, dict.fromkeys(library.page_sizes(operation), SMALLEST_SIZE))
+		if smallest > limit:
+			failures.append(f"{operation}: costs {smallest} even with every page size at 1, over {limit}")
+		if estimate > MAX_QUERY_COST:
+			shrinking.append(f"{operation} ({estimate})")
+	return failures, shrinking
 
 
 def field_resolver(source: Any, info: Any, **_arguments: Any) -> Any:
@@ -50,7 +81,7 @@ def mismatched_shopify_fixtures(schema: GraphQLSchema, library: QueryLibrary) ->
 				schema,
 				library.document(fixture.operation),
 				root_value=fixture.data,
-				variable_values=fixture.variables,
+				variable_values={**library.page_sizes(fixture.operation), **fixture.variables},
 				field_resolver=field_resolver,
 			)
 			name = f"{state}/{fixture.file.name}"

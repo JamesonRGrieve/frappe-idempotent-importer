@@ -1,0 +1,358 @@
+{
+    "apiVersion": "2026-10",
+    "recorded": "2026-10-16",
+    "connectionMultipliers": {
+        "1": 1,
+        "2": 1,
+        "3": 2,
+        "5": 3,
+        "8": 4,
+        "12": 4,
+        "13": 5,
+        "20": 5,
+        "21": 6,
+        "33": 6,
+        "34": 7,
+        "50": 7,
+        "90": 8,
+        "91": 9,
+        "100": 9,
+        "150": 10,
+        "249": 11,
+        "250": 11
+    },
+    "operations": {
+        "ArticleList": {
+            "variables": {
+                "first": 50,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 121
+        },
+        "ArticleMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "ArticleNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 17
+        },
+        "BlogList": {
+            "variables": {
+                "first": 50,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 100
+        },
+        "BlogMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "BlogNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "CollectionList": {
+            "variables": {
+                "first": 50,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 121
+        },
+        "CollectionMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "CollectionNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 17
+        },
+        "CommentList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 23
+        },
+        "CommentNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 3
+        },
+        "CustomerAddressesV2Page": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "CustomerList": {
+            "variables": {
+                "first": 50,
+                "addressesV2First": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 205
+        },
+        "CustomerMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "CustomerNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "addressesV2First": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 29
+        },
+        "DeliveryProfileList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 3957
+        },
+        "DeliveryProfileNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 565
+        },
+        "DiscountNodeList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 338
+        },
+        "DiscountNodeNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 48
+        },
+        "DraftOrderLineItemsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 58
+        },
+        "DraftOrderList": {
+            "variables": {
+                "first": 50,
+                "lineItemsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 548
+        },
+        "DraftOrderMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "DraftOrderNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "lineItemsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 78
+        },
+        "FileList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 16
+        },
+        "FileNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 2
+        },
+        "InventoryItemProduct": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 3
+        },
+        "MenuList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 30
+        },
+        "MenuNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 4
+        },
+        "OrderEventsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 25
+        },
+        "OrderLineItemsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 58
+        },
+        "OrderList": {
+            "variables": {
+                "first": 50,
+                "lineItemsFirst": 250,
+                "shippingLinesFirst": 250,
+                "eventsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 1080
+        },
+        "OrderMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "OrderNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "lineItemsFirst": 250,
+                "shippingLinesFirst": 250,
+                "eventsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 154
+        },
+        "OrderShippingLinesPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 25
+        },
+        "PageList": {
+            "variables": {
+                "first": 50,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 100
+        },
+        "PageMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "PageNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "ProductCollectionsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "ProductList": {
+            "variables": {
+                "first": 50,
+                "variantsFirst": 250,
+                "mediaFirst": 250,
+                "collectionsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 1941
+        },
+        "ProductMediaPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 25
+        },
+        "ProductMetafieldsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 14
+        },
+        "ProductNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "variantsFirst": 250,
+                "mediaFirst": 250,
+                "collectionsFirst": 250,
+                "metafieldsFirst": 250
+            },
+            "requestedQueryCost": 277
+        },
+        "ProductVariantsPage": {
+            "variables": {
+                "id": "gid://shopify/Product/1",
+                "first": 250
+            },
+            "requestedQueryCost": 223
+        },
+        "Shop": {
+            "variables": [],
+            "requestedQueryCost": 2
+        },
+        "ShopPolicies": {
+            "variables": [],
+            "requestedQueryCost": 2
+        },
+        "UrlRedirectList": {
+            "variables": {
+                "first": 50
+            },
+            "requestedQueryCost": 9
+        },
+        "UrlRedirectNode": {
+            "variables": {
+                "id": "gid://shopify/Product/1"
+            },
+            "requestedQueryCost": 1
+        },
+        "WebhookSubscriptions": {
+            "variables": {
+                "uri": "https://example.com/webhooks"
+            },
+            "requestedQueryCost": 11
+        }
+    }
+}

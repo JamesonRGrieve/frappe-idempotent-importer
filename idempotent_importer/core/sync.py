@@ -31,6 +31,8 @@ class Outcome(StrEnum):
 	UNSUPPORTED = "unsupported"
 	DEFERRED = "deferred"
 	FAILED = "failed"
+	# The whole kind: the source won't give it to these credentials (KindUnavailable).
+	UNAVAILABLE = "unavailable"
 
 	def is_incomplete(self) -> bool:
 		"""Outcomes that leave the kind incomplete for this run (its incremental cursor must not advance)."""

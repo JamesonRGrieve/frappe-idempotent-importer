@@ -31,7 +31,7 @@ fragment CollectionFields on Collection {
       }
     }
   }
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

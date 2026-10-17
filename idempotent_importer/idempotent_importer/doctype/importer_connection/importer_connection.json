@@ -43,6 +43,7 @@
   "import_discounts",
   "import_orders",
   "import_pages",
+  "import_policies",
   "column_break_kinds",
   "import_blogs",
   "import_articles",
@@ -101,23 +102,23 @@
   {
    "fieldname": "auth_method",
    "fieldtype": "Select",
-   "label": "WooCommerce Credentials",
-   "options": "\nApplication Password\nConsumer Key",
-   "depends_on": "eval:doc.source==\"WooCommerce\"",
-   "mandatory_depends_on": "eval:doc.source==\"WooCommerce\"",
-   "description": "An Application Password (Users → Profile) reads everything, drafts and redirects included. A REST API consumer key (WooCommerce → Settings → Advanced) reads the store, and published WordPress content only."
+   "label": "Credentials",
+   "options": "\nApplication Password\nConsumer Key\nClient Credentials\nAccess Token",
+   "depends_on": "eval:in_list([\"WooCommerce\", \"Shopify\"], doc.source)",
+   "mandatory_depends_on": "eval:in_list([\"WooCommerce\", \"Shopify\"], doc.source)",
+   "description": "WooCommerce: an Application Password (Users → Profile) reads everything, drafts and redirects included; a REST API consumer key (WooCommerce → Settings → Advanced) reads the store, and published WordPress content only. Shopify: Client Credentials for an app made in the Dev Dashboard (the importer exchanges them for a 24-hour token and renews it); Access Token for a legacy custom app made in the store admin before 2026."
   },
   {
    "fieldname": "api_user",
    "fieldtype": "Data",
-   "label": "User or Key",
-   "description": "WooCommerce: the WordPress user name, or the consumer key."
+   "label": "User, Key or Client ID",
+   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID."
   },
   {
    "fieldname": "api_secret",
    "fieldtype": "Password",
    "label": "Secret",
-   "description": "The Application Password, consumer secret or Shopify Admin API access token. Never shown again or logged."
+   "description": "The Application Password, consumer secret, Shopify client secret or legacy Admin API access token. Never shown again or logged."
   },
   {
    "fieldname": "target_section",
@@ -311,6 +312,12 @@
    "fieldname": "import_pages",
    "fieldtype": "Check",
    "label": "Pages → Web Pages",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_policies",
+   "fieldtype": "Check",
+   "label": "Shop policies → Web Pages",
    "default": "1"
   },
   {

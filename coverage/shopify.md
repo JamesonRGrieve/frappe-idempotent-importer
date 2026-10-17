@@ -5,11 +5,38 @@ The single source of truth for what the Shopify adapter mirrors. Its GraphQL ope
 fixtures are ported from wp-woo-idempotent-importer, and every operation and fixture is proven against
 Shopify's published Admin schema (`python -m tools.prove`).
 
-Access: a custom app with read scopes for products, inventory, customers, orders (`read_all_orders` for
-orders older than 60 days), discounts, content (pages and blogs) and online store navigation; enter the
-store's `<name>.myshopify.com` domain and the Admin API access token. Rate limits: Shopify meters a
-query-cost bucket and reports it on every response; before each query the client waits until the bucket
-can take one as costly as the last, and a throttled query is retried once it refills.
+Access: an app made in Shopify's Dev Dashboard (dev.shopify.com, signed in to the store's organization)
+with the read scopes below, released and installed on the store. The connection takes the store's
+`<name>.myshopify.com` domain and the app's client ID and secret (**Client Credentials**); the importer
+exchanges them for a 24-hour token and renews it whenever Shopify rejects it. A refused grant (a wrong
+secret, the app not installed) stops the run and holds scheduled runs, like any rejected credentials. A
+legacy custom app made in the store admin before 2026 can use its permanent token instead (**Access
+Token**).
+
+| Scope | Read for |
+|---|---|
+| `read_products` | Products, variants, product media, collections |
+| `read_inventory` | Stock quantities, weights |
+| `read_customers` | Customers and their addresses |
+| `read_discounts` | Code discounts |
+| `read_orders` | Orders, refunds, transactions, the order timeline (last 60 days) |
+| `read_all_orders` | Orders older than 60 days. Granted by Shopify on request only; the Dev Dashboard doesn't offer it |
+| `read_content` | Pages, blogs, articles, comments |
+| `read_online_store_navigation` | URL redirects |
+| `read_legal_policies` | Shop policies. Read on their own: without the scope everything else mirrors, the run warns that the policies weren't read, and the policy pages already mirrored stay as they are |
+
+Rate limits: Shopify meters a query-cost bucket and reports it on every response; before each query the
+client waits until the bucket can take one as costly as the last, and a throttled query is retried once
+it refills.
+
+Query cost: Shopify refuses before running it any query whose requested cost is over 1,000 points. Every
+page size the importer asks for (the page itself and each nested connection it pages through) is a query
+variable; a refused query is resent at once with every size scaled down by how far over it was (never
+below 1), the sizes that fit are kept for the rest of the run, and they grow back toward the defaults (50
+per page, 250 per nested page) while responses report room under the limit. `python -m tools.prove` checks
+that every operation fits at page size 1 and that its static cost estimate matches the cost a live store
+charged for it (`tests/fixtures/shopify-query-cost.json`, recorded by wp-woo-idempotent-importer's
+`tools/calibrate-query-cost.php` against a development store).
 
 Incremental runs read everything that has `updated_at` (collections, products, customers, discounts,
 orders, pages, articles); blogs, comments and redirects are read in full.
@@ -28,11 +55,12 @@ orders, pages, articles); blogs, comments and redirects are read in full.
 | Active, published products | **Website Item** on the Public Site's Webshop Store | |
 | Customers and their addresses | **Customer**, **Contact**, **Address** (default address as billing) | |
 | Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code, on the Public Site's Webshop Store | Another store can hold the same code at once. |
-| Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. |
+| Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. A refunded order gets exactly Shopify's refunds: nothing is derived from its status. |
 | Orders awaiting payment | Draft **Sales Invoice** | Voided and cancelled orders aren't mirrored. |
 | Refunds | Credit note + refund **Payment Entry** | Shipping or other amounts refunded beyond the lines become an adjustment line. |
 | Order timeline comments | **Comment** on the invoice | |
 | Pages | **Web Page** under the prefix | |
+| Shop policies (refund, privacy, terms, shipping, …) | **Web Page** `<prefix>/policies/<type>` | Read by their own query (`read_legal_policies`). |
 | Blogs, articles | **Blog Category**, **Blog Post** (+ **Blogger**) | |
 | Published comments | **Comment** on the Blog Post | |
 | URL redirects, old product/collection/page/blog/article URLs | **Website Route Redirect** under the prefix | |
@@ -46,7 +74,7 @@ orders, pages, articles); blogs, comments and redirects are read in full.
 | Orders with tax-inclusive prices | The taxes can't be split out of the prices exactly into ERPNext's tax rows. |
 | Duties | No sales tax and charge type for them. |
 | Fulfillments and tracking | Delivery Notes would move stock a second time (see README, "Decisions to confirm"). |
-| Draft orders, files, menus, delivery profiles, shop policies and settings, metafields, metaobjects | Later phases (Quotation, File, Website Settings, Shipping Rule have homes; not built yet). |
+| Draft orders, files, menus, delivery profiles, shop settings, metafields, metaobjects | Later phases (Quotation, File, Website Settings, Shipping Rule have homes; not built yet). |
 | Product tags, article tags and images | Later phase. |
 | Product reviews | Shopify has no reviews API (the PHP importer reads a review app's CSV export; later phase). |
 | Selling plans, subscriptions, markets, B2B, staff, abandoned checkouts, payouts | No first-party home. |

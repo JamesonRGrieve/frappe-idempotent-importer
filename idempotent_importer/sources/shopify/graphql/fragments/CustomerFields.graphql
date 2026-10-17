@@ -32,10 +32,10 @@ fragment CustomerFields on Customer {
   defaultAddress {
     ...MailingAddressFields
   }
-  addressesV2(first: 250) {
+  addressesV2(first: $addressesV2First) {
     ...MailingAddressConnectionFields
   }
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

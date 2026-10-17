@@ -2,24 +2,29 @@
 """Reads complete Shopify objects. A page's nodes have every nested connection declared on their EntityQuery
 followed to the end; any other connection that still has more pages is an error, never a silent
 truncation. Shopify's own ids (``gid://shopify/<Type>/<id>``) become this connection's identities
-(``gid://shopify/<connection>/<Type>/<id>``), wherever they appear in the object."""
+(``gid://shopify/<connection>/<Type>/<id>``), wherever they appear in the object.
+
+The shop's legal policies need an access scope of their own (read_legal_policies), so they are read by
+their own operation: without the scope that kind is unavailable (KindUnavailable), and everything else
+still mirrors."""
 
 from __future__ import annotations
 
 import re
 from datetime import UTC, datetime
 
-from idempotent_importer.core.errors import SourceError
+from idempotent_importer.core.errors import KindUnavailable, SourceError
 from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonObject, JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig, Page
-from idempotent_importer.sources.shopify.client import GraphQlClient
-from idempotent_importer.sources.shopify.queries import NESTED_PAGE_SIZE, EntityQuery, entity_query
+from idempotent_importer.sources.shopify.client import AccessDenied, GraphQlClient
+from idempotent_importer.sources.shopify.queries import EntityQuery, entity_query
 
 SOURCE_ID = "shopify"
-PAGE_SIZE = 50
 SHOPIFY_GID = re.compile(r"^gid://shopify/([A-Za-z]+)/([A-Za-z0-9-]+)(\?.*)?$")
+SHOP_POLICIES_OPERATION = "ShopPolicies"
+POLICIES_SCOPE = "read_legal_policies"
 
 
 def search_query(updated_since: datetime | None, filter_: str) -> str | None:
@@ -38,11 +43,13 @@ class ShopifyReader:
 		self._client = client
 
 	def is_incremental(self, kind: Kind) -> bool:
-		return entity_query(kind).is_incremental()
+		return kind is not Kind.POLICY and entity_query(kind).is_incremental()
 
 	def page(self, kind: Kind, cursor: str | None, since: datetime | None, filter_: str) -> Page:
+		if kind is Kind.POLICY:
+			return Page(self._policies(), False, None)
 		query = entity_query(kind)
-		variables: dict[str, JsonValue] = {"first": PAGE_SIZE, "after": cursor}
+		variables: dict[str, JsonValue] = {"after": cursor}
 		if query.searchable:
 			variables["query"] = search_query(since, filter_)
 		connection = self._client.query(query.list_operation(), variables).required_child(query.connection)
@@ -51,6 +58,8 @@ class ShopifyReader:
 		return Page(nodes, page_info.flag("hasNextPage"), page_info.optional_string("endCursor"))
 
 	def node(self, kind: Kind, gid: str) -> Node | None:
+		if kind is Kind.POLICY:
+			return next((policy for policy in self._policies() if policy.id() == gid), None)
 		identity = Identity.parse(gid)
 		query = entity_query(kind)
 		data = self._client.query(
@@ -58,6 +67,13 @@ class ShopifyReader:
 		)
 		node = data.child(query.node_field)
 		return None if node is None else self._complete(query, node)
+
+	def _policies(self) -> list[Node]:
+		try:
+			shop = self._client.query(SHOP_POLICIES_OPERATION).required_child("shop")
+		except AccessDenied as e:
+			raise KindUnavailable(f"the app lacks the {POLICIES_SCOPE} access scope (Shopify: {e})") from e
+		return [self._identified(policy.raw()) for policy in shop.children("shopPolicies")]
 
 	def _complete(self, query: EntityQuery, node: Node) -> Node:
 		data = node.raw()
@@ -83,13 +99,15 @@ class ShopifyReader:
 		truncated = first_truncated_path(data, shopify_id)
 		if truncated is not None:
 			raise SourceError(
-				f"{truncated} has more than {NESTED_PAGE_SIZE} entries, which the importer cannot page through."
+				f"{truncated} has more entries than one query returns, and the importer does not page through it."
 			)
+		return self._identified(data)
+
+	def _identified(self, data: JsonObject) -> Node:
 		identified = self._identities(data)
 		if not isinstance(identified, dict):
-			raise SourceError(f"{shopify_id} is not an object.")
-		gid = str(identified["id"])
-		return Node(identified, gid)
+			raise SourceError("A Shopify object is not an object.")
+		return Node(identified, str(identified["id"]))
 
 	def _identities(self, value: JsonValue) -> JsonValue:
 		"""Every Shopify global id in ``value`` as this connection's identity."""

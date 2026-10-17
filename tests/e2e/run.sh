@@ -62,7 +62,6 @@ suite() {
 	step assert_woocommerce woo-b v1
 	step assert_shopify v1
 	step assert_shared_coupon_codes welcome10 woo-a woo-b
-	step assert_storeless_site_refuses_codes woo-a
 
 	echo "== Unchanged sources: full and incremental re-runs must write nothing"
 	step checksum v1

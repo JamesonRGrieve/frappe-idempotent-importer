@@ -18,7 +18,8 @@ truth for what each source mirrors and what is a gap. Python rules:
 - `contract.py` — the shared field contract every mapper produces and every writer reads; `naming.py` —
   how globally named ERPNext records and routes are scoped to a connection.
 - `sources/<source>/` — one adapter: `adapter`, `reader`, `mapping` (one mapper per kind), and for
-  Shopify `client` + `queries` + `graphql/fragments`. `sources/registry.py` is the single list of sources;
+  Shopify `auth` (client credentials or a legacy token), `client`, `page_sizes` (shrinking queries Shopify
+  refuses as too costly), `queries` + `graphql/{fragments,operations}`. `sources/registry.py` is the single list of sources;
   listed-but-unbuilt ones are `ListedAdapter`s that refuse to run.
 - `erpnext/` — the Frappe side: `stores` (Importer Link/Seen/Run, cursors, lock, credential hold),
   `context` (a connection's targets), `media`, `writers/` (one writer per kind: catalog, parties,

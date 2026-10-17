@@ -9,7 +9,7 @@ fragment PageFields on Page {
   templateSuffix
   createdAt
   updatedAt
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

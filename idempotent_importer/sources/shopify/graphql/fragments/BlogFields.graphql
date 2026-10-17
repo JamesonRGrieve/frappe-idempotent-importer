@@ -6,7 +6,7 @@ fragment BlogFields on Blog {
   commentPolicy
   templateSuffix
   updatedAt
-  metafields(first: 250) {
+  metafields(first: $metafieldsFirst) {
     ...MetafieldConnectionFields
   }
 }

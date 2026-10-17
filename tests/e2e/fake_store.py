@@ -12,11 +12,13 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import json
 import struct
 import sys
 import zlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -28,8 +30,16 @@ PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 BINARY_MARKER = bytes(range(0x80, 0xA0))
 MEDIA_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".webp")
 WOO_AUTHORIZATION = "Basic " + base64.b64encode(b"e2e:e2e-application-password").decode()
+# The token the fake Shopify issues for the e2e app's client credentials (a Dev Dashboard app's grant).
 SHOPIFY_TOKEN = "e2e-shopify-token"
+SHOPIFY_TOKEN_PATH = "/admin/oauth/access_token"
+SHOPIFY_CLIENT_GRANT = {
+	"grant_type": ["client_credentials"],
+	"client_id": ["e2e-client-id"],
+	"client_secret": ["e2e-client-secret"],
+}
 THROTTLE_RETRY_AFTER_SECONDS = "120"
+HTTP_BAD_REQUEST = 400
 HTTP_UNAUTHORIZED = 401
 HTTP_TOO_MANY_REQUESTS = 429
 
@@ -63,11 +73,15 @@ class FakeStore(BaseHTTPRequestHandler):
 			return
 		state = self.read_state(f"{host}-state")
 		if host == "shopify-fake":
+			length = int(self.headers.get("Content-Length") or 0)
+			body = self.rfile.read(length)
+			if method == "POST" and self.path == SHOPIFY_TOKEN_PATH:
+				self.send(shopify_grant(body))
+				return
 			if self.headers.get("X-Shopify-Access-Token") != SHOPIFY_TOKEN:
 				self.send(Answer(HTTP_UNAUTHORIZED, b'{"errors":"[API] Invalid API key or access token"}'))
 				return
-			length = int(self.headers.get("Content-Length") or 0)
-			self.send(ShopifyResponder(state).answer(self.rfile.read(length)))
+			self.send(ShopifyResponder(state).answer(body))
 			return
 		if self.headers.get("Authorization") != WOO_AUTHORIZATION:
 			self.send(Answer(HTTP_UNAUTHORIZED, b'{"code":"rest_not_logged_in"}'))
@@ -89,6 +103,15 @@ class FakeStore(BaseHTTPRequestHandler):
 
 	def log_message(self, format: str, *args: object) -> None:
 		sys.stderr.write(f"{self.headers.get('Host')} {format % args}\n")
+
+
+def shopify_grant(body: bytes) -> Answer:
+	"""Shopify's client credentials grant: the e2e app's client ID and secret get the token the Admin API
+	answers to; anything else is refused as Shopify refuses it."""
+	if parse_qs(body.decode()) != SHOPIFY_CLIENT_GRANT:
+		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_client"}')
+	grant = {"access_token": SHOPIFY_TOKEN, "scope": "read_products", "expires_in": 86399}
+	return Answer(200, json.dumps(grant).encode())
 
 
 def png(path: str) -> bytes:

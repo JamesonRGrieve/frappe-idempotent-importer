@@ -20,7 +20,7 @@ from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Protocol
 
-from idempotent_importer.core.errors import CredentialsRejected, RetryLater, SourceError
+from idempotent_importer.core.errors import CredentialsRejected, KindUnavailable, RetryLater, SourceError
 from idempotent_importer.core.kind import SYNC_ORDER, Kind
 from idempotent_importer.core.node import JsonValue
 from idempotent_importer.core.source import SourceReader
@@ -238,6 +238,10 @@ class Runner:
 			except CredentialsRejected as e:
 				self._stop(state, kind, e)
 				return True
+			except KindUnavailable as e:
+				logger.warning("%s not mirrored: %s", kind.value, e)
+				state.counts.add(kind, Outcome.UNAVAILABLE)
+				done = True
 			except SourceError as e:
 				logger.error("Reading %s failed: %s", kind.value, e)
 				state.counts.add(kind, Outcome.FAILED)
@@ -295,6 +299,8 @@ class Runner:
 	def _finish_kind(self, state: RunState, kind: Kind) -> None:
 		if state.counts.is_incomplete(kind):
 			logger.warning("%s did not complete cleanly; it is retried next run.", kind.value)
+			return
+		if state.counts.get(kind, Outcome.UNAVAILABLE):
 			return
 		if state.mode is Mode.FULL:
 			if self._deps.filters.get(kind, ""):

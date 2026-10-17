@@ -677,6 +677,12 @@ class TestWriters(IntegrationTestCase):
 		self.assertEqual(
 			self.mirror(Kind.ORDER, OrderWriter, gid("Order", "8"), no_rate), Outcome.UNSUPPORTED
 		)
+		other_base = {**usd, "base_currency": "EUR"}
+		self.assertEqual(
+			self.mirror(Kind.ORDER, OrderWriter, gid("Order", "10"), other_base),
+			Outcome.UNSUPPORTED,
+			"a base total in another currency than the company's",
+		)
 
 	def draft(self, qty: str = "2") -> Fields:
 		order = self.order(qty=qty)

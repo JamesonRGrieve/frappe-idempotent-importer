@@ -153,6 +153,26 @@ BUSINESSES = (
 		"https://harbourpine.example",
 		{"api_secret": "e2e-squarespace-key"},
 	),
+	Business(
+		"WX",
+		"Store X",
+		"wix-x",
+		"Wix",
+		"wix",
+		"wix-fake",
+		"http://wix-fake:8080",
+		{"api_account": "e2e-wix-site", "api_secret": "e2e-wix-key"},
+	),
+	Business(
+		"MG",
+		"Store M",
+		"magento-m",
+		"Magento / Adobe Commerce",
+		"magento",
+		"magento-fake",
+		"http://magento-fake:8080",
+		{"api_secret": "e2e-magento-token"},
+	),
 )
 
 
@@ -396,6 +416,8 @@ def main() -> None:
 		"assert_square_online": assert_square_online,
 		"assert_bigcommerce": assert_bigcommerce,
 		"assert_squarespace": assert_squarespace,
+		"assert_wix": assert_wix,
+		"assert_magento": assert_magento,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -1219,6 +1241,178 @@ def assert_squarespace(state: str) -> None:
 		),
 		target(connection, "customer", "Profile", "6c3000000000000000000024"),
 		"new order 1003, linked to the new customer",
+	)
+
+
+@check
+def assert_wix(state: str) -> None:
+	connection = "wix-x"
+	mug = target(connection, "product", "Product", "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001")
+	expect(
+		(mug, frappe.db.get_value("Item", mug, "item_group")),
+		("WX-WIX-MUG-1", "Mugs - WX"),
+		"the mug: its default variant's SKU, its category",
+	)
+	expect(stock_of(connection, mug), amount("14"), "the mug's tracked stock, not reduced by orders")
+	expect(frappe.db.get_value("Item Barcode", {"parent": mug}, "barcode"), "0845511200019", "barcode")
+	sage = part(
+		connection,
+		"variant",
+		"Variant/1a7e5c10-0002-4c2e-9b41-6f0d2a1e0002:7c1d3e20-0001-4f8a-a3b2-1d9c4e5f0001",
+	)
+	expect(
+		(item_price(connection, sage), stock_of(connection, sage)),
+		(amount("22"), amount("6")),
+		"the sage towel: its compare-at price (the sale is a pricing rule) and stock",
+	)
+	order = target(connection, "order", "Order", "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(
+			1,
+			amount("69.93"),
+			amount("6.40"),
+			target(connection, "customer", "Contact", "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001"),
+		),
+		"order 10001's invoice",
+	)
+	expect(
+		frappe.db.count(
+			"Comment",
+			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
+		),
+		1,
+		"order 10001's fulfillment",
+	)
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice",
+			target(connection, "order", "Order", "8f1e2d30-0002-4c5b-a69d-7e8f9a0b0002"),
+			"docstatus",
+		),
+		0,
+		"unpaid order 10002",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		1,
+		"the one-product percentage coupon (not per-customer, free-shipping, amount-off-products or deactivated ones)",
+	)
+	post = target(connection, "article", "Post", "0e1f2a30-0001-4b5c-9d6e-7f8a9b0c0001")
+	expect(
+		frappe.db.get_value("Blog Post", post, "blog_category"),
+		target(connection, "blog", "BlogCategory", "4d3c2b10-0001-4e5f-8a9b-0c1d2e3f0001"),
+		"the post in its first category",
+	)
+	expect(
+		'<img src="/files/kiln' in (frappe.db.get_value("Blog Post", post, "content_html") or ""),
+		True,
+		"the post's image, copied",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
+		1,
+		"the approved review",
+	)
+	if state == "v1":
+		expect(item_price(connection, mug), amount("28"), "the mug's price")
+		bowl = target(connection, "product", "Product", "1a7e5c10-0003-4c2e-9b41-6f0d2a1e0003")
+		expect(published(bowl), 0, "a hidden product")
+		return
+	expect(item_price(connection, mug), amount("30"), "the mug's new price")
+	credit = part(connection, "refund", "Refund/b0000000-0000-4000-8000-000000000001")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-17.01"),
+		"order 10001's refund",
+	)
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice",
+			target(connection, "order", "Order", "8f1e2d30-0003-4c5b-a69d-7e8f9a0b0003"),
+			"customer",
+		),
+		target(connection, "customer", "Contact", "2c4e6a80-0003-4b3d-9e1f-5a6b7c8d0003"),
+		"new order 10003, linked to the new contact",
+	)
+
+
+@check
+def assert_magento(state: str) -> None:
+	connection = "magento-m"
+	kettle = target(connection, "product", "Product", "11")
+	expect(
+		(kettle, frappe.db.get_value("Item", kettle, "item_group")),
+		("MG-MAG-KETTLE-1", "Galley - MG"),
+		"the kettle: its SKU, its category (not the store root)",
+	)
+	expect(stock_of(connection, kettle), amount("7"), "the kettle's stock, not reduced by orders")
+	navy = part(connection, "variant", "Variant/122")
+	red = part(connection, "variant", "Variant/121")
+	expect(
+		(
+			item_price(connection, navy),
+			stock_of(connection, navy),
+			item_price(connection, red),
+			stock_of(connection, red),
+		),
+		(amount("159.5"), amount("0"), amount("149"), amount("4")),
+		"the jacket's child products: their prices and stock",
+	)
+	tide = target(connection, "product", "Product", "14")
+	expect(frappe.db.get_value("Item", tide, "is_stock_item"), 0, "a downloadable product isn't a stock item")
+	expect(
+		frappe.db.get_value("Importer Link", {"connection": connection, "gid": ["like", "%/Product/15"]}),
+		None,
+		"the bundle",
+	)
+	order = target(connection, "order", "Order", "501")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(1, amount("258.82"), amount("5.00"), target(connection, "customer", "Customer", "41")),
+		"order 501's invoice",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice Item", {"parent": order, "idx": 2}, "item_code"),
+		navy,
+		"the jacket line is the navy child product bought",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "502"), "docstatus"),
+		0,
+		"new guest order 502",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		1,
+		"the percentage rule (not the per-customer, free-shipping, couponless, item-conditioned or inactive ones)",
+	)
+	expect(
+		frappe.db.get_value("Web Page", target(connection, "page", "CmsPage", "3"), "published"),
+		0,
+		"an inactive CMS page",
+	)
+	if state == "v1":
+		expect(item_price(connection, kettle), amount("89.99"), "the kettle's price")
+		expect(published(target(connection, "product", "Product", "13")), 0, "a disabled product")
+		return
+	expect(item_price(connection, kettle), amount("94.99"), "the kettle's new price")
+	credit = part(connection, "refund", "CreditMemo/901")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-10"),
+		"order 501's credit memo",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "customer"),
+		target(connection, "customer", "Customer", "43"),
+		"new order 503, linked to the new customer",
 	)
 
 

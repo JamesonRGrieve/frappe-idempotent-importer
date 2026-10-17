@@ -88,6 +88,11 @@ class SalesDocuments(Writer):
 				f"the order is in {currency}, the company books in {self.context.currency}, and the source "
 				"recorded no exchange rate and total in it"
 			)
+		base_currency = values.optional_string("base_currency")
+		if base_currency is not None and base_currency != self.context.currency:
+			raise Unsupported(
+				f"the source booked the order's total in {base_currency}, not the company's {self.context.currency}"
+			)
 		# ERPNext books a customer's invoices in the currency of its receivable account.
 		receivable = frappe.db.get_value(
 			"Account",

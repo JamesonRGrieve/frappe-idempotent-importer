@@ -63,6 +63,8 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		"squarespace",
 		{"Authorization": "Bearer e2e-squarespace-key", "User-Agent": "frappe-idempotent-importer"},
 	),
+	"wix-fake": ("wix", {"Authorization": "e2e-wix-key", "wix-site-id": "e2e-wix-site"}),
+	"magento-fake": ("magento", {"Authorization": "Bearer e2e-magento-token"}),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400

@@ -13,9 +13,11 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.source import Adapter, ConnectionConfig, SourceReader
 from idempotent_importer.sources.bigcommerce.adapter import BigCommerceAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
+from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.squarespace.adapter import SquarespaceAdapter
+from idempotent_importer.sources.wix.adapter import WixAdapter
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
 
 
@@ -43,8 +45,6 @@ class ListedAdapter:
 
 
 LISTED: tuple[ListedAdapter, ...] = (
-	ListedAdapter("wix", "Wix"),
-	ListedAdapter("magento", "Magento / Adobe Commerce"),
 	ListedAdapter("lightspeed", "Lightspeed eCom (C-Series)"),
 	ListedAdapter("ecwid", "Ecwid"),
 	ListedAdapter("odoo", "Odoo"),
@@ -72,6 +72,8 @@ def all_adapters() -> dict[str, Adapter]:
 		SquareOnlineAdapter(),
 		BigCommerceAdapter(),
 		SquarespaceAdapter(),
+		WixAdapter(),
+		MagentoAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

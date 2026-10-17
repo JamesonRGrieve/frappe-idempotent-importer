@@ -48,6 +48,8 @@ SOURCES=(
 	square-q:square_online-fake:assert_square_online
 	bigcommerce-c:bigcommerce-fake:assert_bigcommerce
 	squarespace-p:squarespace-fake:assert_squarespace
+	wix-x:wix-fake:assert_wix
+	magento-m:magento-fake:assert_magento
 )
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do

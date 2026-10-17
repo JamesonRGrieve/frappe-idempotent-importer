@@ -22,7 +22,9 @@ stores can import into two businesses at once and never touch each other's recor
 | Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
 | BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, coupons and coupon promotions, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
 | Squarespace | Built | Store pages, products with variants, prices, sales, stock, images and tags, customer profiles, promo codes, and orders with payments, refunds and fulfillments — [coverage/squarespace.md](coverage/squarespace.md) |
-| Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Wix | Built | Stores categories or collections, V3 and V1 catalog products with variants, prices, sales, stock and images, contacts, Stores coupons, orders with payments, refunds and fulfillments, the blog's categories and posts (rich content and its images), reviews and redirects — [coverage/wix.md](coverage/wix.md) |
+| Magento / Adobe Commerce | Built | Categories, simple, virtual, downloadable and configurable products with prices, special prices, stock and images, customers, cart price rules with coupons, orders (other currencies too) with payments, credit memos, shipments and comments, and CMS pages — [coverage/magento.md](coverage/magento.md) |
+| Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -109,6 +111,12 @@ This is the operator's decision to confirm (see below).
      after `/stores/` in the account's API path) as the account, and the access token as the secret.
    - **Squarespace:** create a Developer API key with the read-only permissions in
      [coverage/squarespace.md](coverage/squarespace.md); enter the site's URL and the key as the secret.
+   - **Wix:** create an account API key with the read permissions in [coverage/wix.md](coverage/wix.md);
+     enter the site's URL, its site ID as the account and the key as the secret.
+   - **Magento / Adobe Commerce:** create an integration with the read access in
+     [coverage/magento.md](coverage/magento.md) and allow integration tokens as bearer tokens; enter the
+     store's URL, the store view code as the account (blank for `default`) and the integration's access
+     token as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands

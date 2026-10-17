@@ -38,7 +38,8 @@ is honoured, and a spent daily quota pauses the run until Etsy says to retry
 | Shipping, sales tax, VAT, gift wrap | Charges (Etsy doesn't split tax per line) | |
 | Discount amount | The invoice's discount | |
 | Refunds | Credit note (one adjustment line: Etsy refunds name no lines) + refund **Payment Entry** | Identified by receipt and refund time. |
-| Shipments (carrier, tracking), seller's message | **Comment** on the invoice | |
+| Shipments | Draft **Shipment** | Carrier and tracking code. |
+| The seller's message | **Comment** on the invoice | |
 | Buyer's message, recipient's name and address | The invoice's remarks | |
 | Transaction reviews | **Item Review** on the listing's Website Item | Attributed to "Etsy buyer". |
 

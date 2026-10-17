@@ -64,6 +64,7 @@ profiles are read in full.
 | Duties | A tax charge ("Duties") on the tax account | |
 | Orders awaiting payment | Draft **Sales Invoice** | Voided and cancelled orders aren't mirrored. |
 | Refunds | Credit note + refund **Payment Entry** | Shipping or other amounts refunded beyond the lines become an adjustment line. |
+| Fulfillments that shipped | Draft **Shipment** (see the README's fulfilment decision) | Tracking company, numbers and link; delivered once Shopify records the delivery. |
 | Order timeline comments | **Comment** on the invoice | |
 | Draft orders (open, invoice sent) | Draft **Quotation** to the customer (or the guest customer), its lines, discount, taxes and shipping, the total checked exactly | Never submitted. A completed draft became an order (mirrored as such): its Quotation is marked "[Removed at source]". |
 | Files (images, videos, documents) | Public **File** | A file removed at the source stays. |
@@ -82,7 +83,6 @@ profiles are read in full.
 |---|---|
 | Gift cards and their balances | No first-party gift-card ledger. |
 | Discounts: automatic, Buy X Get Y, free shipping, app discounts, once-per-customer, customer- or segment-specific, minimum quantity, single-variant | ERPNext's coupons can't enforce them exactly. |
-| Fulfillments and tracking | Delivery Notes would move stock a second time (see README, "Decisions to confirm"). |
 | Delivery profiles for some products only; zones limited to provinces or "rest of world"; rates with price or weight conditions; carrier-calculated rates | A Shipping Rule is store-wide and per country; outside a rule's band ERPNext charges nothing instead of not offering the rate; ERPNext has no carrier rates. Reported as warnings. |
 | Menus | Website Settings' top bar and footer are global; a Public Site has no menu of its own (the router would need one). |
 | Shop settings, metafields, metaobjects | No first-party home for them as such. |

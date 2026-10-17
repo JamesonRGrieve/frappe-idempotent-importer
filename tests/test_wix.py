@@ -323,7 +323,11 @@ class TestMappers:
 			"pi_wix_0001",
 		)
 		assert order.records("lines")[0].string("name") == "Linen tea towel (Colour: Sage)"
-		assert len(order.records("notes")) == 1
+		shipment = order.records("shipments")[0]
+		assert (shipment.optional_string("carrier"), shipment.optional_string("contents")) == (
+			"Canada Post",
+			"2 x Linen tea towel, 1 x Speckled clay mug",
+		)
 
 	def test_refunds_that_returned_money(self) -> None:
 		refunds = values(Kind.ORDER, ORDER_1, "v2").records("refunds")

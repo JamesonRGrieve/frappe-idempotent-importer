@@ -24,6 +24,7 @@ from typing import Any
 import frappe
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
 from erpnext.accounts.party import get_party_gle_currency
+from frappe.contacts.doctype.address.address import get_default_address
 
 from idempotent_importer.contract import (
 	FEE,
@@ -42,11 +43,13 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.money import decimal_text
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity, system_datetime
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+from idempotent_importer.erpnext.writers.parties import address_values, link_to
 
 INVOICE = "Sales Invoice"
 QUOTATION = "Quotation"
 PAYMENT = "Payment Entry"
+SHIPMENT = "Shipment"
 DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 UOM = "Nos"
 MULTI_CURRENCY_SETTING = "allow_multi_currency_invoices_against_single_party_account"
@@ -337,9 +340,12 @@ class OrderWriter(SalesDocuments):
 			self._payment(desired.gid, values, invoice)
 			self._refunds(desired.gid, values, invoice)
 		self._notes(values, invoice)
+		self._shipments(desired.gid, values, invoice)
 		return Target(INVOICE, invoice.name)
 
 	def retire(self, link: Link) -> None:
+		for part in self.links.children(Kind.SHIPMENT, f"{link.gid}#"):
+			self._discard_shipment(part)
 		for kind in (Kind.REFUND_PAYMENT, Kind.REFUND, Kind.PAYMENT):
 			for part in self.links.children(kind, f"{link.gid}#"):
 				cancel(part.target.doctype, part.target.name)
@@ -512,6 +518,87 @@ class OrderWriter(SalesDocuments):
 		self.check_totals(note, -refund.decimal("amount"), refund.records("charges"))
 		note.submit()
 		return note
+
+	# -- shipments --------------------------------------------------------------------------------------
+
+	def _shipments(self, gid: str, values: Values, invoice: Any) -> None:
+		"""Each fulfilment as a Shipment from the company's address to the order's shipping address (else the
+		customer's, else the company's own: a pickup), with its carrier, service, tracking number and link.
+		A Shipment never moves stock; it stays a draft (ERPNext submits one only with its parcels' weights,
+		which no source gives for a fulfilment). A fulfilment the source drops is discarded."""
+		wanted_keys: set[str] = set()
+		for shipment in values.records("shipments"):
+			key = f"{gid}#{shipment.string('gid')}"
+			wanted_keys.add(key)
+			wanted = part_hash(
+				{"shipment": shipment.all(), "to": values.all().get("shipping"), "invoice": invoice.name}
+			)
+			part = self.links.find(Kind.SHIPMENT, key)
+			if part is not None and not part.retired and part.hash == wanted and self.exists(part):
+				continue
+			doc = self.existing(part) if part is not None and not part.retired else None
+			if doc is None or doc.docstatus != DRAFT:
+				doc = frappe.new_doc(SHIPMENT)
+			company_address = get_default_address("Company", self.context.company)
+			if not company_address:
+				raise Unsupported(
+					f"{self.context.company} has no address to ship from (a Shipment needs one)"
+				)
+			shipped = system_datetime(shipment.string("date"))
+			doc.update(
+				{
+					"pickup_from_type": "Company",
+					"pickup_company": self.context.company,
+					"pickup_address_name": company_address,
+					"delivery_to_type": "Customer",
+					"delivery_customer": invoice.customer,
+					"delivery_address_name": self._delivery_address(gid, values, invoice.customer)
+					or company_address,
+					"delivery_contact_name": frappe.db.get_value(
+						"Customer", invoice.customer, "customer_primary_contact"
+					),
+					"value_of_goods": invoice.base_grand_total,
+					"pickup_date": shipped.date(),
+					"description_of_content": shipment.optional_string("contents")
+					or f"Order {invoice.po_no}",
+					"service_provider": self.context.source,
+					"carrier": shipment.optional_string("carrier"),
+					"carrier_service": shipment.optional_string("service"),
+					"awb_number": shipment.optional_string("tracking_number"),
+					"tracking_url": shipment.optional_string("tracking_url"),
+					"tracking_status": "Delivered" if shipment.flag("delivered") else "In Progress",
+					"shipment_id": shipment.string("gid").rsplit("/", 1)[-1],
+				}
+			)
+			doc.save(ignore_permissions=True)
+			self.links.save(Kind.SHIPMENT, key, Target(SHIPMENT, doc.name), wanted, 1)
+		for part in self.links.children(Kind.SHIPMENT, f"{gid}#"):
+			if part.gid not in wanted_keys:
+				self._discard_shipment(part)
+
+	def _delivery_address(self, gid: str, values: Values, customer: str) -> str | None:
+		"""The order's shipping address as an Address of the customer's (one per order, kept with it), else
+		the customer's own."""
+		address = values.record("shipping")
+		if address is None or not address.optional_string("country_code"):
+			return frappe.db.get_value("Customer", customer, "customer_primary_address")
+		key = f"{gid}#shipping"
+		existing = self.links.target(Kind.ADDRESS, key)
+		doc = (
+			frappe.get_doc("Address", existing)
+			if existing and frappe.db.exists("Address", existing)
+			else frappe.new_doc("Address")
+		)
+		doc.update(address_values(address))
+		link_to(doc, customer)
+		doc.save(ignore_permissions=True)
+		self.links.save(Kind.ADDRESS, key, Target("Address", doc.name), PART_HASH, 1)
+		return str(doc.name)
+
+	def _discard_shipment(self, part: Link) -> None:
+		if frappe.db.get_value(SHIPMENT, part.target.name, "docstatus") == DRAFT:
+			frappe.get_doc(SHIPMENT, part.target.name).discard()
+		self.links.retire(Kind.SHIPMENT, part.gid)
 
 	# -- notes ------------------------------------------------------------------------------------------
 

@@ -19,6 +19,7 @@ from idempotent_importer.contract import (
 	Charge,
 	Discount,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
@@ -27,6 +28,7 @@ from idempotent_importer.contract import (
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -42,7 +44,7 @@ WEIGHT_UNITS = {"g": "g", "kg": "kg", "oz": "oz", "lb": "lbs"}
 PAGE_SUFFIX = ".html"
 VARIANT_ATTRIBUTE = "Variant"
 TRACKING_DISABLED = "disabled"
-# Order states: a cancelled order has no sale; a paid one is booked.
+# Order states: a cancelled order has no sale; a paid one is booked. A cancelled shipment shipped nothing.
 CANCELLED = "cancelled"
 PAID = frozenset({"paid"})
 CREDITED_PRODUCT = "product"
@@ -377,7 +379,7 @@ class OrderMapper:
 	map to nothing."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -419,6 +421,7 @@ class OrderMapper:
 			if submitted
 			else [],
 			"notes": self._notes(node),
+			"shipments": self._shipments(node),
 			"remarks": text(node, "comment"),
 		}
 		return Desired(self.kind, node.id(), fields)
@@ -472,22 +475,28 @@ class OrderMapper:
 			"charges": [],
 		}
 
+	def _shipments(self, order: Node) -> list[Field]:
+		"""Each shipment that wasn't cancelled: the order's shipping method and the shipment's tracking code."""
+		return [
+			shipment_fields(
+				Shipment(
+					gid=self._context.gid("Shipment", shipment.integer("id")),
+					date=shipment.optional_time("createdAt") or order.time("createdAt"),
+					carrier=None,
+					service=text(order, "shipmentTitle"),
+					tracking_number=text(shipment, "trackingCode"),
+					tracking_url=None,
+					delivered=False,
+					contents=None,
+				)
+			)
+			for shipment in order.children("shipments")
+			if text(shipment, "status") != CANCELLED
+		]
+
 	def _notes(self, order: Node) -> list[Field]:
 		created = order.time("createdAt")
 		notes: list[Field] = []
-		for shipment in order.children("shipments"):
-			tracking = text(shipment, "trackingCode")
-			state = (text(shipment, "status") or "unknown").replace("_", " ")
-			parts = [text(shipment, "number"), f"({state})", f"tracking {tracking}" if tracking else None]
-			notes.append(
-				{
-					"gid": self._context.gid("Shipment", shipment.integer("id")),
-					"date": shipment.optional_time("createdAt") or created,
-					"author": None,
-					"text": "Lightspeed shipment " + " ".join(p for p in parts if p),
-					"customer_note": False,
-				}
-			)
 		memo = text(order, "memo")
 		if memo:
 			notes.append(

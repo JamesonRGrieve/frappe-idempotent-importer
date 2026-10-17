@@ -33,6 +33,7 @@ read in full every run (they have no such filter).
 | Coupons: percent, fixed cart, fixed product; product or category limits; minimum spend; expiry; usage limit | **Pricing Rule** (coupon based, on the company) + **Coupon Code** on the Public Site's Webshop Store | Another store can hold the same code at once; a code already held on this store (or store-less) is not mirrored (reported). |
 | Orders: processing, completed, refunded | Submitted **Sales Invoice** (lines at their prices before discounts, the coupon discount on the net total, tax, shipping and fee lines as Actual charges) + **Payment Entry** into the deposit account | The invoice must total exactly what WooCommerce charged, or it isn't kept. Never moves stock. |
 | Orders: pending, on hold | Draft **Sales Invoice**, submitted (with its payment) once paid | |
+| Shipment tracking (the WooCommerce Shipment Tracking extension's items in the order's meta) | Draft **Shipment** | Provider, tracking number, link and ship date. WooCommerce core keeps no shipments. |
 | Orders in another currency (WooPayments Multi-Currency, Aelia Currency Switcher) | A multi-currency **Sales Invoice** at the rate the extension recorded in the order's meta | Aelia's base-currency total is checked exactly. |
 | Orders: cancelled, failed, checkout drafts | Not mirrored (an earlier copy is cancelled) | |
 | Refunds | Submitted credit note (**Sales Invoice** return) + refund **Payment Entry** | Amount-only refunds become one adjustment line on the connection's fallback item. |
@@ -57,7 +58,6 @@ read in full every run (they have no such filter).
 | Orders in another currency than the company's that record no exchange rate (no multi-currency extension's meta) | The source never had a rate for them; a rate of the day would make the books inexact (reported; an operator decision). |
 | Order lines whose amount has no exact unit price (e.g. 10.00 for 3) | ERPNext holds quantity × rate; the line can't be represented exactly. |
 | Taxes per rate (several tax accounts) | Taxes land in the connection's one tax account, labelled per rate. |
-| Shipment tracking | WooCommerce core has none (plugins add it); Delivery Notes would also move stock twice (see README). |
 | Downloadable products' files and download permissions | No first-party home. |
 | Sticky posts, comments on posts | Not read yet (Blog Post comments have a home; WooCommerce's adapter doesn't read `wp/v2/comments`). |
 | Regular-expression redirects | Can't be scoped to one site's prefix. |

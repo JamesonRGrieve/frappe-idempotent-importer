@@ -35,7 +35,8 @@ sits out the minute when limited anyway (which pauses the run).
 | Tax-inclusive orders (`priceTaxInterpretation` INCLUSIVE) | Each tax an "On Net Total" row included in the line prices, at each line's rates from its transaction sale item (paired by amount; different rates per line through an **Item Tax Template** and a tax account per tax); shipping at its price less its taxes, then each tax at its rate | Kept only when ERPNext computes every row and the total to Squarespace's amounts. An order with no transactions yet includes its tax total at the one rate that comes to it. |
 | Shipping lines | Shipping charges | One for the shipping total when the order has none. |
 | Refunds of the order's payments | Credit note (one adjustment line) + refund **Payment Entry** | Squarespace doesn't say which lines a refund was for. |
-| Fulfillments, internal notes | **Comment** each | Carrier, service and tracking. |
+| Fulfillments | Draft **Shipment** | Carrier, service, tracking number and link. |
+| Internal notes | **Comment** each | |
 
 ## Gaps
 

@@ -33,7 +33,8 @@ every 1.2 seconds), and a shop needing more than the day's quota pauses on the 4
 | Order lines | Invoice lines at their tax-exclusive base prices, on the variant's item | The variant title in the line's name. |
 | Line discounts, order taxes, shipping, payment costs | The invoice's discount; one charge per tax; shipping and fee charges | The order's tax total when Lightspeed itemises none. |
 | Credit notes | Credit note (the credited product lines, an adjustment for their tax and the rest) + refund **Payment Entry** | |
-| Shipments, the staff memo | **Comment** each | Number, state, tracking code. |
+| Shipments (not cancelled) | Draft **Shipment** | The order's shipping method and the shipment's tracking code. |
+| The staff memo | **Comment** | |
 | Text pages | **Web Page** | Hidden pages unpublished; the old URL (`/service/<url>`) redirects. |
 | Blogs | **Blog Category** | The old URL (`/blogs/<url>`) redirects. |
 | Blog articles | **Blog Post** in its blog's category, by its author | Unpublished articles unpublished; the old URL redirects. |

@@ -19,13 +19,16 @@ from idempotent_importer.contract import (
 	Charge,
 	Discount,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
+	contents_of,
 	date_of,
 	discount_fields,
 	line_fields,
 	order_line,
 	refund_balance,
+	shipment_fields,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -494,12 +497,12 @@ class OrderMapper:
 	"""An order → an invoice with Magento's totals (in the order's currency): the lines a customer sees at
 	their row totals (a configurable product's line on the child product bought), the discount, each applied
 	tax, the shipping; credit memos as credit notes (their lines at their row totals, an adjustment for the
-	rest), and each shipment and order comment as a comment. Paid orders are submitted; unpaid ones are
+	rest), each shipment as a Shipment and each order comment as a comment. Paid orders are submitted; unpaid ones are
 	drafts; cancelled orders map to nothing. An order in another currency than the store's base currency
 	carries Magento's base total and the rate it implies."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -560,6 +563,7 @@ class OrderMapper:
 			if submitted
 			else [],
 			"notes": self._notes(node),
+			"shipments": self._shipments(node),
 			"remarks": node.optional_string("customer_note"),
 		}
 		base_currency = node.optional_string("base_currency_code")
@@ -615,30 +619,46 @@ class OrderMapper:
 			"charges": [],
 		}
 
+	def _shipments(self, order: Node) -> list[Field]:
+		"""Each shipment: its tracks' carrier and numbers, and the items it held."""
+		found: list[Field] = []
+		for shipment in order.children("shipments"):
+			tracks = shipment.children("tracks")
+			found.append(
+				shipment_fields(
+					Shipment(
+						gid=self._context.gid("Shipment", shipment.integer("entity_id")),
+						date=shipment.optional_time("created_at") or order.time("created_at"),
+						carrier=next(
+							(
+								c
+								for t in tracks
+								if (c := t.optional_string("title") or t.optional_string("carrier_code"))
+							),
+							None,
+						),
+						service=None,
+						tracking_number=", ".join(
+							n for t in tracks if (n := t.optional_string("track_number"))
+						)
+						or None,
+						tracking_url=None,
+						delivered=False,
+						contents=contents_of(
+							[
+								(item.text("name"), whole(item, "qty"))
+								for item in shipment.children("items")
+								if item.optional_decimal("qty")
+							]
+						),
+					)
+				)
+			)
+		return found
+
 	def _notes(self, order: Node) -> list[Field]:
 		created = order.time("created_at")
 		notes: list[Field] = []
-		for shipment in order.children("shipments"):
-			tracks = ", ".join(
-				" ".join(
-					p
-					for p in (
-						t.optional_string("title") or t.optional_string("carrier_code"),
-						t.optional_string("track_number"),
-					)
-					if p
-				)
-				for t in shipment.children("tracks")
-			)
-			notes.append(
-				{
-					"gid": self._context.gid("Shipment", shipment.integer("entity_id")),
-					"date": shipment.optional_time("created_at") or created,
-					"author": None,
-					"text": f"Magento shipment {shipment.text('increment_id')}: {tracks}".strip(": "),
-					"customer_note": False,
-				}
-			)
 		for history in order.children("status_histories"):
 			comment = history.optional_string("comment")
 			if comment:

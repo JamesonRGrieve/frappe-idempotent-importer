@@ -32,7 +32,8 @@ are storefront paths.
 | Discount, taxes, shipping option, handling fee, surcharges | The invoice's discount; one charge per tax name (items, shipping, surcharges); shipping and fee charges | The order's tax total when Ecwid itemises none. |
 | Gross-price orders (`pricesIncludeTax`) | Items at their gross prices, the discount as Ecwid gives it (with tax, off the grand total); each item tax an "On Net Total" row included in the prices at the item's own rates (different rates per item through an **Item Tax Template** and a tax account per tax); shipping and surcharges at their prices before tax, then each of their taxes at its rate | Kept only when ERPNext computes every row and the total to Ecwid's amounts. |
 | Refunds | Credit note (one adjustment line: Ecwid doesn't say which items) + refund **Payment Entry** | Refunds have no ids, so each is keyed by its place in the order's list (Ecwid only adds them). |
-| Tracking number, shipping labels, private notes | **Comment** each | |
+| Shipping labels, or the order's tracking number | Draft **Shipment** | Carrier, service, tracking number and link; delivered when the order is. |
+| Private notes | **Comment** | |
 | Published reviews | **Item Review** | |
 | Instant Site redirects | **Website Route Redirect** | A target on the store's site redirects on to its mirrored object. |
 

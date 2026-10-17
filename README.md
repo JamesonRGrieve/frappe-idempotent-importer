@@ -176,8 +176,12 @@ Each of these is the operator's call.
 2. **Stock:** invoices never update stock; the source's count is mirrored absolutely by zero-valued Stock
    Reconciliations against the company's Temporary (opening) account. Valuation stays zero until purchases
    are booked in ERPNext.
-3. **No Delivery Notes** for fulfilments in phase 1: they would move stock a second time. Tracking numbers
-   are not mirrored yet.
+3. **Fulfilments are Shipments, never Delivery Notes** (a Delivery Note would move stock a second time):
+   each fulfilment is a Shipment from the company's address (give each company one) to the order's
+   shipping address (an Address of the customer's, kept with the order), with the source's carrier,
+   service, tracking number (AWB) and link, delivery state and contents. Shipments stay drafts: ERPNext
+   submits one only with its parcels' weights, which no source gives per fulfilment. A fulfilment the
+   source drops is discarded.
 4. **Routes under the Public Site's prefix** for Web Pages, Blog Posts, Item Groups, Website Items and
    redirect sources, as the spec asks, so two sites never collide. The router today serves only Web
    Pages (and Builder Pages, Web Forms) by prefix; Website Items, Item Groups and Blog Posts it serves at

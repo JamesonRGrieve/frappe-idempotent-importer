@@ -19,6 +19,7 @@ from idempotent_importer.contract import (
 	Discount,
 	LineRates,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
@@ -27,6 +28,7 @@ from idempotent_importer.contract import (
 	line_fields,
 	order_line,
 	refund_balance,
+	shipment_fields,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import Unsupported
@@ -487,6 +489,7 @@ class OrderMapper:
 				if event.typename() == COMMENT_EVENT
 			],
 			"remarks": node.optional_string("note"),
+			"shipments": [shipment_fields(s) for s in shipments(node)],
 		}
 		return Desired(self.kind, node.id(), fields)
 
@@ -541,6 +544,32 @@ class OrderMapper:
 			"lines": credit_lines,
 			"charges": [charge_fields(charge) for charge in charges],
 		}
+
+
+# Fulfillments that shipped (not cancelled, failed or in error).
+SHIPPED = frozenset({"SUCCESS", "OPEN", "PENDING"})
+
+
+def shipments(order: Node) -> list[Shipment]:
+	"""Each fulfillment that shipped: its first tracking company, its tracking numbers and link."""
+	found: list[Shipment] = []
+	for fulfillment in order.children("fulfillments"):
+		if fulfillment.string("status") not in SHIPPED:
+			continue
+		tracking = fulfillment.children("trackingInfo")
+		found.append(
+			Shipment(
+				gid=fulfillment.id(),
+				date=fulfillment.time("createdAt"),
+				carrier=next((c for t in tracking if (c := t.optional_string("company"))), None),
+				service=None,
+				tracking_number=", ".join(n for t in tracking if (n := t.optional_string("number"))) or None,
+				tracking_url=next((u for t in tracking if (u := t.optional_string("url"))), None),
+				delivered=fulfillment.optional_time("deliveredAt") is not None,
+				contents=None,
+			)
+		)
+	return found
 
 
 class DraftOrderMapper:

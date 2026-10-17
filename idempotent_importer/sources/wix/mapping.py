@@ -20,8 +20,10 @@ from idempotent_importer.contract import (
 	Discount,
 	LineRates,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
+	contents_of,
 	date_of,
 	discount_fields,
 	included_taxes,
@@ -29,6 +31,7 @@ from idempotent_importer.contract import (
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 	taxed_charge,
 	variant_attributes,
 )
@@ -517,7 +520,7 @@ class OrderMapper:
 	(``inclusive_charges``); gift card sales are Unsupported."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -586,7 +589,10 @@ class OrderMapper:
 			]
 			if submitted
 			else [],
-			"notes": [self._note(f, node.time("createdDate")) for f in node.children("fulfillments")],
+			"notes": [],
+			"shipments": [
+				self._shipment(f, node.time("createdDate"), lines) for f in node.children("fulfillments")
+			],
 			"remarks": node.optional_string("buyerNote"),
 		}
 		if inclusive:
@@ -673,21 +679,26 @@ class OrderMapper:
 			"charges": [],
 		}
 
-	def _note(self, fulfillment: Node, created: str) -> Field:
+	def _shipment(self, fulfillment: Node, created: str, lines: dict[str, Node]) -> Field:
+		"""A fulfillment: its shipping provider, tracking number and link, and the lines it held."""
 		tracking = fulfillment.child("trackingInfo")
-		parts = (
-			[tracking.optional_string(f) for f in ("shippingProvider", "trackingNumber", "trackingLink")]
-			if tracking
-			else []
+		items = []
+		for item in fulfillment.children("lineItems"):
+			line = lines.get(item.string("id"))
+			name = line.child("productName") if line else None
+			items.append((name.text("original") if name else "Item", Decimal(item.integer("quantity"))))
+		return shipment_fields(
+			Shipment(
+				gid=self._context.gid("Fulfillment", fulfillment.string("id")),
+				date=fulfillment.optional_time("createdDate") or created,
+				carrier=tracking.optional_string("shippingProvider") if tracking else None,
+				service=None,
+				tracking_number=tracking.optional_string("trackingNumber") if tracking else None,
+				tracking_url=tracking.optional_string("trackingLink") if tracking else None,
+				delivered=False,
+				contents=contents_of(items),
+			)
 		)
-		detail = " ".join(p for p in parts if p)
-		return {
-			"gid": self._context.gid("Fulfillment", fulfillment.string("id")),
-			"date": fulfillment.optional_time("createdDate") or created,
-			"author": None,
-			"text": f"Wix fulfillment: {detail}" if detail else "Wix fulfillment",
-			"customer_note": False,
-		}
 
 
 def line_value(description: Node) -> str | None:

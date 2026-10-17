@@ -18,7 +18,9 @@ discount     codes, description, discount ("percentage" | "amount"), applies ("t
 order        number, currency, created_at, submitted, customer (identity | None), guest ({name, email,
              phone} | None), billing, shipping (address | None), lines ([line]), discount, charges
              ([charge]), total, payment ({method, reference, date} | None), refunds ([{gid, date, reason,
-             amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks;
+             amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks,
+             shipments ([{gid, date, carrier, service, tracking_number, tracking_url, delivered,
+             contents}]: its fulfilments);
              optionally taxes_included (line prices include the "included_tax" charges; when the lines'
              rates differ each line carries its own, taxes ([{title, rate}])), and for an order
              in another currency than the company's, exchange_rate (company currency per order currency,
@@ -45,7 +47,7 @@ from decimal import Decimal
 
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields, Values
-from idempotent_importer.core.money import exact_quotient, minor_units
+from idempotent_importer.core.money import decimal_text, exact_quotient, minor_units
 
 
 @dataclass(frozen=True)
@@ -235,6 +237,39 @@ def booked(fields: Fields) -> Fields:
 			for line in lines
 		],
 	}
+
+
+@dataclass(frozen=True)
+class Shipment:
+	"""A fulfilment of an order: when it shipped, by which carrier and service, its tracking number and
+	link, whether it was delivered, and what it held ("2 x Toque, 1 x Scarf")."""
+
+	gid: str
+	date: str
+	carrier: str | None
+	service: str | None
+	tracking_number: str | None
+	tracking_url: str | None
+	delivered: bool
+	contents: str | None
+
+
+def shipment_fields(shipment: Shipment) -> Fields:
+	return {
+		"gid": shipment.gid,
+		"date": shipment.date,
+		"carrier": shipment.carrier,
+		"service": shipment.service,
+		"tracking_number": shipment.tracking_number,
+		"tracking_url": shipment.tracking_url,
+		"delivered": shipment.delivered,
+		"contents": shipment.contents,
+	}
+
+
+def contents_of(items: list[tuple[str, Decimal]]) -> str | None:
+	"""What a shipment held, from its (name, quantity) items: "2 x Toque, 1 x Scarf"."""
+	return ", ".join(f"{decimal_text(qty)} x {name}" for name, qty in items if qty) or None
 
 
 REFUND_ADJUSTMENT = "Refund adjustment"

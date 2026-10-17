@@ -20,14 +20,17 @@ from idempotent_importer.contract import (
 	Charge,
 	Discount,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
+	contents_of,
 	date_of,
 	discount_fields,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -474,11 +477,11 @@ class OrderMapper:
 	"""An order → an invoice with BigCommerce's totals: lines at their pre-tax prices before discounts (on
 	the variant's item), the order's coupon and manual discounts as the invoice's discount, each tax as a
 	charge, each shipping address's cost as shipping (its handling as a fee), gift wrapping and the order's
-	fees as fees; refunds as credit notes (their refunded products as returned lines), each shipment and the
-	staff notes as comments. Abandoned, cancelled, declined and archived orders map to nothing."""
+	fees as fees; refunds as credit notes (their refunded products as returned lines), each shipment as a
+	Shipment and the staff notes as a comment. Abandoned, cancelled, declined and archived orders map to nothing."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -529,6 +532,7 @@ class OrderMapper:
 			else [],
 			"notes": self._notes(node),
 			"remarks": node.optional_string("customer_message"),
+			"shipments": self._shipments(node, lines),
 		}
 		if store_currency is not None and currency != store_currency:
 			fields |= foreign_currency(node, store_currency)
@@ -582,25 +586,36 @@ class OrderMapper:
 			"charges": [],
 		}
 
+	def _shipments(self, order: Node, lines: dict[int, Node]) -> list[Field]:
+		"""Each shipment: its carrier, method, tracking number and link, and the products it held."""
+		found: list[Field] = []
+		for shipment in order.children("shipments"):
+			items = [
+				(lines[item.integer("order_product_id")].text("name"), Decimal(item.integer("quantity")))
+				for item in shipment.children("items")
+				if item.integer("order_product_id") in lines
+			]
+			found.append(
+				shipment_fields(
+					Shipment(
+						gid=self._context.gid("Shipment", shipment.integer("id")),
+						date=shipment.optional_time("date_created") or order.time("date_created"),
+						carrier=shipment.optional_string("shipping_provider_display_name")
+						or shipment.optional_string("tracking_carrier")
+						or shipment.optional_string("shipping_provider"),
+						service=shipment.optional_string("shipping_method"),
+						tracking_number=shipment.optional_string("tracking_number"),
+						tracking_url=shipment.optional_string("tracking_link")
+						or shipment.optional_string("generated_tracking_link"),
+						delivered=False,
+						contents=contents_of(items),
+					)
+				)
+			)
+		return found
+
 	def _notes(self, order: Node) -> list[Field]:
 		notes: list[Field] = []
-		for shipment in order.children("shipments"):
-			carrier = shipment.optional_string("shipping_provider_display_name") or shipment.optional_string(
-				"tracking_carrier"
-			)
-			link = shipment.optional_string("tracking_link") or shipment.optional_string(
-				"generated_tracking_link"
-			)
-			tracking = " ".join(v for v in (carrier, shipment.optional_string("tracking_number"), link) if v)
-			notes.append(
-				{
-					"gid": self._context.gid("Shipment", shipment.integer("id")),
-					"date": shipment.optional_time("date_created") or order.time("date_created"),
-					"author": None,
-					"text": f"BigCommerce shipment: {tracking}".strip(),
-					"customer_note": False,
-				}
-			)
 		staff = order.optional_string("staff_notes")
 		if staff:
 			notes.append(

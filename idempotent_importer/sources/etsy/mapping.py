@@ -15,12 +15,14 @@ from idempotent_importer.contract import (
 	Address,
 	Charge,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
@@ -237,10 +239,10 @@ class ReceiptMapper:
 	"""A receipt → an invoice with Etsy's totals: transactions as lines (pointing at the listing and its
 	variant), shipping, sales tax and VAT as charges (Etsy doesn't split them per line), gift wrap as a
 	fee, refunds as credit notes (Etsy refunds name no lines, so each is one adjustment line), and the
-	seller's note and each shipment's tracking as comments."""
+	seller's note as a comment, and each shipment as a Shipment."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -279,6 +281,7 @@ class ReceiptMapper:
 			else [],
 			"notes": self._notes(node),
 			"remarks": text(node.optional_string("message_from_buyer")) or None,
+			"shipments": self._shipments(node),
 		}
 		return Desired(self.kind, node.id(), fields)
 
@@ -348,18 +351,29 @@ class ReceiptMapper:
 					"customer_note": True,
 				}
 			)
-		for index, shipment in enumerate(node.children("shipments")):
-			shipment_id = shipment.optional_integer("receipt_shipping_id") or f"{receipt_id}-{index}"
-			notes.append(
-				{
-					"gid": self._context.gid("Shipment", shipment_id),
-					"date": required_unix_time(shipment, "shipment_notification_timestamp"),
-					"author": None,
-					"text": f"Etsy shipment: {shipment.string('carrier_name')} {shipment.string('tracking_code')}".strip(),
-					"customer_note": False,
-				}
-			)
 		return notes
+
+	def _shipments(self, node: Node) -> list[Field]:
+		"""Each shipment the seller notified: its carrier and tracking code."""
+		receipt_id = node.integer("receipt_id")
+		return [
+			shipment_fields(
+				Shipment(
+					gid=self._context.gid(
+						"Shipment",
+						shipment.optional_integer("receipt_shipping_id") or f"{receipt_id}-{index}",
+					),
+					date=required_unix_time(shipment, "shipment_notification_timestamp"),
+					carrier=text(shipment.optional_string("carrier_name")) or None,
+					service=None,
+					tracking_number=text(shipment.optional_string("tracking_code")) or None,
+					tracking_url=None,
+					delivered=False,
+					contents=None,
+				)
+			)
+			for index, shipment in enumerate(node.children("shipments"))
+		]
 
 
 def charges(receipt: Node) -> list[Charge]:

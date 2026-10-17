@@ -249,6 +249,7 @@ CONTENT_DOCTYPES = (
 	"Quotation Item",
 	"Shipping Rule",
 	"Shipping Rule Country",
+	"Shipment",
 	"Tag",
 	"Tag Link",
 )
@@ -369,6 +370,20 @@ def make_business(spec: Business) -> None:
 				"item_group_name": root_group,
 				"parent_item_group": "All Item Groups",
 				"is_group": 1,
+			}
+		).insert()
+	if not frappe.db.exists("Address", f"{company}-Billing"):
+		# The address its shipments leave from.
+		frappe.get_doc(
+			{
+				"doctype": "Address",
+				"address_title": company,
+				"address_type": "Billing",
+				"address_line1": "100 Warehouse Road",
+				"city": "Edmonton",
+				"country": COUNTRY,
+				"is_your_company_address": 1,
+				"links": [{"link_doctype": "Company", "link_name": company}],
 			}
 		).insert()
 	guest = f"Guest {abbr}"
@@ -878,6 +893,17 @@ def assert_shopify(state: str) -> None:
 	assert_tax_inclusive(
 		connection, "805", "31.50", {"GST": "1.44", "PST": "1.31"}, ["GST at 5, PST at 7", "GST at 5"]
 	)
+	assert_shipment(
+		connection,
+		"801",
+		"Fulfillment/8301",
+		{
+			"carrier": "Canada Post",
+			"awb_number": "1234567890",
+			"tracking_url": "https://www.canadapost-postescanada.ca/track/1234567890",
+			"tracking_status": "In Progress",
+		},
+	)
 	draft = target(connection, "draft_order", "DraftOrder", "901")
 	quotation = frappe.db.get_value("Quotation", draft, ["docstatus", "grand_total", "title"], as_dict=True)
 	if state == "v1":
@@ -955,8 +981,15 @@ def assert_etsy(state: str) -> None:
 			"Comment",
 			{"reference_doctype": "Sales Invoice", "reference_name": receipt, "comment_type": "Comment"},
 		),
-		1,
-		"receipt 801's shipment tracking",
+		0,
+		"receipt 801's comments: its shipment is a Shipment",
+	)
+	assert_shipment(
+		connection,
+		"801",
+		"Shipment/3001",
+		{"carrier": "Canada Post", "awb_number": "CP123456789CA"},
+		"Receipt",
 	)
 	expect(
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Receipt", "802"), "docstatus"),
@@ -1098,6 +1131,17 @@ def assert_bigcommerce(state: str) -> None:
 		"order 504, paid in USD at BigCommerce's rate (0.75 USD per CAD)",
 	)
 	expect(amount(usd.outstanding_amount), amount("0"), "order 504, paid")
+	assert_shipment(
+		connection,
+		"501",
+		"Shipment/1",
+		{
+			"carrier": "Canada Post",
+			"carrier_service": "Canada Post Expedited",
+			"awb_number": "CP123456789CA",
+			"description_of_content": "2 x Enamel trail mug, 1 x Wool toque",
+		},
+	)
 	mug = target(connection, "product", "Product", "111")
 	expect(
 		(mug, frappe.db.get_value("Item", mug, "brand"), frappe.db.get_value("Item", mug, "item_group")),
@@ -1132,8 +1176,8 @@ def assert_bigcommerce(state: str) -> None:
 			"Comment",
 			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
 		),
-		2,
-		"order 501's shipment and staff notes",
+		1,
+		"order 501's staff notes (its shipment is a Shipment)",
 	)
 	expect(
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "502"), "docstatus"),
@@ -1245,8 +1289,14 @@ def assert_squarespace(state: str) -> None:
 			"Comment",
 			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
 		),
-		2,
-		"order 1001's fulfillment and internal note",
+		1,
+		"order 1001's internal note (its fulfillment is a Shipment)",
+	)
+	assert_shipment(
+		connection,
+		"6d4000000000000000000031",
+		"Fulfillment/6d4000000000000000000031-0",
+		{"carrier": "Canada Post", "awb_number": "SQS1234567890CA"},
 	)
 	expect(
 		frappe.db.get_value(
@@ -1345,8 +1395,14 @@ def assert_wix(state: str) -> None:
 			"Comment",
 			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
 		),
-		1,
-		"order 10001's fulfillment",
+		0,
+		"order 10001's comments: its fulfillment is a Shipment",
+	)
+	assert_shipment(
+		connection,
+		"8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001",
+		"Fulfillment/ff000000-0000-4000-8000-000000000001",
+		{"carrier": "Canada Post", "awb_number": "7023210039414604"},
 	)
 	expect(
 		frappe.db.get_value(
@@ -1494,6 +1550,23 @@ def assert_invoice(
 	return str(order)
 
 
+def assert_shipment(
+	connection: str, order_id: str, fulfilment: str, wanted: dict[str, Any], order_type: str = "Order"
+) -> None:
+	"""An order's fulfilment as a draft Shipment from the company's address to the order's customer, with the
+	source's carrier and tracking (``wanted``: Shipment fields)."""
+	order = target(connection, "order", order_type, order_id)
+	shipment = frappe.get_doc("Shipment", part(connection, "shipment", fulfilment))
+	expect(
+		(shipment.docstatus, shipment.pickup_company, shipment.delivery_customer),
+		(0, business_of(connection).company, frappe.db.get_value("Sales Invoice", order, "customer")),
+		f"order {order_id}'s shipment",
+	)
+	expect(
+		{field: shipment.get(field) for field in wanted}, wanted, f"order {order_id}'s shipment's tracking"
+	)
+
+
 def assert_tax_inclusive(
 	connection: str, order_id: str, total: str, taxes: dict[str, str], templates: list[str | None]
 ) -> None:
@@ -1551,9 +1624,10 @@ def assert_lightspeed(state: str) -> None:
 			"Comment",
 			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
 		),
-		2,
-		"order ORD00001's shipment and staff memo",
+		1,
+		"order ORD00001's staff memo (its shipment is a Shipment)",
 	)
+	assert_shipment(connection, "701", "Shipment/901", {"awb_number": "CP987654321CA"})
 	expect(
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "702"), "docstatus"),
 		0,

@@ -306,7 +306,23 @@ class TestMappers:
 		assert extra is not None
 		descriptions = [c.string("description") for c in extra.values().records("charges")]
 		assert {"Handling", "Gift wrap"} <= set(descriptions)
-		assert len(extra.values().records("notes")) == 3
+		assert len(extra.values().records("notes")) == 1, "the private notes"
+		assert [
+			(s.optional_string("carrier"), s.optional_string("tracking_number"))
+			for s in extra.values().records("shipments")
+		] == [("Canada Post", "CP123")], "the label, and no second shipment for the same tracking number"
+		unlabelled = mapper.map(order.with_fields(trackingNumber="CP999", fulfillmentStatus="DELIVERED"))
+		assert unlabelled is not None
+		shipment = unlabelled.values().records("shipments")[-1]
+		assert (
+			shipment.optional_string("service"),
+			shipment.optional_string("tracking_number"),
+			shipment.flag("delivered"),
+		) == (
+			"Canada Post Expedited",
+			"CP999",
+			True,
+		)
 		assert taxes_of(Node({"t": [{"name": "GST", "total": 0}]}, "x"), "t") == []
 
 	def test_reviews_and_redirects(self) -> None:

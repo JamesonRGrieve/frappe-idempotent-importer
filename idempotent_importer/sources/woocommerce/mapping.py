@@ -15,6 +15,7 @@ from idempotent_importer.contract import (
 	Charge,
 	Discount,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
@@ -23,6 +24,7 @@ from idempotent_importer.contract import (
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import Unsupported
@@ -32,6 +34,7 @@ from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.html import embedded_images, hosted_on
+from idempotent_importer.sources.common import from_unix
 
 SIMPLE = "simple"
 UPLOADS = "/wp-content/uploads/"
@@ -321,6 +324,8 @@ WCPAY_RATE, WCPAY_DEFAULT_CURRENCY = (
 	"_wcpay_multi_currency_order_default_currency",
 )
 AELIA_BASE_TOTAL = "_order_total_base_currency"
+# The WooCommerce Shipment Tracking extension's tracking items.
+SHIPMENT_TRACKING = "_wc_shipment_tracking_items"
 
 
 def meta_values(node: Node) -> dict[str, str]:
@@ -353,12 +358,44 @@ def recorded_exchange(order: Node) -> Fields:
 	return {}
 
 
+def tracked_shipments(order: Node, context: Context) -> list[Field]:
+	"""The WooCommerce Shipment Tracking extension's tracking items, each a Shipment: its provider (or
+	custom provider), number, link and ship date. WooCommerce core keeps no shipments."""
+	found: list[Field] = []
+	for meta in order.children("meta_data"):
+		if meta.optional_string("key") != SHIPMENT_TRACKING or not isinstance(meta.get("value"), list):
+			continue
+		for item in meta.children("value"):
+			shipped = item.optional_string("date_shipped")
+			found.append(
+				shipment_fields(
+					Shipment(
+						gid=context.gid(
+							"ShipmentTracking",
+							f"{order.integer('source_id')}-{item.optional_string('tracking_id') or item.text('tracking_number')}",
+						),
+						date=from_unix(int(shipped))
+						if shipped and shipped.isdigit()
+						else order.time("date_created_gmt"),
+						carrier=item.optional_string("custom_tracking_provider")
+						or item.optional_string("tracking_provider"),
+						service=None,
+						tracking_number=item.optional_string("tracking_number"),
+						tracking_url=item.optional_string("custom_tracking_link"),
+						delivered=False,
+						contents=None,
+					)
+				)
+			)
+	return found
+
+
 class OrderMapper:
 	"""An order's invoice, payment, credit notes and notes. Unpaid orders are draft invoices; cancelled,
 	failed and checkout-draft orders have none (an earlier copy is retired)."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -399,6 +436,7 @@ class OrderMapper:
 			else [],
 			"notes": [self._note(note) for note in node.children("note_nodes")],
 			"remarks": node.optional_string("customer_note"),
+			"shipments": tracked_shipments(node, self._context),
 		}
 		fields |= recorded_exchange(node)
 		return Desired(self.kind, node.id(), fields)

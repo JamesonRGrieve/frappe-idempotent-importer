@@ -196,7 +196,18 @@ class TestMappers:
 		assert totals(order) == order.decimal("total") == Decimal("92.4")
 		assert order.decimal("discount") == Decimal("4.5")
 		assert order.flag("submitted") and order.optional_string("customer") == f"{GID}/Customer/41"
-		assert len(order.records("notes")) == 2, "the shipment and the staff notes"
+		assert len(order.records("notes")) == 1, "the staff notes"
+		shipment = order.records("shipments")[0]
+		assert {
+			k: shipment.all()[k]
+			for k in ("carrier", "service", "tracking_number", "tracking_url", "contents")
+		} == {
+			"carrier": "Canada Post",
+			"service": "Canada Post Expedited",
+			"tracking_number": "CP123456789CA",
+			"tracking_url": "https://www.canadapost-postescanada.ca/track/CP123456789CA",
+			"contents": "2 x Enamel trail mug, 1 x Wool toque",
+		}
 		assert order.optional_string("remarks") == "Please leave it at the back door."
 
 	def test_a_pending_order_is_a_draft_and_refunds_are_credit_notes(self) -> None:

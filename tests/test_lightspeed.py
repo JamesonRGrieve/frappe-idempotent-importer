@@ -281,6 +281,13 @@ class TestMappers:
 		assert lines[1].string("name") == "Waffle dish towel (Colour Slate)"
 		assert lines[1].optional_string("variant") == f"{GID}/Variant/5022"
 		assert order.optional_string("customer") == f"{GID}/Customer/801"
+		assert [s.optional_string("tracking_number") for s in order.records("shipments")] == ["CP987654321CA"]
+		cancelled = mapper_of(Kind.ORDER).map(
+			nodes(Kind.ORDER)["Order/701"].with_fields(
+				shipments=[{"id": 1, "status": "cancelled", "order": {}}]
+			)
+		)
+		assert cancelled is not None and cancelled.values().records("shipments") == []
 
 	def test_an_unpaid_guest_order_and_a_credit_note(self) -> None:
 		guest = values(Kind.ORDER, "Order/702")

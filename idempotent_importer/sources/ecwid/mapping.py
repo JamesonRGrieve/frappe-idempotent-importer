@@ -19,6 +19,7 @@ from idempotent_importer.contract import (
 	Discount,
 	LineRates,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
@@ -28,6 +29,7 @@ from idempotent_importer.contract import (
 	order_line,
 	rating_fraction,
 	refund_balance,
+	shipment_fields,
 	taxed_charge,
 	variant_attributes,
 )
@@ -44,6 +46,7 @@ UPC, BRAND = "UPC", "BRAND"
 # Payment statuses of a paid order; cancelled and incomplete (unfinished online payment) orders aren't sales.
 PAID = frozenset({"PAID", "PARTIALLY_REFUNDED", "REFUNDED"})
 NOT_SALES = frozenset({"CANCELLED", "INCOMPLETE"})
+DELIVERED = "DELIVERED"
 ACTIVE = "ACTIVE"
 COUPON_TYPES = {"PERCENT": "percentage", "ABS": "amount"}
 ANY_CUSTOMER = "UNLIMITED"
@@ -369,13 +372,13 @@ class OrderMapper:
 	"""An order → an invoice with Ecwid's totals in the store's currency, numbered by its id: items at their
 	prices before discounts on the variation's item, the order's discount, each tax summed by name over the
 	items, shipping and surcharges, the shipping option, the handling fee and surcharges; refunds as credit
-	notes (one adjustment line each: Ecwid doesn't say which items), and the tracking number, each shipping
-	label and the private notes as comments. Paid orders are submitted; awaiting and custom payment statuses
+	notes (one adjustment line each: Ecwid doesn't say which items), each shipping label (or the
+	tracking number) as a Shipment and the private notes as a comment. Paid orders are submitted; awaiting and custom payment statuses
 	are drafts; cancelled and incomplete orders map to nothing. A gross-price order's taxes are included in
 	its prices (``inclusive_charges``)."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -429,6 +432,7 @@ class OrderMapper:
 			if submitted
 			else [],
 			"notes": self._notes(node, order_id),
+			"shipments": self._shipments(node, order_id),
 			"remarks": node.optional_string("orderComments"),
 		}
 		if inclusive:
@@ -476,33 +480,46 @@ class OrderMapper:
 			"charges": [],
 		}
 
-	def _notes(self, order: Node, order_id: str) -> list[Field]:
+	def _shipments(self, order: Node, order_id: str) -> list[Field]:
+		"""Each shipping label as a Shipment (its carrier, service and tracking); an order shipped without a
+		label but with a tracking number, as one Shipment by the order's shipping option."""
 		placed = order.time("createDate")
-		notes: list[Field] = []
-		tracking = order.optional_string("trackingNumber")
-		if tracking:
-			notes.append(
-				self._note(
-					f"Tracking/{order_id}-{tracking}", placed, None, f"Ecwid tracking number {tracking}"
-				)
-			)
+		found: list[Shipment] = []
 		for shipment in order.children("shipments"):
 			service = shipment.child("shippingService")
 			label = shipment.child("tracking")
-			number = label.optional_string("tracking_number") if label else None
-			parts = [
-				service.optional_string("carrierName") if service else None,
-				f"tracking {number}" if number else None,
-			]
-			text = "Ecwid shipping label " + " ".join(p for p in parts if p)
-			notes.append(
-				self._note(
-					f"Shipment/{order_id}-{shipment.string('id')}",
-					shipment.optional_time("created") or placed,
-					None,
-					text.strip(),
+			found.append(
+				Shipment(
+					gid=self._context.gid("Shipment", f"{order_id}-{shipment.string('id')}"),
+					date=shipment.optional_time("created") or placed,
+					carrier=service.optional_string("carrierName") if service else None,
+					service=service.optional_string("carrierServiceName") if service else None,
+					tracking_number=label.optional_string("tracking_number") if label else None,
+					tracking_url=label.optional_string("tracking_url") if label else None,
+					delivered=False,
+					contents=None,
 				)
 			)
+		tracking = order.optional_string("trackingNumber")
+		if tracking and all(s.tracking_number != tracking for s in found):
+			option = order.child("shippingOption")
+			found.append(
+				Shipment(
+					gid=self._context.gid("Tracking", f"{order_id}-{tracking}"),
+					date=order.optional_time("updateDate") or placed,
+					carrier=option.optional_string("shippingCarrierName") if option else None,
+					service=option.optional_string("shippingMethodName") if option else None,
+					tracking_number=tracking,
+					tracking_url=None,
+					delivered=order.optional_string("fulfillmentStatus") == DELIVERED,
+					contents=None,
+				)
+			)
+		return [shipment_fields(s) for s in found]
+
+	def _notes(self, order: Node, order_id: str) -> list[Field]:
+		placed = order.time("createDate")
+		notes: list[Field] = []
 		memo = order.optional_string("privateAdminNotes")
 		if memo:
 			notes.append(self._note(f"Memo/{order_id}", placed, "Staff", memo))

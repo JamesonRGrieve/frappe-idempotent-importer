@@ -303,7 +303,13 @@ class TestMappers:
 			f"{GID}/Variant/122",
 		]
 		assert order.required_record("payment").string("method") == "Check / Money order"
-		assert len(order.records("notes")) == 2, "the shipment and the comment"
+		assert len(order.records("notes")) == 1, "the comment"
+		shipment = order.records("shipments")[0]
+		assert (shipment.optional_string("carrier"), shipment.optional_string("tracking_number")) == (
+			"Canada Post",
+			"LM987654321CA",
+		)
+		assert order.optional_string("customer") == f"{GID}/Customer/41"
 
 	def test_a_guest_order_and_a_credit_memo(self) -> None:
 		guest = values(Kind.ORDER, "Order/502")

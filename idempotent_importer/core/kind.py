@@ -29,6 +29,7 @@ class Kind(StrEnum):
 	REFUND = "refund"
 	REFUND_PAYMENT = "refund_payment"
 	ORDER_NOTE = "order_note"
+	SHIPMENT = "shipment"
 	DRAFT_ORDER = "draft_order"
 	PAGE = "page"
 	POLICY = "policy"

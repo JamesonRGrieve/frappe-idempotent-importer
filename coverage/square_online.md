@@ -38,7 +38,7 @@ prices, stock and presence the items mirror.
 | Shipping and delivery service charges | Shipping charges | A charge named for shipping or delivery (or the shipment's shipping type) on an order that ships. |
 | Other service charges, tips, cash rounding | Fee charges | |
 | Approved refunds | Credit note (one adjustment line) + refund **Payment Entry** | Pending refunds wait until Square approves them. |
-| Fulfillments (shipment, pickup, delivery, in-store) | **Comment** per state reached | Carrier and tracking; the recipient and their note in the remarks. |
+| Fulfillments (shipment, pickup, delivery, in-store) | **Comment** per state reached; a completed one is also a draft **Shipment** | Carrier (or courier), shipping type, tracking number and link, and the items fulfilled; the recipient and their note in the remarks. |
 | Payment | **Payment Entry** on the first tender's date | Tender types as the method, the payment id as the reference. |
 
 ## Gaps

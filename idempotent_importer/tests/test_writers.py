@@ -561,6 +561,84 @@ class TestWriters(IntegrationTestCase):
 		)
 		self.assertEqual(frappe.db.get_value("Payment Entry", payment, "docstatus"), 2)
 
+	def shipment(self, number: str = "CP1") -> Field:
+		return {
+			"gid": gid("Fulfillment", "1"),
+			"date": "2026-06-02T15:00:00Z",
+			"carrier": "Canada Post",
+			"service": "Expedited",
+			"tracking_number": number,
+			"tracking_url": f"https://track.example/{number}",
+			"delivered": False,
+			"contents": "2 x Wool Toque",
+		}
+
+	def test_an_orders_fulfilments_are_shipments(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		key = gid("Order", "14")
+		shipped: Fields = {
+			**self.order(),
+			"shipping": {
+				"address_type": "Shipping",
+				"name": "Avery Writer",
+				"company": None,
+				"line1": "9 Ship St",
+				"line2": None,
+				"city": "Banff",
+				"state": "AB",
+				"postcode": "T1L 1A1",
+				"country_code": "CA",
+				"email": None,
+				"phone": None,
+			},
+			"shipments": [self.shipment()],
+		}
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, shipped), Outcome.CREATED)
+		part = f"{key}#{gid('Fulfillment', '1')}"
+		shipment = frappe.get_doc("Shipment", self.target(Kind.SHIPMENT, part))
+		invoice = frappe.get_doc("Sales Invoice", self.target(Kind.ORDER, key))
+		self.assertEqual(
+			(
+				shipment.docstatus,
+				shipment.delivery_customer,
+				frappe.db.get_value("Address", shipment.delivery_address_name, "city"),
+				shipment.carrier,
+				shipment.carrier_service,
+				shipment.awb_number,
+				shipment.tracking_status,
+				Decimal(str(shipment.value_of_goods)),
+				shipment.description_of_content,
+			),
+			(
+				0,
+				invoice.customer,
+				"Banff",
+				"Canada Post",
+				"Expedited",
+				"CP1",
+				"In Progress",
+				Decimal("52.5"),
+				"2 x Wool Toque",
+			),
+		)
+		before = modified("Shipment", shipment.name)
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, shipped), Outcome.SKIPPED)
+		self.assertEqual(modified("Shipment", shipment.name), before, "an unchanged shipment writes nothing")
+		retracked: Fields = {**shipped, "shipments": [self.shipment("CP2")]}
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, retracked), Outcome.UPDATED)
+		self.assertEqual(
+			frappe.db.get_value("Shipment", shipment.name, "awb_number"), "CP2", "updated in place"
+		)
+		self.assertEqual(
+			self.mirror(Kind.ORDER, OrderWriter, key, {**shipped, "shipments": []}), Outcome.UPDATED
+		)
+		self.assertEqual(
+			frappe.db.get_value("Shipment", shipment.name, "docstatus"),
+			2,
+			"a dropped fulfilment is discarded",
+		)
+
 	def test_an_order_whose_books_would_not_match_is_not_kept(self) -> None:
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
 		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())

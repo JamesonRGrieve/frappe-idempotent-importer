@@ -35,7 +35,7 @@ sits out a minute on a 429, which pauses the run.
 | Tax-inclusive orders (`taxIncludedInPrices`) | Lines at their prices with tax; each line tax an "On Net Total" row included in the line prices at the line's own rates (different rates per line through an **Item Tax Template** and a tax account per tax); the shipping option and each fee at their prices before tax, then each of their taxes at its rate | Kept only when ERPNext computes every row and the total to Wix's amounts. |
 | Shipping option, additional fees | Shipping and fee charges | |
 | Refunds that returned money | Credit note (the refunded lines at the price paid, an adjustment for their tax and the rest) + refund **Payment Entry** | Failed or pending refunds wait. |
-| Fulfillments | **Comment** each | Carrier, tracking number and link. |
+| Fulfillments | Draft **Shipment** | Shipping provider, tracking number and link, and the lines fulfilled. |
 | The site's blog and its categories | **Blog Category** ("Blog" at /blog for posts in no category) | |
 | Published blog posts | **Blog Post** in its first category | Rich content rendered to HTML (paragraphs, headings, lists, quotes, code, dividers, images, links and text marks), its images copied into **Files**; hashtags as **Tags**; excerpt. |
 | Published Stores reviews (approved, or without moderation) | **Item Review** | |

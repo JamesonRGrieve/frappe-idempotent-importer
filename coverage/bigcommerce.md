@@ -37,7 +37,8 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Each shipping address's cost and handling | Shipping and fee charges | The first shipping address is the invoice's. |
 | Gift wrapping, order fees | Fee charges | |
 | Refunds | Credit note (returned product lines, plus an adjustment line for the rest) + refund **Payment Entry** | |
-| Shipments, staff notes | **Comment** each | Carrier, tracking number and link. The customer's message as the remarks. |
+| Shipments | Draft **Shipment** | Carrier, method, tracking number and link, and the products shipped. |
+| Staff notes | **Comment** | The customer's message as the remarks. |
 | Content pages (page, raw) | **Web Page** | Hidden and customers-only pages are unpublished. |
 | The blog | **Blog Category** named after its blog page | "Blog" when the store has no blog page. |
 | Blog posts | **Blog Post** by its author (**Blogger**) | Tags; unpublished posts are unpublished. |

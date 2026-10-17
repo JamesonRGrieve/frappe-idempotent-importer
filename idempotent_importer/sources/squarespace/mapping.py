@@ -19,6 +19,7 @@ from idempotent_importer.contract import (
 	Discount,
 	LineRates,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
@@ -27,6 +28,7 @@ from idempotent_importer.contract import (
 	line_fields,
 	order_line,
 	refund_balance,
+	shipment_fields,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -336,12 +338,12 @@ class OrderMapper:
 	"""An order → an invoice with Squarespace's totals: lines at the unit price paid (before order
 	discounts) on the variant's item, the discount total, each tax (from the order's transactions, summed
 	by name; the tax total when there are none), each shipping line; payments' refunds as credit notes, and
-	fulfillments and internal notes as comments. Paid and refunded orders are submitted; unpaid ones are
+	fulfillments as Shipments and internal notes as comments. Paid and refunded orders are submitted; unpaid ones are
 	drafts. Test-mode, cancelled and failed orders map to nothing; a tax-inclusive order's taxes are included
 	in its prices (``inclusive_charges``); gift card sales are Unsupported."""
 
 	kind = Kind.ORDER
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -407,6 +409,7 @@ class OrderMapper:
 			if submitted
 			else [],
 			"notes": self._notes(node),
+			"shipments": self._shipments(node),
 			"remarks": None,
 		}
 		if inclusive:
@@ -449,26 +452,32 @@ class OrderMapper:
 			"charges": [],
 		}
 
+	def _shipments(self, order: Node) -> list[Field]:
+		"""Each fulfillment (a shipment): its carrier, service, tracking number and link. A fulfillment has no
+		id, so each is keyed by its position (Squarespace only ever adds them)."""
+		order_id = order.string("source_id")
+		return [
+			shipment_fields(
+				Shipment(
+					gid=self._context.gid("Fulfillment", f"{order_id}-{index}"),
+					date=fulfillment.optional_time("shipDate") or order.time("createdOn"),
+					carrier=fulfillment.optional_string("carrierName"),
+					service=fulfillment.optional_string("service"),
+					tracking_number=fulfillment.optional_string("trackingNumber"),
+					tracking_url=fulfillment.optional_string("trackingUrl"),
+					delivered=False,
+					contents=None,
+				)
+			)
+			for index, fulfillment in enumerate(order.children("fulfillments"))
+		]
+
 	def _notes(self, order: Node) -> list[Field]:
-		"""Each fulfillment and internal note; neither has an id, so each is keyed by its position
-		(Squarespace only ever adds them)."""
+		"""Each internal note; it has no id, so each is keyed by its position (Squarespace only ever adds
+		them)."""
 		created = order.time("createdOn")
 		order_id = order.string("source_id")
 		notes: list[Field] = []
-		for index, fulfillment in enumerate(order.children("fulfillments")):
-			parts = (
-				fulfillment.optional_string(f)
-				for f in ("carrierName", "service", "trackingNumber", "trackingUrl")
-			)
-			notes.append(
-				{
-					"gid": self._context.gid("Fulfillment", f"{order_id}-{index}"),
-					"date": fulfillment.optional_time("shipDate") or created,
-					"author": None,
-					"text": "Squarespace fulfillment: " + " ".join(p for p in parts if p),
-					"customer_note": False,
-				}
-			)
 		for index, note in enumerate(order.children("internalNotes")):
 			content = note.optional_string("content")
 			if content:

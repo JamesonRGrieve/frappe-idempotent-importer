@@ -252,7 +252,12 @@ class TestMappers:
 			"STRIPE (VISA)",
 			"ch_000501",
 		)
-		assert len(order.records("notes")) == 2, "the fulfillment and the internal note"
+		assert len(order.records("notes")) == 1, "the internal note"
+		shipment = order.records("shipments")[0]
+		assert (shipment.optional_string("carrier"), shipment.optional_string("tracking_number")) == (
+			"Canada Post",
+			"SQS1234567890CA",
+		)
 		assert order.records("lines")[0].string("name") == "Cedar cutting board (Engraving: M.B.)"
 		taxes = [c for c in order.records("charges") if c.string("kind") == "tax"]
 		assert [(c.string("description"), c.decimal("amount")) for c in taxes] == [("GST", Decimal("7.90"))]

@@ -836,6 +836,27 @@ class TestOrderStates:
 			c.all() for c in desired.values().records("charges")
 		]
 
+	def test_fulfillments_are_shipments(self, shopify_config: ConnectionConfig) -> None:
+		desired = self.mapper(shopify_config).map(self.order(shopify_config))
+		assert desired is not None
+		assert [s.all() for s in desired.values().records("shipments")] == [
+			{
+				"gid": "gid://shopify/shop-s/Fulfillment/8301",
+				"date": "2026-09-03T12:00:00Z",
+				"carrier": "Canada Post",
+				"service": None,
+				"tracking_number": "1234567890",
+				"tracking_url": "https://www.canadapost-postescanada.ca/track/1234567890",
+				"delivered": False,
+				"contents": None,
+			}
+		]
+		cancelled = self.order(
+			shopify_config, fulfillments=[{"id": "gid://shopify/Fulfillment/1", "status": "CANCELLED"}]
+		)
+		desired = self.mapper(shopify_config).map(cancelled)
+		assert desired is not None and desired.values().records("shipments") == []
+
 	def test_tips_are_a_fee(self, shopify_config: ConnectionConfig) -> None:
 		tip: JsonObject = {"shopMoney": {"amount": "2.0", "currencyCode": "CAD"}}
 		desired = self.mapper(shopify_config).map(self.order(shopify_config, totalTipReceivedSet=tip))

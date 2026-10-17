@@ -231,7 +231,11 @@ class TestMappers:
 		assert lines[1].optional_string("variant") == "gid://etsy/etsy-e/ListingVariant/602-1002"
 		assert receipt.optional_string("customer") == "gid://etsy/etsy-e/User/9001"
 		assert receipt.flag("submitted")
-		assert receipt.records("notes")[0].string("text") == "Etsy shipment: Canada Post CP123456789CA"
+		shipment = receipt.records("shipments")[0]
+		assert (shipment.optional_string("carrier"), shipment.optional_string("tracking_number")) == (
+			"Canada Post",
+			"CP123456789CA",
+		)
 
 	def test_an_unpaid_receipt_is_a_draft_and_a_refund_one_adjustment(self, config: ConnectionConfig) -> None:
 		assert not values(config, Kind.ORDER, "802").flag("submitted")

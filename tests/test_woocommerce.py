@@ -15,7 +15,7 @@ from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
-from idempotent_importer.core.node import Node
+from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
 from idempotent_importer.sources.woocommerce.reader import WooCommerceReader
@@ -232,6 +232,42 @@ class TestOrders:
 			)
 		)
 		assert same is not None and not same.values().has("exchange_rate")
+
+	def test_shipment_tracking_items_are_shipments(self, woo_config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.ORDER]
+		items: list[JsonValue] = [
+			{
+				"tracking_provider": "canada-post",
+				"custom_tracking_provider": "",
+				"custom_tracking_link": "",
+				"tracking_number": "CP1",
+				"date_shipped": "1788768000",
+				"tracking_id": "a1",
+			},
+			{
+				"tracking_provider": "",
+				"custom_tracking_provider": "Local courier",
+				"custom_tracking_link": "https://courier.example/t/2",
+				"tracking_number": "LC2",
+				"date_shipped": "",
+				"tracking_id": "",
+			},
+		]
+		order = nodes(woo_config, Kind.ORDER)["501"].with_fields(
+			meta_data=[{"id": 9, "key": "_wc_shipment_tracking_items", "value": items}]
+		)
+		desired = mapper.map(order)
+		assert desired is not None
+		found = [s.all() for s in desired.values().records("shipments")]
+		assert [(s["gid"], s["date"], s["carrier"], s["tracking_url"]) for s in found] == [
+			("gid://woocommerce/woo-a/ShipmentTracking/501-a1", "2026-09-07T08:00:00Z", "canada-post", None),
+			(
+				"gid://woocommerce/woo-a/ShipmentTracking/501-LC2",
+				order.time("date_created_gmt"),
+				"Local courier",
+				"https://courier.example/t/2",
+			),
+		]
 
 	def test_a_guest_order(self, woo_config: ConnectionConfig) -> None:
 		order = values(woo_config, Kind.ORDER, "502")

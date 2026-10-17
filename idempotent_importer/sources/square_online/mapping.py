@@ -17,11 +17,14 @@ from idempotent_importer.contract import (
 	Address,
 	Charge,
 	OrderLine,
+	Shipment,
 	address_fields,
 	charge_fields,
+	contents_of,
 	line_fields,
 	order_line,
 	refund_balance,
+	shipment_fields,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -63,6 +66,7 @@ DETAILS = {
 	"IN_STORE": "in_store_details",
 }
 APPROVED = "APPROVED"
+COMPLETED = "COMPLETED"
 
 
 def money(node: Node | None, field: str) -> Decimal | None:
@@ -409,7 +413,7 @@ class OrderMapper:
 	a comment. Return and exchange orders, and service charges apportioned into lines, have no exact home."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -464,6 +468,7 @@ class OrderMapper:
 			"refunds": [self._refund(refund, currency) for refund in refunds] if submitted else [],
 			"notes": self._notes(node),
 			"remarks": self._customer_note(node),
+			"shipments": self._shipments(node),
 		}
 		return Desired(self.kind, node.id(), fields)
 
@@ -503,7 +508,8 @@ class OrderMapper:
 		}
 		for charge in order.children("service_charges"):
 			if charge.optional_string("treatment_type") == APPORTIONED:
-				raise Unsupported("a service charge apportioned into its line items has no exact invoice row")
+				# Already in the line items' totals (and so in their prices): no row of its own.
+				continue
 			name = charge.optional_string("name") or "Service charge"
 			is_shipping = ships and (SHIPPING_CHARGE.search(name) is not None or name in shipping_types)
 			charges.append(Charge(SHIPPING if is_shipping else FEE, name, pre_tax(charge)))
@@ -557,6 +563,47 @@ class OrderMapper:
 				if details is not None and details.optional_string(note):
 					return details.optional_string(note)
 		return None
+
+	def _shipments(self, order: Node) -> list[Field]:
+		"""Each completed fulfillment (shipped, delivered or picked up) as a Shipment: its carrier, shipping
+		type and tracking for a shipment, its courier for a delivery, and the items it fulfilled."""
+		names = {
+			line.optional_string("uid"): line.optional_string("name") for line in order.children("line_items")
+		}
+		found: list[Field] = []
+		for index, fulfillment in enumerate(order.children("fulfillments")):
+			kind = fulfillment.optional_string("type") or "FULFILLMENT"
+			details = fulfillment.child(DETAILS.get(kind, ""))
+			if fulfillment.optional_string("state") != COMPLETED or details is None:
+				continue
+			at = next((t for f in STATE_TIMES[COMPLETED] if (t := details.optional_time(f))), None)
+			items = [
+				(
+					names.get(entry.optional_string("line_item_uid")) or "Item",
+					decimal_of(entry.string("quantity")),
+				)
+				for entry in fulfillment.children("entries")
+			]
+			found.append(
+				shipment_fields(
+					Shipment(
+						gid=self._context.gid(
+							"Fulfillment",
+							fulfillment.optional_string("uid") or f"{order.string('square_id')}-{index}",
+						),
+						date=at or order.time("created_at"),
+						carrier=details.optional_string("carrier")
+						or details.optional_string("courier_provider_name"),
+						service=details.optional_string("shipping_type") or kind.lower().replace("_", " "),
+						tracking_number=details.optional_string("tracking_number"),
+						tracking_url=details.optional_string("tracking_url"),
+						delivered=details.optional_time("delivered_at") is not None
+						or details.optional_time("picked_up_at") is not None,
+						contents=contents_of(items),
+					)
+				)
+			)
+		return found
 
 	def _notes(self, order: Node) -> list[Field]:
 		"""One comment per fulfillment state reached (its type, state and, for shipments, the tracking)."""

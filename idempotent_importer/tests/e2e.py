@@ -123,6 +123,26 @@ BUSINESSES = (
 			"refresh_token": ETSY_CONNECTED_REFRESH_TOKEN,
 		},
 	),
+	Business(
+		"SQ",
+		"Store Q",
+		"square-q",
+		"Square Online",
+		"square_online",
+		"square_online-fake",
+		"https://prairiepottery.square.site",
+		{"api_secret": "e2e-square-token"},
+	),
+	Business(
+		"BC",
+		"Store C",
+		"bigcommerce-c",
+		"BigCommerce",
+		"bigcommerce",
+		"bigcommerce-fake",
+		"http://bigcommerce-fake:8080",
+		{"api_account": "bcfix123", "api_secret": "e2e-bigcommerce-token"},
+	),
 )
 
 
@@ -363,6 +383,8 @@ def main() -> None:
 		"assert_shopify": assert_shopify,
 		"assert_etsy": assert_etsy,
 		"assert_etsy_connect": assert_etsy_connect,
+		"assert_square_online": assert_square_online,
+		"assert_bigcommerce": assert_bigcommerce,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -917,6 +939,170 @@ def assert_etsy(state: str) -> None:
 		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
 		2,
 		"the new review on the apron",
+	)
+
+
+@check
+def assert_square_online(state: str) -> None:
+	connection = "square-q"
+	mug = target(connection, "product", "Item", "ITEM_MUG")
+	expect(
+		(
+			mug,
+			frappe.db.get_value("Item", mug, "item_name"),
+			frappe.db.get_value("Item", mug, "has_variants"),
+		),
+		("SQ-PP-MUG-OCEAN", "Ocean mug", 0),
+		"the mug, one item",
+	)
+	expect(stock_of(connection, mug), amount("4"), "the mug's main-location stock, not reduced by orders")
+	expect(frappe.db.get_value("Item Barcode", {"parent": mug}, "barcode"), "0629104150021", "UPC → barcode")
+	expect(frappe.db.get_value("Item", mug, "item_group"), "Mugs - SQ", "category → Item Group")
+	charcoal = part(connection, "variant", "ItemVariation/VAR_APRON_CHAR")
+	expect(
+		(item_price(connection, charcoal), stock_of(connection, charcoal)),
+		(amount("48"), amount("0")),
+		"the main location's price override, and sold out",
+	)
+	expect(
+		frappe.db.get_value("Importer Link", {"connection": connection, "gid": ["like", "%/Item/ITEM_GIFT"]}),
+		None,
+		"the gift card",
+	)
+	order = target(connection, "order", "Order", "ORDER_1")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(1, amount("123.06"), amount("4.80"), target(connection, "customer", "Customer", "CUST_ADA")),
+		"order 1's invoice",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "ORDER_2"), "docstatus"),
+		0,
+		"unpaid order 2",
+	)
+	expect(
+		frappe.db.get_value(
+			"Web Page", target(connection, "policy", "ReturnPolicy", "LOCMAIN1"), "published"
+		),
+		1,
+		"the return policy page",
+	)
+	if state == "v1":
+		expect(item_price(connection, mug), amount("32"), "the mug's price")
+		expect(
+			published(target(connection, "product", "Item", "ITEM_SAMPLE")),
+			0,
+			"an archived item, unpublished",
+		)
+		return
+	expect(item_price(connection, mug), amount("34"), "the mug's new price")
+	expect(
+		frappe.db.get_value("Item", target(connection, "product", "Item", "ITEM_SAMPLE"), "disabled"),
+		1,
+		"the deleted item, disabled",
+	)
+	credit = part(connection, "refund", "Refund/REF_1")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")), amount("-10"), "order 1's refund"
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "ORDER_3"), "customer"),
+		target(connection, "customer", "Customer", "CUST_GRACE"),
+		"new order 3, linked to the new customer",
+	)
+
+
+@check
+def assert_bigcommerce(state: str) -> None:
+	connection = "bigcommerce-c"
+	mug = target(connection, "product", "Product", "111")
+	expect(
+		(mug, frappe.db.get_value("Item", mug, "brand"), frappe.db.get_value("Item", mug, "item_group")),
+		("BC-BC-MUG-1", "Northern Trail", "Camp Kitchen - BC"),
+		"the mug: its base variant's SKU, brand and category",
+	)
+	expect(stock_of(connection, mug), amount("12"), "product-level stock, not reduced by orders")
+	expect(frappe.db.get_value("Item Barcode", {"parent": mug}, "barcode"), "0778899100018", "GTIN → barcode")
+	navy = part(connection, "variant", "Variant/1122")
+	red = part(connection, "variant", "Variant/1121")
+	expect(
+		(
+			item_price(connection, navy),
+			stock_of(connection, navy),
+			item_price(connection, red),
+			stock_of(connection, red),
+		),
+		(amount("32.5"), amount("0"), amount("30"), amount("5")),
+		"the navy variant's own price and stock; the red one inherits the product's price",
+	)
+	order = target(connection, "order", "Order", "501")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(1, amount("92.40"), amount("4.50"), target(connection, "customer", "Customer", "41")),
+		"order 501's invoice",
+	)
+	expect(
+		frappe.db.count(
+			"Comment",
+			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
+		),
+		2,
+		"order 501's shipment and staff notes",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "502"), "docstatus"),
+		0,
+		"pending guest order 502",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount"}),
+		0,
+		"no coupon ERPNext could enforce exactly (once-per-customer, shipping, automatic, disabled)",
+	)
+	expect(
+		frappe.db.get_value("Web Page", target(connection, "page", "Page", "82"), "published"),
+		0,
+		"a hidden page",
+	)
+	post = target(connection, "article", "Post", "91")
+	expect(
+		frappe.db.get_value("Blog Post", post, "blog_category"),
+		target(connection, "blog", "Blog", "bcfix123"),
+		"the post in the store's blog",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
+		1 if state == "v1" else 2,
+		"approved reviews",
+	)
+	if state == "v1":
+		expect(item_price(connection, mug), amount("24"), "the mug's price")
+		expect(
+			published(target(connection, "product", "Product", "113")), 0, "the hidden product, unpublished"
+		)
+		return
+	expect(item_price(connection, mug), amount("26"), "the mug's new price")
+	expect(
+		frappe.db.get_value("Item", target(connection, "product", "Product", "113"), "disabled"),
+		1,
+		"the deleted product",
+	)
+	credit = part(connection, "refund", "Refund/9001")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-10"),
+		"order 501's refund",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "docstatus"),
+		1,
+		"new paid order 503",
 	)
 
 

@@ -9,11 +9,15 @@ import pytest
 
 from idempotent_importer.contract import (
 	Charge,
+	Discount,
 	booked,
+	date_of,
+	discount_fields,
 	order_line,
 	order_remarks,
 	rating_fraction,
 	refund_balance,
+	variant_attributes,
 )
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Fields, Values
@@ -80,6 +84,28 @@ def test_ratings() -> None:
 	assert rating_fraction(4, 5) == Decimal("0.8")
 	with pytest.raises(Unsupported):
 		rating_fraction(6, 5)
+
+
+def test_variant_attributes_keep_first_use_order() -> None:
+	variants: list[Fields] = [
+		{"attributes": {"Colour": "Red", "Size": "S"}},
+		{"attributes": {"Colour": "Navy", "Size": "S"}},
+		{"attributes": {"Colour": "Red", "Size": "M"}},
+	]
+	assert variant_attributes(variants) == [
+		{"name": "Colour", "values": ["Red", "Navy"]},
+		{"name": "Size", "values": ["S", "M"]},
+	]
+
+
+def test_discount_fields_and_dates() -> None:
+	discount = Discount(
+		["A", "B"], None, "amount", "items", Decimal(5), ["gid://x/c/P/1"], [], None, None, None, 3
+	)
+	fields = discount_fields(discount)
+	assert (fields["codes"], fields["items"], fields["max_uses"]) == (["A", "B"], ["gid://x/c/P/1"], 3)
+	assert date_of("2026-09-01T10:00:00Z") == "2026-09-01"
+	assert date_of(None) is None
 
 
 class TestNaming:

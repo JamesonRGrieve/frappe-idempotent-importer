@@ -54,6 +54,11 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		"etsy",
 		{"x-api-key": "e2e-keystring:e2e-shared-secret", "Authorization": "Bearer 7001.fixture-access-token"},
 	),
+	"square_online-fake": (
+		"square_online",
+		{"Authorization": "Bearer e2e-square-token", "Square-Version": "2026-09-16"},
+	),
+	"bigcommerce-fake": ("bigcommerce", {"X-Auth-Token": "e2e-bigcommerce-token"}),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400

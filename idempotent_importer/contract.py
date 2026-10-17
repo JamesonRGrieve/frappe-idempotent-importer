@@ -41,7 +41,7 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from idempotent_importer.core.errors import Unsupported
-from idempotent_importer.core.fields import Fields, Values
+from idempotent_importer.core.fields import Field, Fields, Values
 from idempotent_importer.core.money import exact_quotient, minor_units
 
 
@@ -201,6 +201,58 @@ def refund_balance(
 	if beyond == 0:
 		return None
 	return order_line(key, None, None, REFUND_ADJUSTMENT, Decimal(-1), -beyond, currency)
+
+
+@dataclass(frozen=True)
+class Discount:
+	"""A coupon discount ERPNext enforces exactly: codes, a percentage or amount off the transaction, some
+	items or some item groups, with its minimum spend, dates and use limit."""
+
+	codes: list[str]
+	description: str | None
+	discount: str
+	applies: str
+	value: Decimal
+	items: list[str]
+	groups: list[str]
+	min_amount: Decimal | None
+	valid_from: str | None
+	valid_upto: str | None
+	max_uses: int | None
+
+
+def discount_fields(discount: Discount) -> Fields:
+	return {
+		"codes": list[Field](discount.codes),
+		"description": discount.description,
+		"discount": discount.discount,
+		"applies": discount.applies,
+		"value": discount.value,
+		"items": list[Field](discount.items),
+		"groups": list[Field](discount.groups),
+		"min_amount": discount.min_amount,
+		"valid_from": discount.valid_from,
+		"valid_upto": discount.valid_upto,
+		"max_uses": discount.max_uses,
+	}
+
+
+def date_of(time: str | None) -> str | None:
+	"""A contract time's date (``YYYY-MM-DD``), or None."""
+	return time[:10] if time else None
+
+
+def variant_attributes(variants: list[Fields]) -> list[Field]:
+	"""A product's attributes from its mapped variants: each attribute name once, in the order the variants
+	first use it, with its values in the order they first appear."""
+	values: dict[str, list[Field]] = {}
+	for variant in variants:
+		chosen = variant["attributes"]
+		if isinstance(chosen, dict):
+			for name, value in chosen.items():
+				if value not in values.setdefault(name, []):
+					values[name].append(value)
+	return [{"name": name, "values": taken} for name, taken in values.items()]
 
 
 def rating_fraction(rating: int, scale: int) -> Decimal:

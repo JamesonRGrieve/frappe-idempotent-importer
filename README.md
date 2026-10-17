@@ -19,7 +19,9 @@ stores can import into two businesses at once and never touch each other's recor
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
 | Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
-| Square Online, BigCommerce, Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
+| BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, coupons and coupon promotions, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
+| Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -97,6 +99,13 @@ This is the operator's decision to confirm (see below).
      keystring as the user and its shared secret as the secret, save, then click **Connect to Etsy** and
      approve read access as the shop owner. The refresh token Etsy issues (and replaces on every refresh)
      is kept on the connection.
+   - **Square Online:** in the Square Developer Console create an application and copy its production
+     access token (or issue an OAuth token with the read scopes in
+     [coverage/square_online.md](coverage/square_online.md)); enter the Square Online site's URL and the
+     token as the secret.
+   - **BigCommerce:** create a store-level API account with the read-only scopes in
+     [coverage/bigcommerce.md](coverage/bigcommerce.md); enter the storefront URL, the store hash (the code
+     after `/stores/` in the account's API path) as the account, and the access token as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands
@@ -178,11 +187,12 @@ Each of these is the operator's call.
 11. **A product deleted at the source** leaves the invoices that sold it as booked; lines that never named
     a product use the fallback item.
 12. **Currency:** an order in another currency than the company's is mirrored only when the source
-    recorded its exchange rate and its total in the company's currency (BigCommerce, Magento): the invoice
-    is in the order's currency at that rate, on the company's receivable account in that currency (create
-    one per currency; ERPNext books a customer in one currency), and its total in the company's currency
-    must equal the source's exactly. Without a recorded rate (WooCommerce, Shopify's other currencies) it
-    is a gap: a rate of the day would make the books inexact.
+    recorded its exchange rate and its total in the company's currency (Magento): the invoice is in the
+    order's currency at that rate, on the company's receivable account in that currency (create one per
+    currency; ERPNext books a customer in one currency), and its total in the company's currency must equal
+    the source's exactly. Without both (WooCommerce, Shopify's other currencies, BigCommerce, which records
+    the rate but no total in the store's currency) it is a gap: a derived or day's rate would make the
+    books inexact.
 13. **Required apps:** the app requires ERPNext, Webshop, the blog app and the Public Site router (every
     connection belongs to a Public Site). HRMS is needed only by the HR sources of later phases.
 14. **Schedule:** incremental hourly, full daily, a five-minute tick for paused runs. Times are UTC in the

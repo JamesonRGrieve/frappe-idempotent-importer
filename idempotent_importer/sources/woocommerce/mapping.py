@@ -13,9 +13,12 @@ from urllib.parse import urlsplit
 from idempotent_importer.contract import (
 	Address,
 	Charge,
+	Discount,
 	OrderLine,
 	address_fields,
 	charge_fields,
+	date_of,
+	discount_fields,
 	line_fields,
 	order_line,
 	rating_fraction,
@@ -269,10 +272,8 @@ class CouponMapper:
 				raise Unsupported(f"its {limit} limit has no ERPNext coupon equivalent")
 		if node.optional_decimal("maximum_amount"):
 			raise Unsupported("a maximum spend has no ERPNext coupon equivalent")
-		products: list[Field] = [self._context.gid("Product", pid) for pid in node.integers("product_ids")]
-		groups: list[Field] = [
-			self._context.gid("ProductCategory", cid) for cid in node.integers("product_categories")
-		]
+		products = [self._context.gid("Product", pid) for pid in node.integers("product_ids")]
+		groups = [self._context.gid("ProductCategory", cid) for cid in node.integers("product_categories")]
 		if products and groups:
 			raise Unsupported(
 				"a coupon limited to both products and categories has no single ERPNext pricing rule"
@@ -294,20 +295,20 @@ class CouponMapper:
 		if applies == "all_items":
 			raise Unsupported("a fixed discount on every product has no ERPNext coupon pricing rule")
 		minimum = node.optional_decimal("minimum_amount")
-		fields: Fields = {
-			"codes": [node.string("code")],
-			"description": node.optional_string("description"),
-			"discount": kind,
-			"applies": applies,
-			"value": node.decimal("amount"),
-			"items": products,
-			"groups": groups,
-			"min_amount": minimum if minimum else None,
-			"valid_from": None,
-			"valid_upto": (node.optional_time("date_expires_gmt") or "")[:10] or None,
-			"max_uses": node.optional_integer("usage_limit"),
-		}
-		return Desired(self.kind, node.id(), fields)
+		discount = Discount(
+			codes=[node.string("code")],
+			description=node.optional_string("description"),
+			discount=kind,
+			applies=applies,
+			value=node.decimal("amount"),
+			items=products,
+			groups=groups,
+			min_amount=minimum if minimum else None,
+			valid_from=None,
+			valid_upto=date_of(node.optional_time("date_expires_gmt")),
+			max_uses=node.optional_integer("usage_limit"),
+		)
+		return Desired(self.kind, node.id(), discount_fields(discount))
 
 
 class OrderMapper:

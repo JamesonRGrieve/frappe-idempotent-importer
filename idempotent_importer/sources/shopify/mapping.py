@@ -17,9 +17,12 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Discount,
 	OrderLine,
 	address_fields,
 	charge_fields,
+	date_of,
+	discount_fields,
 	line_fields,
 	order_line,
 	refund_balance,
@@ -395,8 +398,8 @@ class DiscountMapper:
 			case other:
 				raise Unsupported(f"a {other} value has no ERPNext coupon equivalent")
 		items = gets.required_child("items")
-		products: list[Field] = []
-		groups: list[Field] = []
+		products: list[str] = []
+		groups: list[str] = []
 		match items.typename():
 			case "AllDiscountItems":
 				applies = "transaction" if kind == "percentage" else "all_items"
@@ -420,20 +423,20 @@ class DiscountMapper:
 			if minimum.typename() != "DiscountMinimumSubtotal":
 				raise Unsupported("a minimum quantity has no ERPNext coupon equivalent")
 			min_amount = minimum.required_child("greaterThanOrEqualToSubtotal").decimal("amount")
-		fields: Fields = {
-			"codes": [code.string("code") for code in discount.required_child("codes").children("nodes")],
-			"description": discount.optional_string("title"),
-			"discount": kind,
-			"applies": applies,
-			"value": amount,
-			"items": products,
-			"groups": groups,
-			"min_amount": min_amount,
-			"valid_from": (discount.optional_time("startsAt") or "")[:10] or None,
-			"valid_upto": (discount.optional_time("endsAt") or "")[:10] or None,
-			"max_uses": discount.optional_integer("usageLimit"),
-		}
-		return Desired(self.kind, node.id(), fields)
+		rule = Discount(
+			codes=[code.string("code") for code in discount.required_child("codes").children("nodes")],
+			description=discount.optional_string("title"),
+			discount=kind,
+			applies=applies,
+			value=amount,
+			items=products,
+			groups=groups,
+			min_amount=min_amount,
+			valid_from=date_of(discount.optional_time("startsAt")),
+			valid_upto=date_of(discount.optional_time("endsAt")),
+			max_uses=discount.optional_integer("usageLimit"),
+		)
+		return Desired(self.kind, node.id(), discount_fields(rule))
 
 
 class OrderMapper:

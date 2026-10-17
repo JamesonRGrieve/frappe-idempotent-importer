@@ -20,5 +20,9 @@ jobs:
       - name: The apps the bench installs beside this one
         run: |
           git clone --branch version-16 https://github.com/JamesonRGrieve/frappe-webshop ../frappe-webshop
+          git -C ../frappe-webshop checkout --quiet "$WEBSHOP_REF"
           git clone https://github.com/JamesonRGrieve/frappe-public-site-router ../frappe-public-site-router
+        env:
+          # The Webshop fork's store-scoped coupon codes (Coupon Code.webshop_store), which the importer writes.
+          WEBSHOP_REF: 83fcd3ccee
       - run: tests/e2e/run.sh

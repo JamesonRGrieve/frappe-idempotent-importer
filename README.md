@@ -21,7 +21,8 @@ stores can import into two businesses at once and never touch each other's recor
 | Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
 | Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
 | BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, coupons and coupon promotions, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
-| Squarespace, Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Squarespace | Built | Store pages, products with variants, prices, sales, stock, images and tags, customer profiles, promo codes, and orders with payments, refunds and fulfillments — [coverage/squarespace.md](coverage/squarespace.md) |
+| Wix, Magento / Adobe Commerce, Lightspeed eCom, Ecwid, Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -106,6 +107,8 @@ This is the operator's decision to confirm (see below).
    - **BigCommerce:** create a store-level API account with the read-only scopes in
      [coverage/bigcommerce.md](coverage/bigcommerce.md); enter the storefront URL, the store hash (the code
      after `/stores/` in the account's API path) as the account, and the access token as the secret.
+   - **Squarespace:** create a Developer API key with the read-only permissions in
+     [coverage/squarespace.md](coverage/squarespace.md); enter the site's URL and the key as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands

@@ -47,6 +47,7 @@ SOURCES=(
 	etsy-e:etsy-fake:assert_etsy
 	square-q:square_online-fake:assert_square_online
 	bigcommerce-c:bigcommerce-fake:assert_bigcommerce
+	squarespace-p:squarespace-fake:assert_squarespace
 )
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do

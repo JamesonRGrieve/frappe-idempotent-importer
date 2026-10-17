@@ -59,6 +59,10 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		{"Authorization": "Bearer e2e-square-token", "Square-Version": "2026-09-16"},
 	),
 	"bigcommerce-fake": ("bigcommerce", {"X-Auth-Token": "e2e-bigcommerce-token"}),
+	"squarespace-fake": (
+		"squarespace",
+		{"Authorization": "Bearer e2e-squarespace-key", "User-Agent": "frappe-idempotent-importer"},
+	),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400

@@ -143,6 +143,16 @@ BUSINESSES = (
 		"http://bigcommerce-fake:8080",
 		{"api_account": "bcfix123", "api_secret": "e2e-bigcommerce-token"},
 	),
+	Business(
+		"SS",
+		"Store P",
+		"squarespace-p",
+		"Squarespace",
+		"squarespace",
+		"squarespace-fake",
+		"https://harbourpine.example",
+		{"api_secret": "e2e-squarespace-key"},
+	),
 )
 
 
@@ -385,6 +395,7 @@ def main() -> None:
 		"assert_etsy_connect": assert_etsy_connect,
 		"assert_square_online": assert_square_online,
 		"assert_bigcommerce": assert_bigcommerce,
+		"assert_squarespace": assert_squarespace,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -1103,6 +1114,111 @@ def assert_bigcommerce(state: str) -> None:
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "docstatus"),
 		1,
 		"new paid order 503",
+	)
+
+
+@check
+def assert_squarespace(state: str) -> None:
+	connection = "squarespace-p"
+	board = target(connection, "product", "Product", "6b2000000000000000000011")
+	expect(
+		(board, frappe.db.get_value("Item", board, "item_group")),
+		("SS-SQS-BOARD-1", "Kitchen - SS"),
+		"the board: its variant's SKU, its store page",
+	)
+	expect(stock_of(connection, board), amount("9"), "the board's stock, not reduced by orders")
+	expect(
+		frappe.db.get_value("Item Barcode", {"parent": board}, "barcode"), "0662233440017", "GTIN → barcode"
+	)
+	expect(tags_of("Item", board), ["cedar", "kitchen"], "the board's tags")
+	moss = part(connection, "variant", "ProductVariant/a1b2c3d4-0000-4000-8000-000000000122")
+	expect(
+		(item_price(connection, moss), stock_of(connection, moss)),
+		(amount("65"), amount("0")),
+		"the moss scarf",
+	)
+	ebook = target(connection, "product", "Product", "6b2000000000000000000014")
+	expect(
+		(frappe.db.get_value("Item", ebook, "is_stock_item"), item_price(connection, ebook)),
+		(0, amount("12")),
+		"a download: not a stock item, priced at the product",
+	)
+	expect(
+		frappe.db.get_value(
+			"Importer Link", {"connection": connection, "gid": ["like", "%/Product/6b2000000000000000000015"]}
+		),
+		None,
+		"the gift card",
+	)
+	order = target(connection, "order", "Order", "6d4000000000000000000031")
+	invoice = frappe.db.get_value(
+		"Sales Invoice", order, ["docstatus", "grand_total", "discount_amount", "customer"], as_dict=True
+	)
+	expect(
+		(invoice.docstatus, amount(invoice.grand_total), amount(invoice.discount_amount), invoice.customer),
+		(
+			1,
+			amount("165.90"),
+			amount("5.00"),
+			target(connection, "customer", "Profile", "6c3000000000000000000021"),
+		),
+		"order 1001's invoice",
+	)
+	expect(
+		frappe.db.count(
+			"Comment",
+			{"reference_doctype": "Sales Invoice", "reference_name": order, "comment_type": "Comment"},
+		),
+		2,
+		"order 1001's fulfillment and internal note",
+	)
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice", target(connection, "order", "Order", "6d4000000000000000000032"), "docstatus"
+		),
+		0,
+		"unpaid guest order 1002",
+	)
+	expect(
+		frappe.db.get_value(
+			"Importer Link", {"connection": connection, "gid": ["like", "%/Profile/6c3000000000000000000023"]}
+		),
+		None,
+		"a mailing-list subscriber",
+	)
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		2,
+		"the amount-off and one-product promo codes (not once-per-customer, free shipping or automatic ones)",
+	)
+	if state == "v1":
+		expect(item_price(connection, board), amount("48"), "the board's price")
+		expect(
+			published(target(connection, "product", "Product", "6b2000000000000000000013")),
+			0,
+			"a hidden product",
+		)
+		return
+	expect(item_price(connection, board), amount("52"), "the board's new price")
+	expect(
+		frappe.db.get_value(
+			"Item", target(connection, "product", "Product", "6b2000000000000000000013"), "disabled"
+		),
+		1,
+		"the deleted product, disabled",
+	)
+	credit = part(connection, "refund", "Refund/b7c8d9e0-0000-4000-8000-000000009001")
+	expect(
+		amount(frappe.db.get_value("Sales Invoice", credit, "grand_total")),
+		amount("-10"),
+		"order 1001's refund",
+	)
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice", target(connection, "order", "Order", "6d4000000000000000000033"), "customer"
+		),
+		target(connection, "customer", "Profile", "6c3000000000000000000024"),
+		"new order 1003, linked to the new customer",
 	)
 
 

@@ -131,7 +131,9 @@ bench_up() {
 }
 
 bench_down() {
-	podman rm -f "$E2E_BENCH" "$E2E_FAKE" "$E2E_REDIS" "$E2E_DB" >/dev/null 2>&1 || true
+	# --volumes: the images declare anonymous volumes (MariaDB's and Redis's data), which outlive their
+	# containers otherwise and pile up in the suite's store run after run.
+	podman rm -f --volumes "$E2E_BENCH" "$E2E_FAKE" "$E2E_REDIS" "$E2E_DB" >/dev/null 2>&1 || true
 	podman volume rm -f "$E2E_SITES" >/dev/null 2>&1 || true
 	podman network rm -f "$E2E_NETWORK" >/dev/null 2>&1 || true
 	podman rmi -f "$E2E_IMAGE" >/dev/null 2>&1 || true

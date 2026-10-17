@@ -7,9 +7,12 @@ connection (see ShopifyReader)."""
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from decimal import Decimal
 
 from idempotent_importer.contract import (
+	COUPON_LIMITS,
+	DISCOUNT_CAPS,
 	FEE,
 	SHIPPING,
 	SHIPPING_TAX,
@@ -23,15 +26,16 @@ from idempotent_importer.contract import (
 	address_fields,
 	charge_fields,
 	date_of,
-	discount_fields,
+	discount_desired,
 	included_taxes,
 	line_fields,
 	order_line,
+	planned,
 	refund_balance,
 	shipment_fields,
 )
 from idempotent_importer.core.desired import Desired, Mapper
-from idempotent_importer.core.errors import Unsupported
+from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Field, Fields
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
@@ -53,6 +57,9 @@ UNPAID = frozenset({"PENDING", "AUTHORIZED", "PARTIALLY_PAID", "EXPIRED"})
 PAYMENT_KINDS = frozenset({"SALE", "CAPTURE"})
 SUCCESS = "SUCCESS"
 COMMENT_EVENT = "CommentEvent"
+AUTOMATIC = frozenset({"DiscountAutomaticBasic", "DiscountAutomaticFreeShipping"})
+BASIC = frozenset({"DiscountCodeBasic", "DiscountAutomaticBasic"})
+FREE_SHIPPING = frozenset({"DiscountCodeFreeShipping", "DiscountAutomaticFreeShipping"})
 MEDIA_IMAGE = "MediaImage"
 
 
@@ -377,75 +384,118 @@ class CustomerMapper:
 
 
 class DiscountMapper:
-	"""Basic code discounts (a percentage or an amount off everything, some products or some collections).
-	Other discount types and restrictions ERPNext's coupons can't enforce are Unsupported."""
+	"""Code and automatic discounts: a basic one's percentage or amount off everything, some products,
+	single variants or some collections, after a minimum spend or quantity, for every customer or some;
+	a free-shipping one's code. What ERPNext's pricing doesn't enforce is planned companion work (a
+	once-per-customer limit and free shipping: coupon limits, card 405; customer segments and an amount
+	spread across some items: card 407) and the rest is written. Buy X Get Y and app discounts are
+	Unsupported: their fields aren't read (the query's cost is recorded from a live store, see
+	coverage/shopify.md)."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def map(self, node: Node) -> Desired | None:
 		discount = node.required_child("discount")
 		typename = discount.typename()
-		if typename != "DiscountCodeBasic":
-			raise Unsupported(f"{typename} has no ERPNext coupon equivalent")
+		if typename not in BASIC | FREE_SHIPPING:
+			raise Unsupported(f"{typename} isn't read yet (an operator decision: coverage/shopify.md)")
 		if discount.string("status") != ACTIVE:
 			return None
+		automatic = typename in AUTOMATIC
+		later: list[str] = []
 		if discount.flag("appliesOncePerCustomer"):
-			raise Unsupported("a once-per-customer limit has no ERPNext coupon equivalent")
-		context = discount.child("context")
-		if context and context.typename() != "DiscountBuyerSelectionAll":
-			raise Unsupported("a discount for selected customers has no ERPNext coupon equivalent")
+			later.append(planned("its once-per-customer limit", COUPON_LIMITS))
+		customers = self._customers(discount.child("context"), automatic, later)
+		minimum = discount.child("minimumRequirement")
+		min_amount = min_qty = None
+		if minimum is not None:
+			if minimum.typename() == "DiscountMinimumSubtotal":
+				min_amount = minimum.required_child("greaterThanOrEqualToSubtotal").decimal("amount")
+			else:
+				min_qty = minimum.decimal("greaterThanOrEqualToQuantity")
+		base = Discount(
+			codes=[]
+			if automatic
+			else [c.string("code") for c in discount.required_child("codes").children("nodes")],
+			description=discount.optional_string("title"),
+			discount="percentage",
+			applies="transaction",
+			value=Decimal(0),
+			items=[],
+			groups=[],
+			min_amount=min_amount,
+			min_qty=min_qty,
+			mixed=min_qty is not None,
+			valid_from=date_of(discount.optional_time("startsAt")),
+			valid_upto=date_of(discount.optional_time("endsAt")),
+			max_uses=None if automatic else discount.optional_integer("usageLimit"),
+			automatic=automatic,
+			customers=customers,
+			planned=later,
+		)
+		if typename in FREE_SHIPPING:
+			later.append(planned("its free shipping", COUPON_LIMITS))
+			return discount_desired(node.id(), base)
 		gets = discount.required_child("customerGets")
 		value = gets.required_child("value")
-		match value.typename():
-			case "DiscountPercentage":
-				kind, amount = "percentage", value.decimal("percentage") * 100
-			case "DiscountAmount":
-				if not value.flag("appliesOnEachItem"):
-					raise Unsupported("an amount spread across the order has no ERPNext coupon equivalent")
-				kind, amount = "amount", value.required_child("amount").decimal("amount")
-			case other:
-				raise Unsupported(f"a {other} value has no ERPNext coupon equivalent")
 		items = gets.required_child("items")
 		products: list[str] = []
+		variants: list[tuple[str | None, str]] = []
 		groups: list[str] = []
 		match items.typename():
 			case "AllDiscountItems":
-				applies = "transaction" if kind == "percentage" else "all_items"
+				applies = "all_items"
 			case "DiscountProducts":
-				if items.child("productVariants") and items.required_child("productVariants").children(
-					"nodes"
-				):
-					raise Unsupported("a discount on single variants has no ERPNext coupon equivalent")
 				products = [p.id() for p in items.required_child("products").children("nodes")]
+				if items.child("productVariants") is not None:
+					variants = [
+						(None, v.id()) for v in items.required_child("productVariants").children("nodes")
+					]
 				applies = "items"
 			case "DiscountCollections":
 				groups = [c.id() for c in items.required_child("collections").children("nodes")]
 				applies = "groups"
 			case other:
-				raise Unsupported(f"discounted items of type {other} have no ERPNext equivalent")
-		if applies == "all_items":
-			raise Unsupported("a fixed discount on every product has no ERPNext coupon pricing rule")
-		minimum = discount.child("minimumRequirement")
-		min_amount = None
-		if minimum is not None:
-			if minimum.typename() != "DiscountMinimumSubtotal":
-				raise Unsupported("a minimum quantity has no ERPNext coupon equivalent")
-			min_amount = minimum.required_child("greaterThanOrEqualToSubtotal").decimal("amount")
-		rule = Discount(
-			codes=[code.string("code") for code in discount.required_child("codes").children("nodes")],
-			description=discount.optional_string("title"),
+				raise SourceError(f"Discounted items of type {other}.")
+		match value.typename():
+			case "DiscountPercentage":
+				kind, amount = "percentage", value.decimal("percentage") * 100
+				if applies == "all_items":
+					applies = "transaction"
+			case "DiscountAmount":
+				kind, amount = "amount", value.required_child("amount").decimal("amount")
+				if not value.flag("appliesOnEachItem"):
+					if applies != "all_items":
+						later.append(planned("its amount spread across some items", DISCOUNT_CAPS))
+					applies, products, variants, groups = "transaction", [], [], []
+			case other:
+				raise SourceError(f"A discount value of type {other}.")
+		rule = replace(
+			base,
 			discount=kind,
 			applies=applies,
 			value=amount,
 			items=products,
 			groups=groups,
-			min_amount=min_amount,
-			valid_from=date_of(discount.optional_time("startsAt")),
-			valid_upto=date_of(discount.optional_time("endsAt")),
-			max_uses=discount.optional_integer("usageLimit"),
+			variants=variants,
 		)
-		return Desired(self.kind, node.id(), discount_fields(rule))
+		return discount_desired(node.id(), rule)
+
+	@staticmethod
+	def _customers(context: Node | None, automatic: bool, later: list[str]) -> list[str]:
+		"""The customers a discount is for: every one (none listed), or some. A code applies one Pricing
+		Rule, so a code for several customers, like one for customer segments, is planned (card 407)."""
+		if context is None or context.typename() == "DiscountBuyerSelectionAll":
+			return []
+		if context.typename() != "DiscountCustomers":
+			later.append(planned("its customer segments", DISCOUNT_CAPS))
+			return []
+		customers = [c.id() for c in context.children("customers")]
+		if len(customers) > 1 and not automatic:
+			later.append(planned("its several customers", DISCOUNT_CAPS))
+			return []
+		return customers
 
 
 class OrderMapper:

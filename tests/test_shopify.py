@@ -579,10 +579,12 @@ class TestMappers:
 	def test_a_voided_order_has_no_invoice(self, shopify_config: ConnectionConfig) -> None:
 		assert mapped(shopify_config, Kind.ORDER, "802") is None
 
-	def test_discounts_erpnext_cannot_enforce(self, shopify_config: ConnectionConfig) -> None:
-		for discount, reason in (("701", "once-per-customer"), ("702", "FreeShipping"), ("703", "Bxgy")):
-			with pytest.raises(Unsupported, match=reason):
-				mapped(shopify_config, Kind.DISCOUNT, discount)
+	def test_discount_limits_are_planned(self, shopify_config: ConnectionConfig) -> None:
+		for discount, warning in (("701", "once-per-customer"), ("702", "free shipping")):
+			desired = mapped(shopify_config, Kind.DISCOUNT, discount)
+			assert desired is not None and warning in desired.warnings[0]
+		with pytest.raises(Unsupported, match="DiscountCodeBxgy"):
+			mapped(shopify_config, Kind.DISCOUNT, "703")
 
 	def test_customers(self, shopify_config: ConnectionConfig) -> None:
 		avery = values(shopify_config, Kind.CUSTOMER, "401")
@@ -734,12 +736,40 @@ class TestDiscounts:
 		assert desired is not None
 		assert desired.values().strings("items") == ["gid://shopify/shop-s/Product/1"]
 
+	def test_an_expired_discount_maps_to_nothing(self) -> None:
+		assert self.MAPPER.map(basic_discount(status="EXPIRED")) is None
+
 	@pytest.mark.parametrize(
-		("change", "reason"),
+		("change", "field", "wanted", "warning"),
 		[
-			({"status": "EXPIRED"}, None),
-			({"context": {"__typename": "DiscountCustomers"}}, "selected customers"),
-			({"minimumRequirement": {"__typename": "DiscountMinimumQuantity"}}, "minimum quantity"),
+			(
+				{
+					"context": {
+						"__typename": "DiscountCustomers",
+						"customers": [{"id": "gid://shopify/shop-s/Customer/1"}],
+					}
+				},
+				"customers",
+				["gid://shopify/shop-s/Customer/1"],
+				None,
+			),
+			(
+				{
+					"minimumRequirement": {
+						"__typename": "DiscountMinimumQuantity",
+						"greaterThanOrEqualToQuantity": "3",
+					}
+				},
+				"min_qty",
+				Decimal(3),
+				None,
+			),
+			(
+				{"appliesOncePerCustomer": True},
+				"applies",
+				"transaction",
+				"its once-per-customer limit (planned: card 405)",
+			),
 			(
 				{
 					"customerGets": {
@@ -751,16 +781,62 @@ class TestDiscounts:
 						"items": {"__typename": "AllDiscountItems"},
 					}
 				},
-				"spread across the order",
+				"applies",
+				"transaction",
+				None,
+			),
+			(
+				{
+					"customerGets": {
+						"value": {
+							"__typename": "DiscountAmount",
+							"amount": {"amount": "5"},
+							"appliesOnEachItem": True,
+						},
+						"items": {"__typename": "AllDiscountItems"},
+					}
+				},
+				"applies",
+				"all_items",
+				None,
 			),
 		],
 	)
-	def test_what_coupons_cannot_hold(self, change: JsonObject, reason: str | None) -> None:
-		if reason is None:
-			assert self.MAPPER.map(basic_discount(**change)) is None
-			return
-		with pytest.raises(Unsupported, match=reason):
-			self.MAPPER.map(basic_discount(**change))
+	def test_every_basic_discount_is_written(
+		self, change: JsonObject, field: str, wanted: JsonValue, warning: str | None
+	) -> None:
+		desired = self.MAPPER.map(basic_discount(**change))
+		assert desired is not None
+		assert desired.values().all()[field] == wanted
+		assert desired.warnings == ((warning,) if warning else ())
+
+	def test_automatic_and_free_shipping_discounts(self) -> None:
+		automatic = self.MAPPER.map(basic_discount(__typename="DiscountAutomaticBasic", codes=None))
+		assert automatic is not None
+		assert (automatic.values().flag("automatic"), automatic.values().strings("codes")) == (True, [])
+		shipping = self.MAPPER.map(
+			Node(
+				{
+					"id": "gid://shopify/shop-s/DiscountCodeNode/8",
+					"discount": {
+						"__typename": "DiscountCodeFreeShipping",
+						"title": "Ship",
+						"status": "ACTIVE",
+						"startsAt": "2026-09-01T00:00:00Z",
+						"endsAt": None,
+						"usageLimit": None,
+						"appliesOncePerCustomer": False,
+						"codes": {"nodes": [{"code": "SHIP"}]},
+						"context": {"__typename": "DiscountBuyerSelectionAll"},
+						"minimumRequirement": None,
+					},
+				}
+			)
+		)
+		assert shipping is not None
+		assert shipping.warnings == ("its free shipping (planned: card 405)",)
+		with pytest.raises(Unsupported, match="operator decision"):
+			self.MAPPER.map(basic_discount(__typename="DiscountCodeBxgy"))
 
 
 class TestOrderStates:

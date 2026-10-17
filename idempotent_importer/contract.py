@@ -10,8 +10,9 @@ product      type ("simple" | "variable"), name, slug, description, short_descri
              sale ({price, from, to} | None), stock_qty (Decimal | None), attributes ([{name, values}]),
              specifications ([{label, value}]), variants ([{gid, sku, barcode, attributes {name: value},
              price, sale, stock_qty, weight, image, enabled}]), tags
+customer_group  name (a group of customers a source's discounts are for)
 customer     name, type ("Individual" | "Company"), first_name, last_name, company, email, phone,
-             addresses ([address])
+             addresses ([address]); optionally group (customer_group identity | None)
 discount     codes, description, discount ("percentage" | "amount"), applies ("transaction" | "items" |
              "groups"), value, items, groups (identities), min_amount, valid_from, valid_upto (dates),
              max_uses
@@ -42,11 +43,13 @@ Times are UTC ``YYYY-MM-DDTHH:MM:SSZ``; money and quantities are exact Decimals.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from decimal import Decimal
 
+from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields, Values
+from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.money import decimal_text, exact_quotient, minor_units
 
 
@@ -289,9 +292,40 @@ def refund_balance(
 
 
 @dataclass(frozen=True)
+class FreeItem:
+	"""What a product discount gives: ``qty`` of an item (``product``, with its ``variant``; neither for
+	the same item bought) at ``rate`` (free when None), for every ``recurse_for`` bought when recursive."""
+
+	product: str | None
+	variant: str | None
+	qty: Decimal
+	rate: Decimal | None = None
+	recursive: bool = False
+	recurse_for: Decimal | None = None
+
+
+@dataclass(frozen=True)
+class Tier:
+	"""One tier of a tiered discount: from a quantity (or spend) up to the next, its discount."""
+
+	discount: str
+	value: Decimal
+	min_qty: Decimal | None = None
+	max_qty: Decimal | None = None
+	min_amount: Decimal | None = None
+	max_amount: Decimal | None = None
+
+
+@dataclass(frozen=True)
 class Discount:
-	"""A coupon discount ERPNext enforces exactly: codes, a percentage or amount off the transaction, some
-	items or some item groups, with its minimum spend, dates and use limit."""
+	"""A discount as ERPNext's pricing holds it: codes (none when automatic); a percentage, an amount or a
+	fixed rate (``discount``: "percentage" | "amount" | "rate") off the transaction, some products (and
+	single ``variants``, as (product, variant) identities), some collections, or every item
+	(``applies``: "transaction" | "items" | "groups" | "all_items"), or an item given (``free``); with its
+	minimum and maximum quantity (across the items together when ``mixed``) and spend, dates and use limit;
+	for some ``customers`` or ``customer_groups`` (identities); on other items than those bought
+	(``other``: ("items" | "groups", identity)); in ``tiers``. What the source's discount holds beyond
+	that is ``planned`` (each a condition and the companion card that enforces it): the rest is written."""
 
 	codes: list[str]
 	description: str | None
@@ -304,10 +338,24 @@ class Discount:
 	valid_from: str | None
 	valid_upto: str | None
 	max_uses: int | None
+	automatic: bool = False
+	variants: list[tuple[str | None, str]] = field(default_factory=list)
+	min_qty: Decimal | None = None
+	max_qty: Decimal | None = None
+	max_amount: Decimal | None = None
+	mixed: bool = False
+	customers: list[str] = field(default_factory=list)
+	customer_groups: list[str] = field(default_factory=list)
+	free: FreeItem | None = None
+	other: tuple[str, str] | None = None
+	tiers: list[Tier] = field(default_factory=list)
+	planned: list[str] = field(default_factory=list)
 
 
 def discount_fields(discount: Discount) -> Fields:
-	return {
+	"""The discount's fields; those it doesn't use are left out, so a discount mapped before they existed
+	keeps its change signal."""
+	fields: Fields = {
 		"codes": list[Field](discount.codes),
 		"description": discount.description,
 		"discount": discount.discount,
@@ -320,6 +368,60 @@ def discount_fields(discount: Discount) -> Fields:
 		"valid_upto": discount.valid_upto,
 		"max_uses": discount.max_uses,
 	}
+	extra: Fields = {
+		"automatic": discount.automatic or None,
+		"variants": [{"product": p, "variant": v} for p, v in discount.variants] or None,
+		"min_qty": discount.min_qty,
+		"max_qty": discount.max_qty,
+		"max_amount": discount.max_amount,
+		"mixed": discount.mixed or None,
+		"customers": list[Field](discount.customers) or None,
+		"customer_groups": list[Field](discount.customer_groups) or None,
+		"free": free_fields(discount.free) if discount.free else None,
+		"other": {"applies": discount.other[0], "target": discount.other[1]} if discount.other else None,
+		"tiers": [tier_fields(tier) for tier in discount.tiers] or None,
+		"planned": list[Field](discount.planned) or None,
+	}
+	return fields | {key: value for key, value in extra.items() if value is not None}
+
+
+def free_fields(free: FreeItem) -> Fields:
+	fields: Fields = {
+		"item": free.product,
+		"variant": free.variant,
+		"qty": free.qty,
+		"rate": free.rate,
+		"recursive": free.recursive,
+		"recurse_for": free.recurse_for,
+	}
+	return {key: value for key, value in fields.items() if value is not None}
+
+
+def tier_fields(tier: Tier) -> Fields:
+	fields: Fields = {
+		"discount": tier.discount,
+		"value": tier.value,
+		"min_qty": tier.min_qty,
+		"max_qty": tier.max_qty,
+		"min_amount": tier.min_amount,
+		"max_amount": tier.max_amount,
+	}
+	return {key: value for key, value in fields.items() if value is not None}
+
+
+def discount_desired(gid: str, discount: Discount) -> Desired:
+	"""A discount's desired state; what it holds that is planned companion work is reported as warnings."""
+	return Desired(Kind.DISCOUNT, gid, discount_fields(discount), warnings=tuple(discount.planned))
+
+
+# The companion cards that enforce what ERPNext's pricing doesn't (the frappe-webshop fork's).
+COUPON_LIMITS = "card 405"
+DISCOUNT_CAPS = "card 407"
+
+
+def planned(condition: str, card: str) -> str:
+	"""A discount condition ERPNext's pricing doesn't enforce, and the companion card that will."""
+	return f"{condition} (planned: {card})"
 
 
 def date_of(time: str | None) -> str | None:

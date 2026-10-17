@@ -58,7 +58,8 @@ profiles are read in full.
 | Vendor, product type | **Brand**; a "Product type" specification on the Website Item | |
 | Active, published products | **Website Item** on the Public Site's Webshop Store | |
 | Customers and their addresses | **Customer**, **Contact**, **Address** (default address as billing) | |
-| Basic code discounts (percentage or per-item amount; all items, products or collections; minimum subtotal; dates; usage limit; every code) | **Pricing Rule** + one **Coupon Code** per code, on the Public Site's Webshop Store | Another store can hold the same code at once. |
+| Code and automatic basic discounts (percentage or amount; every item, products, single variants or collections; minimum subtotal or quantity; dates; usage limit; every customer or some; every code) | **Pricing Rule** (coupon based with one **Coupon Code** per code on the Public Site's Webshop Store, or automatic) | An amount not per item off every item is off the order. A once-per-customer limit is planned (card 405); an amount spread across some items, customer segments and a code for several customers are planned (card 407): the rule is written without them. |
+| Free-shipping discounts (code and automatic) | **Pricing Rule** and its **Coupon Codes** | The free shipping itself is planned (card 405). |
 | Orders (paid, partially refunded, refunded) | Submitted **Sales Invoice** + **Payment Entry** | Exact totals, no stock movement, as for WooCommerce. A refunded order gets exactly Shopify's refunds: nothing is derived from its status. |
 | Orders with tax-inclusive prices | The same, each tax in the prices an "On Net Total" row included in the line rates; shipping at its price less its tax, then that tax at its rate on the shipping row | Lines taxed alike: each row at its rate. Lines taxed differently (an exempt line, a tax only some lines bear): each tax on an account of its own (`<title> - <abbr>`) and each line's own rates as an **Item Tax Template** (`GST at 5, PST at 7 - <abbr>`). Kept only when ERPNext computes every tax row and the total to Shopify's amounts. |
 | Duties | A tax charge ("Duties") on the tax account | |
@@ -82,7 +83,7 @@ profiles are read in full.
 | Shopify | Why it isn't mirrored |
 |---|---|
 | Gift cards and their balances | No first-party gift-card ledger. |
-| Discounts: automatic, Buy X Get Y, free shipping, app discounts, once-per-customer, customer- or segment-specific, minimum quantity, single-variant | ERPNext's coupons can't enforce them exactly. |
+| Buy X Get Y and app discounts | Planned (card 386): their fields need new query fields whose cost must be recorded from a live store first (an operator decision). |
 | Delivery profiles for some products only; zones limited to provinces or "rest of world"; rates with price or weight conditions; carrier-calculated rates | A Shipping Rule is store-wide and per country; outside a rule's band ERPNext charges nothing instead of not offering the rate; ERPNext has no carrier rates. Reported as warnings. |
 | Menus | Website Settings' top bar and footer are global; a Public Site has no menu of its own (the router would need one). |
 | Shop settings, metafields, metaobjects | No first-party home for them as such. |

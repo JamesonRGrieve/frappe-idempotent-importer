@@ -46,13 +46,13 @@ prices, stock and presence the items mirror.
 | Square | Why it isn't mirrored |
 |---|---|
 | Gift card, appointment, event, donation, legacy service and membership items | No ERPNext item equivalent (reported). |
-| Items sold by a measurement unit; fractional stock or quantities | Mirrored items count whole units (reported). |
+| Items sold by a measurement unit; fractional stock or quantities | Planned (card 386): the unit of measure, with fractional quantities. |
 | Variable-priced variations | No price until the sale (a warning; the variant has no Item Price). |
-| Stock at other locations | The connection mirrors one warehouse: the main location's. |
+| Stock at other locations | Planned (card 386): one Warehouse per location. |
 | Item weight and dimensions | Not exposed by the Catalog API. |
 | Modifier lists, item location presence details, custom attributes, taxes per item | No first-party Item field. |
-| Catalog discounts, pricing rules, product sets | Automatic POS rules, not codes. |
-| Return and exchange orders | A return order has no invoice of its own; the sale order's refunds are its credit notes (reported). |
+| Catalog discounts, pricing rules, product sets | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
+| Return and exchange orders | Planned: itemised credit notes from return orders (card 386); in-store exchanges (card 404). |
 | Service charges apportioned into line items | Already inside the line totals; no exact invoice row (reported). |
 | Draft orders | Unsubmitted carts and API drafts, not store history. |
 | Seller and location settings, Square Online sites | No home for a storefront's settings. |

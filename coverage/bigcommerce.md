@@ -49,15 +49,17 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 
 | BigCommerce | Why it isn't mirrored |
 |---|---|
-| Free-shipping and shipping-discount coupons | ERPNext coupons can't discount shipping (reported). |
-| Coupons limited to countries or shipping methods; per-customer use limits | No ERPNext coupon equivalent (reported). |
-| Automatic promotions; promotions with several rules, item, shipping or gift actions, capped discounts, customer, address or schedule conditions; codes with their own limits | No exact ERPNext coupon equivalent (reported). |
+| Free-shipping and shipping-discount coupons | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
+| Coupons limited to countries or shipping methods; per-customer use limits | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
+| Automatic promotions; promotions with several rules, item, shipping or gift actions, capped discounts, customer, address or schedule conditions; codes with their own limits | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Product-level stock on a product with option variants | Variants are mirrored untracked (a warning). |
 | Contact-form and link pages | A form and a menu link, not content (reported). |
 | Pending and disapproved reviews | Not published at the source. |
 | Blog post thumbnails | Blog Post has no image of its own. |
 | Abandoned checkouts (incomplete orders), cancelled and declined orders | Not sales. |
 | Customer groups, store credit, customer attributes and form fields | No first-party home for a storefront's segments and custom fields. |
-| Product options and modifiers that aren't variants, bulk pricing rules, related products, videos | No first-party Item field. |
-| Brands' own pages, wishlists, carts, channels, sites, themes, widgets, scripts, menus | Storefront presentation, not catalog or order data. |
+| Bulk pricing rules | Planned (card 386): a Promotional Scheme per product. |
+| Product options and modifiers that aren't variants, related products, videos | Planned: product options (card 408); related products and videos have no first-party Item field. |
+| Wishlists | Planned (card 386): the Webshop's Wishlist. |
+| Brands' own pages, carts, channels, sites, themes, widgets, scripts, menus | Storefront presentation (menus: card 406; abandoned carts: card 415). |
 | Store settings, tax and shipping configuration | ERPNext's own settings; mirrored orders carry what BigCommerce charged. |

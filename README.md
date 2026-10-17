@@ -17,7 +17,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Source | Status | What it mirrors |
 |---|---|---|
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
-| Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, basic code discounts, orders (tax-inclusive ones too, at each line's own rates) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
+| Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, code and automatic discounts, orders (tax-inclusive ones too, at each line's own rates) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
 | Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
 | BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, coupons and coupon promotions, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
@@ -196,8 +196,16 @@ Each of these is the operator's call.
    per store), so two stores can hold the same code at once; a code someone already holds on the same
    store, or store-less, is not mirrored (reported), and a connection whose Public Site has no store
    mirrors no codes (a store-less code would apply on every store).
-6. **Coupons ERPNext can't enforce exactly** (email or customer limits, exclusions, per-customer limits,
-   free shipping, Buy X Get Y, …) are not mirrored rather than mirrored more permissively.
+6. **Discounts through ERPNext's own pricing:** a discount is a Pricing Rule (a Promotional Scheme when it
+   has tiers or applies to several customers or customer groups), coupon based with a Coupon Code per code,
+   or automatic without one. A percentage, an amount or a fixed rate; a free or discounted item (the same
+   item, recursively); on the transaction, products, single variants, collections or every item; minimum
+   and maximum quantity and spend, dates, use limit, a customer or customer group (source groups mirror to
+   Customer Groups `<name> - <abbr>`), discounts on other items than those bought. What a source's
+   discount holds that ERPNext's pricing doesn't enforce is written without it and reported as planned
+   companion work in the frappe-webshop fork: coupon limits and shipping discounts (per-customer and
+   email limits, exclusions, free shipping: card 405), discount caps and segments (an amount spread across
+   some items, a limit on the items discounted, customer segments: card 407).
 7. **Shopify's compare-at price** becomes the Item Price, and Shopify's price an open-ended sale (a
    Pricing Rule), which is how the webshop shows a sale.
 8. **Retiring without deleting:** a Website Route Redirect row has no disabled flag, so a retired redirect's
@@ -249,6 +257,17 @@ Still to do:
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
 3. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
+4. **Native mirroring still to build (card 386):** discounts through the generalised Pricing Rule writer for
+   BigCommerce (automatic promotions, gift items, customer groups, bulk pricing tiers), Magento (rules
+   without coupons, customer groups, tier prices), Lightspeed, Ecwid (wholesale tiers), Wix (fixed price,
+   Buy X Get Y), Squarespace and Square (catalog discounts and pricing rules); multi-location stock as one
+   Warehouse per source location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist;
+   units of measure (Square's measurement units, Ecwid's carats); itemised refunds where the source gives
+   the refunded items (Square's return orders). Until built, each source's coverage page lists them as
+   planned.
+5. **Operator decision:** Shopify's Buy X Get Y and app discounts, per-location stock and bundles need new
+   Admin query fields whose cost must be recorded from a live store (wp-woo-idempotent-importer's
+   `tools/calibrate-query-cost.php`); every operation's cost is proven against such a recording.
 
 ## License
 

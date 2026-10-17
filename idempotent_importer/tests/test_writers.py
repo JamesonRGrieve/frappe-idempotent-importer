@@ -44,7 +44,7 @@ from idempotent_importer.erpnext.writers.content import (
 	ReviewWriter,
 )
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.parties import CustomerWriter
+from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter
 from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING, DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
 
@@ -399,6 +399,189 @@ class TestWriters(IntegrationTestCase):
 		)
 		self.retire(Kind.DISCOUNT, DiscountWriter, key)
 		self.assertEqual(frappe.db.get_value("Pricing Rule", rule, "disable"), 1)
+
+	def test_automatic_discounts_for_a_customer_group(self) -> None:
+		group = gid("CustomerGroup", "1")
+		self.assertEqual(
+			self.mirror(Kind.CUSTOMER_GROUP, CustomerGroupWriter, group, {"name": "Wholesale"}),
+			Outcome.CREATED,
+		)
+		self.assertEqual(self.target(Kind.CUSTOMER_GROUP, group), "Wholesale - WT")
+		customer = {**self.customer(), "group": group}
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), customer)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Customer", self.target(Kind.CUSTOMER, gid("Customer", "1")), "customer_group"
+			),
+			"Wholesale - WT",
+		)
+		automatic: Fields = {
+			**self.discount([], "12"),
+			"applies": "all_items",
+			"automatic": True,
+			"min_qty": Decimal(3),
+			"mixed": True,
+			"customer_groups": [group],
+			"max_uses": None,
+		}
+		_, rule = self.assert_lifecycle(
+			Kind.DISCOUNT,
+			DiscountWriter,
+			gid("Discount", "2"),
+			automatic,
+			{**automatic, "value": Decimal(15)},
+		)
+		doc = frappe.get_doc("Pricing Rule", rule)
+		self.assertEqual(
+			(
+				doc.coupon_code_based,
+				doc.apply_on,
+				[row.item_group for row in doc.item_groups],
+				doc.applicable_for,
+				doc.customer_group,
+				doc.min_qty,
+				doc.mixed_conditions,
+				Decimal(str(doc.discount_percentage)),
+			),
+			(
+				0,
+				"Item Group",
+				[self.context.item_group],
+				"Customer Group",
+				"Wholesale - WT",
+				3,
+				1,
+				Decimal(15),
+			),
+		)
+
+	def test_a_free_item_and_a_discount_on_other_items(self) -> None:
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		third_free: Fields = {
+			**self.discount([], "0"),
+			"applies": "items",
+			"items": [gid("Product", "1")],
+			"automatic": True,
+			"min_qty": Decimal(2),
+			"free": {"qty": Decimal(1), "recursive": True, "recurse_for": Decimal(2)},
+			"max_uses": None,
+		}
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Discount", "3"), third_free), Outcome.CREATED
+		)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, gid("Discount", "3")))
+		self.assertEqual(
+			(
+				rule.price_or_product_discount,
+				rule.same_item,
+				rule.free_qty,
+				rule.is_recursive,
+				rule.recurse_for,
+			),
+			("Product", 1, 1, 1, 2),
+		)
+		other: Fields = {
+			**self.discount(["WTOTHER"], "50"),
+			"applies": "items",
+			"items": [gid("Product", "1")],
+			"other": {"applies": "items", "target": gid("Product", "1")},
+		}
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Discount", "4"), other), Outcome.CREATED
+		)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, gid("Discount", "4")))
+		self.assertEqual(
+			(rule.apply_rule_on_other, rule.other_item_code, rule.coupon_code_based),
+			("Item Code", self.target(Kind.PRODUCT, gid("Product", "1")), 1),
+		)
+
+	def test_tiers_and_several_customers_are_a_promotional_scheme(self) -> None:
+		for number in ("1", "2"):
+			self.mirror(
+				Kind.CUSTOMER, CustomerWriter, gid("Customer", number), self.customer(f"Avery Writer{number}")
+			)
+		first: Fields = {
+			"discount": "percentage",
+			"value": Decimal(5),
+			"min_qty": Decimal(10),
+			"max_qty": Decimal(49),
+		}
+		second: Fields = {"discount": "percentage", "value": Decimal(10), "min_qty": Decimal(50)}
+		tiered: Fields = {
+			**self.discount([], "0"),
+			"applies": "all_items",
+			"automatic": True,
+			"customers": [gid("Customer", "1"), gid("Customer", "2")],
+			"tiers": [first, second],
+			"max_uses": None,
+		}
+		key = gid("Discount", "5")
+		_, scheme = self.assert_lifecycle(
+			Kind.DISCOUNT, DiscountWriter, key, tiered, {**tiered, "tiers": [first]}
+		)
+		self.assertEqual(frappe.db.get_value("Promotional Scheme", scheme, "applicable_for"), "Customer")
+		rules = frappe.get_all(
+			"Pricing Rule",
+			filters={"promotional_scheme": scheme},
+			fields=["customer", "discount_percentage", "disable"],
+		)
+		live = sorted((r.customer, Decimal(str(r.discount_percentage))) for r in rules if not r.disable)
+		self.assertEqual(
+			len(live), 2, "one rule per customer for the tier left; the dropped tier is disabled"
+		)
+		self.retire(Kind.DISCOUNT, DiscountWriter, key)
+		self.assertEqual(frappe.db.get_value("Promotional Scheme", scheme, "disable"), 1)
+
+	def test_a_discount_moving_between_a_rule_and_a_scheme(self) -> None:
+		for number in ("1", "2"):
+			self.mirror(
+				Kind.CUSTOMER, CustomerWriter, gid("Customer", number), self.customer(f"Avery Writer{number}")
+			)
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		one: Fields = {
+			**self.discount([], "10"),
+			"automatic": True,
+			"customers": [gid("Customer", "1")],
+			"free": {"item": gid("Product", "1"), "qty": Decimal(1), "rate": Decimal(5)},
+			"applies": "items",
+			"items": [gid("Product", "1")],
+			"max_uses": None,
+		}
+		key = gid("Discount", "6")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, one), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(rule.applicable_for, rule.customer, rule.free_item, rule.free_item_rate, rule.same_item),
+			(
+				"Customer",
+				self.target(Kind.CUSTOMER, gid("Customer", "1")),
+				self.target(Kind.PRODUCT, gid("Product", "1")),
+				5,
+				0,
+			),
+		)
+		both: Fields = {**one, "customers": [gid("Customer", "1"), gid("Customer", "2")]}
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, both), Outcome.UPDATED)
+		moved = self.links.find(Kind.DISCOUNT, key)
+		assert moved is not None
+		self.assertEqual(moved.target.doctype, "Promotional Scheme")
+		self.assertEqual(
+			frappe.db.get_value("Pricing Rule", rule.name, "disable"), 1, "the old rule is disabled"
+		)
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Discount", "7"), {**both, "codes": ["WTSCHEME"]}),
+			Outcome.UNSUPPORTED,
+			"a code applies one Pricing Rule",
+		)
+		group = gid("CustomerGroup", "2")
+		self.mirror(Kind.CUSTOMER_GROUP, CustomerGroupWriter, group, {"name": "Retail"})
+		self.assertEqual(
+			self.mirror(
+				Kind.DISCOUNT, DiscountWriter, gid("Discount", "8"), {**one, "customer_groups": [group]}
+			),
+			Outcome.UNSUPPORTED,
+			"customers and groups at once",
+		)
 
 	def test_a_code_held_on_the_store_is_not_taken_over(self) -> None:
 		frappe.get_doc(

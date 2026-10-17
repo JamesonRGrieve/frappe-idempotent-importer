@@ -79,7 +79,33 @@ fragment DiscountNodeFields on DiscountNode {
     }
     ... on DiscountAutomaticBasic {
       title
+      status
+      startsAt
+      endsAt
       updatedAt
+      context {
+        ...DiscountContextFields
+      }
+      minimumRequirement {
+        ...DiscountMinimumFields
+      }
+      customerGets {
+        value {
+          __typename
+          ... on DiscountPercentage {
+            percentage
+          }
+          ... on DiscountAmount {
+            amount {
+              amount
+            }
+            appliesOnEachItem
+          }
+        }
+        items {
+          ...DiscountItemsFields
+        }
+      }
     }
     ... on DiscountAutomaticBxgy {
       title
@@ -87,7 +113,16 @@ fragment DiscountNodeFields on DiscountNode {
     }
     ... on DiscountAutomaticFreeShipping {
       title
+      status
+      startsAt
+      endsAt
       updatedAt
+      context {
+        ...DiscountContextFields
+      }
+      minimumRequirement {
+        ...DiscountMinimumFields
+      }
     }
     ... on DiscountAutomaticApp {
       title

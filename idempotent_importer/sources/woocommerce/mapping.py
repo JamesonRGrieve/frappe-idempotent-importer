@@ -11,6 +11,8 @@ from decimal import Decimal
 from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
+	COUPON_LIMITS,
+	DISCOUNT_CAPS,
 	Address,
 	Charge,
 	Discount,
@@ -19,9 +21,10 @@ from idempotent_importer.contract import (
 	address_fields,
 	charge_fields,
 	date_of,
-	discount_fields,
+	discount_desired,
 	line_fields,
 	order_line,
+	planned,
 	rating_fraction,
 	refund_balance,
 	shipment_fields,
@@ -45,12 +48,15 @@ HIDDEN = "hidden"
 PAID_STATUSES = frozenset({"processing", "completed", "refunded"})
 # Orders awaiting payment: a draft invoice, submitted once paid.
 UNPAID_STATUSES = frozenset({"pending", "on-hold"})
-# Coupon restrictions ERPNext's Pricing Rule + Coupon Code can't enforce: mirroring the coupon without
-# them would let it be used more widely than at the source.
-UNENFORCEABLE_COUPON_RESTRICTIONS = (
-	"excluded_product_ids",
-	"excluded_product_categories",
-	"email_restrictions",
+# Coupon limits ERPNext's Pricing Rule + Coupon Code don't enforce (the Webshop fork's, planned), and how a
+# coupon names them.
+COUPON_LIMIT_FIELDS = (
+	("excluded_product_ids", "excluded products"),
+	("excluded_product_categories", "excluded categories"),
+	("email_restrictions", "email restrictions"),
+	("exclude_sale_items", "exclusion of sale items"),
+	("usage_limit_per_user", "per-customer use limit"),
+	("free_shipping", "free shipping"),
 )
 WOO_MAX_RATING = 5
 
@@ -257,47 +263,46 @@ def woo_address(address_type: str, node: Node | None) -> Address | None:
 
 class CouponMapper:
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
-		for restriction in UNENFORCEABLE_COUPON_RESTRICTIONS:
-			if node.get(restriction):
-				raise Unsupported(f"its {restriction} restriction has no ERPNext coupon equivalent")
-		if node.get("exclude_sale_items") is True:
-			raise Unsupported("excluding sale items has no ERPNext coupon equivalent")
-		if node.get("free_shipping") is True:
-			raise Unsupported("free shipping has no ERPNext coupon equivalent")
-		for limit in ("usage_limit_per_user", "limit_usage_to_x_items"):
-			if node.optional_integer(limit):
-				raise Unsupported(f"its {limit} limit has no ERPNext coupon equivalent")
-		if node.optional_decimal("maximum_amount"):
-			raise Unsupported("a maximum spend has no ERPNext coupon equivalent")
+		"""A coupon: its percentage or amount off the cart, some products, some categories or every
+		product, its minimum and maximum spend, expiry and use limit. Exclusions, email and per-user limits,
+		sale-item exclusions and free shipping are coupon limits, and a limit on the items discounted a cap,
+		that the Webshop fork enforces (planned); the rest is written."""
 		products = [self._context.gid("Product", pid) for pid in node.integers("product_ids")]
 		groups = [self._context.gid("ProductCategory", cid) for cid in node.integers("product_categories")]
+		later: list[str] = [
+			planned(f"its {label}", COUPON_LIMITS)
+			for field, label in COUPON_LIMIT_FIELDS
+			if node.get(field) not in (None, False, 0, "", [])
+		]
+		if node.optional_integer("limit_usage_to_x_items"):
+			later.append(planned("its limit on the items discounted", DISCOUNT_CAPS))
 		if products and groups:
-			raise Unsupported(
-				"a coupon limited to both products and categories has no single ERPNext pricing rule"
-			)
+			# A product in either list qualifies; one Pricing Rule applies to items or to groups.
+			later.append(planned("its categories beside its products", COUPON_LIMITS))
+			groups = []
 		discount_type = node.string("discount_type")
 		match discount_type:
 			case "percent":
 				kind, applies = "percentage", "items" if products else "groups" if groups else "transaction"
 			case "fixed_cart":
 				if products or groups:
-					raise Unsupported(
-						"a fixed cart discount limited to some products has no ERPNext equivalent"
-					)
+					later.append(planned("its amount off only the cart's qualifying products", DISCOUNT_CAPS))
+					products, groups = [], []
 				kind, applies = "amount", "transaction"
 			case "fixed_product":
 				kind, applies = "amount", "items" if products else "groups" if groups else "all_items"
 			case _:
-				raise Unsupported(f"the {discount_type} discount type has no ERPNext pricing rule")
-		if applies == "all_items":
-			raise Unsupported("a fixed discount on every product has no ERPNext coupon pricing rule")
+				raise Unsupported(
+					f"the {discount_type} discount type (a subscription's: planned, card 410) has no ERPNext pricing rule"
+				)
 		minimum = node.optional_decimal("minimum_amount")
+		maximum = node.optional_decimal("maximum_amount")
 		discount = Discount(
 			codes=[node.string("code")],
 			description=node.optional_string("description"),
@@ -310,8 +315,10 @@ class CouponMapper:
 			valid_from=None,
 			valid_upto=date_of(node.optional_time("date_expires_gmt")),
 			max_uses=node.optional_integer("usage_limit"),
+			max_amount=maximum if maximum else None,
+			planned=later,
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		return discount_desired(node.id(), discount)
 
 
 # ERPNext keeps an exchange rate to nine places.

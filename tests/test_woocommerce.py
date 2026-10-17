@@ -297,9 +297,49 @@ class TestCoupons:
 		assert (hoodie.string("discount"), hoodie.string("applies")) == ("amount", "items")
 		assert hoodie.strings("items") == ["gid://woocommerce/woo-a/Product/102"]
 
-	def test_unenforceable_restrictions(self, woo_config: ConnectionConfig) -> None:
-		with pytest.raises(Unsupported, match="email_restrictions"):
-			mapped(woo_config, Kind.DISCOUNT, "304")
+	def test_limits_the_webshop_enforces_are_planned(self, woo_config: ConnectionConfig) -> None:
+		desired = mapped(woo_config, Kind.DISCOUNT, "304")
+		assert desired is not None
+		assert desired.warnings == ("its email restrictions (planned: card 405)",)
+		assert desired.values().strings("codes")
+
+	@pytest.mark.parametrize(
+		("change", "applies", "warning"),
+		[
+			({"discount_type": "fixed_product"}, "all_items", None),
+			({"free_shipping": True}, "transaction", "its free shipping (planned: card 405)"),
+			(
+				{"limit_usage_to_x_items": 2},
+				"transaction",
+				"its limit on the items discounted (planned: card 407)",
+			),
+			(
+				{"discount_type": "fixed_cart", "product_ids": [102]},
+				"transaction",
+				"its amount off only the cart's qualifying products (planned: card 407)",
+			),
+			(
+				{"product_ids": [102], "product_categories": [21]},
+				"items",
+				"its categories beside its products (planned: card 405)",
+			),
+		],
+	)
+	def test_every_coupon_is_written(
+		self, woo_config: ConnectionConfig, change: dict[str, JsonValue], applies: str, warning: str | None
+	) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]
+		desired = mapper.map(nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(**change))
+		assert desired is not None
+		assert desired.values().string("applies") == applies
+		assert desired.warnings == ((warning,) if warning else ())
+
+	def test_a_maximum_spend_and_a_subscription_coupon(self, woo_config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]
+		capped = mapper.map(nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(maximum_amount="500.00"))
+		assert capped is not None and capped.values().decimal("max_amount") == Decimal("500.00")
+		with pytest.raises(Unsupported, match="card 410"):
+			mapper.map(nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(discount_type="sign_up_fee"))
 
 
 class TestContent:

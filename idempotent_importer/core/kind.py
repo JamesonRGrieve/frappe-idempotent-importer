@@ -18,6 +18,7 @@ class Kind(StrEnum):
 	PRICE = "price"
 	FILE = "file"
 	TAG = "tag"
+	CUSTOMER_GROUP = "customer_group"
 	CUSTOMER = "customer"
 	CONTACT = "contact"
 	ADDRESS = "address"
@@ -55,6 +56,7 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.ASSET,
 	Kind.COLLECTION,
 	Kind.PRODUCT,
+	Kind.CUSTOMER_GROUP,
 	Kind.CUSTOMER,
 	Kind.DISCOUNT,
 	Kind.ORDER,

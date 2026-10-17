@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Customers, with a Contact (name, email, phone) and an Address per source address, linked to them."""
+"""Customers, with a Contact (name, email, phone) and an Address per source address, linked to them, in the
+Customer Group their source group is mirrored to (else the connection's)."""
 
 from __future__ import annotations
 
@@ -23,12 +24,42 @@ def country_of(code: str | None) -> str:
 	return str(country)
 
 
+CUSTOMER_GROUP = "Customer Group"
+ROOT_CUSTOMER_GROUP = "All Customer Groups"
+
+
+class CustomerGroupWriter(Writer):
+	"""A source's customer group (what its discounts are for) as a Customer Group ``<name> - <abbr>``. A
+	group the source drops stays (customers may still be in it); its link is retired."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		name = self.context.suffixed(desired.values().string("name"))
+		doc = self.existing(link)
+		if doc is None:
+			doc = frappe.new_doc(CUSTOMER_GROUP)
+			doc.update(
+				{"customer_group_name": name, "parent_customer_group": ROOT_CUSTOMER_GROUP, "is_group": 0}
+			)
+			doc.insert(ignore_permissions=True)
+		elif doc.name != name:
+			frappe.rename_doc(CUSTOMER_GROUP, doc.name, name, force=True)
+		return Target(CUSTOMER_GROUP, name)
+
+	def retire(self, link: Link) -> None:
+		"""Nothing to switch off: a Customer Group has no disabled state, and its customers keep it."""
+
+
 class CustomerWriter(Writer):
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
 		doc = self.existing(link) or frappe.new_doc("Customer")
 		if doc.is_new():
 			doc.update({"customer_group": self.context.customer_group, "territory": self.context.territory})
+		if values.has("group"):
+			group = values.optional_string("group")
+			doc.customer_group = (
+				self.dependency(Kind.CUSTOMER_GROUP, group) if group else self.context.customer_group
+			)
 		doc.update({"customer_name": values.string("name"), "customer_type": values.string("type")})
 		doc.save(ignore_permissions=True)
 		contact = self._contact(desired.gid, doc.name, values)

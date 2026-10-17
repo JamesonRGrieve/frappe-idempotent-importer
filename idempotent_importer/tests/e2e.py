@@ -758,6 +758,13 @@ def assert_woocommerce(connection: str, state: str) -> None:
 		"the deleted coupon's rule",
 	)
 	expect(
+		frappe.db.get_value(
+			"Pricing Rule", target(connection, "discount", "Coupon", "304"), ["coupon_code_based", "disable"]
+		),
+		(1, 0),
+		"the email-restricted coupon, written (its restriction planned: card 405)",
+	)
+	expect(
 		frappe.db.get_value("Web Page", target(connection, "page", "Page", "702"), "published"),
 		0,
 		"the deleted page",
@@ -904,6 +911,16 @@ def assert_shopify(state: str) -> None:
 			"tracking_status": "In Progress",
 		},
 	)
+	for discount in ("701", "702"):
+		expect(
+			frappe.db.get_value(
+				"Pricing Rule",
+				target(connection, "discount", "DiscountCodeNode", discount),
+				"coupon_code_based",
+			),
+			1,
+			f"discount {discount}, written (its once-per-customer limit or free shipping planned: card 405)",
+		)
 	draft = target(connection, "draft_order", "DraftOrder", "901")
 	quotation = frappe.db.get_value("Quotation", draft, ["docstatus", "grand_total", "title"], as_dict=True)
 	if state == "v1":

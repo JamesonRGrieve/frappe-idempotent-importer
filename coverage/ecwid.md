@@ -42,9 +42,10 @@ are storefront paths.
 | Ecwid | Why it isn't mirrored |
 |---|---|
 | Gift card products | No ERPNext home for a stored-value liability (reported). |
-| Shipping and free-shipping coupons, an amount off some products, once-per-customer coupons, coupons for new or repeat customers, some shipping methods or the front page, codes for both products and categories | No exact ERPNext coupon equivalent (reported). |
+| Shipping and free-shipping coupons, an amount off some products, once-per-customer coupons, coupons for new or repeat customers, some shipping methods or the front page, codes for both products and categories | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled and incomplete (unfinished online payment) orders | Not sales. |
 | Reviews awaiting moderation | Not published. |
-| Product options without variations, wholesale price tiers, files, subscriptions, dimensions | No first-party Item field (warnings). |
-| Weights in carats | No ERPNext UOM (a warning). |
+| Wholesale price tiers | Planned (card 386): a Promotional Scheme per product. |
+| Product options without variations, files, subscriptions, dimensions | Planned: product options (card 408), subscriptions (card 410); files and dimensions have no first-party Item field (warnings). |
+| Weights in carats | Planned (card 386): the Carat unit of measure. |
 | Instant Site pages, store profile settings, taxes and shipping configuration | No read API for page content; the rest is ERPNext's own settings. |

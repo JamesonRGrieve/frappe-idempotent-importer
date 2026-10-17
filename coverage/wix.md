@@ -46,7 +46,7 @@ sits out a minute on a 429, which pauses the run.
 | Wix | Why it isn't mirrored |
 |---|---|
 | Gift card products and sales, subscriptions | No ERPNext home for a stored-value liability (reported). |
-| Fixed-price, buy-X-get-Y and free-shipping coupons, an amount off some products, per-customer limits, coupons limited to one item, other Wix apps' coupons | No exact ERPNext coupon equivalent (reported). |
+| Fixed-price, buy-X-get-Y and free-shipping coupons, an amount off some products, per-customer limits, coupons limited to one item, other Wix apps' coupons | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled, rejected and declined orders | Not sales. |
 | Product modifiers, info sections, ribbons, price per unit, subscriptions | No first-party Item field (modifiers are a warning). |
 | V1 product weights | V1 gives no unit (a warning). |

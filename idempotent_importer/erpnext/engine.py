@@ -51,7 +51,7 @@ from idempotent_importer.erpnext.writers.content import (
 	flush_redirect_cache,
 )
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.parties import CustomerWriter
+from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter
 from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
 from idempotent_importer.sources.registry import by_label
@@ -68,6 +68,7 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.ASSET: AssetWriter,
 	Kind.COLLECTION: CollectionWriter,
 	Kind.PRODUCT: ProductWriter,
+	Kind.CUSTOMER_GROUP: CustomerGroupWriter,
 	Kind.CUSTOMER: CustomerWriter,
 	Kind.DISCOUNT: DiscountWriter,
 	Kind.ORDER: OrderWriter,
@@ -86,6 +87,7 @@ SWITCHES: dict[Kind, str] = {
 	Kind.ASSET: "import_files",
 	Kind.COLLECTION: "import_collections",
 	Kind.PRODUCT: "import_products",
+	Kind.CUSTOMER_GROUP: "import_customers",
 	Kind.CUSTOMER: "import_customers",
 	Kind.DISCOUNT: "import_discounts",
 	Kind.ORDER: "import_orders",

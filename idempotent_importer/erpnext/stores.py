@@ -114,6 +114,21 @@ class FrappeLinkStore:
 		link = self.find(kind, gid)
 		return None if link is None or link.retired else link.target.name
 
+	def ending(self, kind: Kind, gid_suffix: str) -> str | None:
+		"""The live record of the one part of ``kind`` whose identity ends with ``gid_suffix`` (a variant by
+		its own identity, when the source doesn't name its product), or None."""
+		names = frappe.get_all(
+			LINK,
+			filters={
+				"connection": self.connection,
+				"kind": kind.value,
+				"gid": ["like", f"%{escape_like(gid_suffix)}"],
+				"retired": 0,
+			},
+			pluck="target_name",
+		)
+		return str(names[0]) if len(names) == 1 else None
+
 	def children(self, kind: Kind, gid_prefix: str) -> list[Link]:
 		"""Live links of ``kind`` whose identity starts with ``gid_prefix`` (an object's parts)."""
 		rows = frappe.get_all(

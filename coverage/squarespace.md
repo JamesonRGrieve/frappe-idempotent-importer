@@ -43,7 +43,7 @@ sits out the minute when limited anyway (which pauses the run).
 | Squarespace | Why it isn't mirrored |
 |---|---|
 | Gift card products and gift card sales | No ERPNext home for a stored-value liability (reported). |
-| Automatic discounts, free-shipping codes, once-per-customer codes, amount-off or free shipping for one product, other criteria | No exact ERPNext coupon equivalent (reported). |
+| Automatic discounts, free-shipping codes, once-per-customer codes, amount-off or free shipping for one product, other criteria | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled, failed and test-mode orders | Not sales. |
 | Mailing-list subscribers and donors | Not customers. |
 | Download files | Not in the API. |

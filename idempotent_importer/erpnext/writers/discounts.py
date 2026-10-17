@@ -1,27 +1,47 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Discount codes: one coupon-based Pricing Rule per source discount, and a Coupon Code per code, scoped to
-the connection's Webshop Store (the Webshop fork makes a code unique per store, and a store-less code
-applies on every store). Two connections on different stores can hold the same code at once; a code a
-person (or another connection) already holds on this store, or store-less, is Unsupported for this one
-rather than taken over. A connection whose Public Site has no store can't mirror codes: a store-less copy
-would apply on, and clash with, every store."""
+"""Discounts, through ERPNext's own pricing: a Pricing Rule per source discount (a Promotional Scheme when it
+has tiers, or applies to several customers or customer groups), with a Coupon Code per code.
+
+A rule discounts a price (a percentage, an amount, or a fixed rate) or gives an item (free, or at a rate;
+the same item bought, recursively for every so many), on the transaction, some items (variants included),
+some item groups or every item of the connection; after a minimum (and up to a maximum) quantity or spend;
+for one customer or customer group; optionally on other items than the ones bought (buy X, get Y). An
+automatic discount has no codes. What a source's discount holds that ERPNext's pricing doesn't enforce is
+planned companion work: the mapper lists it (a warning), and writes the rest.
+
+Coupon Codes are scoped to the connection's Webshop Store (the Webshop fork makes a code unique per store, and
+a store-less code applies on every store). Two connections on different stores can hold the same code at
+once; a code a person (or another connection) already holds on this store, or store-less, is Unsupported for
+this one rather than taken over. A connection whose Public Site has no store can't mirror codes: a store-less
+copy would apply on, and clash with, every store."""
 
 from __future__ import annotations
+
+from typing import Any
 
 import frappe
 from frappe.utils import add_days, nowdate
 
 from idempotent_importer.core.desired import Desired
-from idempotent_importer.core.errors import Unsupported
+from idempotent_importer.core.errors import UnresolvedDependency, Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
-from idempotent_importer.erpnext.context import money
+from idempotent_importer.erpnext.context import money, quantity
 from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
 
-APPLY_ON = {"transaction": "Transaction", "items": "Item Code", "groups": "Item Group"}
-RATE_OR_DISCOUNT = {"percentage": "Discount Percentage", "amount": "Discount Amount"}
+PRICING_RULE, SCHEME = "Pricing Rule", "Promotional Scheme"
+APPLY_ON = {
+	"transaction": "Transaction",
+	"items": "Item Code",
+	"groups": "Item Group",
+	"all_items": "Item Group",
+}
+OTHER = {"items": ("Item Code", "other_item_code"), "groups": ("Item Group", "other_item_group")}
+RATE_OR_DISCOUNT = {"percentage": "Discount Percentage", "amount": "Discount Amount", "rate": "Rate"}
 TITLE_LENGTH = 140
+# A rule's benefit fields a scheme's slab doesn't have (a scheme's slab table says which it is).
+RULE_ONLY = frozenset({"price_or_product_discount", "apply_discount_on"})
 
 
 class DiscountWriter(Writer):
@@ -41,46 +61,199 @@ class DiscountWriter(Writer):
 				raise Unsupported(
 					f"the coupon code {code} is already held on this store by Coupon Code {holder}"
 				)
-		applies = values.string("applies")
-		items = [self.dependency(Kind.PRODUCT, gid) for gid in values.strings("items")]
-		groups = [self.dependency(Kind.COLLECTION, gid) for gid in values.strings("groups")]
-		rule = self.existing(link) or frappe.new_doc("Pricing Rule")
-		discount = values.string("discount")
-		amount = money(values.decimal("value"))
-		rule.update(
-			{
-				"title": (values.optional_string("description") or ", ".join(codes))[:TITLE_LENGTH],
-				"apply_on": APPLY_ON[applies],
-				"price_or_product_discount": "Price",
-				"coupon_code_based": 1,
-				"selling": 1,
-				"buying": 0,
-				"company": self.context.company,
-				"currency": self.context.currency,
-				"rate_or_discount": RATE_OR_DISCOUNT[discount],
-				"discount_percentage": amount if discount == "percentage" else 0,
-				"discount_amount": amount if discount == "amount" else 0,
-				"apply_discount_on": "Net Total",
-				"min_amt": money(values.decimal("min_amount")) if values.has("min_amount") else 0,
-				"valid_from": values.optional_string("valid_from"),
-				"valid_upto": values.optional_string("valid_upto"),
-				"disable": 0,
-			}
-		)
-		rule.set("items", [{"item_code": code} for code in items])
-		rule.set("item_groups", [{"item_group": group} for group in groups])
-		rule.save(ignore_permissions=True)
+		scheme = self.is_scheme(values)
+		if scheme and codes:
+			raise Unsupported("a coupon code applies one Pricing Rule: no tiers or several customers")
+		doctype = SCHEME if scheme else PRICING_RULE
+		existing = self.existing(link)
+		if link is not None and existing is not None and existing.doctype != doctype:
+			# The discount gained or lost its tiers or customers: the old record is disabled, not reused.
+			self.retire(link)
+			existing = None
+		doc = existing or frappe.new_doc(doctype)
+		doc.update(self._common(values))
+		if scheme:
+			self._slabs(doc, values)
+			self.save(doc, self.context.item_code(None, desired.gid))
+		else:
+			doc.update(self._rule(values, bool(codes)))
+			self.save(doc)
 		for code in codes:
-			self._coupon(desired.gid, code, rule.name, values)
+			self._coupon(desired.gid, code, doc.name, values)
 		for coupon in self.links.children(Kind.COUPON, f"{desired.gid}#"):
 			if coupon.gid.split("#", 1)[1] not in codes:
 				# A code the source dropped: it expires (a Coupon Code has no disabled flag).
 				frappe.db.set_value("Coupon Code", coupon.target.name, "valid_upto", add_days(nowdate(), -1))
 				self.links.retire(Kind.COUPON, coupon.gid)
-		return Target("Pricing Rule", rule.name)
+		return Target(doctype, doc.name)
 
 	def retire(self, link: Link) -> None:
-		frappe.db.set_value("Pricing Rule", link.target.name, "disable", 1)
+		if link.target.doctype == SCHEME:
+			scheme = frappe.get_doc(SCHEME, link.target.name)
+			if not scheme.disable:
+				scheme.disable = 1
+				scheme.save(ignore_permissions=True)
+			return
+		frappe.db.set_value(PRICING_RULE, link.target.name, "disable", 1)
+
+	@staticmethod
+	def is_scheme(values: Values) -> bool:
+		"""A discount ERPNext holds as a Promotional Scheme (one Pricing Rule per tier and customer)."""
+		return bool(values.records("tiers")) or any(
+			len(values.strings(f)) > 1 for f in ("customers", "customer_groups")
+		)
+
+	# -- what a rule and a scheme share -----------------------------------------------------------------
+
+	def _common(self, values: Values) -> dict[str, Any]:
+		applies = values.string("applies")
+		items = self._items(values)
+		groups = [self.dependency(Kind.COLLECTION, gid) for gid in values.strings("groups")]
+		if applies == "all_items":
+			groups = [self.context.item_group]
+		fields: dict[str, Any] = {
+			"apply_on": APPLY_ON[applies],
+			"mixed_conditions": int(values.has("mixed") and values.flag("mixed")),
+			"selling": 1,
+			"buying": 0,
+			"company": self.context.company,
+			"currency": self.context.currency,
+			"valid_from": values.optional_string("valid_from"),
+			"valid_upto": values.optional_string("valid_upto"),
+			"disable": 0,
+			"apply_rule_on_other": "",
+			**self._applicable_for(values),
+		}
+		other = values.record("other")
+		if other is not None:
+			on, field = OTHER[other.string("applies")]
+			kind = Kind.PRODUCT if on == "Item Code" else Kind.COLLECTION
+			fields |= {"apply_rule_on_other": on, field: self.dependency(kind, other.string("target"))}
+		return fields | {
+			"items": [{"item_code": code} for code in items],
+			"item_groups": [{"item_group": g} for g in groups],
+		}
+
+	def _items(self, values: Values) -> list[str]:
+		"""The products, and single variants, a discount applies to, as item codes."""
+		items = [self.dependency(Kind.PRODUCT, gid) for gid in values.strings("items")]
+		for variant in values.records("variants"):
+			items.append(self._variant(variant.optional_string("product"), variant.string("variant")))
+		return list(dict.fromkeys(items))
+
+	def _variant(self, product: str | None, variant: str) -> str:
+		"""A variant's item: by its product and itself, or (a source that names only the variant) by itself."""
+		item = (
+			self.links.target(Kind.VARIANT, f"{product}#{variant}")
+			if product
+			else self.links.ending(Kind.VARIANT, f"#{variant}")
+		)
+		if item is None:
+			raise UnresolvedDependency(f"{variant} isn't mirrored yet")
+		return item
+
+	def _applicable_for(self, values: Values) -> dict[str, Any]:
+		customers = [self.dependency(Kind.CUSTOMER, gid) for gid in values.strings("customers")]
+		groups = [self.dependency(Kind.CUSTOMER_GROUP, gid) for gid in values.strings("customer_groups")]
+		if customers and groups:
+			raise Unsupported(
+				"a discount for some customers and some customer groups has no one ERPNext rule"
+			)
+		if self.is_scheme(values):
+			if customers:
+				return {"applicable_for": "Customer", "customer": [{"customer": c} for c in customers]}
+			if groups:
+				return {
+					"applicable_for": "Customer Group",
+					"customer_group": [{"customer_group": g} for g in groups],
+				}
+			return {"applicable_for": ""}
+		if customers:
+			return {"applicable_for": "Customer", "customer": customers[0]}
+		if groups:
+			return {"applicable_for": "Customer Group", "customer_group": groups[0]}
+		return {"applicable_for": "", "customer": None, "customer_group": None}
+
+	# -- a Pricing Rule ---------------------------------------------------------------------------------
+
+	def _rule(self, values: Values, coupon: bool) -> dict[str, Any]:
+		codes = values.strings("codes")
+		return {
+			"title": (values.optional_string("description") or ", ".join(codes) or "Discount")[:TITLE_LENGTH],
+			"coupon_code_based": int(coupon),
+			"min_qty": quantity(values.decimal("min_qty")) if values.has("min_qty") else 0,
+			"max_qty": quantity(values.decimal("max_qty")) if values.has("max_qty") else 0,
+			"min_amt": money(values.decimal("min_amount")) if values.has("min_amount") else 0,
+			"max_amt": money(values.decimal("max_amount")) if values.has("max_amount") else 0,
+			**self._benefit(values),
+		}
+
+	def _benefit(self, values: Values) -> dict[str, Any]:
+		"""What the discount gives: a price discount (with its rate or amount), or an item."""
+		free = values.record("free")
+		if free is None:
+			discount = values.string("discount")
+			amount = money(values.decimal("value"))
+			return {
+				"price_or_product_discount": "Price",
+				"rate_or_discount": RATE_OR_DISCOUNT[discount],
+				"discount_percentage": amount if discount == "percentage" else 0,
+				"discount_amount": amount if discount == "amount" else 0,
+				"rate": amount if discount == "rate" else 0,
+				"apply_discount_on": "Net Total",
+			}
+		item = free.optional_string("item")
+		variant = free.optional_string("variant")
+		free_item = None
+		if variant:
+			free_item = self._variant(item, variant)
+		elif item:
+			free_item = self.dependency(Kind.PRODUCT, item)
+		return {
+			"price_or_product_discount": "Product",
+			"rate_or_discount": "",
+			"same_item": int(item is None),
+			"free_item": free_item,
+			"free_qty": quantity(free.decimal("qty")),
+			"free_item_rate": money(free.decimal("rate")) if free.has("rate") else 0,
+			"is_recursive": int(free.has("recursive") and free.flag("recursive")),
+			"recurse_for": quantity(free.decimal("recurse_for")) if free.has("recurse_for") else 0,
+		}
+
+	# -- a Promotional Scheme ----------------------------------------------------------------------------
+
+	def _slabs(self, scheme: Any, values: Values) -> None:
+		"""The scheme's tiers (or its one discount) as its price or product discount slabs. ERPNext keys each
+		slab's Pricing Rules by the slab row, so rows are updated in place; a tier the source drops is
+		disabled."""
+		tiers = values.records("tiers") or [Values({k: v for k, v in values.all().items() if k != "tiers"})]
+		product = values.record("free") is not None
+		field = "product_discount_slabs" if product else "price_discount_slabs"
+		other = "price_discount_slabs" if product else "product_discount_slabs"
+		rows = list(scheme.get(field) or [])
+		title = values.optional_string("description") or "Discount"
+		for index, tier in enumerate(tiers):
+			slab = {
+				"disable": 0,
+				"rule_description": f"{title}, tier {index + 1}"[:TITLE_LENGTH],
+				"min_qty": quantity(tier.decimal("min_qty")) if tier.has("min_qty") else 0,
+				"max_qty": quantity(tier.decimal("max_qty")) if tier.has("max_qty") else 0,
+				"min_amount": money(tier.decimal("min_amount")) if tier.has("min_amount") else 0,
+				"max_amount": money(tier.decimal("max_amount")) if tier.has("max_amount") else 0,
+				**{
+					k: v
+					for k, v in self._benefit(tier).items()
+					if k not in RULE_ONLY and not (product and k == "rate_or_discount")
+				},
+			}
+			if index < len(rows):
+				rows[index].update(slab)
+			else:
+				scheme.append(field, slab)
+		for row in [*rows[len(tiers) :], *(scheme.get(other) or [])]:
+			row.disable = 1
+
+	# -- coupon codes -----------------------------------------------------------------------------------
 
 	@staticmethod
 	def _holders(code: str, store: str | None) -> list[str]:

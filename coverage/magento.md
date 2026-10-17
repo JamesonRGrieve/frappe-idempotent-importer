@@ -45,10 +45,12 @@ for 100 items, under the default "Maximum Page Size" of 300; a list ends when th
 
 | Magento | Why it isn't mirrored |
 |---|---|
-| Bundle, grouped and gift card products; gift card order lines | No exact ERPNext item (reported). |
-| Rules without a coupon, item conditions, other cart conditions, discount caps and steps, shipping discounts and free shipping, customer groups, per-customer limits, coupons with their own limits, a use limit shared by several codes, fixed amounts per item | No exact ERPNext coupon equivalent (reported). |
+| Bundle products | Planned: fixed bundles as Product Bundles (card 386), dynamic ones (card 409). |
+| Grouped and gift card products; gift card order lines | Planned: gift cards (card 403); grouped products (card 409). |
+| Rules without a coupon, item conditions, other cart conditions, discount caps and steps, shipping discounts and free shipping, customer groups, per-customer limits, coupons with their own limits, a use limit shared by several codes, fixed amounts per item | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled orders | Not sales. |
-| Custom options, tier and customer-group prices, downloadable files | No first-party Item field (warnings). |
+| Tier and customer-group prices | Planned (card 386): a Promotional Scheme per product. |
+| Custom options, downloadable files | Planned: custom options (card 408); downloadable files have no first-party Item field (warnings). |
 | Products not on the store's website, disabled child products | Not sold in this store view. |
 | Other store views' translations | One connection mirrors one store view. |
 | CMS blocks, widgets, URL rewrites, reviews (Magento Open Source keeps no review REST API) | Not in the read API, or storefront presentation. |

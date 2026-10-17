@@ -45,7 +45,7 @@ every 1.2 seconds), and a shop needing more than the day's quota pauses on the 4
 
 | Lightspeed eCom | Why it isn't mirrored |
 |---|---|
-| Discounts on shipping and free shipping, an amount off some products, codes for both products and categories, minimums checked after the discount, discounts after tax, automatic discount rules | No exact ERPNext coupon equivalent (reported). |
+| Discounts on shipping and free shipping, an amount off some products, codes for both products and categories, minimums checked after the discount, discounts after tax, automatic discount rules | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled orders | Not sales. |
 | Hidden reviews | Not published. |
 | Article tags, comments | Separate resources, not read. |

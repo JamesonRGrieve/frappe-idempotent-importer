@@ -499,7 +499,7 @@ class OrderMapper:
 	carries Magento's base total and the rate it implies."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -656,11 +656,20 @@ class OrderMapper:
 
 def base_fields(order: Node, base_currency: str) -> Fields:
 	"""An order in another currency than the store's base: Magento's base total, and the rate it implies to
-	ERPNext's nine places (so the invoice's base total rounds to Magento's)."""
+	ERPNext's nine places (so the invoice's base total rounds to Magento's); without a base total (or a
+	total to divide it by), Magento's own rate (``base_to_order_rate``, order currency per base currency)."""
 	total = amount_of(order, "grand_total")
 	base_total = order.optional_decimal("base_grand_total")
 	if not total or base_total is None:
-		raise Unsupported("an order in another currency without its base-currency total")
+		rate = order.optional_decimal("base_to_order_rate")
+		if not rate:
+			raise SourceError(
+				f"Magento order {order.string('source_id')} has no base total or exchange rate."
+			)
+		return {
+			"exchange_rate": (Decimal(1) / rate).quantize(RATE_PLACES, rounding=ROUND_HALF_EVEN),
+			"base_currency": base_currency,
+		}
 	return {
 		"exchange_rate": (base_total / total).quantize(RATE_PLACES, rounding=ROUND_HALF_EVEN),
 		"base_total": base_total,

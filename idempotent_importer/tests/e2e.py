@@ -33,11 +33,13 @@ from idempotent_importer.erpnext.stores import (
 	naive_utc,
 	now_utc,
 )
+from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING
 
 STATE_DIR = Path("/state")
 FISCAL_YEAR_START = "2026-01-01"
 FISCAL_YEAR_END = "2026-12-31"
 CURRENCY = "CAD"
+FOREIGN_CURRENCIES = ("USD",)
 COUNTRY = "Canada"
 FALLBACK_ITEM = "IMPORTED-LINE"
 FAKE_PORT = 8080
@@ -272,6 +274,10 @@ def setup_site() -> None:
 		}
 	)
 	frappe.db.set_single_value("Webshop Settings", "enable_reviews", 1)
+	# Orders paid in another currency (BigCommerce's USD order) book to the customer's own receivable.
+	frappe.db.set_single_value("Accounts Settings", MULTI_CURRENCY_SETTING, 1)
+	for currency in FOREIGN_CURRENCIES:
+		frappe.db.set_value("Currency", currency, "enabled", 1)
 	make_fallback_item()
 	for spec in BUSINESSES:
 		if not frappe.db.exists("Company", spec.company):
@@ -1079,6 +1085,19 @@ def assert_square_online(state: str) -> None:
 @check
 def assert_bigcommerce(state: str) -> None:
 	connection = "bigcommerce-c"
+	usd = frappe.get_doc("Sales Invoice", target(connection, "order", "Order", "504"))
+	expect(
+		(
+			usd.docstatus,
+			usd.currency,
+			amount(usd.conversion_rate),
+			amount(usd.grand_total),
+			amount(usd.base_grand_total),
+		),
+		(1, "USD", amount("1.33"), amount("31.50"), amount("42.00")),
+		"order 504, paid in USD at BigCommerce's rate (0.75 USD per CAD)",
+	)
+	expect(amount(usd.outstanding_amount), amount("0"), "order 504, paid")
 	mug = target(connection, "product", "Product", "111")
 	expect(
 		(mug, frappe.db.get_value("Item", mug, "brand"), frappe.db.get_value("Item", mug, "item_group")),

@@ -86,7 +86,8 @@ This is the operator's decision to confirm (see below).
 2. Create a fiscal year covering the history you import, and per business: its Public Site (company,
    route prefix, Webshop Store), a selling Price List in the company's currency, a guest Customer, a
    non-stock fallback Item (for lines whose product no longer exists), and the deposit, tax, shipping and
-   fee accounts.
+   fee accounts. A store that sold in several currencies needs those currencies enabled and Accounts
+   Settings' "Allow multi-currency invoices against single party account" on.
 3. Create an **Importer Connection**: a permanent Connection ID, the source, its URL and credentials
    (secrets are Password fields, never shown or logged), the Public Site, an abbreviation, and the targets
    above. Choose what to mirror.
@@ -204,13 +205,15 @@ Each of these is the operator's call.
     and the order's addresses are kept in the invoice's remarks.
 11. **A product deleted at the source** leaves the invoices that sold it as booked; lines that never named
     a product use the fallback item.
-12. **Currency:** an order in another currency than the company's is mirrored only when the source
-    recorded its exchange rate and its total in the company's currency (Magento): the invoice is in the
-    order's currency at that rate, on the company's receivable account in that currency (create one per
-    currency; ERPNext books a customer in one currency), and its total in the company's currency must equal
-    the source's exactly. Without both (WooCommerce, Shopify's other currencies, BigCommerce, which records
-    the rate but no total in the store's currency) it is a gap: a derived or day's rate would make the
-    books inexact.
+12. **Currency:** an order in another currency than the company's is a multi-currency Sales Invoice in
+    the order's currency at the exchange rate the source recorded (BigCommerce's store-to-transactional
+    rate, Magento's base total or rate, WooPayments Multi-Currency's or Aelia's order meta), paid at that
+    rate; when the source booked its total in the company's currency too (Magento, Aelia) that total must
+    match exactly. Enable Accounts Settings' "Allow multi-currency invoices against single party account"
+    so a customer (and the guest customer) can be invoiced in several currencies on its own receivable;
+    without it, an order needs a receivable account in its currency and a customer that never bought in
+    another. An order in another currency whose source recorded no rate at all (WooCommerce without a
+    multi-currency extension's meta) isn't booked at a rate the source never had (reported).
 13. **Required apps:** the app requires ERPNext, Webshop, the blog app and the Public Site router (every
     connection belongs to a Public Site). HRMS is needed only by the HR sources of later phases.
 14. **Schedule:** incremental hourly, full daily, a five-minute tick for paused runs. Times are UTC in the

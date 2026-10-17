@@ -204,10 +204,32 @@ class TestMappers:
 		refund = values(Kind.ORDER, "Order/501", "v2").records("refunds")[0]
 		assert refund.decimal("amount") == Decimal(10)
 
-	def test_an_order_in_another_currency_is_unsupported(self) -> None:
+	def test_an_order_in_another_currency_is_booked_at_bigcommerces_rate(self) -> None:
+		order = nodes(Kind.ORDER)["Order/501"].with_fields(
+			currency_code="USD",
+			default_currency_code="USD",
+			store_default_to_transactional_exchange_rate="0.8000000000",
+		)
+		desired = {m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.ORDER].map(order)
+		assert desired is not None
+		found = desired.values()
+		assert (found.string("currency"), found.decimal("exchange_rate"), found.string("base_currency")) == (
+			"USD",
+			Decimal("1.250000000"),
+			"CAD",
+		)
+		assert not found.has("base_total"), "BigCommerce books no total in the store's currency"
+		with pytest.raises(SourceError, match="exchange rate 0"):
+			{m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.ORDER].map(
+				order.with_fields(store_default_to_transactional_exchange_rate="0")
+			)
+
+	def test_the_display_currency_is_not_the_orders(self) -> None:
 		order = nodes(Kind.ORDER)["Order/501"].with_fields(currency_code="USD", currency_exchange_rate="0.73")
-		with pytest.raises(Unsupported, match="USD, not the store's CAD"):
-			{m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.ORDER].map(order)
+		desired = {m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.ORDER].map(order)
+		assert desired is not None
+		assert desired.values().string("currency") == "CAD"
+		assert not desired.values().has("exchange_rate")
 
 	@pytest.mark.parametrize("status", [0, 5, 6])
 	def test_abandoned_cancelled_and_declined_orders_map_to_nothing(self, status: int) -> None:

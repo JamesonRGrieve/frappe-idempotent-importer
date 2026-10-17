@@ -23,6 +23,7 @@ from typing import Any
 
 import frappe
 from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+from erpnext.accounts.party import get_party_gle_currency
 
 from idempotent_importer.contract import (
 	FEE,
@@ -48,6 +49,7 @@ QUOTATION = "Quotation"
 PAYMENT = "Payment Entry"
 DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 UOM = "Nos"
+MULTI_CURRENCY_SETTING = "allow_multi_currency_invoices_against_single_party_account"
 ACCOUNT_NAME_LENGTH = 140
 # The charges ERPNext computes from a rate rather than books as given: each must come to the source's amount.
 COMPUTED = frozenset({INCLUDED_TAX, SHIPPING_TAX})
@@ -81,23 +83,29 @@ class SalesDocuments(Writer):
 	"""What an invoice, a credit note and a quotation share: their lines, charges, currency and the exact
 	check of their totals."""
 
-	def currency(self, values: Values) -> dict[str, Any]:
-		"""The document's currency fields: the company's, or the order's own at the source's rate."""
+	def currency(self, values: Values, party: str | None = None) -> dict[str, Any]:
+		"""The document's currency fields: the company's, or the order's own at the rate the source recorded
+		(its total in the company's currency, when the source booked one, is then checked too)."""
 		currency = values.string("currency")
 		if currency == self.context.currency:
 			return {"currency": currency, "conversion_rate": 1}
 		rate = values.optional_decimal("exchange_rate")
-		if rate is None or values.optional_decimal("base_total") is None:
+		if rate is None:
 			raise Unsupported(
 				f"the order is in {currency}, the company books in {self.context.currency}, and the source "
-				"recorded no exchange rate and total in it"
+				"recorded no exchange rate"
 			)
 		base_currency = values.optional_string("base_currency")
 		if base_currency is not None and base_currency != self.context.currency:
 			raise Unsupported(
 				f"the source booked the order's total in {base_currency}, not the company's {self.context.currency}"
 			)
-		# ERPNext books a customer's invoices in the currency of its receivable account.
+		fields: dict[str, Any] = {"currency": currency, "conversion_rate": float(rate)}
+		if frappe.db.get_single_value("Accounts Settings", MULTI_CURRENCY_SETTING):
+			# The customer's own receivable, in the company's currency, whatever the invoice's.
+			return fields
+		# Otherwise ERPNext books a customer's invoices in the currency of its receivable account, and a
+		# customer's ledger in one currency.
 		receivable = frappe.db.get_value(
 			"Account",
 			{
@@ -107,15 +115,25 @@ class SalesDocuments(Writer):
 				"is_group": 0,
 			},
 		)
-		if not receivable:
-			raise Unsupported(f"{self.context.company} has no receivable account in {currency} for the order")
-		return {"currency": currency, "conversion_rate": float(rate), "debit_to": receivable}
+		booked_in = get_party_gle_currency("Customer", party, self.context.company) if party else None
+		if not receivable or (booked_in and booked_in != currency):
+			raise Unsupported(
+				f"the order is in {currency}: enable Accounts Settings' \"Allow multi-currency invoices against "
+				f'single party account" (or give {self.context.company} a receivable account in {currency}, '
+				"for customers who buy only in it)"
+			)
+		return fields | {"debit_to": receivable}
 
-	def common(self, values: Values, posted_at: str) -> dict[str, Any]:
+	def customer_of(self, values: Values) -> str:
+		"""The order's customer: its mirrored Customer, or the connection's guest customer."""
+		customer = values.optional_string("customer")
+		return self.dependency(Kind.CUSTOMER, customer) if customer else self.context.guest_customer
+
+	def common(self, values: Values, posted_at: str, party: str) -> dict[str, Any]:
 		posted = system_datetime(posted_at)
 		return {
 			"company": self.context.company,
-			**self.currency(values),
+			**self.currency(values, party),
 			"selling_price_list": self.context.price_list,
 			"price_list_currency": self.context.currency,
 			"plc_conversion_rate": 1,
@@ -313,7 +331,7 @@ class SalesDocuments(Writer):
 class OrderWriter(SalesDocuments):
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
-		self.currency(values)
+		self.currency(values, self.customer_of(values))
 		invoice = self._invoice(desired.gid, values)
 		if invoice.docstatus == SUBMITTED:
 			self._payment(desired.gid, values, invoice)
@@ -376,14 +394,12 @@ class OrderWriter(SalesDocuments):
 		return amended
 
 	def _fill(self, invoice: Any, values: Values) -> None:
-		customer = values.optional_string("customer")
 		posted = system_datetime(values.string("created_at"))
+		customer = self.customer_of(values)
 		invoice.update(
 			{
-				**self.common(values, values.string("created_at")),
-				"customer": self.dependency(Kind.CUSTOMER, customer)
-				if customer
-				else self.context.guest_customer,
+				**self.common(values, values.string("created_at"), customer),
+				"customer": customer,
 				"set_posting_time": 1,
 				"due_date": posted.date(),
 				"update_stock": 0,
@@ -426,9 +442,15 @@ class OrderWriter(SalesDocuments):
 				"cost_center": self.context.cost_center,
 			}
 		)
-		if invoice.currency != self.context.currency:
-			# The order's own rate, not a rate of the day: the payment settles the invoice exactly.
-			entry.source_exchange_rate = invoice.conversion_rate
+		party_currency = frappe.db.get_value("Account", invoice.debit_to, "account_currency")
+		if party_currency != self.context.currency:
+			# The order's own rate on the customer's account in its currency, not a rate of the day: the
+			# payment settles the invoice exactly. (On a receivable in the company's currency, ERPNext
+			# settles the invoice's amount in that currency.)
+			if entry.payment_type == "Receive":
+				entry.source_exchange_rate = invoice.conversion_rate
+			else:
+				entry.target_exchange_rate = invoice.conversion_rate
 		entry.setup_party_account_field()
 		entry.set_missing_values()
 		entry.set_amounts()
@@ -473,7 +495,7 @@ class OrderWriter(SalesDocuments):
 		note = frappe.new_doc(INVOICE)
 		note.update(
 			{
-				**self.common(order, refund.string("date")),
+				**self.common(order, refund.string("date"), invoice.customer),
 				"customer": invoice.customer,
 				"is_return": 1,
 				"set_posting_time": 1,
@@ -526,14 +548,12 @@ class DraftOrderWriter(SalesDocuments):
 		quotation = self.existing(link) or frappe.new_doc(QUOTATION)
 		if quotation.docstatus != DRAFT:
 			quotation = frappe.new_doc(QUOTATION)
-		customer = values.optional_string("customer")
+		customer = self.customer_of(values)
 		quotation.update(
 			{
-				**self.common(values, values.string("created_at")),
+				**self.common(values, values.string("created_at"), customer),
 				"quotation_to": "Customer",
-				"party_name": self.dependency(Kind.CUSTOMER, customer)
-				if customer
-				else self.context.guest_customer,
+				"party_name": customer,
 				"order_type": "Sales",
 				"title": f"Draft order {values.string('number')}"[:TITLE_LENGTH],
 				"valid_till": None,

@@ -199,6 +199,40 @@ class TestOrders:
 		assert mapped(woo_config, Kind.ORDER, "504") is None
 		assert values(woo_config, Kind.ORDER, "503", "v2").flag("submitted")
 
+	def test_an_order_in_another_currency_at_the_recorded_rate(self, woo_config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.ORDER]
+		order = nodes(woo_config, Kind.ORDER)["501"]
+		wcpay = mapper.map(
+			order.with_fields(
+				currency="USD",
+				meta_data=[
+					{"id": 1, "key": "_wcpay_multi_currency_order_exchange_rate", "value": "0.8"},
+					{"id": 2, "key": "_wcpay_multi_currency_order_default_currency", "value": "CAD"},
+				],
+			)
+		)
+		assert wcpay is not None
+		assert (wcpay.values().decimal("exchange_rate"), wcpay.values().string("base_currency")) == (
+			Decimal("1.250000000"),
+			"CAD",
+		)
+		aelia = mapper.map(
+			order.with_fields(
+				currency="USD", meta_data=[{"id": 3, "key": "_order_total_base_currency", "value": "143.06"}]
+			)
+		)
+		assert aelia is not None
+		assert (aelia.values().decimal("exchange_rate"), aelia.values().decimal("base_total")) == (
+			Decimal("1.249978156"),
+			Decimal("143.06"),
+		)
+		same = mapper.map(
+			order.with_fields(
+				meta_data=[{"id": 4, "key": "_wcpay_multi_currency_order_exchange_rate", "value": "1"}]
+			)
+		)
+		assert same is not None and not same.values().has("exchange_rate")
+
 	def test_a_guest_order(self, woo_config: ConnectionConfig) -> None:
 		order = values(woo_config, Kind.ORDER, "502")
 		assert order.optional_string("customer") is None

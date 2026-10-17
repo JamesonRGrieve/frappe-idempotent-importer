@@ -311,12 +311,54 @@ class CouponMapper:
 		return Desired(self.kind, node.id(), discount_fields(discount))
 
 
+# ERPNext keeps an exchange rate to nine places.
+EXCHANGE_RATE_PLACES = Decimal("0.000000001")
+# What a multi-currency extension records on an order in another currency than the store's. WooPayments
+# Multi-Currency: the rate from the store's currency to the order's, and the store's currency. Aelia
+# Currency Switcher: the order's total in the store's (base) currency.
+WCPAY_RATE, WCPAY_DEFAULT_CURRENCY = (
+	"_wcpay_multi_currency_order_exchange_rate",
+	"_wcpay_multi_currency_order_default_currency",
+)
+AELIA_BASE_TOTAL = "_order_total_base_currency"
+
+
+def meta_values(node: Node) -> dict[str, str]:
+	"""An object's ``meta_data`` as key → value (text values only)."""
+	return {
+		key: str(value)
+		for meta in node.children("meta_data")
+		if (key := meta.optional_string("key")) and isinstance(value := meta.get("value"), str | int | float)
+	}
+
+
+def recorded_exchange(order: Node) -> Fields:
+	"""The exchange rate a multi-currency extension recorded on the order (company currency per order
+	currency, to ERPNext's nine places): Aelia's base total (checked exactly) and the rate it implies, else
+	WooPayments' rate inverted. Nothing when the order records neither, or is in the store's currency (a
+	rate of 1)."""
+	meta = meta_values(order)
+	total = order.decimal("total")
+	if (base := meta.get(AELIA_BASE_TOTAL)) and total and Decimal(base) != total:
+		base_total = Decimal(base)
+		return {
+			"exchange_rate": (base_total / total).quantize(EXCHANGE_RATE_PLACES),
+			"base_total": base_total,
+		}
+	if (rate := meta.get(WCPAY_RATE)) and Decimal(rate) > 0 and Decimal(rate) != 1:
+		fields: Fields = {"exchange_rate": (Decimal(1) / Decimal(rate)).quantize(EXCHANGE_RATE_PLACES)}
+		if default := meta.get(WCPAY_DEFAULT_CURRENCY):
+			fields["base_currency"] = default
+		return fields
+	return {}
+
+
 class OrderMapper:
 	"""An order's invoice, payment, credit notes and notes. Unpaid orders are draft invoices; cancelled,
 	failed and checkout-draft orders have none (an earlier copy is retired)."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -358,6 +400,7 @@ class OrderMapper:
 			"notes": [self._note(note) for note in node.children("note_nodes")],
 			"remarks": node.optional_string("customer_note"),
 		}
+		fields |= recorded_exchange(node)
 		return Desired(self.kind, node.id(), fields)
 
 	@staticmethod

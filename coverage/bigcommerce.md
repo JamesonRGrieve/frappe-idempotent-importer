@@ -30,6 +30,7 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Legacy coupons: percentage (all, some products, some categories), amount per item (some products or categories), amount off the order | **Pricing Rule** + **Coupon Code** | Minimum spend, expiry and use limit. A disabled coupon disables its rule. |
 | Coupon promotions with one rule taking a percentage or amount off the order | **Pricing Rule** + one **Coupon Code** per code | At most a minimum-spend condition; dates and use limit. |
 | Orders (every status but incomplete, cancelled, declined) | **Sales Invoice** (submitted when the payment is captured, paid or refunded, else draft) + **Payment Entry** | BigCommerce's totals, exactly; number `#<order id>`. |
+| Orders paid in another currency than the store's default | A multi-currency **Sales Invoice** in the transactional currency at BigCommerce's `store_default_to_transactional_exchange_rate` (inverted: store currency per order currency), paid at that rate | BigCommerce books no total in the store's currency, so only the order-currency total is checked (see the README's currency decision). |
 | Order lines | Invoice lines at their pre-tax prices before discounts, on the variant's item | |
 | Coupon and manual discounts | The invoice's discount | |
 | Taxes (rows by tax name) | One charge per tax | The order's total tax when BigCommerce gives no rows. |
@@ -54,7 +55,6 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Contact-form and link pages | A form and a menu link, not content (reported). |
 | Pending and disapproved reviews | Not published at the source. |
 | Blog post thumbnails | Blog Post has no image of its own. |
-| Orders in another currency than the store's default | BigCommerce records the exchange rate but no total in the store's currency, so the invoice's company-currency total can't be checked exactly (reported). |
 | Abandoned checkouts (incomplete orders), cancelled and declined orders | Not sales. |
 | Customer groups, store credit, customer attributes and form fields | No first-party home for a storefront's segments and custom fields. |
 | Product options and modifiers that aren't variants, bulk pricing rules, related products, videos | No first-party Item field. |

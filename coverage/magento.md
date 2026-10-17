@@ -35,7 +35,7 @@ for 100 items, under the default "Maximum Page Size" of 300; a list ends when th
 | Orders of the store's website | **Sales Invoice** (submitted when paid, else draft) + **Payment Entry** | Magento's totals in the order's currency, exactly; number `#<increment id>`. The payment method title and last transaction id. |
 | Order lines (a configurable product's parent and child lines as one) | Invoice lines at their row totals, on the child product bought | |
 | Discount, applied taxes, shipping | The invoice's discount; one charge per applied tax; shipping | The order's tax total when Magento itemises none. |
-| Orders in another currency than the store's base | The invoice in the order's currency at the rate Magento's base total implies, its total in the company's currency checked against Magento's base total | Only when the base currency is the company's (see the README's currency decision). |
+| Orders in another currency than the store's base | The invoice in the order's currency at the rate Magento's base total implies (else Magento's `base_to_order_rate`), its total in the company's currency checked against Magento's base total | Only when the base currency is the company's (see the README's currency decision). |
 | Credit memos | Credit note (the refunded lines at their row totals, an adjustment for the rest) + refund **Payment Entry** | The first comment as the reason. |
 | Shipments, order comments | **Comment** each | Carriers and tracking numbers. |
 | CMS pages | **Web Page** | The identifier's last segment as the slug; inactive pages unpublished; the old URL redirects (not the home page). Content directives are kept as written. |

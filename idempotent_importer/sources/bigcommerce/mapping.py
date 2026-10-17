@@ -453,6 +453,23 @@ def minimum_spend(rule: Node) -> Decimal | None:
 	return cart.optional_decimal("minimum_spend")
 
 
+# ERPNext keeps an exchange rate to nine places.
+EXCHANGE_RATE_PLACES = Decimal("0.000000001")
+
+
+def foreign_currency(order: Node, store_currency: str) -> Fields:
+	"""An order paid in another currency than the store's: the rate BigCommerce recorded
+	(``store_default_to_transactional_exchange_rate``, order currency per store currency) as the books
+	take it, store currency per order currency. BigCommerce books no total in the store's currency."""
+	rate = order.decimal("store_default_to_transactional_exchange_rate")
+	if rate <= 0:
+		raise SourceError(f"BigCommerce order {order.string('source_id')} has the exchange rate {rate}.")
+	return {
+		"exchange_rate": (Decimal(1) / rate).quantize(EXCHANGE_RATE_PLACES),
+		"base_currency": store_currency,
+	}
+
+
 class OrderMapper:
 	"""An order → an invoice with BigCommerce's totals: lines at their pre-tax prices before discounts (on
 	the variant's item), the order's coupon and manual discounts as the invoice's discount, each tax as a
@@ -461,7 +478,7 @@ class OrderMapper:
 	staff notes as comments. Abandoned, cancelled, declined and archived orders map to nothing."""
 
 	kind = Kind.ORDER
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -469,13 +486,10 @@ class OrderMapper:
 	def map(self, node: Node) -> Desired | None:
 		if node.integer("status_id") in NOT_SOLD or node.get("is_deleted") is True:
 			return None
-		currency = node.string("currency_code")
+		# The transactional currency the shopper paid in (its amounts are in it); currency_code is only the
+		# currency prices were displayed in.
+		currency = node.optional_string("default_currency_code") or node.string("currency_code")
 		store_currency = node.optional_string("store_default_currency_code")
-		if store_currency is not None and currency != store_currency:
-			raise Unsupported(
-				f"an order in {currency}, not the store's {store_currency}: BigCommerce records its exchange rate "
-				"but not its total in the store's currency"
-			)
 		submitted = node.optional_string("payment_status") in PAID
 		billing = node.child("billing_address")
 		addresses = node.children("shipping_addresses")
@@ -516,6 +530,8 @@ class OrderMapper:
 			"notes": self._notes(node),
 			"remarks": node.optional_string("customer_message"),
 		}
+		if store_currency is not None and currency != store_currency:
+			fields |= foreign_currency(node, store_currency)
 		return Desired(self.kind, node.id(), fields)
 
 	def _line(self, line: Node, currency: str) -> OrderLine:

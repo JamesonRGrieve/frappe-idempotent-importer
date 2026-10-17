@@ -21,9 +21,10 @@ order        number, currency, created_at, submitted, customer (identity | None)
              amount, lines, charges}]), notes ([{gid, date, author, text, customer_note}]), remarks;
              optionally taxes_included (line prices include the "included_tax" charges; when the lines'
              rates differ each line carries its own, taxes ([{title, rate}])), and for an order
-             in another currency than the company's, exchange_rate (company currency per order currency)
-             and base_total (the total in the company's currency, as the source booked it), with the
-             source's base_currency when it names it (the writer refuses one that isn't the company's)
+             in another currency than the company's, exchange_rate (company currency per order currency,
+             as the source recorded it), base_total when the source booked the total in the company's
+             currency too (checked exactly), and the source's base_currency when it names it (the writer
+             refuses one that isn't the company's)
 draft_order  number, currency, created_at, customer, guest, billing, shipping, lines, discount, charges,
              total, remarks, taxes_included (as for an order: a proposal, never booked)
 page         title, slug, parent (identity | None), published, html, images (source-hosted URLs it embeds)

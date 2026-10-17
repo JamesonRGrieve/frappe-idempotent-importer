@@ -45,7 +45,7 @@ from idempotent_importer.erpnext.writers.content import (
 )
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 from idempotent_importer.erpnext.writers.parties import CustomerWriter
-from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
+from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING, DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
 
 TEMPLATE = "woo-a"
@@ -696,6 +696,7 @@ class TestWriters(IntegrationTestCase):
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
 		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
 		frappe.db.set_value("Currency", "USD", "enabled", 1)
+		frappe.db.set_single_value("Accounts Settings", MULTI_CURRENCY_SETTING, 0)
 		no_account = {
 			**self.order(),
 			"currency": "USD",
@@ -741,6 +742,32 @@ class TestWriters(IntegrationTestCase):
 			Outcome.UNSUPPORTED,
 			"a base total in another currency than the company's",
 		)
+
+	def test_orders_in_several_currencies_on_one_customer(self) -> None:
+		"""With multi-currency invoices against a single party account, a customer's orders in other
+		currencies are booked at the source's rate on its own receivable, and paid exactly."""
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		frappe.db.set_value("Currency", "USD", "enabled", 1)
+		frappe.db.set_single_value("Accounts Settings", MULTI_CURRENCY_SETTING, 1)
+		self.assertEqual(
+			self.mirror(Kind.ORDER, OrderWriter, gid("Order", "12"), self.order()), Outcome.CREATED
+		)
+		key = gid("Order", "13")
+		usd = {**self.order(), "currency": "USD", "exchange_rate": Decimal("1.2")}
+		self.assertEqual(self.mirror(Kind.ORDER, OrderWriter, key, usd), Outcome.CREATED)
+		invoice = frappe.get_doc("Sales Invoice", self.target(Kind.ORDER, key))
+		self.assertEqual(
+			(
+				invoice.currency,
+				Decimal(str(invoice.grand_total)),
+				Decimal(str(invoice.base_grand_total)),
+				frappe.db.get_value("Account", invoice.debit_to, "account_currency"),
+				invoice.docstatus,
+			),
+			("USD", Decimal("52.5"), Decimal(63), self.context.currency, 1),
+		)
+		self.assertEqual(Decimal(str(invoice.outstanding_amount)), Decimal(0), "paid")
 
 	def draft(self, qty: str = "2") -> Fields:
 		order = self.order(qty=qty)

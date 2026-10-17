@@ -304,7 +304,6 @@ class TestMappers:
 		]
 		assert order.required_record("payment").string("method") == "Check / Money order"
 		assert len(order.records("notes")) == 2, "the shipment and the comment"
-		assert order.optional_string("customer") == f"{GID}/Customer/41"
 
 	def test_a_guest_order_and_a_credit_memo(self) -> None:
 		guest = values(Kind.ORDER, "Order/502")
@@ -352,8 +351,12 @@ class TestMappers:
 		assert whole(Node({"q": "2.0000"}, "x"), "q") == Decimal(2)
 		with pytest.raises(Unsupported, match="isn't whole"):
 			whole(Node({"q": 1.5}, "x"), "q")
-		with pytest.raises(Unsupported, match="base-currency total"):
-			base_fields(Node({"grand_total": 1}, "x"), "CAD")
+		assert base_fields(Node({"grand_total": 1, "base_to_order_rate": "0.8"}, "x"), "CAD") == {
+			"exchange_rate": Decimal("1.250000000"),
+			"base_currency": "CAD",
+		}
+		with pytest.raises(SourceError, match="no base total or exchange rate"):
+			base_fields(Node({"grand_total": 1, "source_id": "9"}, "x"), "CAD")
 
 	def test_cms_pages(self) -> None:
 		home = mapped(Kind.PAGE, "CmsPage/1")

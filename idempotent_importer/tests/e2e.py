@@ -2824,7 +2824,7 @@ def assert_quickbooks_online(state: str) -> None:
 		records += [
 			Booked("sales_invoice", "Invoice", "132", "grand_total", amount("192.1")),
 			Booked("payment_entry", "Payment", "151", "paid_amount", amount("192.1")),
-			Booked("account", "Account", "16", "account_name", "Postage and Courier"),
+			Booked("account", "Account", "16", "account_name", "Postage and Courier - QB"),
 		]
 	assert_booked("quickbooks-q", records)
 

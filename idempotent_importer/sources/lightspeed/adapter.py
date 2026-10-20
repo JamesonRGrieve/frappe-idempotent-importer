@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Lightspeed eCom (C-Series, formerly SEOshop / WebshopApp), through its REST API: categories, products with
-their variants, prices, stock, images and brand, customers, discount codes, orders with their payments,
+their variants, prices, stock, images and brand, customers, discount codes and rules, orders with their payments,
 credit notes and shipments, text pages, blogs and their articles, reviews and redirects. The operator
 creates an API key with read permissions in the eCom back office and enters the shop's URL, the cluster and
 shop language as the account (``us1/en``), the key as the user and its secret as the secret. Lightspeed

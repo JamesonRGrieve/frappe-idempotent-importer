@@ -583,6 +583,44 @@
           }
         }
       }
+    },
+    "/discount_rules.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/discountrules/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountRuleListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/discount_rules/{discountrule_id}.json": {
+      "get": {
+        "externalDocs": {
+          "url": "https://developers.lightspeedhq.com/ecom/endpoints/discountrules/"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscountRuleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3196,6 +3234,152 @@
         },
         "required": [
           "review"
+        ]
+      },
+      "DiscountRule": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discountrules/ (fetched 2026-10-19): the properties it lists, and the example's further fields (position, countUsed, createdAt, modifiedAt, discountAmount, discountType, categories, customer_groups, minCategoryAmount, minCategoryProducts), typed as the example sends them (amounts and counts as strings).",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "buy_x_items_from_cat_get_cheapest_free",
+              "get_x_discount_in_y_customer_groups",
+              "get_x_discount_in_y_categories",
+              "buy_x_items_get_y_items_free",
+              "get_x_discount_for_repeat_customers",
+              "get_x_discount_on_orders_over_y",
+              "get_free_shipping_on_orders_over_x",
+              "buy_x_items_get_free_shipping",
+              "buy_x_items_from_cat_get_y_discount_on_cheapest"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "position": {
+            "type": "integer"
+          },
+          "maximumUses": {
+            "type": "integer"
+          },
+          "countUsed": {
+            "type": "integer"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "modifiedAt": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "isStop": {
+            "type": "boolean"
+          },
+          "discountAmount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "discountType": {
+            "type": "string"
+          },
+          "freeProductsCount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "minCategoryAmount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "minCategoryProducts": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "freeProducts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          },
+          "customer_groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "isActive"
+        ]
+      },
+      "DiscountRuleListResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discountrules/: the page's list example wraps its rule in `discount_rule`, as the single read does; Lightspeed wraps every other list in its resource's plural name, so the list is `discount_rules`.",
+        "properties": {
+          "discount_rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountRule"
+            }
+          }
+        },
+        "required": [
+          "discount_rules"
+        ]
+      },
+      "DiscountRuleResponse": {
+        "type": "object",
+        "description": "Transcribed from https://developers.lightspeedhq.com/ecom/endpoints/discountrules/",
+        "properties": {
+          "discount_rule": {
+            "$ref": "#/components/schemas/DiscountRule"
+          }
+        },
+        "required": [
+          "discount_rule"
         ]
       }
     }

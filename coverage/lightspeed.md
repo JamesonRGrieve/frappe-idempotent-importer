@@ -28,7 +28,8 @@ every 1.2 seconds), and a shop needing more than the day's quota pauses on the 4
 | Stock (tracked variants) | **Stock Reconciliation** | Untracked variants aren't counted. |
 | Product images | **File**; the Item's image | By sort order. |
 | Customers | **Customer**, **Contact**, **Address** | Billing and shipping addresses (one when they're the same), the company. |
-| Discount codes: a percentage off the order, some products or some categories; an amount off the order | **Pricing Rule** + **Coupon Code** | Minimum order amount (checked before the discount), use limit, start and end dates. An inactive code disables its rule. |
+| Discount codes: a percentage off the order, some products or some categories; an amount off the order or off some products; free shipping or a shipping discount | **Pricing Rule** + **Coupon Code** | Enforced: the discount and what it applies to, minimum order amount (checked before the discount), use limit, start and end dates. Recorded and held (rule disabled, code not redeemable) until the Webshop fork enforces them: free shipping and shipping discounts, codes that don't combine (card 405); an amount off some products (Lightspeed doesn't say per item or in total), categories beside products, a minimum checked after the discount, a discount taken after tax (card 407). An inactive code disables its rule. |
+| Discount rules (`/discount_rules`, applied without a code) | Automatic **Pricing Rule** | Enforced: dates, and a percentage or amount off some categories. Lightspeed documents no meaning for a rule's thresholds (`minCategoryAmount`, `minCategoryProducts`, `freeProductsCount`), so a rule that uses them, an order minimum, free items, free shipping, the cheapest item's discount, customer groups (Lightspeed's customers can be in several), repeat customers and a use limit are recorded and held (cards 405 and 407). The list's envelope is transcribed as `discount_rules` (the reference's list example shows `discount_rule`). An inactive rule disables its rule. |
 | Orders | **Sales Invoice** (submitted when paid, else draft) + **Payment Entry** | Lightspeed's totals in the shop's currency, exactly, booked from its tax-exclusive amounts and its taxes (so retail and B2B shops both balance); its order number. |
 | Order lines | Invoice lines at their tax-exclusive base prices, on the variant's item | The variant title in the line's name. |
 | Line discounts, order taxes, shipping, payment costs | The invoice's discount; one charge per tax; shipping and fee charges | The order's tax total when Lightspeed itemises none. |
@@ -45,7 +46,6 @@ every 1.2 seconds), and a shop needing more than the day's quota pauses on the 4
 
 | Lightspeed eCom | Why it isn't mirrored |
 |---|---|
-| Discounts on shipping and free shipping, an amount off some products, codes for both products and categories, minimums checked after the discount, discounts after tax, automatic discount rules | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled orders | Not sales. |
 | Hidden reviews | Not published. |
 | Article tags, comments | Separate resources, not read. |

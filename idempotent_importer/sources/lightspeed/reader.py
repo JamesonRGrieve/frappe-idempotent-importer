@@ -5,7 +5,8 @@ number (``page``, ``limit`` up to 250) and ending at a short page. Ported from w
 LightspeedReader. Every node carries its identity as ``id`` (Lightspeed's id as ``source_id``). Products
 arrive with their variants, images, category ids and brand title; orders with their lines, shipments, credit
 notes (each with its items) and the shop's currency; articles with their blog's URL; redirects with the
-shop's domain; products and orders with whether the shop is B2B (it then shows prices without tax).
+shop's domain; products and orders with whether the shop is B2B (it then shows prices without tax). A
+discount run reads the discount codes, then the automatic discount rules.
 Products, customers and orders are incremental (``updated_at_min``): a product also counts as changed when
 one of its variants changed, and an order when one of its shipments or invoices did, so those kinds then read
 the changed children and re-read their parents (the cursor is ``<phase>:<page>``).
@@ -46,6 +47,7 @@ SINCE_FILTER = "updated_at_min"
 SINCE_MARGIN = timedelta(days=1)
 PHASE_PRODUCTS, PHASE_VARIANTS = "products", "variants"
 PHASE_ORDERS, PHASE_SHIPMENTS, PHASE_INVOICES = "orders", "shipments", "invoices"
+PHASE_CODES, PHASE_RULES = "codes", "rules"
 CURSOR_SEPARATOR = ":"
 FIRST_PAGE = 1
 INCREMENTAL = frozenset({Kind.PRODUCT, Kind.CUSTOMER, Kind.ORDER})
@@ -53,7 +55,6 @@ INCREMENTAL = frozenset({Kind.PRODUCT, Kind.CUSTOMER, Kind.ORDER})
 PLAIN = {
 	Kind.COLLECTION: ("/categories", "category", "categories", "Category"),
 	Kind.CUSTOMER: ("/customers", "customer", "customers", "Customer"),
-	Kind.DISCOUNT: ("/discounts", "discount", "discounts", "Discount"),
 	Kind.PAGE: ("/textpages", "textpage", "textpages", "Textpage"),
 	Kind.BLOG: ("/blogs", "blog", "blogs", "Blog"),
 	Kind.REVIEW: ("/reviews", "review", "reviews", "Review"),
@@ -108,6 +109,8 @@ class LightspeedReader:
 				return self._products(cursor, since)
 			case Kind.ORDER:
 				return self._orders(cursor, since)
+			case Kind.DISCOUNT:
+				return self._discounts(cursor)
 			case Kind.ARTICLE:
 				articles, following = self._list_page(
 					"/blogs/articles.json", "blogArticles", {}, page_of(cursor), PAGE_SIZE
@@ -129,11 +132,19 @@ class LightspeedReader:
 				raise SourceError(f"Lightspeed eCom has no {kind.value}.")
 
 	def node(self, kind: Kind, gid: str) -> Node | None:
-		source_id = Identity.parse(gid).id
-		if not source_id.isdigit():
+		identity = Identity.parse(gid)
+		if not identity.id.isdigit():
 			raise SourceError(f"Not a Lightspeed eCom identity: {gid}")
-		object_id = int(source_id)
+		object_id = int(identity.id)
 		match kind:
+			case Kind.DISCOUNT if identity.type == "DiscountRule":
+				rule = self._one(f"/discount_rules/{object_id}.json", "discount_rule")
+				return (
+					None if rule is None else self._identified("DiscountRule", rule.integer("id"), rule.raw())
+				)
+			case Kind.DISCOUNT:
+				code = self._one(f"/discounts/{object_id}.json", "discount")
+				return None if code is None else self._identified("Discount", code.integer("id"), code.raw())
 			case Kind.PRODUCT:
 				return self._product(object_id)
 			case Kind.ORDER:
@@ -150,6 +161,19 @@ class LightspeedReader:
 				return None if item is None else self._identified(type_, item.integer("id"), item.raw())
 			case _:
 				raise SourceError(f"Lightspeed eCom has no {kind.value}.")
+
+	def _discounts(self, cursor: str | None) -> Page:
+		"""Discount codes, then discount rules (applied without a code)."""
+		phase, page = phase_of(cursor, PHASE_CODES)
+		if phase == PHASE_CODES:
+			codes, following = self._list_page("/discounts.json", "discounts", {}, page, PAGE_SIZE)
+			nodes = [self._identified("Discount", c.integer("id"), c.raw()) for c in codes]
+			return phased(nodes, PHASE_CODES, following, PHASE_RULES)
+		if phase != PHASE_RULES:
+			raise SourceError(f"Not a Lightspeed eCom discount cursor: {cursor}")
+		rules, following = self._list_page("/discount_rules.json", "discount_rules", {}, page, PAGE_SIZE)
+		nodes = [self._identified("DiscountRule", r.integer("id"), r.raw()) for r in rules]
+		return phased(nodes, PHASE_RULES, following, None)
 
 	def _products(self, cursor: str | None, since: datetime | None) -> Page:
 		"""Products (changed since ``since``), then on an incremental run the products of changed variants."""

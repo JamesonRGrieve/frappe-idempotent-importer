@@ -11,7 +11,7 @@ from decimal import Decimal
 import pytest
 
 from idempotent_importer.core.desired import Desired, Mapper
-from idempotent_importer.core.errors import SourceError, Unsupported
+from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonValue, Node
@@ -26,6 +26,7 @@ from idempotent_importer.sources.lightspeed.reader import (
 	linked_id,
 	phase_of,
 )
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = LightspeedAdapter()
@@ -245,17 +246,82 @@ class TestMappers:
 		towels = values(Kind.DISCOUNT, "Discount/1002")
 		assert (towels.string("applies"), towels.strings("items")) == ("items", [f"{GID}/Product/502"])
 		assert mapped(Kind.DISCOUNT, "Discount/1004") is None, "an inactive code"
-		with pytest.raises(Unsupported, match="shipping"):
-			mapped(Kind.DISCOUNT, "Discount/1003")
+		shipping = mapped(Kind.DISCOUNT, "Discount/1003")
+		assert (condition_kinds(shipping), held(shipping)) == (["free_shipping"], ["card 405"])
+		assert held(mapped(Kind.DISCOUNT, "Discount/1001")) == []
+
+	def test_discount_rules(self) -> None:
+		source, _ = reader()
+		codes = source.page(Kind.DISCOUNT, None, None, "")
+		assert codes.end_cursor == "rules:"
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:", None, "")
+		kitchen = values(Kind.DISCOUNT, "DiscountRule/2001")
+		assert (kitchen.flag("automatic"), kitchen.string("applies"), kitchen.strings("groups")) == (
+			True,
+			"groups",
+			[f"{GID}/Category/401"],
+		)
+		assert (kitchen.string("discount"), kitchen.decimal("value")) == ("amount", Decimal(5))
+		assert values(Kind.DISCOUNT, "DiscountRule/2001", "v2").decimal("value") == Decimal(6)
+		assert held(mapped(Kind.DISCOUNT, "DiscountRule/2001")) == []
+		big = mapped(Kind.DISCOUNT, "DiscountRule/2002")
+		assert terms(big, "rule_condition") == {
+			"source": {"type": "get_x_discount_on_orders_over_y", "minCategoryAmount": Decimal(75)}
+		}
+		assert mapped(Kind.DISCOUNT, "DiscountRule/2003") is None, "an inactive rule"
+
+	@pytest.mark.parametrize(
+		("changes", "kinds"),
+		[
+			(
+				{
+					"type": "get_x_discount_in_y_customer_groups",
+					"customer_groups": [{"resource": {"id": 9, "url": "groups/9"}}],
+				},
+				["several_customer_groups"],
+			),
+			({"type": "get_x_discount_for_repeat_customers"}, ["customer_history"]),
+			({"type": "get_free_shipping_on_orders_over_x", "minCategoryAmount": "50"}, ["free_shipping"]),
+			(
+				{
+					"type": "buy_x_items_get_y_items_free",
+					"freeProducts": [{"resource": {"id": 502, "url": "products/502"}}],
+				},
+				["rule_condition"],
+			),
+			({"type": "buy_x_items_from_cat_get_cheapest_free"}, ["item_choice"]),
+			({"type": "buy_x_items_from_cat_get_y_discount_on_cheapest"}, ["item_choice"]),
+			({"minCategoryProducts": "2"}, ["rule_condition"]),
+			({"maximumUses": 10}, ["shared_use_limit"]),
+			({"discountType": "points"}, ["rule_condition"]),
+		],
+	)
+	def test_discount_rule_conditions(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
+		desired = mapper_of(Kind.DISCOUNT).map(
+			nodes(Kind.DISCOUNT)["DiscountRule/2001"].with_fields(**changes)
+		)
+		assert condition_kinds(desired) == kinds
+		assert held(desired)
+
+	def test_unknown_discount_shapes(self) -> None:
+		with pytest.raises(SourceError, match="rule of type"):
+			mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["DiscountRule/2001"].with_fields(type="other"))
+		with pytest.raises(SourceError, match="code of type"):
+			mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["Discount/1001"].with_fields(type="other"))
+		source, _ = reader()
+		assert source.node(Kind.DISCOUNT, f"{GID}/DiscountRule/2999") is None
+		assert source.node(Kind.DISCOUNT, f"{GID}/Discount/1999") is None
 
 	def test_discount_edges(self) -> None:
 		code = nodes(Kind.DISCOUNT)["Discount/1001"]
 		mapper = mapper_of(Kind.DISCOUNT)
-		for changes, refusal in (
-			({"applyTo": "products"}, "amount off some products"),
-			({"type": "shipping"}, "shipping discount"),
-			({"before_tax": False}, "after tax"),
-			({"minimum_after": True}, "after the discount"),
+		for changes, kinds in (
+			({"applyTo": "products", "products": [{"id": 502}]}, ["spread_amount"]),
+			({"shipment": "discount"}, ["shipping_discount"]),
+			({"allowCombination": False}, ["combination"]),
+			({"before_tax": False}, ["rule_condition"]),
+			({"minimum_after": True}, ["rule_condition"]),
 			(
 				{
 					"type": "percentage",
@@ -263,11 +329,10 @@ class TestMappers:
 					"products": [{"id": 1}],
 					"categories": [{"id": 2}],
 				},
-				"both",
+				["groups_beside_items"],
 			),
 		):
-			with pytest.raises(Unsupported, match=refusal):
-				mapper.map(code.with_fields(**changes))
+			assert condition_kinds(mapper.map(code.with_fields(**changes))) == kinds
 		on_category = mapper.map(
 			code.with_fields(type="percentage", applyTo="categories", categories=[{"id": 401}])
 		)

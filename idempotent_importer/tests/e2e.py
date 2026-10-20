@@ -1600,6 +1600,34 @@ def assert_magento(state: str) -> None:
 	)
 
 
+def assert_lightspeed_discounts(connection: str, state: str) -> None:
+	"""Every active Lightspeed discount code and rule: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		6,
+		"four active codes and two active rules (not the inactive code or rule)",
+	)
+	assert_discount(connection, "Discount", "1001", None, [], "the amount-off code, enabled")
+	assert_discount(connection, "Discount", "1002", None, [], "the towels code, enabled")
+	assert_discount(connection, "Discount", "1003", "card 405", ["free_shipping"], "the shipping code, held")
+	assert_discount(
+		connection, "Discount", "1005", "card 405", ["shipping_discount"], "the shipping-discount code, held"
+	)
+	assert_discount(connection, "DiscountRule", "2001", None, [], "the kitchen rule, automatic and enabled")
+	kitchen = target(connection, "discount", "DiscountRule", "2001")
+	expect(
+		(
+			frappe.db.get_value("Pricing Rule", kitchen, "apply_on"),
+			amount(frappe.db.get_value("Pricing Rule", kitchen, "discount_amount")),
+		),
+		("Item Group", amount("5" if state == "v1" else "6")),
+		"the kitchen rule's amount off its category",
+	)
+	assert_discount(
+		connection, "DiscountRule", "2002", "card 407", ["rule_condition"], "the order-minimum rule, held"
+	)
+
+
 def assert_magento_discounts(connection: str, state: str) -> None:
 	"""Every active Magento cart price rule and tier price: what ERPNext enforces enabled, the rest held."""
 	expect(
@@ -1803,11 +1831,7 @@ def assert_lightspeed(state: str) -> None:
 		0,
 		"unpaid guest order",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
-		2,
-		"the amount-off and towel codes (not the shipping or inactive ones)",
-	)
+	assert_lightspeed_discounts(connection, state)
 	expect(
 		frappe.db.get_value("Web Page", target(connection, "page", "Textpage", "1102"), "published"),
 		0,

@@ -17,13 +17,14 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Condition,
 	Discount,
 	OrderLine,
 	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
-	discount_fields,
+	discount_desired,
 	line_fields,
 	order_line,
 	rating_fraction,
@@ -32,8 +33,9 @@ from idempotent_importer.contract import (
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
-from idempotent_importer.core.errors import SourceError, Unsupported
+from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.fields import Field, Fields
+from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import normalise, path_of, redirect_target, slugify
@@ -49,7 +51,12 @@ CANCELLED = "cancelled"
 PAID = frozenset({"paid"})
 CREDITED_PRODUCT = "product"
 MAX_SCORE = 5
-PERCENTAGE, AMOUNT, APPLIES_TO_ALL = "percentage", "price", "all"
+APPLIES_TO_ALL = "all"
+# A discount code's type, and a discount rule's discount type, as a discount.
+CODE_DISCOUNTS = {"percentage": "percentage", "price": "amount"}
+RULE_DISCOUNTS = {"percentage": "percentage", "currency": "amount"}
+# A discount rule's thresholds, whose meaning Lightspeed doesn't document.
+RULE_THRESHOLDS = ("minCategoryAmount", "minCategoryProducts", "freeProductsCount")
 APPLIES_TO_PRODUCTS = frozenset({"products", "productscategories"})
 APPLIES_TO_CATEGORIES = frozenset({"categories", "productscategories"})
 SHIPPING_UNCHANGED = "default"
@@ -315,14 +322,23 @@ class CustomerMapper:
 
 
 class DiscountMapper:
-	"""A discount code → a coupon Pricing Rule, when ERPNext applies it exactly: a percentage off the order or
-	off some products or categories, or an amount off the order; with a minimum order amount checked before the
-	discount, a use limit and validity dates. Free shipping or shipping discounts, an amount off some products,
-	a minimum checked after the discount, and a discount taken after tax are Unsupported. An inactive code maps
+	"""Every discount code and discount rule → a Pricing Rule, enforcing natively what ERPNext's pricing does
+	and recording the rest as conditions that hold it (``contract.CONDITIONS``).
+
+	A code: a percentage or amount off the order, a percentage off some products or categories, with its
+	minimum order amount, use limit and dates. Recorded and held: free shipping and shipping discounts, codes
+	that don't combine with others (card 405); an amount off some products (Lightspeed doesn't say per item or
+	in total), categories beside products, a minimum checked after the discount, a discount taken after tax
+	(card 407).
+
+	A rule (automatic): its dates; a discount off some categories is enforced. Lightspeed documents no meaning
+	for a rule's thresholds (``minCategoryAmount``, ``minCategoryProducts``, ``freeProductsCount``), so a rule
+	that uses them, a rule for customer groups or repeat customers, an order minimum, free items or free
+	shipping, the cheapest item's discount and a use limit are recorded and held. An inactive code or rule maps
 	to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -330,19 +346,11 @@ class DiscountMapper:
 	def map(self, node: Node) -> Desired | None:
 		if node.get("isActive") is not True:
 			return None
+		if Identity.parse(node.id()).type == "DiscountRule":
+			return self._rule(node)
 		code, discount_type = node.string("code"), node.string("type")
 		applies_to = text(node, "applyTo") or APPLIES_TO_ALL
-		if discount_type == AMOUNT and applies_to != APPLIES_TO_ALL:
-			raise Unsupported("an amount off some products (Lightspeed doesn't say per item or in total)")
-		if discount_type not in (PERCENTAGE, AMOUNT):
-			raise Unsupported(f"a {discount_type} discount has no ERPNext coupon equivalent")
-		if (text(node, "shipment") or SHIPPING_UNCHANGED) != SHIPPING_UNCHANGED:
-			raise Unsupported("ERPNext coupons can't discount shipping")
-		if node.get("before_tax") is False:
-			raise Unsupported("a discount taken after tax has no ERPNext coupon equivalent")
-		minimum = set_amount(node, "minimumAmount")
-		if minimum is not None and node.get("minimum_after") is True:
-			raise Unsupported("a minimum checked after the discount has no ERPNext coupon equivalent")
+		later: list[Condition] = []
 		products = (
 			[self._context.gid("Product", p.integer("id")) for p in node.children("products")]
 			if applies_to in APPLIES_TO_PRODUCTS
@@ -354,21 +362,127 @@ class DiscountMapper:
 			else []
 		)
 		if products and groups:
-			raise Unsupported("a code for both products and categories has no single ERPNext pricing rule")
+			later.append(Condition("groups_beside_items", {"groups": list[Field](groups)}))
+			groups = []
+		value = amount_of(node, "discount")
+		kind = CODE_DISCOUNTS.get(discount_type)
+		if kind is None:
+			raise SourceError(f"A Lightspeed discount code of type {discount_type}.")
+		if kind == "amount" and (products or groups):
+			later.append(
+				Condition(
+					"spread_amount",
+					{"items": list[Field](products) or None, "groups": list[Field](groups) or None},
+				)
+			)
+			products, groups = [], []
+		match text(node, "shipment") or SHIPPING_UNCHANGED:
+			case "free":
+				later.append(Condition("free_shipping"))
+			case "discount":
+				later.append(Condition("shipping_discount", {"discount": kind, "value": value}))
+		if node.get("allowCombination") is False:
+			later.append(Condition("combination", {"exclusive": True}))
+		taken: Fields = {
+			"before_tax": False if node.get("before_tax") is False else None,
+			"minimum_after": True
+			if node.get("minimum_after") is True and set_amount(node, "minimumAmount")
+			else None,
+		}
+		if any(v is not None for v in taken.values()):
+			later.append(Condition("rule_condition", {"source": taken}))
 		discount = Discount(
 			codes=[code],
 			description=code,
-			discount="percentage" if discount_type == PERCENTAGE else "amount",
+			discount=kind,
 			applies="items" if products else "groups" if groups else "transaction",
-			value=amount_of(node, "discount"),
+			value=value,
 			items=products,
 			groups=groups,
-			min_amount=minimum,
+			min_amount=set_amount(node, "minimumAmount"),
 			valid_from=text(node, "startDate") or date_of(node.optional_time("createdAt")),
 			valid_upto=text(node, "endDate"),
 			max_uses=node.optional_integer("usageLimit") or None,
+			conditions=later,
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		return discount_desired(node.id(), discount)
+
+	def _rule(self, node: Node) -> Desired | None:
+		later: list[Condition] = []
+		kind = RULE_DISCOUNTS.get(text(node, "discountType") or "")
+		value = amount_of(node, "discountAmount") if kind else Decimal(0)
+		if kind is None and text(node, "discountType"):
+			later.append(
+				Condition("rule_condition", {"source": {"discountType": text(node, "discountType")}})
+			)
+		categories = [self._context.gid("Category", i) for i in link_ids(node, "categories")]
+		thresholds: Fields = {key: node.decimal(key) for key in RULE_THRESHOLDS if node.optional_decimal(key)}
+		rule_type = node.string("type")
+		applies, groups = "transaction", []
+		match rule_type:
+			case "get_x_discount_in_y_categories":
+				applies, groups = "groups", categories
+			case "get_x_discount_in_y_customer_groups":
+				customer_groups: list[Field] = [
+					self._context.gid("CustomerGroup", i) for i in link_ids(node, "customer_groups")
+				]
+				later.append(Condition("several_customer_groups", {"groups": customer_groups}))
+			case "get_x_discount_for_repeat_customers":
+				later.append(Condition("customer_history", {"returning": True}))
+			case "get_x_discount_on_orders_over_y":
+				later.append(Condition("rule_condition", {"source": {"type": rule_type, **thresholds}}))
+				thresholds = {}
+			case "get_free_shipping_on_orders_over_x" | "buy_x_items_get_free_shipping":
+				later.append(Condition("free_shipping", {"source": {"type": rule_type, **thresholds}}))
+				thresholds, value = {}, Decimal(0)
+			case "buy_x_items_get_y_items_free":
+				free: list[Field] = [self._context.gid("Product", i) for i in link_ids(node, "freeProducts")]
+				later.append(
+					Condition("rule_condition", {"source": {"type": rule_type, **thresholds}, "items": free})
+				)
+				thresholds, value = {}, Decimal(0)
+			case "buy_x_items_from_cat_get_cheapest_free" | "buy_x_items_from_cat_get_y_discount_on_cheapest":
+				applies, groups = "groups", categories
+				later.append(
+					Condition(
+						"item_choice", {"strategy": "cheapest", "source": {"type": rule_type, **thresholds}}
+					)
+				)
+				thresholds = {}
+				if rule_type.endswith("cheapest_free"):
+					kind, value = "percentage", Decimal(100)
+			case other:
+				raise SourceError(f"A Lightspeed discount rule of type {other}.")
+		if thresholds:
+			later.append(Condition("rule_condition", {"source": thresholds}))
+		if uses := node.optional_integer("maximumUses"):
+			later.append(Condition("shared_use_limit", {"uses": uses}))
+		discount = Discount(
+			codes=[],
+			description=text(node, "title") or f"Discount rule {node.integer('id')}",
+			discount=kind or "percentage",
+			applies=applies,
+			value=value,
+			items=[],
+			groups=groups,
+			min_amount=None,
+			valid_from=text(node, "startDate"),
+			valid_upto=text(node, "endDate"),
+			max_uses=None,
+			automatic=True,
+			conditions=later,
+		)
+		return discount_desired(node.id(), discount)
+
+
+def link_ids(node: Node, field: str) -> list[int]:
+	"""The ids a list of links names (``[{"resource": {"id": 12, …}}]``)."""
+	ids = []
+	for link in node.children(field):
+		resource = unset(link, "resource")
+		if resource is not None and resource.get("id") is not False:
+			ids.append(resource.integer("id"))
+	return ids
 
 
 class OrderMapper:

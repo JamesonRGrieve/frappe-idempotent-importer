@@ -1,0 +1,83 @@
+{
+  "request": {
+    "path": "/en/discount_rules.json"
+  },
+  "response": {
+    "discount_rules": [
+      {
+        "id": 2001,
+        "type": "get_x_discount_in_y_categories",
+        "title": "Five off kitchen",
+        "position": 1,
+        "maximumUses": 0,
+        "countUsed": 0,
+        "startDate": "2026-09-01",
+        "createdAt": "2026-09-01",
+        "modifiedAt": "2026-09-01",
+        "endDate": "2026-12-31",
+        "isActive": true,
+        "isStop": false,
+        "discountAmount": "6",
+        "discountType": "currency",
+        "freeProductsCount": "0",
+        "minCategoryAmount": "0",
+        "minCategoryProducts": "0",
+        "categories": [
+          {
+            "resource": {
+              "id": 401,
+              "url": "categories/401",
+              "link": "https://api.shoplightspeed.com/us/categories/401.json"
+            }
+          }
+        ],
+        "freeProducts": [],
+        "customer_groups": []
+      },
+      {
+        "id": 2002,
+        "type": "get_x_discount_on_orders_over_y",
+        "title": "Ten off big orders",
+        "position": 2,
+        "maximumUses": 0,
+        "countUsed": 0,
+        "startDate": "2026-09-01",
+        "createdAt": "2026-09-01",
+        "modifiedAt": "2026-09-01",
+        "endDate": "2026-12-31",
+        "isActive": true,
+        "isStop": false,
+        "discountAmount": "10",
+        "discountType": "currency",
+        "freeProductsCount": "0",
+        "minCategoryAmount": "75",
+        "minCategoryProducts": "0",
+        "categories": [],
+        "freeProducts": [],
+        "customer_groups": []
+      },
+      {
+        "id": 2003,
+        "type": "buy_x_items_get_free_shipping",
+        "title": "Free shipping on three",
+        "position": 3,
+        "maximumUses": 0,
+        "countUsed": 0,
+        "startDate": "2026-09-01",
+        "createdAt": "2026-09-01",
+        "modifiedAt": "2026-09-01",
+        "endDate": "2026-12-31",
+        "isActive": false,
+        "isStop": false,
+        "discountAmount": "0",
+        "discountType": "currency",
+        "freeProductsCount": "0",
+        "minCategoryAmount": "0",
+        "minCategoryProducts": "3",
+        "categories": [],
+        "freeProducts": [],
+        "customer_groups": []
+      }
+    ]
+  }
+}

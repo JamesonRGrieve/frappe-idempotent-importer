@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Wix, through its REST APIs: the Stores catalog (V3 categories or V1 collections, products with variants,
-prices, sales, stock and images), contacts, Stores coupons, eCommerce orders with their payments, refunds and
+prices, sales, stock and images), contacts, Stores coupons, eCommerce discount rules and orders with their payments, refunds and
 fulfillments, the blog's categories and posts, product reviews and site redirects. The operator creates an
 account API key with read permissions for those APIs and enters the site's URL, its site ID (the account)
 and the key."""

@@ -17,7 +17,9 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Condition,
 	Discount,
+	FreeItem,
 	LineRates,
 	OrderLine,
 	Shipment,
@@ -25,21 +27,23 @@ from idempotent_importer.contract import (
 	charge_fields,
 	contents_of,
 	date_of,
-	discount_fields,
+	discount_desired,
 	included_taxes,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	taxed_charge,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Field, Fields
+from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
-from idempotent_importer.core.node import Node
+from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.paths import path_of, redirect_target
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.html import embedded_images, hosted_on
@@ -66,6 +70,7 @@ CHARGED = frozenset({"APPROVED", "REFUNDED", "PARTIALLY_REFUNDED"})
 GIFT_CARD = "GIFT_CARD"
 REFUND_SUCCEEDED = "SUCCEEDED"
 STORES_COUPONS = "stores"
+EXPIRED = "EXPIRED"
 PUBLISHED_REVIEWS = frozenset({"APPROVED", "SKIPPED"})
 MAX_RATING = 5
 
@@ -441,73 +446,203 @@ def tagged(addresses: list[Node], tag: str) -> Node | None:
 
 
 class CouponMapper:
-	"""A Wix Stores coupon → a coupon Pricing Rule, when ERPNext applies it exactly: a percentage off (the
-	whole store, a product or a collection) or an amount off the order, with its minimum subtotal, dates
-	and use limit. Fixed-price, buy-X-get-Y and free-shipping coupons, an amount off some products, coupons
-	limited to one item or per customer, and other Wix apps' coupons are Unsupported. A deactivated coupon
-	maps to nothing."""
+	"""Every Wix Stores coupon and eCommerce discount rule → a Pricing Rule, enforcing natively what ERPNext's
+	pricing does and recording the rest as conditions that hold it (``contract.CONDITIONS``).
+
+	A coupon: a percentage off (the store, a product or a collection), an amount off the order, a fixed price
+	or buy X get Y free (the same item, for every X), with its minimum subtotal, dates and use limit.
+	Recorded and held: free shipping and per-customer limits (card 405); an amount off some products, a
+	coupon limited to one item, other Wix apps' coupons and subscriptions (card 407). A deactivated coupon
+	maps to nothing.
+
+	A discount rule (``DiscountRule``, automatic): a percentage or amount off, or a fixed price, on Wix
+	Stores products (or every item), after a subtotal or item quantity (at least, and at most), within its
+	active time. Recorded and held: "3 for $10" prices, other apps' or custom item filters, triggers on
+	other items than those discounted, "or" and custom triggers, and specific members (card 407). An
+	inactive or expired rule maps to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
+		if Identity.parse(node.id()).type == "DiscountRule":
+			return self._rule(node)
 		spec = node.required_child("specification")
 		if spec.get("active") is False:
 			return None
-		name = spec.optional_string("name") or spec.string("code")
-		for field, label in (("fixedPriceAmount", "fixed-price"), ("buyXGetY", "buy-X-get-Y")):
-			if spec.has(field):
-				raise Unsupported(f"a {label} coupon has no ERPNext coupon equivalent")
+		later: list[Condition] = []
+		catalog = Catalog(node.string("catalog"))
+		products, groups = self._scope(spec.child("scope"), catalog, later)
 		if spec.get("freeShipping") is True:
-			raise Unsupported("ERPNext coupons can't discount shipping")
+			later.append(Condition("free_shipping"))
 		if spec.get("limitedToOneItem") is True:
-			raise Unsupported("a coupon limited to one item has no ERPNext coupon equivalent")
-		if spec.optional_integer("limitPerCustomer"):
-			raise Unsupported("a per-customer use limit has no ERPNext coupon equivalent")
-		products, groups = self._scope(spec.child("scope"), Catalog(node.string("catalog")))
-		percent = spec.optional_decimal("percentOffRate")
-		amount_off = spec.optional_decimal("moneyOffAmount")
-		if amount_off is not None and (products or groups):
-			raise Unsupported("an amount off some products has no exact ERPNext coupon equivalent")
-		if percent is None and amount_off is None:
-			raise Unsupported("a coupon with no discount ERPNext can apply")
+			later.append(Condition("item_limit", {"qty": Decimal(1)}))
+		if per_customer := spec.optional_integer("limitPerCustomer"):
+			later.append(Condition("per_customer_limit", {"uses": per_customer}))
+		if spec.get("appliesToSubscriptions") is True:
+			cycles = spec.optional_integer("discountedCycleCount")
+			later.append(
+				Condition(
+					"item_matcher",
+					{"source": {"appliesToSubscriptions": True, "discountedCycleCount": cycles}},
+				)
+			)
+		kind, value, free, min_qty = "percentage", Decimal(0), None, None
+		buy_get = spec.child("buyXGetY")
+		if (percent := spec.optional_decimal("percentOffRate")) is not None:
+			kind, value = "percentage", percent
+		elif (amount_off := spec.optional_decimal("moneyOffAmount")) is not None:
+			kind, value = "amount", amount_off
+			if products or groups:
+				spread: Fields = {
+					"items": list[Field](products) or None,
+					"groups": list[Field](groups) or None,
+				}
+				later.append(Condition("spread_amount", spread))
+				products, groups = [], []
+		elif (fixed := spec.optional_decimal("fixedPriceAmount")) is not None:
+			kind, value = "rate", fixed
+		elif buy_get is not None:
+			bought = Decimal(buy_get.integer("x"))
+			free = FreeItem(None, None, Decimal(buy_get.integer("y")), recursive=True, recurse_for=bought)
+			min_qty = bought
+		elif spec.get("freeShipping") is not True:
+			raise SourceError(f'Wix coupon "{spec.string("code")}" gives no discount.')
+		applies = "items" if products else "groups" if groups else "transaction"
+		if applies == "transaction" and (kind == "rate" or free is not None):
+			applies = "all_items"
 		started = epoch_time(spec, "startTime") or epoch_time(node, "dateCreated")
-		minimum = spec.optional_decimal("minimumSubtotal")
 		discount = Discount(
 			codes=[spec.string("code")],
-			description=name,
-			discount="percentage" if percent is not None else "amount",
-			applies="items" if products else "groups" if groups else "transaction",
-			value=percent if percent is not None else amount_off or Decimal(0),
+			description=spec.optional_string("name") or spec.string("code"),
+			discount=kind,
+			applies=applies,
+			value=value,
 			items=products,
 			groups=groups,
-			min_amount=minimum or None,
+			min_amount=spec.optional_decimal("minimumSubtotal") or None,
+			min_qty=min_qty,
 			valid_from=date_of(started),
 			valid_upto=date_of(epoch_time(spec, "expirationTime")),
 			max_uses=spec.optional_integer("usageLimit"),
+			free=free,
+			conditions=later,
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		return discount_desired(node.id(), discount)
 
-	def _scope(self, scope: Node | None, catalog: Catalog) -> tuple[list[str], list[str]]:
+	def _scope(
+		self, scope: Node | None, catalog: Catalog, later: list[Condition]
+	) -> tuple[list[str], list[str]]:
+		"""A coupon's product or collection; another Wix app's coupon, or another group, is recorded."""
 		if scope is None:
 			return [], []
-		namespace = scope.string("namespace")
-		if namespace != STORES_COUPONS:
-			raise Unsupported(f"a {namespace} coupon doesn't apply to the store")
 		group = scope.child("group")
 		entity = group.optional_string("entityId") if group else None
-		match group.optional_string("name") if group else None:
-			case None:
-				return [], []
-			case "product":
-				return ([self._context.gid("Product", entity)] if entity else []), []
-			case "collection":
-				return [], ([self._context.collection(catalog, entity)] if entity else [])
+		name = group.optional_string("name") if group else None
+		if scope.string("namespace") != STORES_COUPONS or name not in (None, "product", "collection"):
+			later.append(Condition("item_matcher", {"source": source_terms(scope.raw())}))
+			return [], []
+		if name == "product" and entity:
+			return [self._context.gid("Product", entity)], []
+		if name == "collection" and entity:
+			return [], [self._context.collection(catalog, entity)]
+		return [], []
+
+	def _rule(self, node: Node) -> Desired | None:
+		if node.get("active") is False or node.optional_string("status") == EXPIRED:
+			return None
+		later: list[Condition] = []
+		values = node.required_child("discounts").children("values")
+		if len(values) != 1:
+			raise SourceError(f'Wix discount rule "{node.string("name")}" has {len(values)} discounts.')
+		value_node = values[0]
+		info = value_node.child("specificItemsInfo")
+		products = self._scopes(info.children("scopes") if info else [], later)
+		minimums = self._trigger(node.child("trigger"), info.raw() if info else None, later)
+		kind, value = "percentage", Decimal(0)
+		match value_node.string("discountType"):
+			case "PERCENTAGE":
+				kind, value = "percentage", value_node.decimal("percentage")
+			case "FIXED_AMOUNT":
+				kind, value = "amount", value_node.decimal("fixedAmount")
+			case "FIXED_PRICE":
+				kind, value = "rate", value_node.decimal("fixedPrice")
+			case "QUANTITY_BASED":
+				for config in value_node.required_child("quantityBased").children("configurations"):
+					price: Fields = {
+						"qty": Decimal(config.integer("quantity")),
+						"price": config.decimal("price"),
+						"items": list[Field](products) or None,
+					}
+					later.append(Condition("fixed_price_set", price))
 			case other:
-				raise Unsupported(f"a coupon on a {other} group has no ERPNext coupon equivalent")
+				raise SourceError(f"A Wix discount of type {other}.")
+		active = node.child("activeTimeInfo")
+		discount = Discount(
+			codes=[],
+			description=node.string("name"),
+			discount=kind,
+			applies="items" if products else "all_items",
+			value=value,
+			items=products,
+			groups=[],
+			min_amount=minimums.get("min_amount"),
+			max_amount=minimums.get("max_amount"),
+			min_qty=minimums.get("min_qty"),
+			max_qty=minimums.get("max_qty"),
+			mixed="min_qty" in minimums or "max_qty" in minimums,
+			valid_from=date_of(active.optional_time("start")) if active else None,
+			valid_upto=date_of(active.optional_time("end")) if active else None,
+			max_uses=None,
+			automatic=True,
+			conditions=later,
+		)
+		return discount_desired(node.id(), discount)
+
+	def _scopes(self, scopes: list[Node], later: list[Condition]) -> list[str]:
+		"""The Wix Stores products a rule discounts. Other apps' items and custom filters (Wix documents their
+		parameters only by example, collections among them) are recorded."""
+		products: list[str] = []
+		for scope in scopes:
+			items = scope.child("catalogItemFilter")
+			if items is not None and items.optional_string("catalogAppId") == STORES_APP_ID:
+				products += [self._context.gid("Product", i) for i in items.strings("catalogItemIds")]
+			else:
+				later.append(Condition("item_matcher", {"source": source_terms(scope.raw())}))
+		return products
+
+	def _trigger(
+		self, trigger: Node | None, discounted: JsonValue, later: list[Condition]
+	) -> dict[str, Decimal]:
+		"""A rule's subtotal and item quantity ranges (alone, or all of them true); a range over other items
+		than those discounted, and any other trigger, are recorded."""
+		if trigger is None:
+			return {}
+		parts = (
+			trigger.required_child("and").children("triggers")
+			if trigger.child("and") is not None
+			else [trigger]
+		)
+		minimums: dict[str, Decimal] = {}
+		for part in parts:
+			subtotal, quantity = part.child("subtotalRange"), part.child("itemQuantityRange")
+			ranged = subtotal or quantity
+			scopes = ranged.get("scopes") if ranged else None
+			other_items = bool(scopes) and (
+				not isinstance(discounted, dict) or scopes != discounted.get("scopes")
+			)
+			if ranged is None or other_items:
+				later.append(Condition("rule_condition", {"source": source_terms(part.raw())}))
+				continue
+			low, high = ("min_amount", "max_amount") if subtotal else ("min_qty", "max_qty")
+			if (start := ranged.optional_decimal("from")) is not None:
+				minimums[low] = start
+			if (end := ranged.optional_decimal("to")) is not None:
+				minimums[high] = end
+		return minimums
 
 
 class OrderMapper:

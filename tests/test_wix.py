@@ -21,6 +21,7 @@ from idempotent_importer.sources.wix.adapter import WixAdapter
 from idempotent_importer.sources.wix.mapping import epoch_time, state_of, text_html
 from idempotent_importer.sources.wix.reader import Catalog, WixAuthorizer, WixReader, phase_of
 from idempotent_importer.sources.wix.rich_content import rich_html
+from tests.support.discounts import condition_kinds, held
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = WixAdapter()
@@ -280,9 +281,93 @@ class TestMappers:
 			"2026-08-01",
 		)
 		assert mapped(Kind.DISCOUNT, COUPON.format(5)) is None, "a deactivated coupon"
-		for number, refusal in ((1, "per-customer"), (2, "shipping"), (3, "amount off some products")):
-			with pytest.raises(Unsupported, match=refusal):
-				mapped(Kind.DISCOUNT, COUPON.format(number))
+		for number, kinds, cards in (
+			(1, ["per_customer_limit"], ["card 405"]),
+			(2, ["free_shipping"], ["card 405"]),
+			(3, ["spread_amount"], ["card 407"]),
+		):
+			desired = mapped(Kind.DISCOUNT, COUPON.format(number))
+			assert (condition_kinds(desired), held(desired)) == (kinds, cards)
+		assert held(mapped(Kind.DISCOUNT, COUPON.format(4))) == []
+
+	def test_discount_rules(self) -> None:
+		source, _ = reader()
+		coupons = source.page(Kind.DISCOUNT, None, None, "")
+		assert coupons.end_cursor == "rules:"
+		assert source.page(Kind.DISCOUNT, "0", None, "").end_cursor == "rules:", (
+			"an offset saved before rules"
+		)
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:0", None, "")
+		mugs = values(Kind.DISCOUNT, "DiscountRule/d0000000-0000-4000-8000-000000000001")
+		assert (
+			mugs.flag("automatic"),
+			mugs.string("applies"),
+			mugs.decimal("value"),
+			mugs.decimal("min_qty"),
+		) == (
+			True,
+			"items",
+			Decimal(10),
+			Decimal(2),
+		)
+		assert mugs.strings("items") == [f"{GID}/Product/1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"]
+		assert held(mapped(Kind.DISCOUNT, "DiscountRule/d0000000-0000-4000-8000-000000000001")) == []
+		assert (
+			values(Kind.DISCOUNT, "DiscountRule/d0000000-0000-4000-8000-000000000001", "v2").decimal("value")
+			== 15
+		)
+		three = mapped(Kind.DISCOUNT, "DiscountRule/d0000000-0000-4000-8000-000000000002")
+		assert condition_kinds(three) == ["fixed_price_set"]
+		assert three is not None and three.values().decimal("min_amount") == Decimal(100)
+		assert mapped(Kind.DISCOUNT, "DiscountRule/d0000000-0000-4000-8000-000000000003") is None
+
+	def test_discount_rule_shapes(self) -> None:
+		rule = nodes(Kind.DISCOUNT)["DiscountRule/d0000000-0000-4000-8000-000000000001"]
+		value = rule.required_child("discounts").children("values")[0].raw()
+		mapper = mapper_of(Kind.DISCOUNT)
+
+		def with_value(**changes: JsonValue) -> Desired | None:
+			return mapper.map(rule.with_fields(discounts={"values": [{**value, **changes}]}))
+
+		amount = with_value(discountType="FIXED_AMOUNT", fixedAmount="2.5")
+		assert amount is not None and amount.values().decimal("value") == Decimal("2.5")
+		price = with_value(discountType="FIXED_PRICE", fixedPrice="9")
+		assert price is not None and price.values().string("discount") == "rate"
+		custom = with_value(
+			specificItemsInfo={
+				"scopes": [{"customFilter": {"params": {}}, "id": "x", "type": "CUSTOM_FILTER"}]
+			}
+		)
+		assert condition_kinds(custom) == ["item_matcher", "rule_condition"], "and its trigger's other items"
+		ranged = mapper.map(
+			rule.with_fields(
+				trigger={
+					"and": {
+						"triggers": [
+							{"subtotalRange": {"from": "20", "to": "200"}},
+							{"customerEligibility": {"individualMembersInfo": {"memberIds": ["m"]}}},
+						]
+					}
+				}
+			)
+		)
+		assert ranged is not None
+		assert (ranged.values().decimal("min_amount"), ranged.values().decimal("max_amount")) == (
+			Decimal(20),
+			Decimal(200),
+		)
+		assert condition_kinds(ranged) == ["rule_condition"]
+		other = mapper.map(
+			rule.with_fields(trigger={"itemQuantityRange": {"from": 2, "scopes": [{"id": "other"}]}})
+		)
+		assert condition_kinds(other) == ["rule_condition"]
+		always = mapper.map(rule.with_fields(trigger=None))
+		assert always is not None and "min_qty" not in always.fields
+		with pytest.raises(SourceError, match="type"):
+			with_value(discountType="BOGUS")
+		with pytest.raises(SourceError, match="discounts"):
+			mapper.map(rule.with_fields(discounts={"values": []}))
 
 	def test_coupon_edges(self) -> None:
 		coupon = nodes(Kind.DISCOUNT)[COUPON.format(4)]
@@ -301,15 +386,24 @@ class TestMappers:
 		assert store_wide is not None and store_wide.values().string("applies") == "transaction"
 		amount = with_spec(percentOffRate=None, moneyOffAmount=5, scope=None)
 		assert amount is not None and amount.values().string("discount") == "amount"
-		for changes, refusal in (
-			({"buyXGetY": {}}, "buy-X-get-Y"),
-			({"limitedToOneItem": True}, "one item"),
-			({"scope": {"namespace": "bookings"}}, "bookings coupon"),
-			({"scope": {"namespace": "stores", "group": {"name": "subscription"}}}, "subscription group"),
-			({"percentOffRate": None}, "no discount"),
+		bogo = with_spec(percentOffRate=None, buyXGetY={"x": 2, "y": 1}, scope=None)
+		assert bogo is not None and bogo.values().required_record("free").all() == {
+			"qty": Decimal(1),
+			"recursive": True,
+			"recurse_for": Decimal(2),
+		}
+		assert bogo.values().string("applies") == "all_items"
+		fixed = with_spec(percentOffRate=None, fixedPriceAmount=12)
+		assert fixed is not None and fixed.values().string("discount") == "rate"
+		for changes, kinds in (
+			({"limitedToOneItem": True}, ["item_limit"]),
+			({"scope": {"namespace": "bookings"}}, ["item_matcher"]),
+			({"scope": {"namespace": "stores", "group": {"name": "subscription"}}}, ["item_matcher"]),
+			({"appliesToSubscriptions": True, "discountedCycleCount": 3}, ["item_matcher"]),
 		):
-			with pytest.raises(Unsupported, match=refusal):
-				with_spec(**changes)
+			assert condition_kinds(with_spec(**changes)) == kinds
+		with pytest.raises(SourceError, match="no discount"):
+			with_spec(percentOffRate=None)
 
 	def test_a_paid_order_balances_to_wixs_total(self) -> None:
 		order = values(Kind.ORDER, ORDER_1)

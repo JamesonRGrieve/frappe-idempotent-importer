@@ -333,6 +333,25 @@
           }
         }
       }
+    },
+    "/ecom/v1/discount-rules/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryDiscountRulesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4539,6 +4558,374 @@
           "id",
           "entityId",
           "content"
+        ]
+      },
+      "DiscountRuleScope": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+        "properties": {
+          "catalogItemFilter": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "catalogAppId": {
+                "type": "string"
+              },
+              "catalogItemIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "customFilter": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "appId": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object"
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CATALOG_ITEM",
+              "CUSTOM_FILTER"
+            ]
+          }
+        }
+      },
+      "DiscountTrigger": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+        "properties": {
+          "and": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "triggers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountTrigger"
+                }
+              }
+            }
+          },
+          "or": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "triggers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountTrigger"
+                }
+              }
+            }
+          },
+          "customTrigger": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "appId": {
+                "type": "string"
+              }
+            }
+          },
+          "subtotalRange": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "scopes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountRuleScope"
+                }
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            }
+          },
+          "itemQuantityRange": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "scopes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountRuleScope"
+                }
+              },
+              "from": {
+                "type": "integer"
+              },
+              "to": {
+                "type": "integer"
+              }
+            }
+          },
+          "customerEligibility": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "individualMembersInfo": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+                "properties": {
+                  "memberIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "eligibilityType": {
+                "type": "string",
+                "enum": [
+                  "INDIVIDUAL_MEMBERS"
+                ]
+              }
+            }
+          },
+          "triggerType": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "SUBTOTAL_RANGE",
+              "ITEM_QUANTITY_RANGE",
+              "CUSTOM",
+              "OR",
+              "CUSTOMER_ELIGIBILITY"
+            ]
+          }
+        }
+      },
+      "DiscountRuleDiscount": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+        "properties": {
+          "percentage": {
+            "type": "number"
+          },
+          "fixedAmount": {
+            "type": "string"
+          },
+          "fixedPrice": {
+            "type": "string"
+          },
+          "quantityBased": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "configurations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "price": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "targetType": {
+            "type": "string",
+            "enum": [
+              "SPECIFIC_ITEMS"
+            ]
+          },
+          "specificItemsInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "scopes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountRuleScope"
+                }
+              }
+            }
+          },
+          "discountType": {
+            "type": "string",
+            "enum": [
+              "PERCENTAGE",
+              "FIXED_AMOUNT",
+              "FIXED_PRICE",
+              "QUANTITY_BASED"
+            ]
+          }
+        },
+        "required": [
+          "discountType"
+        ]
+      },
+      "DiscountRule": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "trigger": {
+            "$ref": "#/components/schemas/DiscountTrigger"
+          },
+          "activeTimeInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            }
+          },
+          "discounts": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "values": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DiscountRuleDiscount"
+                }
+              }
+            },
+            "required": [
+              "values"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "UNDEFINED",
+              "LIVE",
+              "EXPIRED",
+              "PENDING"
+            ]
+          },
+          "usageCount": {
+            "type": "integer"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "privateTags": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+                "properties": {
+                  "tagIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "publicTags": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+                "properties": {
+                  "tagIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "discounts"
+        ]
+      },
+      "QueryDiscountRulesResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+        "properties": {
+          "discountRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountRule"
+            }
+          },
+          "pagingMetadata": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "offset": {
+                "type": "integer"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "cursors": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/business-solutions/e-commerce/discount-rules/query-discount-rules.md (fetched 2026-10-19)",
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "prev": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "discountRules"
         ]
       }
     }

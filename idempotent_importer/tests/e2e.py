@@ -1484,11 +1484,7 @@ def assert_wix(state: str) -> None:
 		0,
 		"unpaid order 10002",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
-		1,
-		"the one-product percentage coupon (not per-customer, free-shipping, amount-off-products or deactivated ones)",
-	)
+	assert_wix_discounts(connection, state)
 	post = target(connection, "article", "Post", "0e1f2a30-0001-4b5c-9d6e-7f8a9b0c0001")
 	expect(
 		frappe.db.get_value("Blog Post", post, "blog_category"),
@@ -1672,6 +1668,52 @@ def assert_ecwid_discounts(connection: str, state: str) -> None:
 		"card 407",
 		["rule_condition"],
 		"wholesale prices with variations' own, held",
+	)
+
+
+def assert_wix_discounts(connection: str, state: str) -> None:
+	"""Every active Wix coupon and discount rule: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		6,
+		"four active coupons and two active rules (not the deactivated coupon or the expired rule)",
+	)
+	coupon = "c0000000-0000-4000-8000-00000000000{}"
+	assert_discount(connection, "Coupon", coupon.format(4), None, [], "the one-product coupon, enabled")
+	assert_discount(
+		connection,
+		"Coupon",
+		coupon.format(1),
+		"card 405",
+		["per_customer_limit"],
+		"the per-customer coupon, held",
+	)
+	assert_discount(
+		connection, "Coupon", coupon.format(2), "card 405", ["free_shipping"], "the shipping coupon, held"
+	)
+	assert_discount(
+		connection, "Coupon", coupon.format(3), "card 407", ["spread_amount"], "the amount off mugs, held"
+	)
+	rule = "d0000000-0000-4000-8000-00000000000{}"
+	assert_discount(
+		connection, "DiscountRule", rule.format(1), None, [], "the two-mugs rule, automatic and enabled"
+	)
+	mugs = target(connection, "discount", "DiscountRule", rule.format(1))
+	expect(
+		(
+			frappe.db.get_value("Pricing Rule", mugs, "min_qty"),
+			amount(frappe.db.get_value("Pricing Rule", mugs, "discount_percentage")),
+		),
+		(2, amount("10" if state == "v1" else "15")),
+		"the two-mugs rule's quantity and percentage",
+	)
+	assert_discount(
+		connection,
+		"DiscountRule",
+		rule.format(2),
+		"card 407",
+		["fixed_price_set"],
+		"the three-for-$20 rule, held",
 	)
 
 

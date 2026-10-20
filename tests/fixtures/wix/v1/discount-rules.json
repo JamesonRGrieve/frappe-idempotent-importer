@@ -1,0 +1,159 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/ecom/v1/discount-rules/query",
+    "body": {
+      "query": {
+        "cursorPaging": {
+          "limit": 100
+        }
+      }
+    }
+  },
+  "response": {
+    "discountRules": [
+      {
+        "id": "d0000000-0000-4000-8000-000000000001",
+        "revision": "1",
+        "createdDate": "2026-09-01T00:00:00.000Z",
+        "updatedDate": "2026-09-01T00:00:00.000Z",
+        "active": true,
+        "name": "Two mugs, 10% off",
+        "trigger": {
+          "itemQuantityRange": {
+            "scopes": [
+              {
+                "catalogItemFilter": {
+                  "catalogAppId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+                  "catalogItemIds": [
+                    "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+                  ]
+                },
+                "id": "scope-mugs",
+                "type": "CATALOG_ITEM"
+              }
+            ],
+            "from": 2
+          },
+          "triggerType": "ITEM_QUANTITY_RANGE"
+        },
+        "activeTimeInfo": {
+          "start": "2026-09-01T00:00:00.000Z"
+        },
+        "discounts": {
+          "values": [
+            {
+              "percentage": 10,
+              "targetType": "SPECIFIC_ITEMS",
+              "specificItemsInfo": {
+                "scopes": [
+                  {
+                    "catalogItemFilter": {
+                      "catalogAppId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+                      "catalogItemIds": [
+                        "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+                      ]
+                    },
+                    "id": "scope-mugs",
+                    "type": "CATALOG_ITEM"
+                  }
+                ]
+              },
+              "discountType": "PERCENTAGE"
+            }
+          ]
+        },
+        "status": "LIVE",
+        "usageCount": 3
+      },
+      {
+        "id": "d0000000-0000-4000-8000-000000000002",
+        "revision": "1",
+        "createdDate": "2026-09-01T00:00:00.000Z",
+        "updatedDate": "2026-09-01T00:00:00.000Z",
+        "active": true,
+        "name": "Three mugs for $20",
+        "trigger": {
+          "subtotalRange": {
+            "from": "100"
+          },
+          "triggerType": "SUBTOTAL_RANGE"
+        },
+        "activeTimeInfo": {
+          "start": "2026-09-01T00:00:00.000Z",
+          "end": "2026-12-31T23:59:59.000Z"
+        },
+        "discounts": {
+          "values": [
+            {
+              "quantityBased": {
+                "configurations": [
+                  {
+                    "id": "e0000000-0000-4000-8000-000000000001",
+                    "quantity": 3,
+                    "price": "20"
+                  }
+                ]
+              },
+              "targetType": "SPECIFIC_ITEMS",
+              "specificItemsInfo": {
+                "scopes": [
+                  {
+                    "catalogItemFilter": {
+                      "catalogAppId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+                      "catalogItemIds": [
+                        "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+                      ]
+                    },
+                    "id": "scope-mugs",
+                    "type": "CATALOG_ITEM"
+                  }
+                ]
+              },
+              "discountType": "QUANTITY_BASED"
+            }
+          ]
+        },
+        "status": "LIVE",
+        "usageCount": 0
+      },
+      {
+        "id": "d0000000-0000-4000-8000-000000000003",
+        "revision": "2",
+        "createdDate": "2026-06-01T00:00:00.000Z",
+        "updatedDate": "2026-08-01T00:00:00.000Z",
+        "active": false,
+        "name": "Summer 5% off",
+        "discounts": {
+          "values": [
+            {
+              "percentage": 5,
+              "targetType": "SPECIFIC_ITEMS",
+              "specificItemsInfo": {
+                "scopes": [
+                  {
+                    "catalogItemFilter": {
+                      "catalogAppId": "215238eb-22a5-4c36-9e7b-e7c08025e04e",
+                      "catalogItemIds": [
+                        "1a7e5c10-0001-4c2e-9b41-6f0d2a1e0001"
+                      ]
+                    },
+                    "id": "scope-mugs",
+                    "type": "CATALOG_ITEM"
+                  }
+                ]
+              },
+              "discountType": "PERCENTAGE"
+            }
+          ]
+        },
+        "status": "EXPIRED",
+        "usageCount": 9
+      }
+    ],
+    "pagingMetadata": {
+      "count": 3,
+      "cursors": {}
+    }
+  }
+}

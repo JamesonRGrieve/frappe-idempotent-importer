@@ -4,7 +4,8 @@ V1 catalog, coupons and blog categories), ported from wp-woo-idempotent-importer
 carries its identity as ``id`` (Wix's own id is kept as ``source_id``). The site's Stores catalog version is
 asked once: a V3 catalog's products arrive with their variants and inventory items (``variants``,
 ``inventory_items``), a V1 catalog's with their variants inline; both, and coupons, carry the catalog they
-came from (``catalog``). Orders arrive with their payments, refunds and fulfillments; blog posts with the
+came from (``catalog``). A discount run reads the Stores coupons, then the eCommerce discount rules (the
+cursor is ``<phase>:<offset or cursor>``). Orders arrive with their payments, refunds and fulfillments; blog posts with the
 site id (``blog_id``). The Blog kind is the site's blog, then its categories. Contacts and orders are
 incremental (by update time), as are a V3 catalog's categories and products; an incremental product run
 then also re-reads the products whose inventory changed (the cursor is ``<phase>:<cursor>``).
@@ -55,6 +56,7 @@ V1_PRODUCT_OPTIONS: dict[str, JsonValue] = {
 	"includeMerchantSpecificData": True,
 }
 PHASE_PRODUCTS, PHASE_STOCK = "products", "stock"
+PHASE_COUPONS, PHASE_RULES = "coupons", "rules"
 CURSOR_SEPARATOR = ":"
 SINGLY_READABLE = frozenset({Kind.PRODUCT, Kind.CUSTOMER, Kind.ORDER})
 
@@ -177,11 +179,7 @@ class WixReader:
 				)
 				return paged([self._identified("Contact", c.raw()) for c in contacts], following)
 			case Kind.DISCOUNT:
-				coupons, following = self._offset_page("/stores/v2/coupons/query", {}, {}, "coupons", cursor)
-				catalog = self.catalog().value
-				return paged(
-					[self._identified("Coupon", {**c.raw(), "catalog": catalog}) for c in coupons], following
-				)
+				return self._discounts(cursor)
 			case Kind.ORDER:
 				orders, following = self._cursor_page(
 					"/ecom/v1/orders/search",
@@ -411,6 +409,39 @@ class WixReader:
 		if cursor is None:
 			nodes.insert(0, self._identified("Blog", {"id": self._site}))
 		return paged(nodes, following)
+
+	def _discounts(self, cursor: str | None) -> Page:
+		"""Stores coupons (offset paged), then eCommerce discount rules (cursor paged)."""
+		phase, separator, position = (cursor or "").partition(CURSOR_SEPARATOR)
+		if not separator:
+			# An offset alone: a coupons cursor saved before the rules phase existed.
+			phase, position = PHASE_COUPONS, cursor or ""
+		if phase == PHASE_COUPONS:
+			coupons, following = self._offset_page(
+				"/stores/v2/coupons/query", {}, {}, "coupons", position or None
+			)
+			catalog = self.catalog().value
+			nodes = [self._identified("Coupon", {**c.raw(), "catalog": catalog}) for c in coupons]
+			return Page(
+				nodes,
+				True,
+				f"{PHASE_COUPONS if following else PHASE_RULES}{CURSOR_SEPARATOR}{following or ''}",
+			)
+		if phase != PHASE_RULES:
+			raise SourceError(f"Not a Wix discount cursor: {cursor}")
+		rules, following = self._cursor_page(
+			"/ecom/v1/discount-rules/query",
+			"query",
+			{},
+			{},
+			"discountRules",
+			"pagingMetadata",
+			position or None,
+		)
+		nodes = [self._identified("DiscountRule", r.raw()) for r in rules]
+		return Page(
+			nodes, following is not None, f"{PHASE_RULES}{CURSOR_SEPARATOR}{following}" if following else None
+		)
 
 	def _cursor_page(
 		self,

@@ -109,16 +109,35 @@ def value_matches(recorded: Any, sent: Any) -> bool:
 	return bool(recorded == sent)
 
 
+def without_incremental_terms(body: Any) -> Any:
+	"""An Odoo JSON-2 request as its fixture records it: an incremental run's ``write_date`` term left out of
+	the domain (a fixture is the store's whole answer, as a full run reads it)."""
+	if isinstance(body, dict) and isinstance(body.get("domain"), list):
+		domain = [
+			term
+			for term in body["domain"]
+			if not (isinstance(term, list) and term[:1] == [ODOO_CHANGE_FIELD])
+		]
+		return {**body, "domain": domain}
+	return body
+
+
+# How a source's requests are compared with its fixtures, where the request carries more than they record.
+BODY_NORMALISERS = {"odoo": without_incremental_terms}
+ODOO_CHANGE_FIELD = "write_date"
+
+
 class RestResponder:
 	"""Answers a REST source's requests from one store state's fixtures; unknown requests get a 404."""
 
 	def __init__(self, source: str, state: str) -> None:
 		self.fixtures = rest_fixtures(source, state)
+		self._normalise = BODY_NORMALISERS.get(source, lambda body: body)
 
 	def answer(self, method: str, url: str, body: bytes = b"") -> Answer:
 		parts = urlsplit(url)
 		sent = parse_qs(parts.query, keep_blank_values=True)
-		decoded = json.loads(body) if body.strip() else {}
+		decoded = self._normalise(json.loads(body) if body.strip() else {})
 		for fixture in self.fixtures:
 			if (
 				fixture.method == method

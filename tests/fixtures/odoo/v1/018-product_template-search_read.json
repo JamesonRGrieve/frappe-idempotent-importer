@@ -1,0 +1,101 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.template/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"default_code",
+				"barcode",
+				"list_price",
+				"type",
+				"is_storable",
+				"categ_id",
+				"description_sale",
+				"sale_ok",
+				"purchase_ok",
+				"active",
+				"weight",
+				"qty_available",
+				"product_variant_count",
+				"is_published",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 10,
+			"name": "Office Chair",
+			"default_code": "CHAIR",
+			"barcode": "0601234567890",
+			"list_price": 150.0,
+			"type": "consu",
+			"is_storable": true,
+			"categ_id": [
+				2,
+				"All / Saleable"
+			],
+			"description_sale": "Ergonomic chair",
+			"sale_ok": true,
+			"purchase_ok": true,
+			"active": true,
+			"weight": 9.5,
+			"qty_available": 12.0,
+			"product_variant_count": 1,
+			"is_published": true,
+			"write_date": false
+		},
+		{
+			"id": 11,
+			"name": "Desk",
+			"default_code": false,
+			"barcode": false,
+			"list_price": 400.0,
+			"type": "consu",
+			"is_storable": true,
+			"categ_id": [
+				2,
+				"All / Saleable"
+			],
+			"description_sale": false,
+			"sale_ok": true,
+			"purchase_ok": true,
+			"active": true,
+			"weight": 0.0,
+			"qty_available": 5.0,
+			"product_variant_count": 2,
+			"is_published": false,
+			"write_date": false
+		},
+		{
+			"id": 12,
+			"name": "Consulting",
+			"default_code": "CONSULT",
+			"barcode": false,
+			"list_price": 90.0,
+			"type": "service",
+			"is_storable": false,
+			"categ_id": [
+				1,
+				"All"
+			],
+			"description_sale": false,
+			"sale_ok": true,
+			"purchase_ok": false,
+			"active": true,
+			"weight": 0.0,
+			"qty_available": 0.0,
+			"product_variant_count": 1,
+			"is_published": false,
+			"write_date": false
+		}
+	]
+}

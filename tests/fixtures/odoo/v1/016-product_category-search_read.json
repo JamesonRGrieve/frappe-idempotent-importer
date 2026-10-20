@@ -1,0 +1,37 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.category/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"parent_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "All",
+			"parent_id": false,
+			"write_date": false
+		},
+		{
+			"id": 2,
+			"name": "Saleable",
+			"parent_id": [
+				1,
+				"All"
+			],
+			"write_date": false
+		}
+	]
+}

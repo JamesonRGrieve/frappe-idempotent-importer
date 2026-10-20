@@ -1,0 +1,39 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.tax.repartition.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"account_id",
+					"!=",
+					false
+				]
+			],
+			"fields": [
+				"account_id"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"account_id": [
+				108,
+				"Tax Received"
+			]
+		},
+		{
+			"id": 2,
+			"account_id": [
+				109,
+				"Tax Paid"
+			]
+		}
+	]
+}

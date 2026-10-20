@@ -1,0 +1,141 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move/search_read",
+		"body": {
+			"domain": [
+				[
+					"move_type",
+					"in",
+					[
+						"out_invoice",
+						"out_refund",
+						"out_receipt"
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"move_type",
+				"state",
+				"partner_id",
+				"commercial_partner_id",
+				"invoice_date",
+				"invoice_date_due",
+				"date",
+				"currency_id",
+				"amount_total",
+				"amount_total_signed",
+				"ref",
+				"narration",
+				"reversed_entry_id",
+				"journal_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 31,
+			"name": "INV/2026/00001",
+			"move_type": "out_invoice",
+			"state": "posted",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"commercial_partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"invoice_date": "2026-03-05",
+			"invoice_date_due": "2026-04-04",
+			"date": "2026-03-05",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 315.0,
+			"amount_total_signed": 315.0,
+			"ref": "DA-PO-77",
+			"narration": false,
+			"reversed_entry_id": false,
+			"journal_id": [
+				1,
+				"Customer Invoices"
+			],
+			"write_date": false
+		},
+		{
+			"id": 32,
+			"name": "RINV/2026/00001",
+			"move_type": "out_refund",
+			"state": "posted",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"commercial_partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"invoice_date": "2026-03-08",
+			"invoice_date_due": false,
+			"date": "2026-03-08",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 157.5,
+			"amount_total_signed": -157.5,
+			"ref": "Reversal of: INV/2026/00001",
+			"narration": false,
+			"reversed_entry_id": [
+				31,
+				"INV/2026/00001"
+			],
+			"journal_id": [
+				1,
+				"Customer Invoices"
+			],
+			"write_date": false
+		},
+		{
+			"id": 36,
+			"name": false,
+			"move_type": "out_invoice",
+			"state": "draft",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"commercial_partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"invoice_date": "2026-04-01",
+			"invoice_date_due": "2026-04-04",
+			"date": "2026-04-01",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 945.0,
+			"amount_total_signed": 945.0,
+			"ref": false,
+			"narration": false,
+			"reversed_entry_id": false,
+			"journal_id": [
+				1,
+				"Customer Invoices"
+			],
+			"write_date": "2026-04-01 09:00:00"
+		}
+	]
+}

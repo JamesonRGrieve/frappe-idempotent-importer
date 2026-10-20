@@ -1,0 +1,70 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move.line/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"move_id": {
+			"type": "many2one"
+		},
+		"sequence": {
+			"type": "char"
+		},
+		"display_type": {
+			"type": "char"
+		},
+		"product_id": {
+			"type": "many2one"
+		},
+		"name": {
+			"type": "char"
+		},
+		"quantity": {
+			"type": "char"
+		},
+		"price_unit": {
+			"type": "char"
+		},
+		"discount": {
+			"type": "char"
+		},
+		"price_subtotal": {
+			"type": "char"
+		},
+		"account_id": {
+			"type": "many2one"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"analytic_distribution": {
+			"type": "char"
+		},
+		"debit": {
+			"type": "char"
+		},
+		"credit": {
+			"type": "char"
+		},
+		"amount_currency": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"matched_debit_ids": {
+			"type": "char"
+		},
+		"matched_credit_ids": {
+			"type": "char"
+		}
+	}
+}

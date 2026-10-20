@@ -1,0 +1,76 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/crm.lead/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"type",
+				"partner_id",
+				"partner_name",
+				"contact_name",
+				"email_from",
+				"phone",
+				"function",
+				"website",
+				"probability",
+				"expected_revenue",
+				"date_deadline",
+				"active",
+				"description",
+				"create_date",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 2,
+			"name": "Desks for HQ",
+			"type": "opportunity",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"partner_name": "Deco Addict",
+			"contact_name": "Douglas Fletcher",
+			"email_from": "douglas.fletcher@decoaddict.example",
+			"phone": false,
+			"function": "Purchasing Manager",
+			"website": false,
+			"probability": 40.0,
+			"expected_revenue": 4500.0,
+			"date_deadline": "2026-04-30",
+			"active": true,
+			"description": "<p>Twelve desks</p>",
+			"create_date": "2026-02-25 10:00:00",
+			"write_date": false
+		},
+		{
+			"id": 3,
+			"name": "Showroom chairs",
+			"type": "opportunity",
+			"partner_id": false,
+			"partner_name": "Prospect Co",
+			"contact_name": "Pat Prospect",
+			"email_from": "pat@prospect.example",
+			"phone": false,
+			"function": false,
+			"website": false,
+			"probability": 0.0,
+			"expected_revenue": 1200.0,
+			"date_deadline": false,
+			"active": false,
+			"description": false,
+			"create_date": "2026-02-26 10:00:00",
+			"write_date": "2026-04-01 09:00:00"
+		}
+	]
+}

@@ -1,0 +1,25 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/read",
+		"body": {
+			"fields": [
+				"customer_rank",
+				"supplier_rank"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				7
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 7,
+			"customer_rank": 3,
+			"supplier_rank": 0
+		}
+	]
+}

@@ -1,0 +1,76 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/sale.order/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"state",
+				"partner_id",
+				"date_order",
+				"commitment_date",
+				"validity_date",
+				"currency_id",
+				"amount_untaxed",
+				"amount_tax",
+				"amount_total",
+				"client_order_ref",
+				"note",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "S00001",
+			"state": "sale",
+			"partner_id": [
+				8,
+				"Deco Addict, Douglas Fletcher"
+			],
+			"date_order": "2026-03-02 15:00:00",
+			"commitment_date": "2026-03-20 15:00:00",
+			"validity_date": false,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_untaxed": 300.0,
+			"amount_tax": 15.0,
+			"amount_total": 315.0,
+			"client_order_ref": "DA-PO-77",
+			"note": false,
+			"write_date": false
+		},
+		{
+			"id": 2,
+			"name": "S00002",
+			"state": "sent",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"date_order": "2026-03-04 15:00:00",
+			"commitment_date": false,
+			"validity_date": "2026-04-04",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_untaxed": 850.0,
+			"amount_tax": 42.5,
+			"amount_total": 892.5,
+			"client_order_ref": false,
+			"note": "<p>Valid one month</p>",
+			"write_date": false
+		}
+	]
+}

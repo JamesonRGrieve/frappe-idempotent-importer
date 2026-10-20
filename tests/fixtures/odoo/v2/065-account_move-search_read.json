@@ -1,0 +1,76 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move/search_read",
+		"body": {
+			"domain": [
+				[
+					"move_type",
+					"in",
+					[
+						"in_invoice",
+						"in_refund",
+						"in_receipt"
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"move_type",
+				"state",
+				"partner_id",
+				"commercial_partner_id",
+				"invoice_date",
+				"invoice_date_due",
+				"date",
+				"currency_id",
+				"amount_total",
+				"amount_total_signed",
+				"ref",
+				"narration",
+				"reversed_entry_id",
+				"journal_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 33,
+			"name": "BILL/2026/03/0001",
+			"move_type": "in_invoice",
+			"state": "posted",
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"commercial_partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"invoice_date": "2026-03-06",
+			"invoice_date_due": false,
+			"date": "2026-03-06",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 840.0,
+			"amount_total_signed": -840.0,
+			"ref": "WC-INV-9001",
+			"narration": false,
+			"reversed_entry_id": false,
+			"journal_id": [
+				2,
+				"Vendor Bills"
+			],
+			"write_date": false
+		}
+	]
+}

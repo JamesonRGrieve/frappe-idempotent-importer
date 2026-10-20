@@ -1,0 +1,46 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/project.project/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"partner_id",
+				"date_start",
+				"date",
+				"active",
+				"description",
+				"last_update_status",
+				"account_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Office Design",
+			"partner_id": [
+				8,
+				"Deco Addict, Douglas Fletcher"
+			],
+			"date_start": "2026-03-01",
+			"date": "2026-05-31",
+			"active": true,
+			"description": "<p>New HQ fit-out</p>",
+			"last_update_status": "on_track",
+			"account_id": [
+				201,
+				"Office Design"
+			],
+			"write_date": false
+		}
+	]
+}

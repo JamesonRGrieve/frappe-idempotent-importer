@@ -1,0 +1,46 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/project.project/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"date_start": {
+			"type": "char"
+		},
+		"date": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"description": {
+			"type": "char"
+		},
+		"last_update_status": {
+			"type": "char"
+		},
+		"account_id": {
+			"type": "many2one"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

@@ -1,0 +1,28 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/hr.job/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Sales Manager",
+			"active": true,
+			"write_date": false
+		}
+	]
+}

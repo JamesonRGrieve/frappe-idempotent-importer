@@ -1,0 +1,60 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/read",
+		"body": {
+			"fields": [
+				"name",
+				"is_company",
+				"parent_id",
+				"type",
+				"street",
+				"street2",
+				"city",
+				"state_id",
+				"zip",
+				"country_code",
+				"email",
+				"phone",
+				"vat",
+				"ref",
+				"website",
+				"function",
+				"active",
+				"write_date"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				1
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Harbour Pine Trading",
+			"is_company": true,
+			"parent_id": false,
+			"type": "contact",
+			"street": "12 Harbour Road",
+			"street2": false,
+			"city": "Edmonton",
+			"state_id": [
+				66,
+				"Alberta (CA)"
+			],
+			"zip": "T5J 0N3",
+			"country_code": "CA",
+			"email": false,
+			"phone": false,
+			"vat": false,
+			"ref": false,
+			"website": false,
+			"function": false,
+			"active": true,
+			"write_date": "2026-03-01 09:00:00"
+		}
+	]
+}

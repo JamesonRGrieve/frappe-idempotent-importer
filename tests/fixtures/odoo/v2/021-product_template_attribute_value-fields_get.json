@@ -1,0 +1,22 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.template.attribute.value/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"attribute_id": {
+			"type": "many2one"
+		}
+	}
+}

@@ -1,0 +1,33 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.account/read",
+		"body": {
+			"fields": [
+				"account_type"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				102,
+				107,
+				109
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 102,
+			"account_type": "liability_payable"
+		},
+		{
+			"id": 107,
+			"account_type": "expense"
+		},
+		{
+			"id": 109,
+			"account_type": "asset_current"
+		}
+	]
+}

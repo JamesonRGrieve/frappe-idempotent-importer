@@ -1,0 +1,39 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.payment.method.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"payment_account_id",
+					"!=",
+					false
+				]
+			],
+			"fields": [
+				"payment_account_id"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"payment_account_id": [
+				104,
+				"Outstanding Receipts"
+			]
+		},
+		{
+			"id": 2,
+			"payment_account_id": [
+				105,
+				"Outstanding Payments"
+			]
+		}
+	]
+}

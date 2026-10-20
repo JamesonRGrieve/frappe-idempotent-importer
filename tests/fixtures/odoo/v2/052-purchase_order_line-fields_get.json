@@ -1,0 +1,49 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/purchase.order.line/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"order_id": {
+			"type": "many2one"
+		},
+		"sequence": {
+			"type": "char"
+		},
+		"display_type": {
+			"type": "char"
+		},
+		"product_id": {
+			"type": "many2one"
+		},
+		"name": {
+			"type": "char"
+		},
+		"product_qty": {
+			"type": "char"
+		},
+		"price_unit": {
+			"type": "char"
+		},
+		"discount": {
+			"type": "char"
+		},
+		"price_subtotal": {
+			"type": "char"
+		},
+		"price_tax": {
+			"type": "char"
+		},
+		"price_total": {
+			"type": "char"
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/read",
+		"body": {
+			"fields": [
+				"commercial_partner_id"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				14
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 14,
+			"commercial_partner_id": [
+				14,
+				"Wood Corner"
+			]
+		}
+	]
+}

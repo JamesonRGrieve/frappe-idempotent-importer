@@ -1,0 +1,67 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/crm.lead/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"type": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"partner_name": {
+			"type": "char"
+		},
+		"contact_name": {
+			"type": "char"
+		},
+		"email_from": {
+			"type": "char"
+		},
+		"phone": {
+			"type": "char"
+		},
+		"function": {
+			"type": "char"
+		},
+		"website": {
+			"type": "char"
+		},
+		"probability": {
+			"type": "char"
+		},
+		"expected_revenue": {
+			"type": "char"
+		},
+		"date_deadline": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"description": {
+			"type": "char"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"create_date": {
+			"type": "char"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

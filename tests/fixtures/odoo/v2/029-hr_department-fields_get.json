@@ -1,0 +1,31 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/hr.department/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"parent_id": {
+			"type": "many2one"
+		},
+		"active": {
+			"type": "char"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

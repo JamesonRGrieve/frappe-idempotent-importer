@@ -159,6 +159,9 @@ def catalog() -> list[SpecDocument]:
 		# Ecwid publishes no OpenAPI document: the responses the adapter reads, transcribed from the official
 		# REST API reference. Requests go to /api/v3/<store id>/…, so that prefix is stripped.
 		committed("ecwid", "rest-api-reference", "tests/schemas/ecwid.json", r"/api/v3/\d+"),
+		# Odoo publishes no OpenAPI document (each database describes itself at /doc): the JSON-2 answers the
+		# adapter reads, transcribed by tools/odoo_schema.py from Odoo 19's model definitions at a pinned commit.
+		committed("odoo", "json2-model-reference", "tests/schemas/odoo.json", ""),
 	]
 
 

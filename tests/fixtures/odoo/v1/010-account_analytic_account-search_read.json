@@ -1,0 +1,35 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.analytic.account/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"code",
+				"plan_id",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 201,
+			"name": "Office Design",
+			"code": "PRJ",
+			"plan_id": [
+				1,
+				"Projects"
+			],
+			"active": true,
+			"write_date": false
+		}
+	]
+}

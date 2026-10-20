@@ -1,0 +1,126 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.account/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"code",
+				"name",
+				"account_type",
+				"currency_id",
+				"reconcile",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 101,
+			"code": "121000",
+			"name": "Account Receivable",
+			"account_type": "asset_receivable",
+			"currency_id": false,
+			"reconcile": true,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 102,
+			"code": "211000",
+			"name": "Account Payable",
+			"account_type": "liability_payable",
+			"currency_id": false,
+			"reconcile": true,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 103,
+			"code": "101401",
+			"name": "Bank",
+			"account_type": "asset_cash",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 104,
+			"code": "101402",
+			"name": "Outstanding Receipts",
+			"account_type": "asset_current",
+			"currency_id": false,
+			"reconcile": true,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 105,
+			"code": "101403",
+			"name": "Outstanding Payments",
+			"account_type": "asset_current",
+			"currency_id": false,
+			"reconcile": true,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 106,
+			"code": "400000",
+			"name": "Product Sales",
+			"account_type": "income",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 107,
+			"code": "600000",
+			"name": "Expenses",
+			"account_type": "expense",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 108,
+			"code": "251000",
+			"name": "Tax Received",
+			"account_type": "liability_current",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 109,
+			"code": "131000",
+			"name": "Tax Paid",
+			"account_type": "asset_current",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		},
+		{
+			"id": 110,
+			"code": "990000",
+			"name": "Commitments",
+			"account_type": "off_balance",
+			"currency_id": false,
+			"reconcile": false,
+			"active": false,
+			"write_date": false
+		}
+	]
+}

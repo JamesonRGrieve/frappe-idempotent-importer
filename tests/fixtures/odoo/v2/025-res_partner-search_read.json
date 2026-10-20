@@ -1,0 +1,107 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/search_read",
+		"body": {
+			"domain": [
+				[
+					"parent_id",
+					"=",
+					false
+				],
+				"|",
+				[
+					"customer_rank",
+					">",
+					0
+				],
+				[
+					"supplier_rank",
+					"=",
+					0
+				],
+				[
+					"id",
+					"not in",
+					[
+						1,
+						3
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"is_company",
+				"parent_id",
+				"type",
+				"street",
+				"street2",
+				"city",
+				"state_id",
+				"zip",
+				"country_code",
+				"email",
+				"phone",
+				"vat",
+				"ref",
+				"website",
+				"function",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 7,
+			"name": "Deco Addict",
+			"is_company": true,
+			"parent_id": false,
+			"type": "contact",
+			"street": "77 Santa Barbara Rd",
+			"street2": false,
+			"city": "Calgary",
+			"state_id": [
+				66,
+				"Alberta (CA)"
+			],
+			"zip": "T2P 1J9",
+			"country_code": "CA",
+			"email": "info@decoaddict.example",
+			"phone": "+1 780 555 0107",
+			"vat": "CA123456789",
+			"ref": false,
+			"website": "https://decoaddict.example",
+			"function": false,
+			"active": true,
+			"write_date": "2026-03-01 09:00:00"
+		},
+		{
+			"id": 16,
+			"name": "Lumber Lane Interiors",
+			"is_company": false,
+			"parent_id": false,
+			"type": "contact",
+			"street": false,
+			"street2": false,
+			"city": false,
+			"state_id": false,
+			"zip": false,
+			"country_code": false,
+			"email": "hello@lumberlane.example",
+			"phone": false,
+			"vat": false,
+			"ref": false,
+			"website": false,
+			"function": false,
+			"active": false,
+			"write_date": "2026-04-01 09:00:00"
+		}
+	]
+}

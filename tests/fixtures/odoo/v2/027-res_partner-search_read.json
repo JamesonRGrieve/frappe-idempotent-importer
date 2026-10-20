@@ -1,0 +1,77 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/search_read",
+		"body": {
+			"domain": [
+				[
+					"parent_id",
+					"=",
+					false
+				],
+				[
+					"supplier_rank",
+					">",
+					0
+				],
+				[
+					"id",
+					"not in",
+					[
+						1,
+						3
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"is_company",
+				"parent_id",
+				"type",
+				"street",
+				"street2",
+				"city",
+				"state_id",
+				"zip",
+				"country_code",
+				"email",
+				"phone",
+				"vat",
+				"ref",
+				"website",
+				"function",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 14,
+			"name": "Wood Corner",
+			"is_company": true,
+			"parent_id": false,
+			"type": "contact",
+			"street": "1 Mill Street",
+			"street2": false,
+			"city": "Red Deer",
+			"state_id": false,
+			"zip": false,
+			"country_code": "CA",
+			"email": "sales@woodcorner.example",
+			"phone": false,
+			"vat": false,
+			"ref": false,
+			"website": false,
+			"function": false,
+			"active": true,
+			"write_date": "2026-03-01 09:00:00"
+		}
+	]
+}

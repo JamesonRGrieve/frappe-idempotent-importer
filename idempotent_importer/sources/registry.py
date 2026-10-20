@@ -16,6 +16,7 @@ from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
 from idempotent_importer.sources.magento.adapter import MagentoAdapter
+from idempotent_importer.sources.odoo.adapter import OdooAdapter
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.squarespace.adapter import SquarespaceAdapter
@@ -47,7 +48,6 @@ class ListedAdapter:
 
 
 LISTED: tuple[ListedAdapter, ...] = (
-	ListedAdapter("odoo", "Odoo"),
 	ListedAdapter("dynamics_business_central", "Dynamics 365 Business Central"),
 	ListedAdapter("dynamics_finance_operations", "Dynamics 365 Finance & Operations"),
 	ListedAdapter("dynamics_sales", "Dynamics 365 Sales"),
@@ -77,6 +77,7 @@ def all_adapters() -> dict[str, Adapter]:
 		MagentoAdapter(),
 		LightspeedAdapter(),
 		EcwidAdapter(),
+		OdooAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

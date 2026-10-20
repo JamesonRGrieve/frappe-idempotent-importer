@@ -1,0 +1,61 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/hr.employee/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"sex": {
+			"type": "char"
+		},
+		"birthday": {
+			"type": "char"
+		},
+		"department_id": {
+			"type": "many2one"
+		},
+		"job_id": {
+			"type": "many2one"
+		},
+		"parent_id": {
+			"type": "many2one"
+		},
+		"work_email": {
+			"type": "char"
+		},
+		"private_email": {
+			"type": "char"
+		},
+		"mobile_phone": {
+			"type": "char"
+		},
+		"work_phone": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"departure_date": {
+			"type": "char"
+		},
+		"contract_date_start": {
+			"type": "char"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

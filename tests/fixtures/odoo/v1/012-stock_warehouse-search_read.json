@@ -1,0 +1,35 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/stock.warehouse/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"code",
+				"partner_id",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Harbour Warehouse",
+			"code": "WH",
+			"partner_id": [
+				1,
+				"Harbour Pine Trading"
+			],
+			"active": true,
+			"write_date": false
+		}
+	]
+}

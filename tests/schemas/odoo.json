@@ -1,0 +1,4530 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Odoo 19 JSON-2 API answers read by frappe-idempotent-importer",
+  "version": "19.0@0faf35b5ff68",
+  "description": "Odoo publishes no OpenAPI document. Transcribed by tools/odoo_schema.py from the field declarations of odoo/odoo at 0faf35b5ff680a172a73fc22230957c2771d32c9 (19.0), per https://www.odoo.com/documentation/19.0/developer/reference/external_api.html: only the models and fields the Odoo adapter reads."
+ },
+ "paths": {
+  "/json/2/res.company/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResCompanyList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.company/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResCompanyList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.company/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.users/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResUsersList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.users/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResUsersList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.users/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.partner/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResPartnerList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.partner/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ResPartnerList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/res.partner/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.account/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountAccountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.account/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountAccountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.account/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.tax.repartition.line/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountTaxRepartitionLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.tax.repartition.line/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountTaxRepartitionLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.tax.repartition.line/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment.method.line/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPaymentMethodLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment.method.line/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPaymentMethodLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment.method.line/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.analytic.account/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountAnalyticAccountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.analytic.account/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountAnalyticAccountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.analytic.account/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/stock.warehouse/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/StockWarehouseList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/stock.warehouse/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/StockWarehouseList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/stock.warehouse/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.category/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductCategoryList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.category/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductCategoryList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.category/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductTemplateList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductTemplateList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.product/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductProductList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.product/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductProductList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.product/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template.attribute.value/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductTemplateAttributeValueList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template.attribute.value/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProductTemplateAttributeValueList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/product.template.attribute.value/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.department/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrDepartmentList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.department/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrDepartmentList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.department/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.job/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrJobList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.job/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrJobList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.job/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.employee/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrEmployeeList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.employee/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HrEmployeeList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/hr.employee/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/project.project/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectProjectList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/project.project/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProjectProjectList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/project.project/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/crm.lead/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CrmLeadList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/crm.lead/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CrmLeadList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/crm.lead/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SaleOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SaleOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order.line/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SaleOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order.line/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SaleOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/sale.order.line/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PurchaseOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PurchaseOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order.line/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PurchaseOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order.line/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/PurchaseOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/purchase.order.line/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountMoveList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountMoveList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move.line/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountMoveLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move.line/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountMoveLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.move.line/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.partial.reconcile/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPartialReconcileList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.partial.reconcile/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPartialReconcileList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.partial.reconcile/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment/search_read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPaymentList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment/read": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/AccountPaymentList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/json/2/account.payment/fields_get": {
+   "post": {
+    "externalDocs": {
+     "url": "https://www.odoo.com/documentation/19.0/developer/reference/external_api.html"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/FieldsGet"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "FieldsGet": {
+    "type": "object",
+    "description": "fields_get's answer: each field's description (the adapter reads the names).",
+    "additionalProperties": {
+     "type": "object",
+     "properties": {
+      "type": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "type"
+     ]
+    }
+   },
+   "ResCompany": {
+    "type": "object",
+    "description": "res.company, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/odoo/addons/base/models/res_company.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ResCompanyList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ResCompany"
+    }
+   },
+   "ResUsers": {
+    "type": "object",
+    "description": "res.users, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/odoo/addons/base/models/res_users.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ResUsersList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ResUsers"
+    }
+   },
+   "ResPartner": {
+    "type": "object",
+    "description": "res.partner, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/odoo/addons/base/models/res_partner.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/partner.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "is_company": {
+      "type": "boolean"
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "type": {
+      "anyOf": [
+       {
+        "enum": [
+         "contact",
+         "delivery",
+         "invoice",
+         "other"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "street": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "street2": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "city": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "state_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "zip": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "country_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "phone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "vat": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "ref": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "website": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "function": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "commercial_partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "customer_rank": {
+      "type": "integer"
+     },
+     "supplier_rank": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ResPartnerList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ResPartner"
+    }
+   },
+   "AccountAccount": {
+    "type": "object",
+    "description": "account.account, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_account.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "account_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "asset_cash",
+         "asset_current",
+         "asset_fixed",
+         "asset_non_current",
+         "asset_prepayments",
+         "asset_receivable",
+         "equity",
+         "equity_unaffected",
+         "expense",
+         "expense_depreciation",
+         "expense_direct_cost",
+         "expense_other",
+         "income",
+         "income_other",
+         "liability_credit_card",
+         "liability_current",
+         "liability_non_current",
+         "liability_payable",
+         "off_balance"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "reconcile": {
+      "type": "boolean"
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountAccountList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountAccount"
+    }
+   },
+   "AccountTaxRepartitionLine": {
+    "type": "object",
+    "description": "account.tax.repartition.line, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_tax.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountTaxRepartitionLineList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountTaxRepartitionLine"
+    }
+   },
+   "AccountPaymentMethodLine": {
+    "type": "object",
+    "description": "account.payment.method.line, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_payment_method.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "payment_account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountPaymentMethodLineList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountPaymentMethodLine"
+    }
+   },
+   "AccountAnalyticAccount": {
+    "type": "object",
+    "description": "account.analytic.account, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/analytic/models/analytic_account.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "plan_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountAnalyticAccountList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountAnalyticAccount"
+    }
+   },
+   "StockWarehouse": {
+    "type": "object",
+    "description": "stock.warehouse, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/stock/models/stock_warehouse.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "StockWarehouseList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/StockWarehouse"
+    }
+   },
+   "ProductCategory": {
+    "type": "object",
+    "description": "product.category, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/product/models/product_category.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ProductCategoryList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ProductCategory"
+    }
+   },
+   "ProductTemplate": {
+    "type": "object",
+    "description": "product.template, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/product/models/product_template.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/stock/models/product.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/website/models/mixins.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "default_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "barcode": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "list_price": {
+      "type": "number"
+     },
+     "type": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "is_storable": {
+      "type": "boolean"
+     },
+     "categ_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "description_sale": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "sale_ok": {
+      "type": "boolean"
+     },
+     "purchase_ok": {
+      "type": "boolean"
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "weight": {
+      "type": "number"
+     },
+     "qty_available": {
+      "type": "number"
+     },
+     "product_variant_count": {
+      "type": "integer"
+     },
+     "is_published": {
+      "type": "boolean"
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ProductTemplateList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ProductTemplate"
+    }
+   },
+   "ProductProduct": {
+    "type": "object",
+    "description": "product.product, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/product/models/product_product.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/stock/models/product.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "product_tmpl_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "default_code": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "barcode": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "lst_price": {
+      "type": "number"
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "qty_available": {
+      "type": "number"
+     },
+     "weight": {
+      "type": "number"
+     },
+     "product_template_attribute_value_ids": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "product_variant_count": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ProductProductList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ProductProduct"
+    }
+   },
+   "ProductTemplateAttributeValue": {
+    "type": "object",
+    "description": "product.template.attribute.value, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/product/models/product_template_attribute_value.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "attribute_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ProductTemplateAttributeValueList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ProductTemplateAttributeValue"
+    }
+   },
+   "HrDepartment": {
+    "type": "object",
+    "description": "hr.department, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/hr/models/hr_department.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "HrDepartmentList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/HrDepartment"
+    }
+   },
+   "HrJob": {
+    "type": "object",
+    "description": "hr.job, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/hr/models/hr_job.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "HrJobList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/HrJob"
+    }
+   },
+   "HrEmployee": {
+    "type": "object",
+    "description": "hr.employee, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/hr/models/hr_employee.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/hr/models/hr_version.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "sex": {
+      "anyOf": [
+       {
+        "enum": [
+         "female",
+         "male",
+         "other"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "birthday": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "department_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "job_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "parent_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "work_email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "private_email": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "mobile_phone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "work_phone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "departure_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "contract_date_start": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "HrEmployeeList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/HrEmployee"
+    }
+   },
+   "ProjectProject": {
+    "type": "object",
+    "description": "project.project, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/project/models/project_project.py, https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/analytic/models/analytic_mixin.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date_start": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "last_update_status": {
+      "anyOf": [
+       {
+        "enum": [
+         "at_risk",
+         "done",
+         "off_track",
+         "on_hold",
+         "on_track",
+         "to_define"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "ProjectProjectList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/ProjectProject"
+    }
+   },
+   "CrmLead": {
+    "type": "object",
+    "description": "crm.lead, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/crm/models/crm_lead.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "type": {
+      "anyOf": [
+       {
+        "enum": [
+         "lead",
+         "opportunity"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "contact_name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "email_from": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "phone": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "function": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "website": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "probability": {
+      "type": "number"
+     },
+     "expected_revenue": {
+      "type": "number"
+     },
+     "date_deadline": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "description": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "create_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "CrmLeadList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/CrmLead"
+    }
+   },
+   "SaleOrder": {
+    "type": "object",
+    "description": "sale.order, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/sale/models/sale_order.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "state": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date_order": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "commitment_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "validity_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "amount_untaxed": {
+      "type": "number"
+     },
+     "amount_tax": {
+      "type": "number"
+     },
+     "amount_total": {
+      "type": "number"
+     },
+     "client_order_ref": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "SaleOrderList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/SaleOrder"
+    }
+   },
+   "SaleOrderLine": {
+    "type": "object",
+    "description": "sale.order.line, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/sale/models/sale_order_line.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "order_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "sequence": {
+      "type": "integer"
+     },
+     "display_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "line_note",
+         "line_section",
+         "line_subsection"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "product_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "product_uom_qty": {
+      "type": "number"
+     },
+     "price_unit": {
+      "type": "number"
+     },
+     "discount": {
+      "type": "number"
+     },
+     "price_subtotal": {
+      "type": "number"
+     },
+     "price_tax": {
+      "type": "number"
+     },
+     "price_total": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "SaleOrderLineList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/SaleOrderLine"
+    }
+   },
+   "PurchaseOrder": {
+    "type": "object",
+    "description": "purchase.order, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/purchase/models/purchase_order.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "state": {
+      "anyOf": [
+       {
+        "enum": [
+         "cancel",
+         "draft",
+         "purchase",
+         "sent",
+         "to approve"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date_order": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date_planned": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "amount_untaxed": {
+      "type": "number"
+     },
+     "amount_tax": {
+      "type": "number"
+     },
+     "amount_total": {
+      "type": "number"
+     },
+     "partner_ref": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "note": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "PurchaseOrderList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/PurchaseOrder"
+    }
+   },
+   "PurchaseOrderLine": {
+    "type": "object",
+    "description": "purchase.order.line, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/purchase/models/purchase_order_line.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "order_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "sequence": {
+      "type": "integer"
+     },
+     "display_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "line_note",
+         "line_section",
+         "line_subsection"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "product_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "product_qty": {
+      "type": "number"
+     },
+     "price_unit": {
+      "type": "number"
+     },
+     "discount": {
+      "type": "number"
+     },
+     "price_subtotal": {
+      "type": "number"
+     },
+     "price_tax": {
+      "type": "number"
+     },
+     "price_total": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "PurchaseOrderLineList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/PurchaseOrderLine"
+    }
+   },
+   "AccountMove": {
+    "type": "object",
+    "description": "account.move, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_move.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "move_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "entry",
+         "in_invoice",
+         "in_receipt",
+         "in_refund",
+         "out_invoice",
+         "out_receipt",
+         "out_refund"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "state": {
+      "anyOf": [
+       {
+        "enum": [
+         "cancel",
+         "draft",
+         "posted"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "commercial_partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "invoice_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "invoice_date_due": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "amount_total": {
+      "type": "number"
+     },
+     "amount_total_signed": {
+      "type": "number"
+     },
+     "ref": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "narration": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "reversed_entry_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "journal_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "origin_payment_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountMoveList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountMove"
+    }
+   },
+   "AccountMoveLine": {
+    "type": "object",
+    "description": "account.move.line, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_move_line.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "move_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "sequence": {
+      "type": "integer"
+     },
+     "display_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "cogs",
+         "discount",
+         "epd",
+         "line_note",
+         "line_section",
+         "line_subsection",
+         "non_deductible_product",
+         "non_deductible_product_total",
+         "non_deductible_tax",
+         "payment_term",
+         "product",
+         "rounding",
+         "tax"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "product_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "quantity": {
+      "type": "number"
+     },
+     "price_unit": {
+      "type": "number"
+     },
+     "discount": {
+      "type": "number"
+     },
+     "price_subtotal": {
+      "type": "number"
+     },
+     "account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "analytic_distribution": {
+      "anyOf": [
+       {
+        "type": "object"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "debit": {
+      "type": "number"
+     },
+     "credit": {
+      "type": "number"
+     },
+     "amount_currency": {
+      "type": "number"
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "matched_debit_ids": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     },
+     "matched_credit_ids": {
+      "type": "array",
+      "items": {
+       "type": "integer"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountMoveLineList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountMoveLine"
+    }
+   },
+   "AccountPartialReconcile": {
+    "type": "object",
+    "description": "account.partial.reconcile, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_partial_reconcile.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "debit_move_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "credit_move_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "amount": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountPartialReconcileList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountPartialReconcile"
+    }
+   },
+   "AccountPayment": {
+    "type": "object",
+    "description": "account.payment, transcribed from https://github.com/odoo/odoo/blob/0faf35b5ff680a172a73fc22230957c2771d32c9/addons/account/models/account_payment.py",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "payment_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "inbound",
+         "outbound"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_type": {
+      "anyOf": [
+       {
+        "enum": [
+         "customer",
+         "supplier"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "partner_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "amount": {
+      "type": "number"
+     },
+     "currency_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "state": {
+      "anyOf": [
+       {
+        "enum": [
+         "canceled",
+         "draft",
+         "in_process",
+         "paid",
+         "rejected"
+        ]
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "memo": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "move_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "outstanding_account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "destination_account_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "company_id": {
+      "anyOf": [
+       {
+        "type": "array",
+        "items": {
+         "type": [
+          "integer",
+          "string"
+         ]
+        }
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     },
+     "write_date": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "enum": [
+         false
+        ]
+       }
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "AccountPaymentList": {
+    "type": "array",
+    "items": {
+     "$ref": "#/components/schemas/AccountPayment"
+    }
+   }
+  }
+ }
+}

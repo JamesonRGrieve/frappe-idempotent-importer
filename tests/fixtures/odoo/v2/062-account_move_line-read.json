@@ -1,0 +1,42 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move.line/read",
+		"body": {
+			"fields": [
+				"move_id"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				313,
+				323,
+				512
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 313,
+			"move_id": [
+				31,
+				"INV/2026/00001"
+			]
+		},
+		{
+			"id": 323,
+			"move_id": [
+				32,
+				"RINV/2026/00001"
+			]
+		},
+		{
+			"id": 512,
+			"move_id": [
+				51,
+				"PBNK1/2026/00001"
+			]
+		}
+	]
+}

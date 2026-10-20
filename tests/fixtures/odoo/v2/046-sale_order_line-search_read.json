@@ -1,0 +1,115 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/sale.order.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"order_id",
+					"in",
+					[
+						1,
+						2
+					]
+				]
+			],
+			"fields": [
+				"order_id",
+				"sequence",
+				"display_type",
+				"product_id",
+				"name",
+				"product_uom_qty",
+				"price_unit",
+				"discount",
+				"price_subtotal",
+				"price_tax",
+				"price_total"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"order_id": [
+				1,
+				"S00001"
+			],
+			"sequence": 10,
+			"display_type": false,
+			"product_id": [
+				20,
+				"[CHAIR] Office Chair"
+			],
+			"name": "[CHAIR] Office Chair",
+			"product_uom_qty": 2.0,
+			"price_unit": 150.0,
+			"discount": 0.0,
+			"price_subtotal": 300.0,
+			"price_tax": 15.0,
+			"price_total": 315.0
+		},
+		{
+			"id": 2,
+			"order_id": [
+				1,
+				"S00001"
+			],
+			"sequence": 20,
+			"display_type": "line_note",
+			"product_id": false,
+			"name": "Deliver to the dock",
+			"product_uom_qty": 0.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"price_tax": 0.0,
+			"price_total": 0.0
+		},
+		{
+			"id": 3,
+			"order_id": [
+				2,
+				"S00002"
+			],
+			"sequence": 10,
+			"display_type": false,
+			"product_id": [
+				21,
+				"[DESK-OAK] Desk (Oak)"
+			],
+			"name": "[DESK-OAK] Desk (Oak)",
+			"product_uom_qty": 1.0,
+			"price_unit": 400.0,
+			"discount": 0.0,
+			"price_subtotal": 400.0,
+			"price_tax": 20.0,
+			"price_total": 420.0
+		},
+		{
+			"id": 4,
+			"order_id": [
+				2,
+				"S00002"
+			],
+			"sequence": 20,
+			"display_type": false,
+			"product_id": [
+				22,
+				"[DESK-WAL] Desk (Walnut)"
+			],
+			"name": "[DESK-WAL] Desk (Walnut)",
+			"product_uom_qty": 1.0,
+			"price_unit": 450.0,
+			"discount": 0.0,
+			"price_subtotal": 450.0,
+			"price_tax": 22.5,
+			"price_total": 472.5
+		}
+	]
+}

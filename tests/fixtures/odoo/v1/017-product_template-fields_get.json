@@ -1,0 +1,64 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.template/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"default_code": {
+			"type": "char"
+		},
+		"barcode": {
+			"type": "char"
+		},
+		"list_price": {
+			"type": "char"
+		},
+		"type": {
+			"type": "char"
+		},
+		"is_storable": {
+			"type": "char"
+		},
+		"categ_id": {
+			"type": "many2one"
+		},
+		"description_sale": {
+			"type": "char"
+		},
+		"sale_ok": {
+			"type": "char"
+		},
+		"purchase_ok": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"weight": {
+			"type": "char"
+		},
+		"qty_available": {
+			"type": "char"
+		},
+		"product_variant_count": {
+			"type": "char"
+		},
+		"is_published": {
+			"type": "char"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

@@ -26,7 +26,8 @@ stores can import into two businesses at once and never touch each other's recor
 | Magento / Adobe Commerce | Built | Categories, simple, virtual, downloadable and configurable products with prices, special prices, stock and images, customer groups, customers, cart price rules (with coupons and automatic), tier prices, orders (other currencies too) with payments, credit memos, shipments and comments, and CMS pages — [coverage/magento.md](coverage/magento.md) |
 | Lightspeed eCom (C-Series) | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, discount codes and rules, orders with payments, credit notes and shipments, text pages, blogs and articles, reviews and redirects — [coverage/lightspeed.md](coverage/lightspeed.md) |
 | Ecwid | Built | Categories, products with variations, prices, sales, stock and images, customers, discount coupons, wholesale price tiers, orders with payments, refunds and shipping labels, reviews and Instant Site redirects — [coverage/ecwid.md](coverage/ecwid.md) |
-| Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Odoo | Built | The chart of accounts, analytic accounts, warehouses, product categories and products with variants and stock, customers and suppliers with contacts and addresses, departments, job positions and employees, projects, leads and opportunities, quotations, sale and purchase orders, invoices and bills with credit notes, payments allocated to what they settle, and journal entries — [coverage/odoo.md](coverage/odoo.md) |
+| Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -123,6 +124,10 @@ This is the operator's decision to confirm (see below).
    - **Lightspeed eCom (C-Series):** create an API key with read permissions; enter the shop's URL, the
      cluster and shop language as the account (e.g. `us1/en`), the key as the user and its secret as the
      secret.
+   - **Odoo:** create an API key (Preferences → Account Security → New API Key) for a user who can read the
+     apps in [coverage/odoo.md](coverage/odoo.md); enter the database's URL, the database name as the account
+     (`<database>:<company id>` for one company of several) and the key as the secret, and choose **JSON-2
+     API Key** (Odoo 19 and later) or **JSON-RPC API Key** (Odoo 17 and 18, with the user's login).
    - **Ecwid:** create a custom app with the read scopes in [coverage/ecwid.md](coverage/ecwid.md); enter the
      store's URL, its store ID as the account and the app's secret access token as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
@@ -270,6 +275,11 @@ Each of these is the operator's call.
 23. **Leads sharing an email:** ERPNext refuses a second Lead with the same email unless CRM Settings'
     "Allow Lead Duplication based on Emails" is on; turn it on when several connections (or a source)
     hold leads with one address, or the later ones aren't mirrored (reported).
+24. **Archived records stay live:** an account, cost center or product a source archived stays enabled
+    (and a customer, supplier, department or lead disabled but linked), so the history that names it still
+    books.
+25. **A stock item bought without a receipt** books to Stock Received But Not Billed, as ERPNext's perpetual
+    inventory requires, not to the expense account the source's bill line names.
 
 ## Next steps
 
@@ -279,7 +289,7 @@ Still to do:
 2. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-3. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
+3. **ERP and HR sources** (PeopleSoft, Agendrix, NetSuite, …): a later phase.
 4. **Native mirroring still to build (card 386):** multi-location stock as one Warehouse per source
    location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist; units of measure
    (Square's measurement units, Ecwid's carats); itemised refunds where the source gives the refunded items

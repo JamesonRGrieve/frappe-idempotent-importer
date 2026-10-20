@@ -1,0 +1,57 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/purchase.order.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"order_id",
+					"in",
+					[
+						1
+					]
+				]
+			],
+			"fields": [
+				"order_id",
+				"sequence",
+				"display_type",
+				"product_id",
+				"name",
+				"product_qty",
+				"price_unit",
+				"discount",
+				"price_subtotal",
+				"price_tax",
+				"price_total"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"order_id": [
+				1,
+				"P00001"
+			],
+			"sequence": 10,
+			"display_type": false,
+			"product_id": [
+				20,
+				"[CHAIR] Office Chair"
+			],
+			"name": "[CHAIR] Office Chair",
+			"product_qty": 10.0,
+			"price_unit": 80.0,
+			"discount": 0.0,
+			"price_subtotal": 800.0,
+			"price_tax": 40.0,
+			"price_total": 840.0
+		}
+	]
+}

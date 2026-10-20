@@ -52,6 +52,7 @@ SOURCES=(
 	magento-m:magento-fake:assert_magento
 	lightspeed-l:lightspeed-fake:assert_lightspeed
 	ecwid-c:ecwid-fake:assert_ecwid
+	odoo-o:odoo-fake:assert_odoo
 )
 # The connections approved through OAuth 2: Connect is proven on each.
 OAUTH_CONNECTIONS=(etsy-e)

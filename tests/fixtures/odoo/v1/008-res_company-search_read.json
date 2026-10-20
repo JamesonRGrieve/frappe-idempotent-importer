@@ -1,0 +1,33 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.company/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"currency_id",
+				"partner_id"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Harbour Pine Trading",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"partner_id": [
+				1,
+				"Harbour Pine Trading"
+			]
+		}
+	]
+}

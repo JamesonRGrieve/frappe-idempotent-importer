@@ -1,0 +1,52 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/purchase.order/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"state",
+				"partner_id",
+				"date_order",
+				"date_planned",
+				"currency_id",
+				"amount_untaxed",
+				"amount_tax",
+				"amount_total",
+				"partner_ref",
+				"note",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "P00001",
+			"state": "cancel",
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"date_order": "2026-02-27 12:00:00",
+			"date_planned": "2026-03-06 12:00:00",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_untaxed": 800.0,
+			"amount_tax": 40.0,
+			"amount_total": 840.0,
+			"partner_ref": "WC-SO-301",
+			"note": false,
+			"write_date": "2026-04-01 09:00:00"
+		}
+	]
+}

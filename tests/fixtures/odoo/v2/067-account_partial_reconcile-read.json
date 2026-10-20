@@ -1,0 +1,33 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.partial.reconcile/read",
+		"body": {
+			"fields": [
+				"debit_move_id",
+				"credit_move_id",
+				"amount"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				63
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 63,
+			"debit_move_id": [
+				521,
+				"PBNK1/2026/00002"
+			],
+			"credit_move_id": [
+				333,
+				"WC-INV-9001"
+			],
+			"amount": 840.0
+		}
+	]
+}

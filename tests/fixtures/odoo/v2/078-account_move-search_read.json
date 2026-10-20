@@ -1,0 +1,102 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move/search_read",
+		"body": {
+			"domain": [
+				[
+					"move_type",
+					"=",
+					"entry"
+				],
+				"|",
+				[
+					"origin_payment_id",
+					"=",
+					false
+				],
+				[
+					"origin_payment_id.partner_id",
+					"=",
+					false
+				]
+			],
+			"fields": [
+				"name",
+				"move_type",
+				"state",
+				"partner_id",
+				"commercial_partner_id",
+				"invoice_date",
+				"invoice_date_due",
+				"date",
+				"currency_id",
+				"amount_total",
+				"amount_total_signed",
+				"ref",
+				"narration",
+				"reversed_entry_id",
+				"journal_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 34,
+			"name": "MISC/2026/03/0001",
+			"move_type": "entry",
+			"state": "posted",
+			"partner_id": false,
+			"commercial_partner_id": false,
+			"invoice_date": false,
+			"invoice_date_due": false,
+			"date": "2026-03-01",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 1100.0,
+			"amount_total_signed": 1100.0,
+			"ref": "March rent",
+			"narration": false,
+			"reversed_entry_id": false,
+			"journal_id": [
+				3,
+				"Miscellaneous Operations"
+			],
+			"write_date": "2026-04-01 09:00:00"
+		},
+		{
+			"id": 35,
+			"name": "BNK1/2026/00001",
+			"move_type": "entry",
+			"state": "posted",
+			"partner_id": false,
+			"commercial_partner_id": false,
+			"invoice_date": false,
+			"invoice_date_due": false,
+			"date": "2026-03-11",
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"amount_total": 157.5,
+			"amount_total_signed": 157.5,
+			"ref": false,
+			"narration": false,
+			"reversed_entry_id": false,
+			"journal_id": [
+				4,
+				"Bank"
+			],
+			"write_date": false
+		}
+	]
+}

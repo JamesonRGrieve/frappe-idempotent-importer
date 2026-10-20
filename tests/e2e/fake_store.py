@@ -70,6 +70,7 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		{"Authorization": "Basic " + base64.b64encode(b"e2e-lightspeed-key:e2e-lightspeed-secret").decode()},
 	),
 	"ecwid-fake": ("ecwid", {"Authorization": "Bearer e2e-ecwid-token"}),
+	"odoo-fake": ("odoo", {"Authorization": "bearer e2e-odoo-key", "X-Odoo-Database": "harbour"}),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400

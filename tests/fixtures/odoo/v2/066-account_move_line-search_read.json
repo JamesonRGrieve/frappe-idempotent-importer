@@ -1,0 +1,148 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"move_id",
+					"in",
+					[
+						33
+					]
+				]
+			],
+			"fields": [
+				"move_id",
+				"sequence",
+				"display_type",
+				"product_id",
+				"name",
+				"quantity",
+				"price_unit",
+				"discount",
+				"price_subtotal",
+				"account_id",
+				"partner_id",
+				"analytic_distribution",
+				"debit",
+				"credit",
+				"amount_currency",
+				"currency_id",
+				"matched_debit_ids",
+				"matched_credit_ids"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 331,
+			"move_id": [
+				33,
+				"BILL/2026/03/0001"
+			],
+			"sequence": 10,
+			"display_type": "product",
+			"product_id": [
+				20,
+				"[CHAIR] Office Chair"
+			],
+			"name": "[CHAIR] Office Chair",
+			"quantity": 10.0,
+			"price_unit": 80.0,
+			"discount": 0.0,
+			"price_subtotal": 800.0,
+			"account_id": [
+				107,
+				"Expenses"
+			],
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"analytic_distribution": false,
+			"debit": 800.0,
+			"credit": 0.0,
+			"amount_currency": 800.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		},
+		{
+			"id": 332,
+			"move_id": [
+				33,
+				"BILL/2026/03/0001"
+			],
+			"sequence": 10,
+			"display_type": "tax",
+			"product_id": false,
+			"name": "GST 5%",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				109,
+				"Tax Paid"
+			],
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"analytic_distribution": false,
+			"debit": 40.0,
+			"credit": 0.0,
+			"amount_currency": 40.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		},
+		{
+			"id": 333,
+			"move_id": [
+				33,
+				"BILL/2026/03/0001"
+			],
+			"sequence": 10,
+			"display_type": "payment_term",
+			"product_id": false,
+			"name": "WC-INV-9001",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				102,
+				"Account Payable"
+			],
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"analytic_distribution": false,
+			"debit": 0.0,
+			"credit": 840.0,
+			"amount_currency": -840.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [
+				63
+			],
+			"matched_credit_ids": []
+		}
+	]
+}

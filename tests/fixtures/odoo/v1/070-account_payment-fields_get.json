@@ -1,0 +1,58 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.payment/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"payment_type": {
+			"type": "char"
+		},
+		"partner_type": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"amount": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"date": {
+			"type": "char"
+		},
+		"state": {
+			"type": "char"
+		},
+		"memo": {
+			"type": "char"
+		},
+		"move_id": {
+			"type": "many2one"
+		},
+		"outstanding_account_id": {
+			"type": "many2one"
+		},
+		"destination_account_id": {
+			"type": "many2one"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

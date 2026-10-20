@@ -1,0 +1,19 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.tax.repartition.line/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"account_id": {
+			"type": "many2one"
+		}
+	}
+}

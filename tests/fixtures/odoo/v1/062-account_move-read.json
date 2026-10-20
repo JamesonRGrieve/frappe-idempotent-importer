@@ -1,0 +1,33 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move/read",
+		"body": {
+			"fields": [
+				"move_type"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				31,
+				32,
+				51
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 31,
+			"move_type": "out_invoice"
+		},
+		{
+			"id": 32,
+			"move_type": "out_refund"
+		},
+		{
+			"id": 51,
+			"move_type": "entry"
+		}
+	]
+}

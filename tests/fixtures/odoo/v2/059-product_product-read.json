@@ -1,0 +1,37 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.product/read",
+		"body": {
+			"fields": [
+				"product_tmpl_id",
+				"product_variant_count"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				20,
+				23
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 20,
+			"product_tmpl_id": [
+				10,
+				"Office Chair"
+			],
+			"product_variant_count": 1
+		},
+		{
+			"id": 23,
+			"product_tmpl_id": [
+				12,
+				"Consulting"
+			],
+			"product_variant_count": 1
+		}
+	]
+}

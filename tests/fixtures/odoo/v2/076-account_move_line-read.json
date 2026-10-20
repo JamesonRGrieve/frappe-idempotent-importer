@@ -1,0 +1,50 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move.line/read",
+		"body": {
+			"fields": [
+				"move_id"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				313,
+				333,
+				512,
+				521
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 313,
+			"move_id": [
+				31,
+				"INV/2026/00001"
+			]
+		},
+		{
+			"id": 333,
+			"move_id": [
+				33,
+				"BILL/2026/03/0001"
+			]
+		},
+		{
+			"id": 512,
+			"move_id": [
+				51,
+				"PBNK1/2026/00001"
+			]
+		},
+		{
+			"id": 521,
+			"move_id": [
+				52,
+				"PBNK1/2026/00002"
+			]
+		}
+	]
+}

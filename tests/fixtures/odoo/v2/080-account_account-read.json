@@ -1,0 +1,33 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.account/read",
+		"body": {
+			"fields": [
+				"account_type"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				103,
+				104,
+				107
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 103,
+			"account_type": "asset_cash"
+		},
+		{
+			"id": 104,
+			"account_type": "asset_current"
+		},
+		{
+			"id": 107,
+			"account_type": "expense"
+		}
+	]
+}

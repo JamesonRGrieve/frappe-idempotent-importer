@@ -1,0 +1,70 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"move_type": {
+			"type": "char"
+		},
+		"state": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"commercial_partner_id": {
+			"type": "many2one"
+		},
+		"invoice_date": {
+			"type": "char"
+		},
+		"invoice_date_due": {
+			"type": "char"
+		},
+		"date": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"amount_total": {
+			"type": "char"
+		},
+		"amount_total_signed": {
+			"type": "char"
+		},
+		"ref": {
+			"type": "char"
+		},
+		"narration": {
+			"type": "char"
+		},
+		"reversed_entry_id": {
+			"type": "many2one"
+		},
+		"journal_id": {
+			"type": "many2one"
+		},
+		"origin_payment_id": {
+			"type": "many2one"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

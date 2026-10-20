@@ -1,0 +1,19 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.users/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		}
+	}
+}

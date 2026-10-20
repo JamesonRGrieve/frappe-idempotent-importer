@@ -1,0 +1,37 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.template.attribute.value/read",
+		"body": {
+			"fields": [
+				"name",
+				"attribute_id"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				1,
+				2
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Oak",
+			"attribute_id": [
+				1,
+				"Wood"
+			]
+		},
+		{
+			"id": 2,
+			"name": "Walnut",
+			"attribute_id": [
+				1,
+				"Wood"
+			]
+		}
+	]
+}

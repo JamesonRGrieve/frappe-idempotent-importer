@@ -1,0 +1,105 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.payment/search_read",
+		"body": {
+			"domain": [
+				[
+					"partner_id",
+					"!=",
+					false
+				],
+				[
+					"move_id",
+					"!=",
+					false
+				]
+			],
+			"fields": [
+				"name",
+				"payment_type",
+				"partner_type",
+				"partner_id",
+				"amount",
+				"currency_id",
+				"date",
+				"state",
+				"memo",
+				"move_id",
+				"outstanding_account_id",
+				"destination_account_id",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 41,
+			"name": "PBNK1/2026/00001",
+			"payment_type": "inbound",
+			"partner_type": "customer",
+			"partner_id": [
+				7,
+				"Deco Addict"
+			],
+			"amount": 157.5,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"date": "2026-03-10",
+			"state": "paid",
+			"memo": "INV/2026/00001",
+			"move_id": [
+				51,
+				"PBNK1/2026/00001"
+			],
+			"outstanding_account_id": [
+				104,
+				"101402 Outstanding Receipts"
+			],
+			"destination_account_id": [
+				101,
+				"121000 Account Receivable"
+			],
+			"write_date": false
+		},
+		{
+			"id": 42,
+			"name": "PBNK1/2026/00002",
+			"payment_type": "outbound",
+			"partner_type": "supplier",
+			"partner_id": [
+				14,
+				"Wood Corner"
+			],
+			"amount": 840.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"date": "2026-03-12",
+			"state": "paid",
+			"memo": "WC-INV-9001",
+			"move_id": [
+				52,
+				"PBNK1/2026/00002"
+			],
+			"outstanding_account_id": [
+				105,
+				"101403 Outstanding Payments"
+			],
+			"destination_account_id": [
+				102,
+				"211000 Account Payable"
+			],
+			"write_date": false
+		}
+	]
+}

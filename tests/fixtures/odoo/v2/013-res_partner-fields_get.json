@@ -1,0 +1,79 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"is_company": {
+			"type": "char"
+		},
+		"parent_id": {
+			"type": "many2one"
+		},
+		"type": {
+			"type": "char"
+		},
+		"street": {
+			"type": "char"
+		},
+		"street2": {
+			"type": "char"
+		},
+		"city": {
+			"type": "char"
+		},
+		"state_id": {
+			"type": "many2one"
+		},
+		"zip": {
+			"type": "char"
+		},
+		"country_code": {
+			"type": "char"
+		},
+		"email": {
+			"type": "char"
+		},
+		"phone": {
+			"type": "char"
+		},
+		"vat": {
+			"type": "char"
+		},
+		"ref": {
+			"type": "char"
+		},
+		"website": {
+			"type": "char"
+		},
+		"function": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"write_date": {
+			"type": "char"
+		},
+		"commercial_partner_id": {
+			"type": "many2one"
+		},
+		"customer_rank": {
+			"type": "char"
+		},
+		"supplier_rank": {
+			"type": "char"
+		}
+	}
+}

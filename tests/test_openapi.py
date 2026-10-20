@@ -109,6 +109,7 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"magento",
 		"lightspeed",
 		"ecwid",
+		"odoo",
 	}
 	assert all(document.committed or document.sha256 or "/" in document.url for document in catalog())
 	assert [document.name for document in for_source("wix")] == ["rest-reference"]

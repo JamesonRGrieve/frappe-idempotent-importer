@@ -1,0 +1,93 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/search_read",
+		"body": {
+			"domain": [
+				[
+					"parent_id",
+					"in",
+					[
+						7,
+						16
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"is_company",
+				"parent_id",
+				"type",
+				"street",
+				"street2",
+				"city",
+				"state_id",
+				"zip",
+				"country_code",
+				"email",
+				"phone",
+				"vat",
+				"ref",
+				"website",
+				"function",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 8,
+			"name": "Douglas Fletcher",
+			"is_company": false,
+			"parent_id": [
+				7,
+				"Deco Addict"
+			],
+			"type": "contact",
+			"street": false,
+			"street2": false,
+			"city": false,
+			"state_id": false,
+			"zip": false,
+			"country_code": false,
+			"email": "douglas.fletcher@decoaddict.example",
+			"phone": false,
+			"vat": false,
+			"ref": false,
+			"website": false,
+			"function": "Purchasing Manager",
+			"active": true,
+			"write_date": "2026-03-01 09:00:00"
+		},
+		{
+			"id": 9,
+			"name": "Deco Addict, Warehouse",
+			"is_company": false,
+			"parent_id": [
+				7,
+				"Deco Addict"
+			],
+			"type": "delivery",
+			"street": "5 Dock Lane",
+			"street2": false,
+			"city": "Calgary",
+			"state_id": false,
+			"zip": "T2G 0A1",
+			"country_code": "CA",
+			"email": false,
+			"phone": false,
+			"vat": false,
+			"ref": false,
+			"website": false,
+			"function": false,
+			"active": true,
+			"write_date": "2026-03-01 09:00:00"
+		}
+	]
+}

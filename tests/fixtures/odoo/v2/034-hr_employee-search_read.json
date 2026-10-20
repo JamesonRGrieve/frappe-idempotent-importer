@@ -1,0 +1,79 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/hr.employee/search_read",
+		"body": {
+			"domain": [],
+			"fields": [
+				"name",
+				"sex",
+				"birthday",
+				"department_id",
+				"job_id",
+				"parent_id",
+				"work_email",
+				"private_email",
+				"mobile_phone",
+				"work_phone",
+				"active",
+				"departure_date",
+				"contract_date_start",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			},
+			"limit": 200
+		}
+	},
+	"response": [
+		{
+			"id": 1,
+			"name": "Mitchell Admin",
+			"sex": "male",
+			"birthday": "1980-02-14",
+			"department_id": [
+				1,
+				"Administration"
+			],
+			"job_id": false,
+			"parent_id": false,
+			"work_email": "admin@harbourpine.example",
+			"private_email": false,
+			"mobile_phone": "+1 780 555 0100",
+			"work_phone": false,
+			"active": true,
+			"departure_date": false,
+			"contract_date_start": "2020-01-06",
+			"write_date": false
+		},
+		{
+			"id": 2,
+			"name": "Marc Demo",
+			"sex": false,
+			"birthday": false,
+			"department_id": [
+				2,
+				"Administration / Sales"
+			],
+			"job_id": [
+				1,
+				"Sales Manager"
+			],
+			"parent_id": [
+				1,
+				"Mitchell Admin"
+			],
+			"work_email": "marc@harbourpine.example",
+			"private_email": false,
+			"mobile_phone": false,
+			"work_phone": "+1 780 555 0101",
+			"active": false,
+			"departure_date": "2026-03-31",
+			"contract_date_start": false,
+			"write_date": "2026-04-01 09:00:00"
+		}
+	]
+}

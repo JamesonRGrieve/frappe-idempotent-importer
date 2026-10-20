@@ -188,6 +188,16 @@ BUSINESSES = (
 		{"api_account": "us1/en", "api_user": "e2e-lightspeed-key", "api_secret": "e2e-lightspeed-secret"},
 	),
 	Business(
+		"OD",
+		"Store O",
+		"odoo-o",
+		"Odoo",
+		"odoo",
+		"odoo-fake",
+		"http://odoo-fake:8080",
+		{"auth_method": "JSON-2 API Key", "api_account": "harbour", "api_secret": "e2e-odoo-key"},
+	),
+	Business(
 		"EC",
 		"Store W",
 		"ecwid-c",
@@ -485,6 +495,7 @@ def main() -> None:
 		"assert_magento": assert_magento,
 		"assert_lightspeed": assert_lightspeed,
 		"assert_ecwid": assert_ecwid,
+		"assert_odoo": assert_odoo,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2050,6 +2061,149 @@ def assert_lightspeed(state: str) -> None:
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "703"), "customer"),
 		target(connection, "customer", "Customer", "803"),
 		"new order ORD00003, linked to the new customer",
+	)
+
+
+@check
+def assert_odoo(state: str) -> None:
+	"""Odoo's books and business: the chart, products and stock, partners, people, the pipeline, orders,
+	invoices with their credit note, payments that settle them, and journal entries."""
+	connection = "odoo-o"
+	sales = target(connection, "account", "Account", "106")
+	expect(
+		frappe.db.get_value("Account", sales, ["account_number", "root_type", "account_type"]),
+		("400000", "Income", "Income Account"),
+		"the product sales account",
+	)
+	expect(
+		frappe.db.get_value("Account", target(connection, "account", "Account", "104"), "account_type"),
+		"Bank",
+		"outstanding receipts, which payments go into",
+	)
+	expect(
+		frappe.db.get_value("Importer Link", {"connection": connection, "gid": ["like", "%/Account/110"]}),
+		None,
+		"an off-balance account",
+	)
+	chair = target(connection, "product", "Product", "10")
+	expect((chair, stock_of(connection, chair)), ("OD-CHAIR", amount("12")), "the chair: its code and stock")
+	expect(
+		frappe.db.get_value("Item", part(connection, "variant", "Variant/22"), "item_code"),
+		"OD-DESK-WAL",
+		"the walnut desk",
+	)
+	deco = target(connection, "customer", "Partner", "7")
+	expect(frappe.db.get_value("Customer", deco, "tax_id"), "CA123456789", "Deco Addict's tax id")
+	invoice = target(connection, "sales_invoice", "Move", "31")
+	expect(
+		[
+			amount(value)
+			for value in frappe.db.get_value(
+				"Sales Invoice", invoice, ["docstatus", "grand_total", "outstanding_amount"]
+			)
+		],
+		[amount("1"), amount("315"), amount("0")],
+		"INV/2026/00001: posted, and settled by its credit note and payment",
+	)
+	credit = target(connection, "sales_invoice", "Move", "32")
+	expect(
+		frappe.db.get_value("Sales Invoice", credit, ["is_return", "return_against"]),
+		(1, invoice),
+		"the credit note, against the invoice",
+	)
+	bill = target(connection, "purchase_invoice", "Move", "33")
+	expect(
+		amount(frappe.db.get_value("Purchase Invoice", bill, "outstanding_amount")),
+		amount("0"),
+		"the paid bill",
+	)
+	expect(
+		frappe.db.get_value(
+			"Payment Entry", target(connection, "payment_entry", "Payment", "41"), "docstatus"
+		),
+		1,
+		"the customer's payment",
+	)
+	expect(
+		frappe.db.get_value("Sales Order", target(connection, "sales_order", "SaleOrder", "1"), "docstatus"),
+		1,
+		"the confirmed sale order",
+	)
+	employee = target(connection, "employee", "Employee", "2")
+	expect(
+		frappe.db.get_value("Employee", employee, "reports_to"),
+		target(connection, "employee", "Employee", "1"),
+		"Marc's manager",
+	)
+	opportunity = target(connection, "opportunity", "CrmLead", "3")
+	expect(
+		frappe.db.get_value("Opportunity", opportunity, ["opportunity_from", "party_name"]),
+		("Lead", target(connection, "lead", "CrmLead", "3")),
+		"an opportunity with no customer, with its lead",
+	)
+	rent = target(connection, "journal_entry", "Move", "34")
+	if state == "v1":
+		expect(item_price(connection, chair), amount("150"), "the chair's price")
+		expect(
+			amount(frappe.db.get_value("Journal Entry", rent, "total_debit")), amount("1000"), "March's rent"
+		)
+		expect(
+			frappe.db.get_value(
+				"Quotation", target(connection, "draft_order", "SaleOrder", "2"), "docstatus"
+			),
+			0,
+			"the quotation",
+		)
+		expect(
+			frappe.db.get_value(
+				"Purchase Order", target(connection, "purchase_order", "PurchaseOrder", "1"), "docstatus"
+			),
+			1,
+			"the confirmed purchase order",
+		)
+		return
+	expect(item_price(connection, chair), amount("155"), "the chair's new price")
+	expect(
+		(
+			amount(frappe.db.get_value("Journal Entry", rent, "total_debit")),
+			frappe.db.get_value("Journal Entry", rent, "amended_from") is not None,
+		),
+		(amount("1100"), True),
+		"the corrected rent, amended",
+	)
+	expect(
+		frappe.db.get_value("Sales Order", target(connection, "sales_order", "SaleOrder", "2"), "docstatus"),
+		1,
+		"the confirmed quotation's order",
+	)
+	expect(
+		frappe.db.get_value(
+			"Purchase Order", target(connection, "purchase_order", "PurchaseOrder", "1"), "docstatus"
+		),
+		2,
+		"the cancelled purchase order",
+	)
+	expect(
+		frappe.db.get_value("Employee", employee, ["status", "relieving_date"]),
+		("Left", frappe.utils.getdate("2026-03-31")),
+		"Marc left",
+	)
+	expect(
+		frappe.db.get_value("Customer", target(connection, "customer", "Partner", "16"), "disabled"),
+		1,
+		"an archived customer",
+	)
+	expect(frappe.db.get_value("Opportunity", opportunity, "status"), "Lost", "the lost opportunity")
+	lead = frappe.db.get_value(
+		"Importer Link",
+		{"connection": connection, "kind": "lead", "gid": ["like", "%/CrmLead/1"]},
+		"target_name",
+	)
+	expect(frappe.db.get_value("Lead", lead, "disabled"), 1, "a lead deleted at the source")
+	expect(
+		frappe.db.get_value("Sales Invoice", target(connection, "sales_invoice", "Move", "36"), "docstatus"),
+		0,
+		"a draft invoice",
 	)
 
 

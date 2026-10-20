@@ -1,0 +1,55 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/purchase.order/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"state": {
+			"type": "char"
+		},
+		"partner_id": {
+			"type": "many2one"
+		},
+		"date_order": {
+			"type": "char"
+		},
+		"date_planned": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"amount_untaxed": {
+			"type": "char"
+		},
+		"amount_tax": {
+			"type": "char"
+		},
+		"amount_total": {
+			"type": "char"
+		},
+		"partner_ref": {
+			"type": "char"
+		},
+		"note": {
+			"type": "char"
+		},
+		"company_id": {
+			"type": "many2one"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

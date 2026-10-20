@@ -1,0 +1,26 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/read",
+		"body": {
+			"fields": [
+				"commercial_partner_id"
+			],
+			"context": {
+				"active_test": false
+			},
+			"ids": [
+				8
+			]
+		}
+	},
+	"response": [
+		{
+			"id": 8,
+			"commercial_partner_id": [
+				7,
+				"Deco Addict"
+			]
+		}
+	]
+}

@@ -1,0 +1,43 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/product.product/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"product_tmpl_id": {
+			"type": "many2one"
+		},
+		"default_code": {
+			"type": "char"
+		},
+		"barcode": {
+			"type": "char"
+		},
+		"lst_price": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"qty_available": {
+			"type": "char"
+		},
+		"weight": {
+			"type": "char"
+		},
+		"product_template_attribute_value_ids": {
+			"type": "char"
+		},
+		"product_variant_count": {
+			"type": "char"
+		}
+	}
+}

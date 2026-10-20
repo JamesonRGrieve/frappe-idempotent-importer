@@ -1,0 +1,25 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.partial.reconcile/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"debit_move_id": {
+			"type": "many2one"
+		},
+		"credit_move_id": {
+			"type": "many2one"
+		},
+		"amount": {
+			"type": "char"
+		}
+	}
+}

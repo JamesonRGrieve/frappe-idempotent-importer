@@ -1,0 +1,19 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.payment.method.line/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"payment_account_id": {
+			"type": "many2one"
+		}
+	}
+}

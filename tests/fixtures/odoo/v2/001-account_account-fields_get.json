@@ -1,0 +1,37 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.account/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"code": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"account_type": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"reconcile": {
+			"type": "char"
+		},
+		"active": {
+			"type": "char"
+		},
+		"write_date": {
+			"type": "char"
+		}
+	}
+}

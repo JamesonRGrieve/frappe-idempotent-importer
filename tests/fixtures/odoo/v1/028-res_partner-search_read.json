@@ -1,0 +1,43 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.partner/search_read",
+		"body": {
+			"domain": [
+				[
+					"parent_id",
+					"in",
+					[
+						14
+					]
+				]
+			],
+			"fields": [
+				"name",
+				"is_company",
+				"parent_id",
+				"type",
+				"street",
+				"street2",
+				"city",
+				"state_id",
+				"zip",
+				"country_code",
+				"email",
+				"phone",
+				"vat",
+				"ref",
+				"website",
+				"function",
+				"active",
+				"write_date"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": []
+}

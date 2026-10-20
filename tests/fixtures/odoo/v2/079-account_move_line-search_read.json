@@ -1,0 +1,165 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/account.move.line/search_read",
+		"body": {
+			"domain": [
+				[
+					"move_id",
+					"in",
+					[
+						34,
+						35
+					]
+				]
+			],
+			"fields": [
+				"move_id",
+				"sequence",
+				"display_type",
+				"product_id",
+				"name",
+				"quantity",
+				"price_unit",
+				"discount",
+				"price_subtotal",
+				"account_id",
+				"partner_id",
+				"analytic_distribution",
+				"debit",
+				"credit",
+				"amount_currency",
+				"currency_id",
+				"matched_debit_ids",
+				"matched_credit_ids"
+			],
+			"offset": 0,
+			"order": "id asc",
+			"context": {
+				"active_test": false
+			}
+		}
+	},
+	"response": [
+		{
+			"id": 341,
+			"move_id": [
+				34,
+				"MISC/2026/03/0001"
+			],
+			"sequence": 10,
+			"display_type": "product",
+			"product_id": false,
+			"name": "Rent",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				107,
+				"Expenses"
+			],
+			"partner_id": false,
+			"analytic_distribution": false,
+			"debit": 1100.0,
+			"credit": 0.0,
+			"amount_currency": 1100.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		},
+		{
+			"id": 342,
+			"move_id": [
+				34,
+				"MISC/2026/03/0001"
+			],
+			"sequence": 10,
+			"display_type": "product",
+			"product_id": false,
+			"name": "Rent",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				103,
+				"Bank"
+			],
+			"partner_id": false,
+			"analytic_distribution": false,
+			"debit": 0.0,
+			"credit": 1100.0,
+			"amount_currency": -1100.0,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		},
+		{
+			"id": 351,
+			"move_id": [
+				35,
+				"BNK1/2026/00001"
+			],
+			"sequence": 10,
+			"display_type": "product",
+			"product_id": false,
+			"name": "Deco Addict payment",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				103,
+				"Bank"
+			],
+			"partner_id": false,
+			"analytic_distribution": false,
+			"debit": 157.5,
+			"credit": 0.0,
+			"amount_currency": 157.5,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		},
+		{
+			"id": 352,
+			"move_id": [
+				35,
+				"BNK1/2026/00001"
+			],
+			"sequence": 10,
+			"display_type": "product",
+			"product_id": false,
+			"name": "Deco Addict payment",
+			"quantity": 1.0,
+			"price_unit": 0.0,
+			"discount": 0.0,
+			"price_subtotal": 0.0,
+			"account_id": [
+				104,
+				"Outstanding Receipts"
+			],
+			"partner_id": false,
+			"analytic_distribution": false,
+			"debit": 0.0,
+			"credit": 157.5,
+			"amount_currency": -157.5,
+			"currency_id": [
+				1,
+				"CAD"
+			],
+			"matched_debit_ids": [],
+			"matched_credit_ids": []
+		}
+	]
+}

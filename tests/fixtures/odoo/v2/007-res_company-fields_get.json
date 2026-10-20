@@ -1,0 +1,25 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/json/2/res.company/fields_get",
+		"body": {
+			"attributes": [
+				"type"
+			]
+		}
+	},
+	"response": {
+		"id": {
+			"type": "char"
+		},
+		"name": {
+			"type": "char"
+		},
+		"currency_id": {
+			"type": "many2one"
+		},
+		"partner_id": {
+			"type": "many2one"
+		}
+	}
+}

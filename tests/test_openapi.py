@@ -4,6 +4,9 @@ the pinned spec catalog (tools/specs.py)."""
 
 from __future__ import annotations
 
+import io
+import re
+import zipfile
 from typing import Any
 
 import pytest
@@ -11,7 +14,7 @@ import pytest
 from tests.support.fixtures import FIXTURES, rest_fixtures, states
 from tools.openapi import SWAGGER_REF_PREFIX, ApiSpec, OpenApiValidator
 from tools.proofs import invalid_source_fixtures
-from tools.specs import catalog, for_source, sources
+from tools.specs import SpecDocument, XsdDocument, catalog, for_source, sources
 
 SCHEMAS: dict[str, dict[str, Any]] = {
 	"Product": {
@@ -113,13 +116,34 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"dynamics_business_central",
 		"dynamics_sales",
 		"dynamics_finance_operations",
+		"quickbooks_online",
+		"xero",
+		"zoho_books",
+		"zoho_inventory",
 	}
-	assert all(document.committed or document.sha256 or "/" in document.url for document in catalog())
+	commit = re.compile(r"/[0-9a-f]{40}/")
+	for document in catalog():
+		if isinstance(document, XsdDocument):
+			assert commit.search(document.base_url), document.name
+		else:
+			# A committed transcription, a pinned hash, or a URL naming a commit or version.
+			assert document.committed or document.sha256 or "/" in document.url, document.name
 	assert [document.name for document in for_source("wix")] == ["rest-reference"]
 
 
+def test_a_document_inside_an_archive_is_its_member() -> None:
+	archive = io.BytesIO()
+	with zipfile.ZipFile(archive, "w") as zipped:
+		zipped.writestr("items.yml", "openapi: 3.0.0\n")
+	document = next(d for d in catalog() if isinstance(d, SpecDocument) and d.member == "items.yml")
+	assert document.document(archive.getvalue()) == b"openapi: 3.0.0\n"
+	assert document.path().name == "openapi-all.zip"
+
+
 def test_a_document_changed_upstream_fails_loudly() -> None:
-	pinned = next(document for document in catalog() if document.sha256)
+	pinned = next(
+		document for document in catalog() if isinstance(document, SpecDocument) and document.sha256
+	)
 	with pytest.raises(RuntimeError, match="has changed"):
 		pinned.verify(b"{}")
 

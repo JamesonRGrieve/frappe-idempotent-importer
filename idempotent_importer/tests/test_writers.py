@@ -1797,6 +1797,51 @@ class TestWriters(IntegrationTestCase):
 			self.retire(kind, writer, key)
 			self.assertEqual(frappe.db.get_value(doctype, invoice, "docstatus"), 2)
 
+	def test_a_refund_paid_out_on_a_credit_note_settles_it(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		note_key = gid("Move", "RefundReceipt")
+		note = replace(self.trade(gid("Customer", "1"), qty="-1"), number="RR/1", is_return=True)
+		self.mirror(Kind.SALES_INVOICE, SalesInvoiceWriter, note_key, trade_fields(note))
+		credit = self.target(Kind.SALES_INVOICE, note_key)
+		refund = payment_fields(
+			Payment(
+				"Pay",
+				"Customer",
+				gid("Customer", "1"),
+				"2026-06-06",
+				Decimal("26.25"),
+				"CAD",
+				[Allocation(Kind.SALES_INVOICE, note_key, Decimal("26.25"))],
+			)
+		)
+		self.assertEqual(
+			self.mirror(Kind.PAYMENT_ENTRY, PaymentEntryWriter, gid("Payment", "Refund"), refund),
+			Outcome.CREATED,
+		)
+		self.assertEqual(
+			Decimal(str(frappe.db.get_value("Sales Invoice", credit, "outstanding_amount"))),
+			Decimal(0),
+			"the refund settles the credit note's negative balance",
+		)
+
+	def test_a_document_of_a_retired_party_is_still_cancelled(self) -> None:
+		customer = gid("Customer", "1")
+		self.mirror(Kind.CUSTOMER, CustomerWriter, customer, self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		key = gid("Move", "OfRetired")
+		self.mirror(Kind.SALES_INVOICE, SalesInvoiceWriter, key, trade_fields(self.trade(customer)))
+		invoice = self.target(Kind.SALES_INVOICE, key)
+		name = self.target(Kind.CUSTOMER, customer)
+		self.assertEqual(self.retire(Kind.CUSTOMER, CustomerWriter, customer), Outcome.RETIRED)
+		self.assertEqual(self.retire(Kind.SALES_INVOICE, SalesInvoiceWriter, key), Outcome.RETIRED)
+		self.assertEqual(frappe.db.get_value("Sales Invoice", invoice, "docstatus"), 2)
+		self.assertEqual(
+			frappe.db.get_value("Customer", name, "disabled"),
+			1,
+			"the retired customer stays disabled",
+		)
+
 	def test_a_payment_of_a_draft_invoice_is_not_booked(self) -> None:
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
 		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
@@ -1854,6 +1899,31 @@ class TestWriters(IntegrationTestCase):
 		self.assertIsNotNone(doc.amended_from, "a posted entry that changed is cancelled and amended")
 		self.retire(Kind.JOURNAL_ENTRY, JournalEntryWriter, key)
 		self.assertEqual(frappe.db.get_value("Journal Entry", journal, "docstatus"), 2)
+
+	def test_a_journal_keeps_a_party_on_receivable_and_payable_lines_only(self) -> None:
+		self.mirror(Kind.SUPPLIER, SupplierWriter, gid("Vendor", "1"), self.supplier())
+		supplies = self.ledger("6200", "Writer Supplies", "Expense", "Expense Account")
+		card = self.ledger("2100", "Writer Card", "Liability")
+		lines = [
+			JournalLine(supplies, Decimal("40"), Decimal(0), "Supplier", gid("Vendor", "1")),
+			JournalLine(card, Decimal(0), Decimal("40")),
+		]
+		key = gid("Move", "Spend")
+		self.assertEqual(
+			self.mirror(
+				Kind.JOURNAL_ENTRY,
+				JournalEntryWriter,
+				key,
+				journal_fields("SPEND/1", "2026-06-11", lines, True),
+			),
+			Outcome.CREATED,
+		)
+		rows = frappe.get_all(
+			"Journal Entry Account",
+			filters={"parent": self.target(Kind.JOURNAL_ENTRY, key)},
+			fields=["party_type", "party"],
+		)
+		self.assertEqual({(row.party_type, row.party) for row in rows}, {(None, None)})
 
 	def test_a_journal_settles_an_invoice_on_the_sources_receivable(self) -> None:
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())

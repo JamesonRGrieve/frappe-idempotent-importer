@@ -94,10 +94,19 @@ class RestClient:
 		self._rate_limit = rate_limit or RateLimit()
 		self._pacer = RequestPacer(self._rate_limit, sleeper)
 
-	def get(self, path: str, query: Mapping[str, QueryValue] | None = None) -> RestResult | None:
-		"""None when the source has no such resource (404). List values are sent as repeated keys."""
+	def get(
+		self,
+		path: str,
+		query: Mapping[str, QueryValue] | None = None,
+		headers: Mapping[str, str] | None = None,
+	) -> RestResult | None:
+		"""None when the source has no such resource (404). List values are sent as repeated keys; ``headers``
+		are the request's own (Xero's If-Modified-Since)."""
 		url = self._base_url + path + query_string(query or {})
-		return self._send(path, lambda headers: self._transport.get(url, headers, REQUEST_TIMEOUT_SECONDS))
+		extra = dict(headers or {})
+		return self._send(
+			path, lambda auth: self._transport.get(url, {**extra, **auth}, REQUEST_TIMEOUT_SECONDS)
+		)
 
 	def query(self, path: str, body: Mapping[str, JsonValue]) -> RestResult | None:
 		"""A read-only query sent as a JSON POST (search endpoints that take their filter in the body)."""

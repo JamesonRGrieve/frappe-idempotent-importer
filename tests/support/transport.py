@@ -107,6 +107,33 @@ def entra(source: str, state: str) -> FakeTransport:
 	return FakeTransport(route)
 
 
+# The tokens the fake OAuth sources (QuickBooks Online, Xero, Zoho) grant: the access token the fixtures'
+# requests carry, and the refresh token a rotating source issues in its place.
+OAUTH_ACCESS_TOKEN = "fixture-oauth-access-token"
+OAUTH_ROTATED_REFRESH_TOKEN = "fixture-oauth-refresh-token"
+
+
+def oauth_source(source: str, state: str, grant_path: str, rotates: bool = True) -> FakeTransport:
+	"""A REST source approved through OAuth 2: its token endpoint (any POST to ``grant_path``) grants the
+	fixture tokens (a new refresh token each time when it ``rotates``); everything else comes from the
+	source's fixtures."""
+	responder = RestResponder(source, state)
+
+	def route(method: str, url: str, body: bytes, _headers: dict[str, str]) -> HttpResponse:
+		if method == "POST" and url.split("?", 1)[0].endswith(grant_path):
+			grant: dict[str, object] = {
+				"access_token": OAUTH_ACCESS_TOKEN,
+				"token_type": "Bearer",
+				"expires_in": 3600,
+			}
+			if rotates:
+				grant["refresh_token"] = OAUTH_ROTATED_REFRESH_TOKEN
+			return HttpResponse(200, json.dumps(grant).encode())
+		return response(responder.answer(method, url, body))
+
+	return FakeTransport(route)
+
+
 def shopify(state: str) -> FakeTransport:
 	responder = ShopifyResponder(state)
 	return FakeTransport(lambda _method, _url, body, _headers: response(responder.answer(body)))

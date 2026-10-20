@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """The recorded source responses in tests/fixtures/<source>/<state>/*.json, answered as the source would.
 
-A REST fixture is ``{"request": {"method"?, "path", "query"?, "body"?}, "headers"?: {...}, "status"?: int,
-"response": ...}``: the response the source gives a request to that path (GET unless named) whose query
-includes those parameters (others, like page sizes, are ignored) and, for a JSON POST query, whose body has
+A REST fixture is ``{"request": {"method"?, "path", "query"?, "query_patterns"?, "body"?}, "headers"?:
+{...}, "status"?: int, "response": ...}``: the response the source gives a request to that path (GET unless
+named) whose query includes those parameters (others, like page sizes, are ignored), each parameter in
+``query_patterns`` matching its regular expression whole (QuickBooks' query statement, whose
+modified-since condition changes with every run), and, for a JSON POST query, whose body has
 those values (an object matches when every key it names matches, a list when it has as many items and each
 matches, anything else when equal). A Shopify fixture is ``{"operation", "variables", "data"}``: the
 ``data`` Shopify returns for that operation, matched by its ``after`` and ``id`` variables. Each store
@@ -13,6 +15,7 @@ end-to-end fake store."""
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -34,6 +37,13 @@ class RestFixture:
 	headers: dict[str, str]
 	response: Any
 	body: dict[str, Any] = field(default_factory=dict)
+	query_patterns: dict[str, re.Pattern[str]] = field(default_factory=dict)
+
+	def matches_query(self, sent: dict[str, list[str]]) -> bool:
+		return all(sent.get(k) == [v] for k, v in self.query.items()) and all(
+			len(sent.get(k, [])) == 1 and pattern.fullmatch(sent[k][0]) is not None
+			for k, pattern in self.query_patterns.items()
+		)
 
 
 @dataclass(frozen=True)
@@ -78,6 +88,7 @@ def rest_fixtures(source: str, state: str) -> list[RestFixture]:
 				{str(k): str(v) for k, v in raw.get("headers", {}).items()},
 				raw["response"],
 				dict(request.get("body") or {}),
+				{str(k): re.compile(str(v)) for k, v in request.get("query_patterns", {}).items()},
 			)
 		)
 	if not fixtures:
@@ -142,7 +153,7 @@ class RestResponder:
 			if (
 				fixture.method == method
 				and fixture.path == parts.path
-				and all(sent.get(k) == [v] for k, v in fixture.query.items())
+				and fixture.matches_query(sent)
 				and value_matches(fixture.body, decoded)
 			):
 				return Answer(fixture.status, json.dumps(fixture.response).encode(), fixture.headers)

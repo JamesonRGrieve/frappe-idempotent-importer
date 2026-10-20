@@ -29,6 +29,7 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money
+from idempotent_importer.erpnext.writers.base import cancel_booked
 from idempotent_importer.erpnext.writers.sales import (
 	CANCELLED,
 	DRAFT,
@@ -103,7 +104,7 @@ class TradeWriter(SalesDocuments):
 	def retire(self, link: Link) -> None:
 		doc = frappe.get_doc(self.spec.doctype, link.target.name)
 		if doc.docstatus == SUBMITTED:
-			doc.cancel()
+			cancel_booked(doc)
 		elif doc.docstatus == DRAFT:
 			field = self.spec.remarks_field
 			text = str(doc.get(field) or "")

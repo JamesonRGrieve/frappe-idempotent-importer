@@ -22,6 +22,35 @@ from idempotent_importer.erpnext.stores import FrappeLinkStore
 PART_HASH = "part"
 
 
+PARTY_FIELDS = (("Customer", "customer"), ("Supplier", "supplier"))
+
+
+def parties_of(doc: Any) -> set[tuple[str, str]]:
+	"""The parties a booked document posts to: its customer or supplier, its party, its lines' parties."""
+	found = {(doctype, str(doc.get(field))) for doctype, field in PARTY_FIELDS if doc.get(field)}
+	if doc.get("party_type") and doc.get("party"):
+		found.add((str(doc.party_type), str(doc.party)))
+	for row in doc.get("accounts") or []:
+		if row.get("party_type") and row.get("party"):
+			found.add((str(row.party_type), str(row.party)))
+	return found
+
+
+def cancel_booked(doc: Any) -> None:
+	"""Cancels a booked document, even when the source retired one of its parties first (ERPNext posts no
+	reversing entry for a disabled party): each disabled party is enabled for the cancellation only."""
+	disabled = [
+		(doctype, name) for doctype, name in parties_of(doc) if frappe.db.get_value(doctype, name, "disabled")
+	]
+	for doctype, name in disabled:
+		frappe.db.set_value(doctype, name, "disabled", 0, update_modified=False)
+	try:
+		doc.cancel()
+	finally:
+		for doctype, name in disabled:
+			frappe.db.set_value(doctype, name, "disabled", 1, update_modified=False)
+
+
 class Writer(ABC):
 	"""A writer of one kind (``core.sync.Writer``)."""
 

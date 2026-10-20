@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import html
 import re
+from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 
@@ -16,6 +17,7 @@ from idempotent_importer.core.fields import Fields
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import slugify
+from idempotent_importer.core.source import Page
 from idempotent_importer.core.times import ISO_FORMAT
 
 PARAGRAPH_BREAK = re.compile(r"\n{2,}")
@@ -61,6 +63,25 @@ def shifted(amount: int, divisor: int, what: str) -> Decimal:
 	if divisor < 1 or DECIMAL_BASE**places != divisor:
 		raise SourceError(f"{what} has a divisor ({divisor}) that isn't a power of ten.")
 	return Decimal(amount).scaleb(-places)
+
+
+FEED_SEPARATOR = ":"
+
+
+def chained(feeds: int, cursor: str | None, read: Callable[[int, str | None], Page]) -> Page:
+	"""One page of a kind a source keeps as several collections read one after another (QuickBooks' invoices,
+	then its sales receipts, then its credit memos): ``read(feed, position)`` reads one page of feed
+	``feed`` from ``position`` (None first). The cursor is ``<feed>:<position>``."""
+	if cursor is None:
+		feed, position = 0, None
+	else:
+		index, _, rest = cursor.partition(FEED_SEPARATOR)
+		feed, position = int(index), rest or None
+	page = read(feed, position)
+	if page.has_next_page:
+		return Page(page.nodes, True, f"{feed}{FEED_SEPARATOR}{page.end_cursor or ''}")
+	following = feed + 1
+	return Page(page.nodes, following < feeds, f"{following}{FEED_SEPARATOR}" if following < feeds else None)
 
 
 class ContentPageMapper:

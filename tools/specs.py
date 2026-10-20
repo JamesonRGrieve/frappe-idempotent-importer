@@ -10,16 +10,21 @@ them (the proofs fetch a missing one themselves)."""
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import sys
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 import requests
 import yaml
 
 from tools.openapi import ApiSpec
+from tools.xsd import REF_PREFIX as XSD_REF_PREFIX
+from tools.xsd import XsdSchemas
 
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache" / "specs"
@@ -50,6 +55,67 @@ BIGCOMMERCE_DOCUMENTS = {
 }
 
 
+QUICKBOOKS_XSD_FILES = (
+	"IntuitRestServiceDef.xsd",
+	"Finance.xsd",
+	"IntuitBaseTypes.xsd",
+	"IntuitNamesTypes.xsd",
+	"SalesTax.xsd",
+	"Report.xsd",
+)
+XERO_BASE = "https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/5a115f378321eab57cae540a5540797bc5e9ec71/"
+XERO_DOCUMENTS = (
+	("xero_accounting", "/api.xro/2.0"),
+	("xero-projects", "/projects.xro/2.0"),
+	("xero-identity", ""),
+)
+# The modules whose responses the Zoho adapters read, in the order a path is looked up (Books' debit notes
+# module also documents /invoices, so invoices come first).
+ZOHO_BOOKS_MEMBERS = (
+	"organizations.yml",
+	"chart-of-accounts.yml",
+	"contacts.yml",
+	"items.yml",
+	"invoices.yml",
+	"credit-notes.yml",
+	"customer-payments.yml",
+	"estimates.yml",
+	"sales-order.yml",
+	"sales-receipt.yml",
+	"bills.yml",
+	"vendor-credits.yml",
+	"vendor-payments.yml",
+	"purchase-order.yml",
+	"journals.yml",
+	"expenses.yml",
+	"projects.yml",
+	"locations.yml",
+	"reporting-tags.yml",
+	"bank-transactions.yml",
+)
+ZOHO_INVENTORY_MEMBERS = (
+	"organizations.yml",
+	"locations.yml",
+	"categories.yml",
+	"itemgroups.yml",
+	"items.yml",
+	"compositeitems.yml",
+	"contacts.yml",
+	"salesorders.yml",
+	"invoices.yml",
+	"credit-notes.yml",
+	"customer-payments.yml",
+	"purchaseorders.yml",
+	"bills.yml",
+	"vendor-credits.yml",
+	"inventoryadjustments.yml",
+	"transferorders.yml",
+	"packages.yml",
+	"salesreturns.yml",
+	"purchasereceives.yml",
+)
+
+
 @dataclass(frozen=True)
 class SpecDocument:
 	"""One published API document: where it is (a URL, or a committed file under the repository), the
@@ -64,8 +130,13 @@ class SpecDocument:
 	format: str = JSON
 	sha256: str | None = None
 	committed: Path | None = None
+	# A document published inside a zip archive (Zoho's): the archive is fetched and pinned, the document
+	# is this member of it.
+	member: str | None = None
 
 	def path(self) -> Path:
+		if self.member is not None:
+			return CACHE / self.source / Path(urlsplit(self.url).path).name
 		return self.committed or CACHE / self.source / f"{self.name}.{self.format}"
 
 	def verify(self, body: bytes) -> None:
@@ -82,11 +153,18 @@ class SpecDocument:
 		response = requests.get(self.url, timeout=FETCH_TIMEOUT_SECONDS, headers={"User-Agent": USER_AGENT})
 		response.raise_for_status()
 		self.verify(response.content)
-		decode(self.format, response.content)
+		decode(self.format, self.document(response.content))
 		target = self.path()
 		target.parent.mkdir(parents=True, exist_ok=True)
 		target.write_bytes(response.content)
 		return target
+
+	def document(self, body: bytes) -> bytes:
+		"""The document's own bytes: ``body``, or its member when ``body`` is the archive."""
+		if self.member is None:
+			return body
+		with zipfile.ZipFile(io.BytesIO(body)) as archive:
+			return archive.read(self.member)
 
 	def load(self) -> ApiSpec:
 		path = self.path()
@@ -94,7 +172,47 @@ class SpecDocument:
 			path = self.fetch()
 		body = path.read_bytes()
 		self.verify(body)
-		return ApiSpec.of(decode(self.format, body), self.prefix_pattern)
+		return ApiSpec.of(decode(self.format, self.document(body)), self.prefix_pattern)
+
+
+@dataclass(frozen=True)
+class XsdDocument:
+	"""A source whose only machine-readable spec is an XML Schema (tools/xsd.py): its files, fetched from a
+	pinned commit, and the REST operations whose JSON responses are its types (path template → the type a
+	GET returns)."""
+
+	source: str
+	name: str
+	base_url: str
+	files: tuple[str, ...]
+	operations: tuple[tuple[str, str], ...]
+	prefix_pattern: str = ""
+	complete_objects: bool = False
+
+	def path(self) -> Path:
+		return CACHE / self.source / self.name
+
+	def fetch(self) -> Path:
+		target = self.path()
+		target.mkdir(parents=True, exist_ok=True)
+		for file in self.files:
+			response = requests.get(
+				self.base_url + file, timeout=FETCH_TIMEOUT_SECONDS, headers={"User-Agent": USER_AGENT}
+			)
+			response.raise_for_status()
+			(target / file).write_bytes(response.content)
+		return target
+
+	def load(self) -> ApiSpec:
+		folder = self.path()
+		if not all((folder / file).is_file() for file in self.files):
+			folder = self.fetch()
+		schemas = XsdSchemas(folder / file for file in self.files).schemas()
+		paths = {
+			template: {"get": {"responses": {"200": {"schema": {"$ref": f"{XSD_REF_PREFIX}{type_}"}}}}}
+			for template, type_ in self.operations
+		}
+		return ApiSpec(schemas, XSD_REF_PREFIX, paths, self.prefix_pattern)
 
 
 def committed(source: str, name: str, relative: str, prefix_pattern: str) -> SpecDocument:
@@ -108,7 +226,22 @@ def decode(format_: str, body: bytes) -> dict[str, Any]:
 	return document
 
 
-def catalog() -> list[SpecDocument]:
+type Document = SpecDocument | XsdDocument
+
+
+def zoho(
+	product: str, prefix: str, archive_url: str, sha256: str, members: tuple[str, ...]
+) -> list[Document]:
+	"""Zoho's OpenAPI 3 documents for one product, one per module, all in one published archive."""
+	return [
+		SpecDocument(
+			product, member.removesuffix(".yml"), archive_url, prefix, False, YAML, sha256, member=member
+		)
+		for member in members
+	]
+
+
+def catalog() -> list[Document]:
 	return [
 		SpecDocument(
 			"etsy", "open-api-v3", "https://www.etsy.com/openapi/generated/oas/3.0.0.json", "", True
@@ -181,10 +314,53 @@ def catalog() -> list[SpecDocument]:
 			"tests/schemas/dynamics_finance_operations.json",
 			"",
 		),
+		# QuickBooks Online publishes its data model as XML Schemas (the JSON API returns the same types), in
+		# its official Java SDK (intuit/QuickBooks-V3-Java-SDK, the commit of 2026-07-17). A query and a read
+		# by id both answer an IntuitResponse.
+		XsdDocument(
+			"quickbooks_online",
+			"v3-schema",
+			"https://raw.githubusercontent.com/intuit/QuickBooks-V3-Java-SDK/"
+			"c4d5dfad23ffebf0302356876d0dc389708513a9/ipp-v3-java-data/src/main/xsd/",
+			QUICKBOOKS_XSD_FILES,
+			(
+				("/v3/company/{realmId}/query", "IntuitResponse"),
+				("/v3/company/{realmId}/{entity}/{entityId}", "IntuitResponse"),
+			),
+		),
+		# Xero's OpenAPI 3 documents (XeroAPI/Xero-OpenAPI, the commit of 2026-10-15; accounting 19.1.0). Each
+		# API answers under its own path on api.xero.com; the identity API's /connections names the tenants.
+		*(
+			SpecDocument(
+				"xero",
+				name,
+				f"{XERO_BASE}{name}.yaml",
+				prefix,
+				False,
+				YAML,
+			)
+			for name, prefix in XERO_DOCUMENTS
+		),
+		# Zoho publishes its Books and Inventory OpenAPI documents as one archive each at an unversioned URL,
+		# so each archive is pinned to the bytes fetched on 2026-10-19 (built 2026-10-08).
+		*zoho(
+			"zoho_books",
+			"/books/v3",
+			"https://www.zoho.com/books/api/v3/openapi-all.zip",
+			"89b337bacfb1c3a37f08144536218cb3009102af48f3dcf848eef02934c42438",
+			ZOHO_BOOKS_MEMBERS,
+		),
+		*zoho(
+			"zoho_inventory",
+			"/inventory/v1",
+			"https://www.zoho.com/inventory/api/v1/openapi-all.zip",
+			"ec5435338b235f18425c23db383ea2199feffbeb19f491fe94a8f0ca2b583863",
+			ZOHO_INVENTORY_MEMBERS,
+		),
 	]
 
 
-def for_source(source: str) -> list[SpecDocument]:
+def for_source(source: str) -> list[Document]:
 	return [document for document in catalog() if document.source == source]
 
 

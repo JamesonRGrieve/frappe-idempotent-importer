@@ -24,7 +24,7 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.base import Writer, cancel_booked
 
 ACCOUNT, COST_CENTER, WAREHOUSE, PROJECT = "Account", "Cost Center", "Warehouse", "Project"
 JOURNAL_ENTRY, PAYMENT_ENTRY = "Journal Entry", "Payment Entry"
@@ -33,6 +33,7 @@ NAME_LENGTH = 140
 REMARK_LENGTH = 140
 RETIRED_REMARK = "Retired: removed at the source."
 NOT_SET = ("is", "not set")
+PARTY_ACCOUNT_TYPES = frozenset({"Receivable", "Payable"})
 # What a payment allocation's kind is booked as.
 ALLOCATED_DOCTYPES: dict[str, tuple[Kind, str]] = {
 	Kind.SALES_INVOICE.value: (Kind.SALES_INVOICE, "Sales Invoice"),
@@ -201,7 +202,7 @@ class PostedWriter(Writer):
 	def retire(self, link: Link) -> None:
 		doc = frappe.get_doc(self.doctype, link.target.name)
 		if doc.docstatus == SUBMITTED:
-			doc.cancel()
+			cancel_booked(doc)
 		elif doc.docstatus == DRAFT and RETIRED_REMARK not in (doc.get(self.remarks_field) or ""):
 			marked = f"{RETIRED_REMARK}\n{doc.get(self.remarks_field) or ''}".strip()
 			frappe.db.set_value(self.doctype, doc.name, self.remarks_field, marked)
@@ -258,12 +259,20 @@ class JournalEntryWriter(PostedWriter):
 	def _line(self, line: Values) -> dict[str, Any]:
 		cost_center = line.optional_string("cost_center")
 		project = line.optional_string("project")
+		account = self.in_company_currency(self.dependency(Kind.ACCOUNT, line.string("account")))
+		# ERPNext keeps a party only on a receivable or payable line; a source that names the contact of any
+		# line (a bank line's payee, an expense's vendor) keeps it on those lines alone.
+		party_type = (
+			line.optional_string("party_type")
+			if frappe.get_cached_value(ACCOUNT, account, "account_type") in PARTY_ACCOUNT_TYPES
+			else None
+		)
 		return {
-			"account": self.in_company_currency(self.dependency(Kind.ACCOUNT, line.string("account"))),
+			"account": account,
 			"debit_in_account_currency": money(line.decimal("debit")),
 			"credit_in_account_currency": money(line.decimal("credit")),
-			"party_type": line.optional_string("party_type"),
-			"party": self.party(line.optional_string("party_type"), line.optional_string("party")),
+			"party_type": party_type,
+			"party": self.party(party_type, line.optional_string("party")),
 			"cost_center": self.dependency(Kind.COST_CENTER, cost_center)
 			if cost_center
 			else self.context.cost_center,
@@ -332,9 +341,14 @@ class PaymentEntryWriter(PostedWriter):
 		doc.set_amounts()
 
 	def _allocation(self, allocation: Values) -> dict[str, Any]:
+		"""An allocation to the invoice it settles. A refund paid out on a credit note (or received on a debit
+		note) settles a negative balance, which ERPNext allocates as a negative amount."""
 		doctype, name = self.booked(allocation.string("kind"), allocation.string("document"))
+		amount = allocation.decimal("amount")
+		if frappe.db.get_value(doctype, name, "is_return"):
+			amount = -amount
 		return {
 			"reference_doctype": doctype,
 			"reference_name": name,
-			"allocated_amount": money(allocation.decimal("amount")),
+			"allocated_amount": money(amount),
 		}

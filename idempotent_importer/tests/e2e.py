@@ -1628,6 +1628,53 @@ def assert_lightspeed_discounts(connection: str, state: str) -> None:
 	)
 
 
+def assert_ecwid_discounts(connection: str, state: str) -> None:
+	"""Every active Ecwid coupon and wholesale price tier: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		6,
+		"four active coupons and two products' wholesale prices (not the paused coupon)",
+	)
+	assert_discount(connection, "DiscountCoupon", "9501", None, [], "the amount-off coupon, enabled")
+	assert_discount(
+		connection,
+		"DiscountCoupon",
+		"9502",
+		"card 405",
+		["once_per_customer"],
+		"the once-per-customer coupon, held",
+	)
+	assert_discount(
+		connection, "DiscountCoupon", "9503", "card 405", ["free_shipping"], "the shipping coupon, held"
+	)
+	assert_discount(
+		connection,
+		"DiscountCoupon",
+		"9505",
+		"card 407",
+		["customer_history"],
+		"the new-customer coupon, held",
+	)
+	assert_discount(connection, "WholesalePrice", "9201", None, [], "the candle's wholesale prices, enabled")
+	scheme = target(connection, "discount", "WholesalePrice", "9201")
+	live = frappe.get_all(
+		"Pricing Rule", filters={"promotional_scheme": scheme, "disable": 0}, fields=["min_qty", "rate"]
+	)
+	expect(
+		sorted((amount(r.min_qty), amount(r.rate)) for r in live),
+		[(amount("5"), amount("25")), (amount("10"), amount("22"))][: 2 if state == "v1" else 1],
+		"the candle's wholesale tiers",
+	)
+	assert_discount(
+		connection,
+		"WholesalePrice",
+		"9202",
+		"card 407",
+		["rule_condition"],
+		"wholesale prices with variations' own, held",
+	)
+
+
 def assert_magento_discounts(connection: str, state: str) -> None:
 	"""Every active Magento cart price rule and tier price: what ERPNext enforces enabled, the rest held."""
 	expect(
@@ -1888,11 +1935,7 @@ def assert_ecwid(state: str) -> None:
 		0,
 		"unpaid order",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
-		1,
-		"the amount-off coupon (not once-per-customer, shipping, paused or new-customer ones)",
-	)
+	assert_ecwid_discounts(connection, state)
 	expect(
 		frappe.db.count("Importer Link", {"connection": connection, "kind": "review", "retired": 0}),
 		1 if state == "v1" else 2,

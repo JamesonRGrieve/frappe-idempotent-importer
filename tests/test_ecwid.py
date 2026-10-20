@@ -18,6 +18,7 @@ from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.ecwid.mapping import legacy, taxes_of
 from idempotent_importer.sources.ecwid.reader import RATE_LIMIT, EcwidAuthorizer, EcwidReader, api_base
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = EcwidAdapter()
@@ -193,13 +194,40 @@ class TestMappers:
 			"2026-12-31",
 		)
 		assert mapped(Kind.DISCOUNT, "DiscountCoupon/9504") is None, "a paused coupon"
-		for key, refusal in (
-			("9502", "once-per-customer"),
-			("9503", "SHIPPING"),
-			("9505", "new_customer_only"),
+		assert held(mapped(Kind.DISCOUNT, "DiscountCoupon/9501")) == []
+		for key, kinds, cards in (
+			("9502", ["once_per_customer"], ["card 405"]),
+			("9503", ["free_shipping"], ["card 405"]),
+			("9505", ["customer_history"], ["card 407"]),
 		):
-			with pytest.raises(Unsupported, match=refusal):
-				mapped(Kind.DISCOUNT, f"DiscountCoupon/{key}")
+			desired = mapped(Kind.DISCOUNT, f"DiscountCoupon/{key}")
+			assert (condition_kinds(desired), held(desired)) == (kinds, cards)
+		assert terms(mapped(Kind.DISCOUNT, "DiscountCoupon/9505"), "customer_history") == {"new": True}
+
+	def test_wholesale_prices(self) -> None:
+		source, _ = reader()
+		coupons = source.page(Kind.DISCOUNT, None, None, "")
+		assert coupons.end_cursor == "wholesale:"
+		assert source.page(Kind.DISCOUNT, "0", None, "").end_cursor == "wholesale:", "an offset saved before"
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:0", None, "")
+		candle = values(Kind.DISCOUNT, "WholesalePrice/9201")
+		assert (candle.flag("automatic"), candle.strings("items")) == (True, [f"{GID}/Product/9201"])
+		assert [t.all() for t in candle.records("tiers")] == [
+			{"discount": "rate", "value": Decimal(25), "min_qty": Decimal(5), "max_qty": Decimal(9)},
+			{"discount": "rate", "value": Decimal(22), "min_qty": Decimal(10)},
+		]
+		assert held(mapped(Kind.DISCOUNT, "WholesalePrice/9201")) == []
+		assert len(values(Kind.DISCOUNT, "WholesalePrice/9201", "v2").records("tiers")) == 1
+		melts = mapped(Kind.DISCOUNT, "WholesalePrice/9202")
+		assert terms(melts, "rule_condition") == {
+			"source": {
+				"variations": [{"variant": f"{GID}/Variant/920202", "tiers": [{"quantity": 3, "price": 12}]}]
+			}
+		}
+		assert "WholesalePrice/9203" not in nodes(Kind.DISCOUNT)
+		node = nodes(Kind.DISCOUNT)["WholesalePrice/9201"]
+		assert mapper_of(Kind.DISCOUNT).map(node.with_fields(wholesalePrices=[])) is None
 
 	def test_coupon_edges(self) -> None:
 		coupon = nodes(Kind.DISCOUNT)["DiscountCoupon/9501"]
@@ -214,14 +242,21 @@ class TestMappers:
 			1,
 			[f"{GID}/Category/9101"],
 		)
-		for changes, refusal in (
-			({"catalogLimit": {"products": [9201]}}, "amount off some products"),
-			({"discountType": "PERCENT", "catalogLimit": {"categories": [0]}}, "front page"),
-			({"discountType": "PERCENT", "catalogLimit": {"products": [1], "categories": [2]}}, "both"),
-			({"shippingLimit": {"shippingMethods": ["pickup-1"]}}, "shipping methods"),
+		for changes, kinds in (
+			({"catalogLimit": {"products": [9201]}}, ["spread_amount"]),
+			({"discountType": "PERCENT", "catalogLimit": {"categories": [0]}}, ["item_matcher"]),
+			(
+				{"discountType": "PERCENT", "catalogLimit": {"products": [1], "categories": [2]}},
+				["groups_beside_items"],
+			),
+			({"shippingLimit": {"shippingMethods": ["pickup-1"]}}, ["shipping_limits"]),
+			({"discountType": "ABS_AND_SHIPPING"}, ["free_shipping"]),
+			({"applicationLimit": "REPEAT_CUSTOMER_ONLY"}, ["customer_history"]),
+			({"applicationLimit": "SOMETHING_NEW"}, ["customer_segments"]),
 		):
-			with pytest.raises(Unsupported, match=refusal):
-				mapper.map(coupon.with_fields(**changes))
+			assert condition_kinds(mapper.map(coupon.with_fields(**changes))) == kinds
+		with pytest.raises(SourceError, match="type"):
+			mapper.map(coupon.with_fields(discountType="BOGUS"))
 
 	def test_a_paid_order_balances_to_ecwids_total(self) -> None:
 		order = values(Kind.ORDER, "Order/CW-1001")

@@ -16,26 +16,30 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Condition,
 	Discount,
 	LineRates,
 	OrderLine,
 	Shipment,
+	Tier,
 	address_fields,
 	charge_fields,
 	date_of,
-	discount_fields,
+	discount_desired,
 	included_taxes,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	taxed_charge,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Field, Fields
+from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target, slugify
@@ -48,7 +52,15 @@ PAID = frozenset({"PAID", "PARTIALLY_REFUNDED", "REFUNDED"})
 NOT_SALES = frozenset({"CANCELLED", "INCOMPLETE"})
 DELIVERED = "DELIVERED"
 ACTIVE = "ACTIVE"
-COUPON_TYPES = {"PERCENT": "percentage", "ABS": "amount"}
+# A coupon's discount type: its discount, and whether it also ships free.
+COUPON_TYPES = {
+	"PERCENT": ("percentage", False),
+	"ABS": ("amount", False),
+	"SHIPPING": ("percentage", True),
+	"PERCENT_AND_SHIPPING": ("percentage", True),
+	"ABS_AND_SHIPPING": ("amount", True),
+}
+SHIPPING_ONLY = "SHIPPING"
 ANY_CUSTOMER = "UNLIMITED"
 SINGLE_USE, ONCE_PER_CUSTOMER = "SINGLE", "ONCEPERCUSTOMER"
 # Ecwid's store front page category: the products shown there, which has no Item Group.
@@ -316,56 +328,129 @@ class CustomerMapper:
 
 
 class DiscountMapper:
-	"""An active discount coupon → a coupon Pricing Rule, when ERPNext applies it exactly: a percentage off
-	(optionally of some products or categories) or an amount off the order, with its minimum subtotal, a
-	single use, and its launch and expiry dates. Free shipping, an amount off some products, once-per-customer
-	coupons, and coupons for new or repeat customers, some shipping methods or the front page are Unsupported."""
+	"""Every active discount coupon and every product's wholesale price tiers → a Pricing Rule (a Promotional
+	Scheme for tiers), enforcing natively what ERPNext's pricing does and recording the rest as conditions that
+	hold it (``contract.CONDITIONS``).
+
+	A coupon: a percentage off (the order, some products or categories) or an amount off the order, with its
+	minimum subtotal, a single use, and its launch and expiry dates. Recorded and held: free shipping, a
+	once-per-customer limit, some shipping methods (card 405); an amount off some products (Ecwid doesn't say
+	per item or in total), categories beside products, the store front page's products, new or repeat
+	customers (card 407). A paused, expired or used-up coupon maps to nothing.
+
+	A product's wholesale prices (``WholesalePrice``): a fixed unit price from each quantity, a scheme on the
+	product; variations' own tiers are recorded on it (card 407)."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
+		if Identity.parse(node.id()).type == "WholesalePrice":
+			return self._wholesale(node)
 		if node.optional_string("status") != ACTIVE:
 			return None
+		later: list[Condition] = []
 		coupon_type = node.string("discountType")
-		kind = COUPON_TYPES.get(coupon_type)
+		kind, shipping = COUPON_TYPES.get(coupon_type, (None, False))
 		if kind is None:
-			raise Unsupported(f"a {coupon_type} coupon (ERPNext coupons can't discount shipping)")
+			raise SourceError(f"An Ecwid coupon of type {coupon_type}.")
+		value = amount_of(node, "discount")
+		if shipping:
+			later.append(Condition("free_shipping"))
+			if coupon_type == SHIPPING_ONLY:
+				value = Decimal(0)
 		catalog = node.child("catalogLimit")
-		products = catalog.integers("products") if catalog else []
-		categories = catalog.integers("categories") if catalog else []
-		if kind == "amount" and (products or categories):
-			raise Unsupported("an amount off some products (Ecwid doesn't say per item or in total)")
-		if FRONT_PAGE_CATEGORY in categories:
-			raise Unsupported("a coupon for the store front page's products has no Item Group")
-		if products and categories:
-			raise Unsupported("a coupon for both products and categories has no single ERPNext pricing rule")
-		customers = node.optional_string("applicationLimit") or ANY_CUSTOMER
-		if customers != ANY_CUSTOMER:
-			raise Unsupported(f"a coupon for {customers.lower()} customers has no ERPNext coupon equivalent")
+		products = [
+			self._context.gid("Product", p) for p in (catalog.integers("products") if catalog else [])
+		]
+		ids = catalog.integers("categories") if catalog else []
+		if FRONT_PAGE_CATEGORY in ids:
+			later.append(Condition("item_matcher", {"source": "the store front page's products"}))
+		groups = [self._context.gid("Category", c) for c in ids if c != FRONT_PAGE_CATEGORY]
+		if products and groups:
+			later.append(Condition("groups_beside_items", {"groups": list[Field](groups)}))
+			groups = []
+		if kind == "amount" and (products or groups):
+			spread: Fields = {"items": list[Field](products) or None, "groups": list[Field](groups) or None}
+			later.append(Condition("spread_amount", spread))
+			products, groups = [], []
+		match node.optional_string("applicationLimit") or ANY_CUSTOMER:
+			case "NEW_CUSTOMER_ONLY":
+				later.append(Condition("customer_history", {"new": True}))
+			case "REPEAT_CUSTOMER_ONLY":
+				later.append(Condition("customer_history", {"returning": True}))
+			case other if other != ANY_CUSTOMER:
+				later.append(Condition("customer_segments", {"source": other}))
 		limit = node.child("shippingLimit")
 		if limit is not None and limit.strings("shippingMethods"):
-			raise Unsupported("a coupon for some shipping methods has no ERPNext coupon equivalent")
+			later.append(
+				Condition("shipping_limits", {"methods": list[Field](limit.strings("shippingMethods"))})
+			)
 		uses = node.optional_string("usesLimit")
 		if uses == ONCE_PER_CUSTOMER:
-			raise Unsupported("a once-per-customer limit has no ERPNext coupon equivalent")
+			later.append(Condition("once_per_customer"))
 		discount = Discount(
 			codes=[node.string("code")],
 			description=node.optional_string("name") or node.string("code"),
 			discount=kind,
-			applies="items" if products else "groups" if categories else "transaction",
-			value=amount_of(node, "discount"),
-			items=[self._context.gid("Product", p) for p in products],
-			groups=[self._context.gid("Category", c) for c in categories],
+			applies="items" if products else "groups" if groups else "transaction",
+			value=value,
+			items=products,
+			groups=groups,
 			min_amount=set_amount(node, "totalLimit"),
 			valid_from=date_of(node.optional_time("launchDate") or node.optional_time("creationDate")),
 			valid_upto=date_of(node.optional_time("expirationDate")),
 			max_uses=1 if uses == SINGLE_USE else None,
+			conditions=later,
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		return discount_desired(node.id(), discount)
+
+	def _wholesale(self, node: Node) -> Desired | None:
+		"""A product's wholesale tiers, each from its quantity up to the next."""
+		prices = sorted(node.children("wholesalePrices"), key=lambda t: t.integer("quantity"))
+		if not prices:
+			return None
+		tiers = [
+			Tier(
+				discount="rate",
+				value=price.decimal("price"),
+				min_qty=Decimal(price.integer("quantity")),
+				max_qty=Decimal(prices[index + 1].integer("quantity") - 1)
+				if index + 1 < len(prices)
+				else None,
+			)
+			for index, price in enumerate(prices)
+		]
+		own: list[Field] = [
+			{
+				"variant": self._context.variant(node.string("product_id"), c.integer("id")),
+				"tiers": source_terms(c.get("wholesalePrices")),
+			}
+			for c in node.children("combinations")
+			if c.children("wholesalePrices") and c.get("wholesalePrices") != node.get("wholesalePrices")
+		]
+		return discount_desired(
+			node.id(),
+			Discount(
+				codes=[],
+				description=f"Wholesale prices, product {node.string('product_id')}",
+				discount="rate",
+				applies="items",
+				value=Decimal(0),
+				items=[self._context.gid("Product", node.string("product_id"))],
+				groups=[],
+				min_amount=None,
+				valid_from=None,
+				valid_upto=None,
+				max_uses=None,
+				automatic=True,
+				tiers=tiers,
+				conditions=[Condition("rule_condition", {"source": {"variations": own}})] if own else [],
+			),
+		)
 
 
 class OrderMapper:

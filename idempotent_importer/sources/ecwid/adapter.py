@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Ecwid by Lightspeed, through its REST API v3: categories, products with their variations, prices, stock
-and images, customers, discount coupons, orders with their payments, refunds and shipping labels, product
+and images, customers, discount coupons, wholesale price tiers, orders with their payments, refunds and shipping labels, product
 reviews and Instant Site redirects. The operator creates a custom app with read scopes in the Ecwid admin and
 enters the store's URL, its store ID (the account) and the app's secret access token."""
 

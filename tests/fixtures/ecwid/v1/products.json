@@ -171,7 +171,17 @@
         "subtitle": "Burns for 45 hours",
         "subtitleTranslated": {
           "en": "Burns for 45 hours"
-        }
+        },
+        "wholesalePrices": [
+          {
+            "quantity": 5,
+            "price": 25
+          },
+          {
+            "quantity": 10,
+            "price": 22
+          }
+        ]
       },
       {
         "id": 9202,
@@ -367,7 +377,13 @@
             "defaultDisplayedPrice": 14,
             "defaultDisplayedPriceFormatted": "$14.00",
             "warningLimit": 3,
-            "attributes": []
+            "attributes": [],
+            "wholesalePrices": [
+              {
+                "quantity": 3,
+                "price": 12
+              }
+            ]
           }
         ],
         "dimensions": {
@@ -390,7 +406,13 @@
         "description": "<p>Six soy wax melts.</p>",
         "descriptionTranslated": {
           "en": "<p>Six soy wax melts.</p>"
-        }
+        },
+        "wholesalePrices": [
+          {
+            "quantity": 6,
+            "price": 12.5
+          }
+        ]
       },
       {
         "id": 9203,

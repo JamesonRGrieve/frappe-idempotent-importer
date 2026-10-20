@@ -4,7 +4,9 @@
 most 100). Ported from wp-woo-idempotent-importer's EcwidReader. Every node carries its identity as ``id``
 (Ecwid's id as ``source_id``). Products arrive with their variations (``combinations``) and images and carry
 the store's weight unit; orders arrive with their items, refunds and shipments and carry the store's currency;
-redirects carry the store's URL. Products, customers, discount coupons, orders and reviews are incremental
+redirects carry the store's URL. A discount run reads the coupons, then each product's wholesale price tiers
+(with its variations' own) as ``WholesalePrice`` nodes. Products, customers, discounts, orders and reviews are
+incremental
 (``updatedFrom``, a UNIX timestamp, so no zone margin is needed); categories and redirects are read in full.
 
 Ecwid accepts up to 600 requests per minute per token; past that every request is refused with a 429 and a
@@ -47,6 +49,9 @@ LISTS: dict[Kind, tuple[str, str, dict[str, QueryValue]]] = {
 	Kind.REVIEW: ("/reviews", "Review", {}),
 }
 REVIEW_FILTER = "reviewId"
+# A discount run reads the coupons, then each product's wholesale prices; the cursor is ``<phase>:<offset>``.
+PHASE_COUPONS, PHASE_WHOLESALE = "coupons", "wholesale"
+CURSOR_SEPARATOR = ":"
 
 
 class EcwidAuthorizer:
@@ -86,6 +91,15 @@ class EcwidReader:
 	def page(self, kind: Kind, cursor: str | None, since: datetime | None, filter_: str) -> Page:
 		if kind not in LISTS:
 			raise SourceError(f"Ecwid has no {kind.value}.")
+		if kind is Kind.DISCOUNT:
+			return self._discounts(cursor, since)
+		nodes, following = self._list_page(kind, cursor, since)
+		return Page(nodes, following is not None, following)
+
+	def _list_page(
+		self, kind: Kind, cursor: str | None, since: datetime | None
+	) -> tuple[list[Node], str | None]:
+		"""One page of a list, from the offset ``cursor``, and the next offset while there are more."""
 		path, type_, query = LISTS[kind]
 		if since is not None and kind in INCREMENTAL:
 			query = {**query, SINCE_FILTER: int(since.timestamp())}
@@ -94,9 +108,40 @@ class EcwidReader:
 		items = response.children("items")
 		following = offset + len(items)
 		more = bool(items) and following < response.integer("total")
+		return [self._assemble(kind, type_, item) for item in items], str(following) if more else None
+
+	def _discounts(self, cursor: str | None, since: datetime | None) -> Page:
+		"""Discount coupons, then the wholesale prices of the products (changed since ``since``) that have any."""
+		phase, separator, offset = (cursor or "").partition(CURSOR_SEPARATOR)
+		if not separator:
+			# An offset alone: a coupons cursor saved before the wholesale phase existed.
+			phase, offset = PHASE_COUPONS, cursor or ""
+		if phase == PHASE_COUPONS:
+			coupons, following = self._list_page(Kind.DISCOUNT, offset or None, since)
+			after = f"{PHASE_COUPONS if following else PHASE_WHOLESALE}{CURSOR_SEPARATOR}{following or ''}"
+			return Page(coupons, True, after)
+		if phase != PHASE_WHOLESALE:
+			raise SourceError(f"Not an Ecwid discount cursor: {cursor}")
+		products, following = self._list_page(Kind.PRODUCT, offset or None, since)
+		nodes = [self._wholesale(p) for p in products if p.children("wholesalePrices")]
 		return Page(
-			[self._assemble(kind, type_, item) for item in items], more, str(following) if more else None
+			nodes,
+			following is not None,
+			f"{PHASE_WHOLESALE}{CURSOR_SEPARATOR}{following}" if following else None,
 		)
+
+	def _wholesale(self, product: Node) -> Node:
+		"""A product's wholesale price tiers, with its variations' own."""
+		product_id = product.string("source_id")
+		raw: dict[str, JsonValue] = {
+			"product_id": product_id,
+			"wholesalePrices": product.get("wholesalePrices"),
+			"combinations": [
+				{"id": c.get("id"), "wholesalePrices": c.get("wholesalePrices")}
+				for c in product.children("combinations")
+			],
+		}
+		return self._identified("WholesalePrice", product_id, raw)
 
 	def node(self, kind: Kind, gid: str) -> Node | None:
 		source_id = Identity.parse(gid).id

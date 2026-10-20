@@ -26,7 +26,8 @@ are storefront paths.
 | Stock (`unlimited` false) | **Stock Reconciliation** | |
 | Media images | **File**; the Item's image | The main image first, at full size. |
 | Customers | **Customer**, **Contact**, **Address** | The billing person and the first saved shipping address; the default phone contact. |
-| Active discount coupons: a percentage off (optionally of some products or categories), an amount off the order | **Pricing Rule** + **Coupon Code** | Minimum subtotal, a single use, launch and expiry dates. A paused, expired or used-up coupon disables its rule. |
+| Active discount coupons: a percentage off (the order, some products or categories), an amount off the order or some products, free shipping (alone or with a discount) | **Pricing Rule** + **Coupon Code** | Enforced: the discount and what it applies to, minimum subtotal, a single use, launch and expiry dates. Recorded and held (rule disabled, code not redeemable) until the Webshop fork enforces them: free shipping, once-per-customer coupons, some shipping methods (card 405); an amount off some products (Ecwid doesn't say per item or in total), categories beside products, the store front page's products, new or repeat customers (card 407). A paused, expired or used-up coupon disables its rule. |
+| Wholesale price tiers | Automatic **Promotional Scheme** on the product, a slab per tier (a fixed unit price from its quantity up to the next) | Read with the products in the discount run. Variations with tiers of their own are recorded on the product's scheme, which they hold (card 407). |
 | Orders | **Sales Invoice** (submitted when paid, partly or fully refunded, else draft) + **Payment Entry** | Ecwid's totals in the store's currency, exactly; the order id (with the store's prefix and suffix) as the number. |
 | Order items | Invoice lines at their prices before discounts, on the variation's item | The selected options in the line's name. |
 | Discount, taxes, shipping option, handling fee, surcharges | The invoice's discount; one charge per tax name (items, shipping, surcharges); shipping and fee charges | The order's tax total when Ecwid itemises none. |
@@ -42,10 +43,8 @@ are storefront paths.
 | Ecwid | Why it isn't mirrored |
 |---|---|
 | Gift card products | No ERPNext home for a stored-value liability (reported). |
-| Shipping and free-shipping coupons, an amount off some products, once-per-customer coupons, coupons for new or repeat customers, some shipping methods or the front page, codes for both products and categories | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled and incomplete (unfinished online payment) orders | Not sales. |
 | Reviews awaiting moderation | Not published. |
-| Wholesale price tiers | Planned (card 386): a Promotional Scheme per product. |
 | Product options without variations, files, subscriptions, dimensions | Planned: product options (card 408), subscriptions (card 410); files and dimensions have no first-party Item field (warnings). |
 | Weights in carats | Planned (card 386): the Carat unit of measure. |
 | Instant Site pages, store profile settings, taxes and shipping configuration | No read API for page content; the rest is ERPNext's own settings. |

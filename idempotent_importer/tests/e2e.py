@@ -456,7 +456,7 @@ def main() -> None:
 		"assert_woocommerce": assert_woocommerce,
 		"assert_shopify": assert_shopify,
 		"assert_etsy": assert_etsy,
-		"assert_etsy_connect": assert_etsy_connect,
+		"assert_oauth_connect": assert_oauth_connect,
 		"assert_square_online": assert_square_online,
 		"assert_bigcommerce": assert_bigcommerce,
 		"assert_squarespace": assert_squarespace,
@@ -1739,39 +1739,71 @@ def assert_ecwid(state: str) -> None:
 	)
 
 
+@dataclass(frozen=True)
+class OAuthConnect:
+	"""What Connect must do for one OAuth connection: the approval URL's query (``redirect`` names the
+	callback method), what the source's redirect back carries beside the code, the refresh token the fake
+	source issues for it, and the connection fields the approval settles."""
+
+	query: dict[str, str]
+	redirect: str
+	params: dict[str, str]
+	refresh_token: str
+	settled: dict[str, str]
+
+
+OAUTH_CONNECTS: dict[str, OAuthConnect] = {
+	"etsy-e": OAuthConnect(
+		{"client_id": "e2e-keystring", "code_challenge_method": "S256"},
+		"etsy_callback",
+		{},
+		ETSY_ROTATED_REFRESH_TOKEN,
+		{},
+	),
+}
+
+
 @check
-def assert_etsy_connect(connection: str) -> None:
-	"""Connect to Etsy: the approval URL asks for read scopes with PKCE, and Etsy's redirect back with a code
-	is exchanged for the refresh token the connection keeps."""
+def assert_oauth_connect(connection: str) -> None:
+	"""Connect through OAuth 2: the approval URL asks for the source's read scopes, and the source's redirect
+	back with a code is exchanged for the refresh token the connection keeps (and settles what it names)."""
+	want = OAUTH_CONNECTS[connection]
 	frappe.db.set_value("Importer Connection", connection, "credential_hold", "held for the check")
 	frappe.db.commit()
-	url = api.etsy_connect(connection)
+	url = api.connect(connection)
 	query = parse_qs(urlsplit(url).query)
 	expect(
-		(query["client_id"], query["code_challenge_method"], query["redirect_uri"]),
-		(["e2e-keystring"], ["S256"], [api.etsy_redirect_uri()]),
-		"the Etsy approval URL",
+		{name: query.get(name, [""])[0] for name in [*want.query, "redirect_uri"]},
+		{**want.query, "redirect_uri": frappe.utils.get_url(api.CALLBACK_METHOD + want.redirect)},
+		"the approval URL",
 	)
-	api.etsy_callback(code="e2e-authorization-code", state=query["state"][0])
+	callback = getattr(api, want.redirect)
+	callback(code="e2e-authorization-code", state=query["state"][0], **want.params)
 	expect(
 		frappe.get_doc("Importer Connection", connection).get_password("refresh_token"),
-		ETSY_ROTATED_REFRESH_TOKEN,
-		"the refresh token Etsy issued for the code",
+		want.refresh_token,
+		"the refresh token the source issued for the code",
 	)
+	for fieldname, value in want.settled.items():
+		expect(
+			frappe.db.get_value("Importer Connection", connection, fieldname),
+			value,
+			f"the settled {fieldname}",
+		)
 	expect(
 		frappe.db.get_value("Importer Connection", connection, "credential_hold"), None, "the hold, released"
 	)
 	expect(
 		frappe.local.response.get("location"),
-		f"/app/importer-connection/{connection}?etsy=connected",
+		f"/app/importer-connection/{connection}?oauth=connected",
 		"back on the connection",
 	)
 	try:
-		api.etsy_callback(code="e2e-authorization-code", state=query["state"][0])
+		callback(code="e2e-authorization-code", state=query["state"][0], **want.params)
 	except frappe.ValidationError:
 		print("a used approval can't be replayed")
 	else:
-		raise AssertionError("an Etsy approval was accepted twice")
+		raise AssertionError("an approval was accepted twice")
 
 
 @check

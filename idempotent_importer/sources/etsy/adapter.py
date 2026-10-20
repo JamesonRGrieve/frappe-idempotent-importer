@@ -7,14 +7,17 @@ token Etsy replaces on every refresh is kept on the connection."""
 
 from __future__ import annotations
 
+from collections.abc import Mapping
+
 from idempotent_importer.core.desired import Mapper
 from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.http import HttpTransport, Sleeper
 from idempotent_importer.core.kind import Kind
+from idempotent_importer.core.oauth import OAuthClient, TokenGrant
 from idempotent_importer.core.rest import RestClient
 from idempotent_importer.core.source import ConnectionConfig, SourceReader
 from idempotent_importer.sources.etsy import mapping
-from idempotent_importer.sources.etsy.auth import API_BASE, EtsyApp, EtsyAuthorizer, EtsyOAuth
+from idempotent_importer.sources.etsy.auth import API_BASE, PROVIDER, EtsyApp, EtsyAuthorizer
 from idempotent_importer.sources.etsy.reader import RATE_LIMIT, SOURCE_ID, EtsyReader
 
 
@@ -22,11 +25,14 @@ def app_of(config: ConnectionConfig) -> EtsyApp:
 	return EtsyApp(config.api_user, config.api_secret, config.endpoint_override or API_BASE)
 
 
-def oauth(config: ConnectionConfig, transport: HttpTransport) -> EtsyOAuth:
+def oauth(config: ConnectionConfig, transport: HttpTransport) -> OAuthClient:
 	"""The connection's OAuth client: the connect flow, and every token refresh."""
 	if config.save_refresh_token is None:
 		raise SourceError("Etsy needs somewhere to keep the refresh token it replaces on every refresh.")
-	return EtsyOAuth(app_of(config), transport, config.refresh_token, config.save_refresh_token)
+	app = app_of(config)
+	return OAuthClient(
+		PROVIDER, app.oauth_app(), transport, config.refresh_token, config.save_refresh_token, app.token_url()
+	)
 
 
 class EtsyAdapter:
@@ -48,3 +54,12 @@ class EtsyAdapter:
 
 	def filter_hint(self) -> str | None:
 		return None
+
+	def oauth(self, config: ConnectionConfig, transport: HttpTransport) -> OAuthClient:
+		return oauth(config, transport)
+
+	def connected(
+		self, config: ConnectionConfig, transport: HttpTransport, grant: TokenGrant, params: Mapping[str, str]
+	) -> dict[str, str]:
+		"""Nothing to settle: the shop is the token's owner's."""
+		return {}

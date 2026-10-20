@@ -26,7 +26,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Magento / Adobe Commerce | Built | Categories, simple, virtual, downloadable and configurable products with prices, special prices, stock and images, customers, cart price rules with coupons, orders (other currencies too) with payments, credit memos, shipments and comments, and CMS pages — [coverage/magento.md](coverage/magento.md) |
 | Lightspeed eCom (C-Series) | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, discount codes, orders with payments, credit notes and shipments, text pages, blogs and articles, reviews and redirects — [coverage/lightspeed.md](coverage/lightspeed.md) |
 | Ecwid | Built | Categories, products with variations, prices, sales, stock and images, customers, discount coupons, orders with payments, refunds and shipping labels, reviews and Instant Site redirects — [coverage/ecwid.md](coverage/ecwid.md) |
-| Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Odoo, Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 

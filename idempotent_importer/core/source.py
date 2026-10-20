@@ -4,16 +4,17 @@ mapping (identity, hashing, writers, retirement, redirects) is shared by every a
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from idempotent_importer.core.desired import Mapper
 from idempotent_importer.core.http import HttpTransport, Sleeper
 from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
+from idempotent_importer.core.oauth import OAuthClient, TokenGrant
 
 
 @dataclass(frozen=True)
@@ -93,4 +94,19 @@ class Adapter(Protocol):
 
 	def filter_hint(self) -> str | None:
 		"""An example of the per-kind filter syntax runs pass to the reader, or None without filters."""
+		...
+
+
+@runtime_checkable
+class OAuthSource(Protocol):
+	"""An adapter whose connection is approved by the account's owner through OAuth 2 (``core.oauth``): the
+	desk's Connect button sends them to ``oauth(...).authorization_url`` and the callback exchanges the code."""
+
+	def oauth(self, config: ConnectionConfig, transport: HttpTransport) -> OAuthClient: ...
+
+	def connected(
+		self, config: ConnectionConfig, transport: HttpTransport, grant: TokenGrant, params: Mapping[str, str]
+	) -> dict[str, str]:
+		"""The connection fields the approval settles (``params`` are the callback's query: QuickBooks' company
+		id, Zoho's data centre), e.g. ``{"api_account": "<company>"}``; empty when there are none."""
 		...

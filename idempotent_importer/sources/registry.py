@@ -58,7 +58,8 @@ LISTED: tuple[ListedAdapter, ...] = (
 	ListedAdapter("quickbooks_online", "QuickBooks Online"),
 	ListedAdapter("xero", "Xero"),
 	ListedAdapter("sage", "Sage"),
-	ListedAdapter("zoho", "Zoho"),
+	ListedAdapter("zoho_books", "Zoho Books"),
+	ListedAdapter("zoho_inventory", "Zoho Inventory"),
 	ListedAdapter("acumatica", "Acumatica"),
 )
 

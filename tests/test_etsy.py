@@ -18,10 +18,11 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.http import HttpResponse
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
+from idempotent_importer.core.oauth import OAuthClient, pkce_challenge
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.common import plain_html, shifted
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter, oauth
-from idempotent_importer.sources.etsy.auth import EtsyApp, EtsyOAuth, pkce_challenge
+from idempotent_importer.sources.etsy.auth import EtsyApp
 from idempotent_importer.sources.etsy.mapping import variant_key
 from idempotent_importer.sources.etsy.reader import EtsyReader
 from tests.support.transport import (
@@ -142,7 +143,7 @@ class TestOAuth:
 			oauth(replace(config, save_refresh_token=None), scripted())
 		flow = oauth(config, scripted())
 		assert "e2e" not in repr(flow) and "e2e-shared-secret" not in repr(EtsyApp("k", "e2e-shared-secret"))
-		assert isinstance(flow, EtsyOAuth)
+		assert isinstance(flow, OAuthClient) and flow.provider.callback == "etsy_callback"
 
 
 class TestReader:

@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+// The sources whose owner approves the connection through OAuth 2 (core.source.OAuthSource).
+const OAUTH_SOURCES = ["Etsy", "QuickBooks Online", "Xero", "Zoho Books", "Zoho Inventory"];
+
 frappe.ui.form.on("Importer Connection", {
 	refresh(frm) {
 		if (frm.is_new()) return;
@@ -23,10 +26,10 @@ frappe.ui.form.on("Importer Connection", {
 					}),
 				__("Sync")
 			);
-		if (frm.doc.source === "Etsy") {
-			frm.add_custom_button(__("Connect to Etsy"), () =>
+		if (OAUTH_SOURCES.includes(frm.doc.source)) {
+			frm.add_custom_button(__("Connect to {0}", [frm.doc.source]), () =>
 				frappe.call({
-					method: "idempotent_importer.api.etsy_connect",
+					method: "idempotent_importer.api.connect",
 					args: { connection: frm.doc.name },
 					callback: (r) => {
 						window.location.href = r.message;

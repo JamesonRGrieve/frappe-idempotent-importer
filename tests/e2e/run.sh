@@ -53,6 +53,8 @@ SOURCES=(
 	lightspeed-l:lightspeed-fake:assert_lightspeed
 	ecwid-c:ecwid-fake:assert_ecwid
 )
+# The connections approved through OAuth 2: Connect is proven on each.
+OAUTH_CONNECTIONS=(etsy-e)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")
@@ -86,7 +88,9 @@ suite() {
 	step assert_woocommerce woo-a v1
 	step assert_woocommerce woo-b v1
 	assert_sources v1
-	step assert_etsy_connect etsy-e
+	for connection in "${OAUTH_CONNECTIONS[@]}"; do
+		step assert_oauth_connect "$connection"
+	done
 	step assert_shared_coupon_codes welcome10 woo-a woo-b
 
 	echo "== Unchanged sources: full and incremental re-runs must write nothing"

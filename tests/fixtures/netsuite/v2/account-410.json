@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/410",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/410"
+			}
+		],
+		"id": "410",
+		"acctNumber": "4010",
+		"acctName": "Service Revenue",
+		"fullName": "4010 Service Revenue",
+		"acctType": {
+			"id": "Income",
+			"refName": "Income"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"parent": {
+			"id": "400",
+			"refName": "4000 Sales",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/400"
+				}
+			]
+		}
+	}
+}

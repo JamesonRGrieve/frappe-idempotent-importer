@@ -1,0 +1,147 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/customer/101",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+			}
+		],
+		"id": "101",
+		"entityId": "C101",
+		"isPerson": false,
+		"isInactive": false,
+		"searchStage": "Customer",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/addressBook"
+				}
+			],
+			"count": 2,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/addressBook/11"
+						}
+					],
+					"id": 11,
+					"label": "Head office",
+					"defaultBilling": true,
+					"defaultShipping": false,
+					"addressBookAddress": {
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/addressBook/11/addressBookAddress"
+							}
+						],
+						"addressee": "Lakeside Cafe",
+						"addr1": "12 Lakeshore Rd",
+						"city": "Kelowna",
+						"state": "BC",
+						"zip": "V1Y 2A1",
+						"country": {
+							"id": "CA",
+							"refName": "Canada"
+						},
+						"addrPhone": "+1 250 555 0111"
+					}
+				},
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/addressBook/12"
+						}
+					],
+					"id": 12,
+					"label": "Kitchen door",
+					"defaultBilling": false,
+					"defaultShipping": true,
+					"addressBookAddress": {
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/addressBook/12/addressBookAddress"
+							}
+						],
+						"addressee": "Lakeside Cafe Kitchen",
+						"addr1": "14 Lakeshore Rd",
+						"city": "Kelowna",
+						"state": "BC",
+						"zip": "V1Y 2A1",
+						"country": {
+							"id": "CA",
+							"refName": "Canada"
+						}
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 2
+		},
+		"contactList": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101/contactList"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/contact/701"
+						}
+					],
+					"id": "701",
+					"entityId": "Rosa Diaz",
+					"firstName": "Rosa",
+					"lastName": "Diaz",
+					"email": "rosa@lakeside.example",
+					"phone": "+1 250 555 0112",
+					"title": "Head Chef",
+					"company": {
+						"id": "101",
+						"refName": "owner",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+							}
+						]
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"companyName": "Lakeside Cafe",
+		"email": "orders@lakeside.example",
+		"phone": "+1 604 555 0101"
+	}
+}

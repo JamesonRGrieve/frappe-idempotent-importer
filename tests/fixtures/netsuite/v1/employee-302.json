@@ -1,0 +1,51 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/employee/302",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/employee/302"
+			}
+		],
+		"id": "302",
+		"entityId": "E302",
+		"firstName": "Jordan",
+		"lastName": "Lee",
+		"title": "Technician",
+		"department": {
+			"id": "3",
+			"refName": "Operations : Field Services",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/3"
+				}
+			]
+		},
+		"gender": {
+			"id": "f",
+			"refName": "Female"
+		},
+		"hireDate": "2023-01-09",
+		"birthdate": "1992-11-02",
+		"isInactive": false,
+		"email": "jordan@northwind.example",
+		"mobilePhone": "+1 604 555 0100",
+		"lastModifiedDate": "2026-09-03T08:00:00Z",
+		"supervisor": {
+			"id": "301",
+			"refName": "E301 Alex Martin",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/employee/301"
+				}
+			]
+		}
+	}
+}

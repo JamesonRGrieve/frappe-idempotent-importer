@@ -18,9 +18,12 @@ dependencies = [
 [dependency-groups]
 dev = [
     "click>=8.3,<9",
+    # Signed JWT client assertions (NetSuite's machine-to-machine grant), at the versions Frappe v16 pins.
+    "cryptography>=50.0,<50.1",
     "graphql-core>=3.2,<3.3",
     "jsonschema>=4.25,<5",
     "mypy>=1.19,<2",
+    "pyjwt>=2.13,<2.14",
     "pytest>=9.0,<10",
     "pytest-cov>=7.0,<8",
     "pyyaml>=6.0,<7",

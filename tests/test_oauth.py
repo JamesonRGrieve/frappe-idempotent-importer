@@ -1,25 +1,34 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""The shared OAuth 2 authorization-code client: how each kind of client authenticates at the token
-endpoint, rotating and kept refresh tokens, refused grants, and the bearer authorizer."""
+"""The shared OAuth 2 layer: the authorization-code client (how each kind of client authenticates at the
+token endpoint, rotating and kept refresh tokens, refused grants), the client credentials grant with a
+secret or a signed JWT assertion (keys generated here, never committed), and the bearer authorizer."""
 
 from __future__ import annotations
 
 import base64
 import json
+from collections.abc import Callable
 from urllib.parse import parse_qs, urlsplit
 
+import jwt
 import pytest
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
 
 from idempotent_importer.core.errors import CredentialsRejected, RetryLater, SourceError
 from idempotent_importer.core.http import HttpResponse
 from idempotent_importer.core.oauth import (
+	ASSERTION_LIFETIME_SECONDS,
 	BearerAuthorizer,
 	ClientAuth,
+	ClientCredentials,
+	ClientCredentialsProvider,
 	OAuthApp,
 	OAuthClient,
 	OAuthProvider,
+	SigningKey,
 )
-from tests.support.transport import scripted
+from tests.support.transport import FakeTransport, scripted
 
 
 def provider(auth: ClientAuth, rotates: bool = True) -> OAuthProvider:
@@ -124,3 +133,134 @@ def test_the_bearer_authorizer_fetches_once_and_again_after_a_rejection() -> Non
 	authorizer.headers()
 	assert len(transport.requests) == 2
 	assert "a1" not in repr(authorizer)
+
+
+# -- The client credentials grant ---------------------------------------------------------------------
+
+ASSERTION_URL = "https://1234567.suitetalk.api.netsuite.com/services/rest/auth/oauth2/v1/token"
+NOW = 1_800_000_000
+
+
+def pem_of(key: ec.EllipticCurvePrivateKey | rsa.RSAPrivateKey) -> str:
+	return key.private_bytes(
+		serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()
+	).decode()
+
+
+def ec_pem(curve: ec.EllipticCurve | None = None) -> str:
+	return pem_of(ec.generate_private_key(curve or ec.SECP256R1()))
+
+
+def credentials_provider(auth: ClientAuth, audience: str | None = None) -> ClientCredentialsProvider:
+	return ClientCredentialsProvider(
+		"Books", ASSERTION_URL, ("rest_webservices",), "check the certificate", auth, audience=audience
+	)
+
+
+def assertion_grant(transport: FakeTransport, pem: str, audience: str | None = None) -> ClientCredentials:
+	return ClientCredentials(
+		credentials_provider(ClientAuth.ASSERTION, audience),
+		OAuthApp("client-1", ""),
+		transport,
+		SigningKey("cert-9", pem),
+		lambda: NOW,
+	)
+
+
+def test_client_credentials_with_a_secret_send_it_and_the_scopes_in_the_form() -> None:
+	transport = scripted(grant(access_token="a1", expires_in=3599))
+	tokens = ClientCredentials(credentials_provider(ClientAuth.FORM), OAuthApp("id", "secret"), transport)
+	assert tokens.refresh() == "a1"
+	assert parse_qs(transport.requests[0].body.decode()) == {
+		"grant_type": ["client_credentials"],
+		"scope": ["rest_webservices"],
+		"client_id": ["id"],
+		"client_secret": ["secret"],
+	}
+	assert "secret" not in repr(tokens)
+	with pytest.raises(SourceError, match="client ID and client secret"):
+		ClientCredentials(credentials_provider(ClientAuth.FORM), OAuthApp("id", ""), transport)
+
+
+def test_a_client_assertion_is_signed_by_the_certificate_key_for_the_token_endpoint() -> None:
+	key = ec.generate_private_key(ec.SECP256R1())
+	transport = scripted(grant(access_token="a1", token_type="Bearer", expires_in=3600))
+	tokens = assertion_grant(transport, pem_of(key), audience="https://canonical.example/token")
+	assert tokens.refresh() == "a1"
+	form = parse_qs(transport.requests[0].body.decode())
+	assert form["grant_type"] == ["client_credentials"]
+	assert form["client_assertion_type"] == ["urn:ietf:params:oauth:client-assertion-type:jwt-bearer"]
+	assert "scope" not in form and "client_secret" not in form
+	assertion = form["client_assertion"][0]
+	assert jwt.get_unverified_header(assertion) == {"alg": "ES256", "typ": "JWT", "kid": "cert-9"}
+	claims = jwt.decode(
+		assertion,
+		key.public_key(),
+		algorithms=["ES256"],
+		audience="https://canonical.example/token",
+		options={"verify_exp": False, "verify_iat": False},
+	)
+	assert claims == {
+		"iss": "client-1",
+		"scope": "rest_webservices",
+		"aud": "https://canonical.example/token",
+		"iat": NOW,
+		"exp": NOW + ASSERTION_LIFETIME_SECONDS,
+	}
+	assert "a1" not in repr(tokens) and "PRIVATE" not in repr(SigningKey("cert-9", pem_of(key)))
+
+
+def test_the_assertion_is_addressed_to_the_token_endpoint_unless_told_otherwise() -> None:
+	transport = scripted(grant(access_token="a1"))
+	assertion_grant(transport, ec_pem()).refresh()
+	assertion = parse_qs(transport.requests[0].body.decode())["client_assertion"][0]
+	assert jwt.decode(assertion, options={"verify_signature": False})["aud"] == ASSERTION_URL
+
+
+@pytest.mark.parametrize(
+	("key", "algorithm"),
+	[
+		(lambda: ec_pem(ec.SECP384R1()), "ES384"),
+		(lambda: ec_pem(ec.SECP521R1()), "ES512"),
+		(lambda: pem_of(rsa.generate_private_key(65537, 2048)), "PS256"),
+	],
+)
+def test_each_key_type_signs_with_its_algorithm(key: Callable[[], str], algorithm: str) -> None:
+	assert SigningKey("k", key()).algorithm() == algorithm
+
+
+def test_a_key_pasted_without_its_line_breaks_still_signs() -> None:
+	pem = ec_pem()
+	flattened = " ".join(pem.split("\n"))
+	assert SigningKey("k", flattened).text() == pem
+	assert SigningKey("k", pem).text() == pem
+
+
+def test_unusable_keys_and_missing_settings_are_refused_before_any_request() -> None:
+	with pytest.raises(SourceError, match="not an unencrypted PEM key"):
+		SigningKey("k", "not a key").algorithm()
+	with pytest.raises(SourceError, match="RSA, or EC"):
+		SigningKey("k", ec_pem(ec.SECP256K1())).algorithm()
+	transport = scripted()
+	for app, key in ((OAuthApp("", ""), SigningKey("k", ec_pem())), (OAuthApp("c", ""), SigningKey("", "x"))):
+		with pytest.raises(SourceError, match="certificate ID and its private key"):
+			ClientCredentials(credentials_provider(ClientAuth.ASSERTION), app, transport, key)
+	with pytest.raises(SourceError, match="certificate ID and its private key"):
+		ClientCredentials(credentials_provider(ClientAuth.ASSERTION), OAuthApp("c", ""), transport)
+	assert transport.requests == []
+
+
+def test_a_refused_assertion_stops_the_run_and_rate_limiting_pauses_it() -> None:
+	refused = scripted(HttpResponse(401, b'{"error":"invalid_client"}'))
+	with pytest.raises(CredentialsRejected, match="check the certificate"):
+		assertion_grant(refused, ec_pem()).refresh()
+	with pytest.raises(RetryLater):
+		assertion_grant(scripted(HttpResponse(429, b"")), ec_pem()).refresh()
+	with pytest.raises(SourceError, match="without tokens"):
+		assertion_grant(scripted(grant(token_type="Bearer")), ec_pem()).refresh()
+
+
+def test_the_bearer_authorizer_serves_a_client_credentials_grant() -> None:
+	transport = scripted(grant(access_token="a1"))
+	authorizer = BearerAuthorizer(assertion_grant(transport, ec_pem()))
+	assert authorizer.headers() == {"Authorization": "Bearer a1"}

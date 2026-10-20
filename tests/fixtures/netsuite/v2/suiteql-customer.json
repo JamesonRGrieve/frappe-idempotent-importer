@@ -1,0 +1,42 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id FROM customer WHERE id > ? AND searchstage = 'Customer' ORDER BY id",
+			"params": [
+				"0"
+			]
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 3,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "101"
+			},
+			{
+				"links": [],
+				"id": "102"
+			},
+			{
+				"links": [],
+				"id": "103"
+			}
+		],
+		"offset": 0,
+		"totalResults": 3
+	}
+}

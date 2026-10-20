@@ -1,0 +1,61 @@
+{
+	"request": {
+		"path": "/b1s/v1/ChartOfAccounts",
+		"query": {
+			"$select": "Code,FatherAccountKey",
+			"$orderby": "Code"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#ChartOfAccounts",
+		"value": [
+			{
+				"Code": "1"
+			},
+			{
+				"Code": "1100",
+				"FatherAccountKey": "1"
+			},
+			{
+				"Code": "1200",
+				"FatherAccountKey": "1"
+			},
+			{
+				"Code": "2"
+			},
+			{
+				"Code": "2100",
+				"FatherAccountKey": "2"
+			},
+			{
+				"Code": "2200",
+				"FatherAccountKey": "2"
+			},
+			{
+				"Code": "3"
+			},
+			{
+				"Code": "3100",
+				"FatherAccountKey": "3"
+			},
+			{
+				"Code": "4"
+			},
+			{
+				"Code": "4100",
+				"FatherAccountKey": "4"
+			},
+			{
+				"Code": "5"
+			},
+			{
+				"Code": "5100",
+				"FatherAccountKey": "5"
+			},
+			{
+				"Code": "5200",
+				"FatherAccountKey": "5"
+			}
+		]
+	}
+}

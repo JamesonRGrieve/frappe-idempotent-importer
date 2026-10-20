@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/customer/104",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/104"
+			}
+		],
+		"id": "104",
+		"entityId": "C104",
+		"isPerson": false,
+		"isInactive": false,
+		"searchStage": "Prospect",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/104/addressBook"
+				}
+			],
+			"count": 0,
+			"hasMore": false,
+			"items": [],
+			"offset": 0,
+			"totalResults": 0
+		},
+		"companyName": "Pine Ridge Lodge",
+		"email": "info@pineridge.example"
+	}
+}

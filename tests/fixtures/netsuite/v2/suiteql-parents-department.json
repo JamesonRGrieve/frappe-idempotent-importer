@@ -1,0 +1,31 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 1000,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT DISTINCT parent FROM department WHERE parent IS NOT NULL ORDER BY parent"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=1000&offset=0"
+			}
+		],
+		"count": 1,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"parent": "2"
+			}
+		],
+		"offset": 0,
+		"totalResults": 1
+	}
+}

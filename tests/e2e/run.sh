@@ -60,9 +60,12 @@ SOURCES=(
 	xero-x:xero-fake:assert_xero
 	zoho-books-b:zoho_books-fake:assert_zoho_books
 	zoho-inventory-i:zoho_inventory-fake:assert_zoho_inventory
+	netsuite-n:netsuite-fake:assert_netsuite
+	sap-b:sap_business_one-fake:assert_sap_business_one
+	acumatica-a:acumatica-fake:assert_acumatica
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

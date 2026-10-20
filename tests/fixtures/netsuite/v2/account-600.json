@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/600",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/600"
+			}
+		],
+		"id": "600",
+		"acctNumber": "6000",
+		"acctName": "Rent",
+		"fullName": "6000 Rent",
+		"acctType": {
+			"id": "Expense",
+			"refName": "Expense"
+		},
+		"isSummary": false,
+		"isInactive": true,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z"
+	}
+}

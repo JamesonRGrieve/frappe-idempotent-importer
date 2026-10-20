@@ -1,0 +1,109 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/salesOrder/603",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder/603"
+			}
+		],
+		"id": "603",
+		"tranId": "SO-3001",
+		"tranDate": "2026-09-12",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 147.55,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "101",
+			"refName": "C101 Lakeside Cafe",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder/603/item"
+				}
+			],
+			"count": 2,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder/603/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "501",
+						"refName": "TRAIL-MUG",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+							}
+						]
+					},
+					"amount": 36.0,
+					"quantity": 2.0,
+					"rate": 18.0,
+					"description": "Trail Mug"
+				},
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/salesOrder/603/item/2"
+						}
+					],
+					"line": 2,
+					"item": {
+						"id": "502",
+						"refName": "INSTALL",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/serviceSaleItem/502"
+							}
+						]
+					},
+					"amount": 95.0,
+					"quantity": 1.0,
+					"rate": 95.0,
+					"description": "Installation"
+				}
+			],
+			"offset": 0,
+			"totalResults": 2
+		},
+		"taxTotal": 6.55,
+		"status": {
+			"id": "B",
+			"refName": "Pending Fulfillment"
+		},
+		"dueDate": "2026-09-30",
+		"shippingCost": 10.0
+	}
+}

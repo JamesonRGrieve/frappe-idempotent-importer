@@ -1,0 +1,19 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/b1s/v1/Login",
+		"body": {
+			"CompanyDB": "SBO_NORTHWIND",
+			"UserName": "e2e-b1-user",
+			"Password": "e2e-b1-password"
+		}
+	},
+	"headers": {
+		"Set-Cookie": "B1SESSION=e2e-b1-session; path=/b1s; HttpOnly, ROUTEID=.node1; path=/b1s"
+	},
+	"response": {
+		"SessionId": "e2e-b1-session",
+		"Version": "1000201",
+		"SessionTimeout": 30
+	}
+}

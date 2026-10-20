@@ -1,0 +1,86 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/estimate/601",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/estimate/601"
+			}
+		],
+		"id": "601",
+		"tranId": "EST-1001",
+		"tranDate": "2026-09-10",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 37.8,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "101",
+			"refName": "C101 Lakeside Cafe",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/estimate/601/item"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/estimate/601/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "501",
+						"refName": "TRAIL-MUG",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+							}
+						]
+					},
+					"amount": 36.0,
+					"quantity": 2.0,
+					"rate": 18.0,
+					"description": "Trail Mug"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"taxTotal": 1.8,
+		"status": {
+			"id": "A",
+			"refName": "Open"
+		},
+		"memo": "Mugs for the patio",
+		"title": "Patio mugs"
+	}
+}

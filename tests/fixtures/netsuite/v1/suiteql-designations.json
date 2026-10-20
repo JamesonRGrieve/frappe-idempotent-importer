@@ -1,0 +1,35 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 1000,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT DISTINCT title FROM employee WHERE title IS NOT NULL ORDER BY title"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=1000&offset=0"
+			}
+		],
+		"count": 2,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"title": "Sales Manager"
+			},
+			{
+				"links": [],
+				"title": "Technician"
+			}
+		],
+		"offset": 0,
+		"totalResults": 2
+	}
+}

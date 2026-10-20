@@ -1,0 +1,128 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Employee",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "ContactInfo,EmployeeSettings"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000047",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"EmployeeID": {
+				"value": "EP001"
+			},
+			"EmployeeName": {
+				"value": "Mara Quinn"
+			},
+			"Status": {
+				"value": "Active"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"ContactInfo": {
+				"id": "00000000-0000-0000-0000-0000000002c7",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"FirstName": {
+					"value": "Mara"
+				},
+				"LastName": {
+					"value": "Quinn"
+				},
+				"Email": {
+					"value": "mara@summitgear.example"
+				},
+				"Phone1": {
+					"value": "+1 403 555 0110"
+				},
+				"JobTitle": {
+					"value": "Store Manager"
+				},
+				"Gender": {
+					"value": "Female"
+				},
+				"DateOfBirth": {
+					"value": "1984-02-11T00:00:00+00:00"
+				},
+				"custom": {}
+			},
+			"EmployeeSettings": {
+				"id": "00000000-0000-0000-0000-0000000002c8",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"DepartmentID": {
+					"value": "RETAIL"
+				},
+				"custom": {}
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000048",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"EmployeeID": {
+				"value": "EP002"
+			},
+			"EmployeeName": {
+				"value": "Theo Grant"
+			},
+			"Status": {
+				"value": "Inactive"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"ContactInfo": {
+				"id": "00000000-0000-0000-0000-0000000002d1",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"FirstName": {
+					"value": "Theo"
+				},
+				"LastName": {
+					"value": "Grant"
+				},
+				"Email": {
+					"value": "theo@summitgear.example"
+				},
+				"JobTitle": {
+					"value": "Fitter"
+				},
+				"custom": {}
+			},
+			"EmployeeSettings": {
+				"id": "00000000-0000-0000-0000-0000000002d2",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"DepartmentID": {
+					"value": "RETAIL"
+				},
+				"ReportsTo": {
+					"value": "EP001"
+				},
+				"custom": {}
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

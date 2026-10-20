@@ -1,0 +1,48 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/vendor/202",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/202"
+			}
+		],
+		"id": "202",
+		"entityId": "V202",
+		"companyName": "Bolt Logistics",
+		"isPerson": false,
+		"isInactive": false,
+		"email": "accounts@bolt.example",
+		"phone": "+1 604 555 0202",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"vatRegNumber": "123456789RT0001",
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/202/addressBook"
+				}
+			],
+			"count": 0,
+			"hasMore": false,
+			"items": [],
+			"offset": 0,
+			"totalResults": 0
+		}
+	}
+}

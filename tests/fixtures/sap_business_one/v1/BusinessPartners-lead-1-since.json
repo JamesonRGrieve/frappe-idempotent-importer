@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/b1s/v1/BusinessPartners",
+		"query": {
+			"$orderby": "CardCode"
+		},
+		"query_patterns": {
+			"$filter": "CardType\\ eq\\ 'cLid' and UpdateDate ge '\\d{4}-\\d{2}-\\d{2}'"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#BusinessPartners",
+		"value": [
+			{
+				"CardCode": "L001",
+				"CardName": "Summit Pilates",
+				"CardType": "cLid",
+				"CompanyPrivate": "cCompany",
+				"Currency": "CAD",
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"UpdateTime": "09:30:00",
+				"BPAddresses": [],
+				"ContactEmployees": [],
+				"EmailAddress": "hello@summitpilates.example",
+				"Notes": "Met at the spring trade show"
+			},
+			{
+				"CardCode": "L002",
+				"CardName": "Cedar Hollow Lodge",
+				"CardType": "cLid",
+				"CompanyPrivate": "cCompany",
+				"Currency": "CAD",
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"UpdateTime": "09:30:00",
+				"BPAddresses": [],
+				"ContactEmployees": [],
+				"EmailAddress": "info@cedarhollow.example"
+			}
+		]
+	}
+}

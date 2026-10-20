@@ -1,0 +1,164 @@
+{
+	"request": {
+		"path": "/b1s/v1/ChartOfAccounts",
+		"query": {
+			"$orderby": "Code"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#ChartOfAccounts",
+		"value": [
+			{
+				"Code": "1",
+				"Name": "Assets",
+				"FormatCode": "1",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tNO",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES"
+			},
+			{
+				"Code": "1100",
+				"Name": "Chequing",
+				"FormatCode": "1100",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tYES",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "1"
+			},
+			{
+				"Code": "1200",
+				"Name": "Accounts Receivable",
+				"FormatCode": "1200",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "1"
+			},
+			{
+				"Code": "2",
+				"Name": "Liabilities",
+				"FormatCode": "2",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tNO",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES"
+			},
+			{
+				"Code": "2100",
+				"Name": "Accounts Payable",
+				"FormatCode": "2100",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "2"
+			},
+			{
+				"Code": "2200",
+				"Name": "GST Payable",
+				"FormatCode": "2200",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "2"
+			},
+			{
+				"Code": "3",
+				"Name": "Equity",
+				"FormatCode": "3",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tNO",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES"
+			},
+			{
+				"Code": "3100",
+				"Name": "Owner's Equity",
+				"FormatCode": "3100",
+				"AccountType": "at_Other",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "3"
+			},
+			{
+				"Code": "4",
+				"Name": "Revenues",
+				"FormatCode": "4",
+				"AccountType": "at_Revenues",
+				"ActiveAccount": "tNO",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES"
+			},
+			{
+				"Code": "4100",
+				"Name": "Sales",
+				"FormatCode": "4100",
+				"AccountType": "at_Revenues",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "4"
+			},
+			{
+				"Code": "5",
+				"Name": "Expenses",
+				"FormatCode": "5",
+				"AccountType": "at_Expenses",
+				"ActiveAccount": "tNO",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES"
+			},
+			{
+				"Code": "5100",
+				"Name": "Rent",
+				"FormatCode": "5100",
+				"AccountType": "at_Expenses",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "5"
+			},
+			{
+				"Code": "5200",
+				"Name": "Office Supplies & Postage",
+				"FormatCode": "5200",
+				"AccountType": "at_Expenses",
+				"ActiveAccount": "tYES",
+				"AcctCurrency": "##",
+				"CashAccount": "tNO",
+				"FrozenFor": "tNO",
+				"ValidFor": "tYES",
+				"FatherAccountKey": "5"
+			}
+		]
+	}
+}

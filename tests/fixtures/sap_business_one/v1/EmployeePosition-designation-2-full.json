@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/b1s/v1/EmployeePosition",
+		"query": {
+			"$orderby": "PositionID"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#EmployeePosition",
+		"value": [
+			{
+				"PositionID": 1,
+				"Name": "Sales Manager"
+			},
+			{
+				"PositionID": 2,
+				"Name": "Technician"
+			}
+		]
+	}
+}

@@ -1,0 +1,83 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/purchaseOrder/608",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/purchaseOrder/608"
+			}
+		],
+		"id": "608",
+		"tranId": "PO-8001",
+		"tranDate": "2026-09-08",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 90.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "201",
+			"refName": "V201 Northern Paper Co",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/purchaseOrder/608/item"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/purchaseOrder/608/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "501",
+						"refName": "TRAIL-MUG",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+							}
+						]
+					},
+					"amount": 90.0,
+					"quantity": 10.0,
+					"rate": 9.0,
+					"description": "Trail Mug"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"status": {
+			"id": "B",
+			"refName": "Pending Receipt"
+		}
+	}
+}

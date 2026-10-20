@@ -1,0 +1,31 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id FROM job WHERE id > ? AND lastmodifieddate >= TO_DATE(?, 'YYYY-MM-DD') ORDER BY id"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 1,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "401"
+			}
+		],
+		"offset": 0,
+		"totalResults": 1
+	}
+}

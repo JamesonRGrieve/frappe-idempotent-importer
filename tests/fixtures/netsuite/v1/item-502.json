@@ -1,0 +1,72 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/serviceSaleItem/502",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/serviceSaleItem/502"
+			}
+		],
+		"id": "502",
+		"itemId": "INSTALL",
+		"displayName": "Installation",
+		"itemType": {
+			"id": "Service",
+			"refName": "Service"
+		},
+		"isInactive": false,
+		"isOnline": false,
+		"lastModifiedDate": "2026-09-04T10:00:00Z",
+		"price": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/serviceSaleItem/502/price"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/serviceSaleItem/502/price/1"
+						}
+					],
+					"priceLevel": {
+						"id": "1",
+						"refName": "Base Price",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/priceLevel/1"
+							}
+						]
+					},
+					"priceLevelName": "Base Price",
+					"currencyPage": {
+						"id": "1",
+						"refName": "Canadian Dollar",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+							}
+						]
+					},
+					"price": 95.0,
+					"priceQty": 0
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"salesDescription": "On-site installation, per visit"
+	}
+}

@@ -34,7 +34,10 @@ stores can import into two businesses at once and never touch each other's recor
 | Xero | Built | Accounts, tracking categories, items, contacts as customers and suppliers, projects, quotes, purchase orders, sales and purchase invoices and credit notes, payments, prepayments and overpayments, manual journals, spend and receive money and bank transfers — [coverage/xero.md](coverage/xero.md) |
 | Zoho Books | Built | The chart of accounts, locations, items, customers and vendors, projects, estimates, sales orders, invoices, credit notes, sales receipts, purchase orders, bills, vendor credits, customer and vendor payments, journals and expenses — [coverage/zoho_books.md](coverage/zoho_books.md) |
 | Zoho Inventory | Built | Locations, categories, item groups with their variants and items, customers and vendors, sales orders, invoices, credit notes, purchase orders, bills, vendor credits and customer payments — [coverage/zoho_inventory.md](coverage/zoho_inventory.md) |
-| PeopleSoft, Agendrix, NetSuite, SAP Business One, Sage, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| NetSuite | Built | The chart of accounts, departments, locations, items, customers with their contacts, leads and prospects, vendors, job titles, employees, projects, opportunities, estimates, sales and purchase orders, invoices, cash sales, credit memos, cash refunds, vendor bills and credits, customer and vendor payments, deposits and refunds, journal entries and checks — [coverage/netsuite.md](coverage/netsuite.md) |
+| SAP Business One | Built | The chart of accounts, profit centers, warehouses, item groups and items, customers, suppliers and leads with their contact persons and addresses, departments, positions, employees, projects, sales opportunities, quotations, sales and purchase orders, A/R and A/P invoices and credit notes, incoming and outgoing payments, and manual journal entries — [coverage/sap_business_one.md](coverage/sap_business_one.md) |
+| Acumatica | Built | GL accounts, subaccounts, warehouses, item classes, stock and non-stock items, customers and vendors with their contacts, departments and job titles, employees, projects, leads, opportunities, quotations, sales and purchase orders, A/R invoices, memos and cash sales, A/P bills and adjustments, payments and checks, and general ledger batches — [coverage/acumatica.md](coverage/acumatica.md) |
+| PeopleSoft, Agendrix, Sage | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -162,6 +165,21 @@ This is the operator's decision to confirm (see below).
      secret, save, then click **Connect to Zoho Books** (or Inventory): the organisation becomes the account.
      An organisation on both products shares its contacts, invoices, bills and payments: mirror those from
      one of the two connections only.
+   - **NetSuite:** in the account, create an integration record with the REST web services scope and the
+     client credentials (machine-to-machine) grant, and on the OAuth 2.0 Client Credentials Setup page map a
+     certificate to it with an entity and a role that can read the records in
+     [coverage/netsuite.md](coverage/netsuite.md). Enter the account ID (`1234567`, or `1234567_SB1` for a
+     sandbox) as the account, the integration's client ID as the user, the certificate ID as **Key or
+     Certificate ID**, and the certificate's private key (PEM) as the secret.
+   - **SAP Business One:** enter the Service Layer's address (`https://<server>:50000`) as the Store URL,
+     the company database as the account, and a user's name and password with read access; in the **Field
+     Map**, the root type of each "other" drawer of the chart
+     (`{"root_types": {"1": "Asset", "2": "Liability", "3": "Equity"}}`, see
+     [coverage/sap_business_one.md](coverage/sap_business_one.md)).
+   - **Acumatica:** register a connected application (SM303010) with the authorization code flow, a secret,
+     refresh tokens allowed and the same redirect URI; enter the instance's address as the Store URL and the
+     application's client ID (`<id>@<tenant>`) and secret, save, then click **Connect to Acumatica**
+     ([coverage/acumatica.md](coverage/acumatica.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands
@@ -328,7 +346,7 @@ Still to do:
 2. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-3. **ERP and HR sources** (PeopleSoft, Agendrix, NetSuite, …): a later phase.
+3. **ERP and HR sources** (PeopleSoft, Agendrix, Sage): a later phase.
 4. **Native mirroring still to build (card 386):** multi-location stock as one Warehouse per source
    location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist; units of measure
    (Square's measurement units, Ecwid's carats); itemised refunds where the source gives the refunded items

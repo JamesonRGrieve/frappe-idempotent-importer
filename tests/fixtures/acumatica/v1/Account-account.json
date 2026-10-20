@@ -1,0 +1,179 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Account",
+		"query": {
+			"$top": 100,
+			"$skip": 0
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000001",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "10100"
+			},
+			"Description": {
+				"value": "Operating Bank"
+			},
+			"Type": {
+				"value": "Asset"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": true
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000002",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "11000"
+			},
+			"Description": {
+				"value": "Accounts Receivable"
+			},
+			"Type": {
+				"value": "Asset"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": false
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000003",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "20000"
+			},
+			"Description": {
+				"value": "Accounts Payable"
+			},
+			"Type": {
+				"value": "Liability"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": false
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000004",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "40000"
+			},
+			"Description": {
+				"value": "Sales Revenue"
+			},
+			"Type": {
+				"value": "Income"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": false
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000005",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "60000"
+			},
+			"Description": {
+				"value": "Rent Expense"
+			},
+			"Type": {
+				"value": "Expense"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": false
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000006",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"AccountCD": {
+				"value": "61000"
+			},
+			"Description": {
+				"value": "Office Supplies"
+			},
+			"Type": {
+				"value": "Expense"
+			},
+			"Active": {
+				"value": true
+			},
+			"CashAccount": {
+				"value": false
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

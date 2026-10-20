@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/department/3",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/3"
+			}
+		],
+		"id": "3",
+		"name": "Field Services",
+		"fullName": "Operations : Field Services",
+		"isInactive": false,
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"parent": {
+			"id": "2",
+			"refName": "Operations",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/2"
+				}
+			]
+		}
+	}
+}

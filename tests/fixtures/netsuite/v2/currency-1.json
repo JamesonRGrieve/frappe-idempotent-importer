@@ -1,0 +1,22 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/currency/1",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+			}
+		],
+		"id": "1",
+		"name": "Canadian Dollar",
+		"symbol": "CAD",
+		"isBaseCurrency": true,
+		"isInactive": false,
+		"exchangeRate": 1.0
+	}
+}

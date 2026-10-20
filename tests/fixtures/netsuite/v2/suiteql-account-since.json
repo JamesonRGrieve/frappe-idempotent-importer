@@ -1,0 +1,79 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id FROM account WHERE id > ? AND lastmodifieddate >= TO_DATE(?, 'YYYY-MM-DD') ORDER BY id"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 13,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "100"
+			},
+			{
+				"links": [],
+				"id": "110"
+			},
+			{
+				"links": [],
+				"id": "130"
+			},
+			{
+				"links": [],
+				"id": "131"
+			},
+			{
+				"links": [],
+				"id": "200"
+			},
+			{
+				"links": [],
+				"id": "210"
+			},
+			{
+				"links": [],
+				"id": "300"
+			},
+			{
+				"links": [],
+				"id": "400"
+			},
+			{
+				"links": [],
+				"id": "410"
+			},
+			{
+				"links": [],
+				"id": "500"
+			},
+			{
+				"links": [],
+				"id": "600"
+			},
+			{
+				"links": [],
+				"id": "610"
+			},
+			{
+				"links": [],
+				"id": "900"
+			}
+		],
+		"offset": 0,
+		"totalResults": 13
+	}
+}

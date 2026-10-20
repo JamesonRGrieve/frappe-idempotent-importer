@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/b1s/v1/SalesOpportunities",
+		"query": {
+			"$orderby": "SequentialNo"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#SalesOpportunities",
+		"value": [
+			{
+				"SequentialNo": 1,
+				"CardCode": "L002",
+				"OpportunityName": "Lodge mugs",
+				"StartDate": "2026-09-11",
+				"PredictedClosingDate": "2026-12-15",
+				"MaxLocalTotal": 900.0,
+				"ClosingPercentage": 40.0,
+				"Status": "sos_Open",
+				"Remarks": "Mugs for every cabin",
+				"UpdateDate": "2026-09-01"
+			}
+		]
+	}
+}

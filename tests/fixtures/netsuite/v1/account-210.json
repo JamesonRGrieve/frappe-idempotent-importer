@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/210",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/210"
+			}
+		],
+		"id": "210",
+		"acctNumber": "2100",
+		"acctName": "GST Payable",
+		"fullName": "2100 GST Payable",
+		"acctType": {
+			"id": "OthCurrLiab",
+			"refName": "Other Current Liability"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"sSpecAcct": {
+			"id": "SalesTaxPay",
+			"refName": "Sales Tax Payable"
+		}
+	}
+}

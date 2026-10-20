@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Subaccount",
+		"query": {
+			"$top": 100,
+			"$skip": 0
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-00000000000b",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"SubaccountCD": {
+				"value": "000-000"
+			},
+			"Description": {
+				"value": "Default"
+			},
+			"Active": {
+				"value": true
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-00000000000c",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"SubaccountCD": {
+				"value": "OPS-000"
+			},
+			"Description": {
+				"value": "Operations"
+			},
+			"Active": {
+				"value": true
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

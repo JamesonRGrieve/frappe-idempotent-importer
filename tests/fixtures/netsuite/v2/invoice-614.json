@@ -1,0 +1,84 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/invoice/614",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/invoice/614"
+			}
+		],
+		"id": "614",
+		"tranId": "INV-4002",
+		"tranDate": "2026-10-02",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 94.5,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "101",
+			"refName": "C101 Lakeside Cafe",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/invoice/614/item"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/invoice/614/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "502",
+						"refName": "INSTALL",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/serviceSaleItem/502"
+							}
+						]
+					},
+					"amount": 90.0,
+					"quantity": 1.0,
+					"rate": 90.0,
+					"description": "Installation follow-up"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"taxTotal": 4.5,
+		"status": {
+			"id": "D",
+			"refName": "Pending Approval"
+		}
+	}
+}

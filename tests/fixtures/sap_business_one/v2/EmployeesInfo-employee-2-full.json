@@ -1,0 +1,44 @@
+{
+	"request": {
+		"path": "/b1s/v1/EmployeesInfo",
+		"query": {
+			"$orderby": "EmployeeID"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#EmployeesInfo",
+		"value": [
+			{
+				"EmployeeID": 1,
+				"FirstName": "Sam",
+				"LastName": "Okoro",
+				"Gender": "gt_Male",
+				"DateOfBirth": "1985-06-15",
+				"StartDate": "2021-03-01",
+				"Department": 1,
+				"Position": 1,
+				"eMail": "sam@northwind.example",
+				"MobilePhone": "+1 604 555 0100",
+				"Active": "tYES",
+				"ExternalEmployeeNumber": "E001",
+				"UpdateDate": "2026-09-01"
+			},
+			{
+				"EmployeeID": 2,
+				"FirstName": "Robin",
+				"LastName": "Vance",
+				"Gender": "gt_Female",
+				"DateOfBirth": "1992-11-02",
+				"StartDate": "2023-01-09",
+				"Department": 2,
+				"Position": 2,
+				"Manager": 1,
+				"eMail": "robin@northwind.example",
+				"Active": "tNO",
+				"ExternalEmployeeNumber": "E002",
+				"UpdateDate": "2026-10-02",
+				"TerminationDate": "2026-10-01"
+			}
+		]
+	}
+}

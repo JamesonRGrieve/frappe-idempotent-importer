@@ -1,0 +1,60 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id, itemtype, subtype, islotitem, isserialitem FROM item WHERE id > ? AND itemtype IN ('InvtPart', 'Assembly', 'Kit', 'GiftCert', 'DwnLdItem', 'NonInvtPart', 'Service', 'OthCharge') ORDER BY id",
+			"params": [
+				"0"
+			]
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 4,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "501",
+				"itemtype": "InvtPart",
+				"islotitem": "F",
+				"isserialitem": "F"
+			},
+			{
+				"links": [],
+				"id": "502",
+				"itemtype": "Service",
+				"subtype": "Sale",
+				"islotitem": "F",
+				"isserialitem": "F"
+			},
+			{
+				"links": [],
+				"id": "503",
+				"itemtype": "NonInvtPart",
+				"subtype": "Sale",
+				"islotitem": "F",
+				"isserialitem": "F"
+			},
+			{
+				"links": [],
+				"id": "506",
+				"itemtype": "Kit",
+				"islotitem": "F",
+				"isserialitem": "F"
+			}
+		],
+		"offset": 0,
+		"totalResults": 4
+	}
+}

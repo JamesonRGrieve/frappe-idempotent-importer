@@ -1,0 +1,78 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/customer/102",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102"
+			}
+		],
+		"id": "102",
+		"entityId": "C102",
+		"isPerson": true,
+		"isInactive": false,
+		"searchStage": "Customer",
+		"currency": {
+			"id": "2",
+			"refName": "US Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/2"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102/addressBook"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102/addressBook/21"
+						}
+					],
+					"id": 21,
+					"label": "Home",
+					"defaultBilling": true,
+					"defaultShipping": true,
+					"addressBookAddress": {
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102/addressBook/21/addressBookAddress"
+							}
+						],
+						"addressee": "Maya Chen",
+						"addr1": "88 Pike St",
+						"city": "Seattle",
+						"state": "WA",
+						"zip": "98101",
+						"country": {
+							"id": "US",
+							"refName": "United States"
+						}
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"firstName": "Maya",
+		"lastName": "Chen",
+		"email": "maya@example.com"
+	}
+}

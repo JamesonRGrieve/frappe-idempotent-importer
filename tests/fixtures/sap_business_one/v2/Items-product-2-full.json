@@ -1,0 +1,77 @@
+{
+	"request": {
+		"path": "/b1s/v1/Items",
+		"query": {
+			"$orderby": "ItemCode"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#Items",
+		"value": [
+			{
+				"ItemCode": "A1000",
+				"ItemName": "Trail Mug",
+				"ItemsGroupCode": 100,
+				"BarCode": "0627843001234",
+				"User_Text": "Enamel camping mug, 350 ml",
+				"InventoryItem": "tYES",
+				"SalesItem": "tYES",
+				"PurchaseItem": "tYES",
+				"QuantityOnStock": 40.0,
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"ItemPrices": [
+					{
+						"PriceList": 1,
+						"Price": 18.0,
+						"Currency": "CAD"
+					},
+					{
+						"PriceList": 2,
+						"Price": 15.0,
+						"Currency": "CAD"
+					}
+				]
+			},
+			{
+				"ItemCode": "K200",
+				"ItemName": "Mug Set",
+				"ItemsGroupCode": 100,
+				"InventoryItem": "tNO",
+				"SalesItem": "tYES",
+				"PurchaseItem": "tNO",
+				"QuantityOnStock": 0.0,
+				"Valid": "tYES",
+				"Frozen": "tYES",
+				"UpdateDate": "2026-10-02",
+				"ItemPrices": [
+					{
+						"PriceList": 1,
+						"Price": 45.0,
+						"Currency": "CAD"
+					}
+				]
+			},
+			{
+				"ItemCode": "S100",
+				"ItemName": "Installation",
+				"ItemsGroupCode": 101,
+				"InventoryItem": "tNO",
+				"SalesItem": "tYES",
+				"PurchaseItem": "tNO",
+				"QuantityOnStock": 0.0,
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"ItemPrices": [
+					{
+						"PriceList": 1,
+						"Price": 95.0,
+						"Currency": "CAD"
+					}
+				]
+			}
+		]
+	}
+}

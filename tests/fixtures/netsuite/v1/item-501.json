@@ -1,0 +1,79 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/inventoryItem/501",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+			}
+		],
+		"id": "501",
+		"itemId": "TRAIL-MUG",
+		"displayName": "Trail Mug",
+		"itemType": {
+			"id": "InvtPart",
+			"refName": "Inventory Item"
+		},
+		"isInactive": false,
+		"isOnline": false,
+		"lastModifiedDate": "2026-09-04T10:00:00Z",
+		"price": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501/price"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501/price/1"
+						}
+					],
+					"priceLevel": {
+						"id": "1",
+						"refName": "Base Price",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/priceLevel/1"
+							}
+						]
+					},
+					"priceLevelName": "Base Price",
+					"currencyPage": {
+						"id": "1",
+						"refName": "Canadian Dollar",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+							}
+						]
+					},
+					"price": 18.0,
+					"priceQty": 0
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"salesDescription": "Enamel camping mug, 350 ml",
+		"upcCode": "0627843001234",
+		"quantityOnHand": 40.0,
+		"weight": 0.5,
+		"weightUnit": {
+			"id": "1",
+			"refName": "lb"
+		}
+	}
+}

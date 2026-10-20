@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/131",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/131"
+			}
+		],
+		"id": "131",
+		"acctNumber": "1510",
+		"acctName": "Equipment",
+		"fullName": "1510 Equipment",
+		"acctType": {
+			"id": "FixedAsset",
+			"refName": "Fixed Asset"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"parent": {
+			"id": "130",
+			"refName": "1500 Fixed Assets",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/130"
+				}
+			]
+		}
+	}
+}

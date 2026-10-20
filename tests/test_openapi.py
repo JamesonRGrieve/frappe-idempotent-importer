@@ -120,6 +120,9 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"xero",
 		"zoho_books",
 		"zoho_inventory",
+		"netsuite",
+		"sap_business_one",
+		"acumatica",
 	}
 	commit = re.compile(r"/[0-9a-f]{40}/")
 	for document in catalog():

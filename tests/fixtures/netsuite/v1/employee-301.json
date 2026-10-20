@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/employee/301",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/employee/301"
+			}
+		],
+		"id": "301",
+		"entityId": "E301",
+		"firstName": "Alex",
+		"lastName": "Martin",
+		"title": "Sales Manager",
+		"department": {
+			"id": "1",
+			"refName": "Sales",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/1"
+				}
+			]
+		},
+		"gender": {
+			"id": "m",
+			"refName": "Male"
+		},
+		"hireDate": "2021-03-01",
+		"birthdate": "1985-06-15",
+		"isInactive": false,
+		"email": "alex@northwind.example",
+		"mobilePhone": "+1 604 555 0100",
+		"lastModifiedDate": "2026-09-03T08:00:00Z"
+	}
+}

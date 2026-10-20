@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/300",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/300"
+			}
+		],
+		"id": "300",
+		"acctNumber": "3000",
+		"acctName": "Owner's Equity",
+		"fullName": "3000 Owner's Equity",
+		"acctType": {
+			"id": "Equity",
+			"refName": "Equity"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z"
+	}
+}

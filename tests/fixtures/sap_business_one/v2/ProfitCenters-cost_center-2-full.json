@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/b1s/v1/ProfitCenters",
+		"query": {
+			"$orderby": "CenterCode"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#ProfitCenters",
+		"value": [
+			{
+				"CenterCode": "OPS",
+				"CenterName": "Operations",
+				"InWhichDimension": 1,
+				"Active": "tYES"
+			},
+			{
+				"CenterCode": "REGION-W",
+				"CenterName": "West",
+				"InWhichDimension": 2,
+				"Active": "tYES"
+			},
+			{
+				"CenterCode": "SALES",
+				"CenterName": "Sales",
+				"InWhichDimension": 1,
+				"Active": "tYES"
+			}
+		]
+	}
+}

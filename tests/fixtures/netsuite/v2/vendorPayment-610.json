@@ -1,0 +1,102 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/vendorPayment/610",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorPayment/610"
+			}
+		],
+		"id": "610",
+		"tranId": "VP-9001",
+		"tranDate": "2026-09-21",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 120.75,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "201",
+			"refName": "V201 Northern Paper Co",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201"
+				}
+			]
+		},
+		"status": {
+			"id": "B",
+			"refName": "Cleared"
+		},
+		"account": {
+			"id": "100",
+			"refName": "1000 Chequing",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+				}
+			]
+		},
+		"apAcct": {
+			"id": "200",
+			"refName": "2000 Accounts Payable",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/200"
+				}
+			]
+		},
+		"apply": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorPayment/610/apply"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorPayment/610/apply/609"
+						}
+					],
+					"doc": {
+						"id": "609",
+						"refName": "Bill #609",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609"
+							}
+						]
+					},
+					"apply": true,
+					"amount": 120.75,
+					"type": "Bill",
+					"applyDate": "2026-09-20"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		}
+	}
+}

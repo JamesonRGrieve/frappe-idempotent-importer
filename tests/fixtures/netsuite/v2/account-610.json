@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/610",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/610"
+			}
+		],
+		"id": "610",
+		"acctNumber": "6100",
+		"acctName": "Office Supplies & Postage",
+		"fullName": "6100 Office Supplies & Postage",
+		"acctType": {
+			"id": "Expense",
+			"refName": "Expense"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z"
+	}
+}

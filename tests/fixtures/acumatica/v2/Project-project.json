@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Project",
+		"query": {
+			"$top": 100,
+			"$skip": 0
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000051",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"ProjectID": {
+				"value": "FITOUT"
+			},
+			"Description": {
+				"value": "Canmore Store Fit-out"
+			},
+			"Customer": {
+				"value": "ALPINE"
+			},
+			"Status": {
+				"value": "Active"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

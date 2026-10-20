@@ -1,0 +1,79 @@
+{
+	"request": {
+		"path": "/b1s/v1/BusinessPartners",
+		"query": {
+			"$orderby": "CardCode",
+			"$filter": "CardType eq 'cCustomer'"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#BusinessPartners",
+		"value": [
+			{
+				"CardCode": "C001",
+				"CardName": "Bayview Bistro",
+				"CardType": "cCustomer",
+				"CompanyPrivate": "cCompany",
+				"Currency": "CAD",
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"UpdateTime": "09:30:00",
+				"BPAddresses": [
+					{
+						"AddressName": "Head office",
+						"Street": "12 Lakeshore Rd",
+						"City": "Kelowna",
+						"State": "BC",
+						"ZipCode": "V1Y 2A1",
+						"Country": "CA",
+						"AddressType": "bo_BillTo",
+						"BPCode": "C001",
+						"RowNum": 0
+					},
+					{
+						"AddressName": "Kitchen door",
+						"Street": "14 Lakeshore Rd",
+						"City": "Kelowna",
+						"State": "BC",
+						"ZipCode": "V1Y 2A1",
+						"Country": "CA",
+						"AddressType": "bo_ShipTo",
+						"BPCode": "C001",
+						"RowNum": 1
+					}
+				],
+				"ContactEmployees": [
+					{
+						"CardCode": "C001",
+						"Name": "Lena Park",
+						"FirstName": "Lena",
+						"LastName": "Park",
+						"Position": "Head Chef",
+						"Phone1": "+1 250 555 0112",
+						"E_Mail": "lena@bayview.example",
+						"InternalCode": 11,
+						"Active": "tYES"
+					}
+				],
+				"EmailAddress": "orders@bayview.example",
+				"Phone1": "+1 604 555 0101",
+				"FederalTaxID": "123456789RT0001"
+			},
+			{
+				"CardCode": "C002",
+				"CardName": "Priya Nair",
+				"CardType": "cCustomer",
+				"CompanyPrivate": "cPrivate",
+				"Currency": "USD",
+				"Valid": "tYES",
+				"Frozen": "tNO",
+				"UpdateDate": "2026-09-01",
+				"UpdateTime": "09:30:00",
+				"BPAddresses": [],
+				"ContactEmployees": [],
+				"EmailAddress": "priya@example.com"
+			}
+		]
+	}
+}

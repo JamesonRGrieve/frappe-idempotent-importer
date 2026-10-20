@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/location/2",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/location/2"
+			}
+		],
+		"id": "2",
+		"name": "Overflow Bay",
+		"fullName": "Main Warehouse : Overflow Bay",
+		"isInactive": false,
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"parent": {
+			"id": "1",
+			"refName": "Main Warehouse",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/location/1"
+				}
+			]
+		}
+	}
+}

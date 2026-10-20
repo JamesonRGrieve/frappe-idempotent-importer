@@ -1,0 +1,70 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Payment",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "ApplicationHistory"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-0000000000a1",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"Type": {
+				"value": "Payment"
+			},
+			"ReferenceNbr": {
+				"value": "PM000001"
+			},
+			"CustomerID": {
+				"value": "ALPINE"
+			},
+			"ApplicationDate": {
+				"value": "2026-09-20T00:00:00+00:00"
+			},
+			"Status": {
+				"value": "Closed"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"PaymentAmount": {
+				"value": 220.5
+			},
+			"PaymentRef": {
+				"value": "EFT-3301"
+			},
+			"CashAccount": {
+				"value": "10100"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"ApplicationHistory": [
+				{
+					"id": "00000000-0000-0000-0000-00000000064b",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"AdjustedDocType": {
+						"value": "Invoice"
+					},
+					"AdjustedRefNbr": {
+						"value": "AR000001"
+					},
+					"AmountPaid": {
+						"value": 220.5
+					},
+					"custom": {}
+				}
+			],
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

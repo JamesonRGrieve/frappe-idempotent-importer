@@ -1,0 +1,58 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/customerDeposit/613",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customerDeposit/613"
+			}
+		],
+		"id": "613",
+		"tranId": "DEP-1301",
+		"tranDate": "2026-09-22",
+		"currency": {
+			"id": "2",
+			"refName": "US Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/2"
+				}
+			]
+		},
+		"exchangeRate": 1.35,
+		"total": 50.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"status": {
+			"id": "B",
+			"refName": "Not Deposited"
+		},
+		"memo": "Deposit for custom mugs",
+		"customer": {
+			"id": "102",
+			"refName": "C102 Maya Chen",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102"
+				}
+			]
+		},
+		"payment": 50.0,
+		"account": {
+			"id": "100",
+			"refName": "1000 Chequing",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,54 @@
+{
+	"request": {
+		"path": "/b1s/v1/PurchaseOrders",
+		"query": {
+			"$orderby": "DocEntry"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#PurchaseOrders",
+		"value": [
+			{
+				"DocEntry": 3,
+				"DocNum": 3001,
+				"DocType": "dDocument_Items",
+				"DocDate": "2026-09-08",
+				"DocDueDate": "2026-09-08",
+				"CardCode": "V001",
+				"DocCurrency": "CAD",
+				"DocRate": 1.0,
+				"DocTotal": 90.0,
+				"DocTotalFc": 0.0,
+				"VatSum": 0.0,
+				"VatSumFc": 0.0,
+				"TotalDiscount": 0.0,
+				"TotalDiscountFC": 0.0,
+				"RoundingDiffAmount": 0.0,
+				"RoundingDiffAmountFC": 0.0,
+				"DownPaymentAmount": 0.0,
+				"DownPaymentAmountFC": 0.0,
+				"Cancelled": "tNO",
+				"CancelStatus": "csNo",
+				"DocumentStatus": "bost_Open",
+				"UpdateDate": "2026-09-01",
+				"UpdateTime": "10:00:00",
+				"DocumentLines": [
+					{
+						"LineNum": 0,
+						"ItemDescription": "Trail Mug",
+						"Quantity": 10.0,
+						"Price": 9.0,
+						"LineTotal": 90.0,
+						"RowTotalFC": 0.0,
+						"TaxCode": "GST",
+						"TaxTotal": 0.0,
+						"NetTaxAmountFC": 0.0,
+						"AccountCode": "5200",
+						"ItemCode": "A1000"
+					}
+				],
+				"DocumentAdditionalExpenses": []
+			}
+		]
+	}
+}

@@ -1,0 +1,96 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/JournalTransaction",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "Details"
+		},
+		"query_patterns": {
+			"$filter": "Module\\ eq\\ 'GL' and LastModifiedDateTime gt datetimeoffset'[0-9T:-]+'"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-0000000000b5",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"Module": {
+				"value": "GL"
+			},
+			"BatchNbr": {
+				"value": "GL000001"
+			},
+			"Status": {
+				"value": "Posted"
+			},
+			"TransactionDate": {
+				"value": "2026-09-30T00:00:00+00:00"
+			},
+			"LedgerID": {
+				"value": "ACTUAL"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"Description": {
+				"value": "September rent"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"Details": [
+				{
+					"id": "00000000-0000-0000-0000-000000000713",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 1
+					},
+					"Account": {
+						"value": "60000"
+					},
+					"Subaccount": {
+						"value": "OPS-000"
+					},
+					"DebitAmount": {
+						"value": 1800.0
+					},
+					"CreditAmount": {
+						"value": 0.0
+					},
+					"custom": {}
+				},
+				{
+					"id": "00000000-0000-0000-0000-000000000714",
+					"rowNumber": 2,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 2
+					},
+					"Account": {
+						"value": "10100"
+					},
+					"Subaccount": {
+						"value": "000-000"
+					},
+					"DebitAmount": {
+						"value": 0.0
+					},
+					"CreditAmount": {
+						"value": 1800.0
+					},
+					"custom": {}
+				}
+			],
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

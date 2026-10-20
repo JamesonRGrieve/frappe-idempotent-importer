@@ -1,0 +1,38 @@
+{
+	"request": {
+		"path": "/b1s/v1/IncomingPayments",
+		"query": {
+			"$orderby": "DocEntry"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#IncomingPayments",
+		"value": [
+			{
+				"DocEntry": 8,
+				"DocNum": 8001,
+				"DocType": "rCustomer",
+				"DocDate": "2026-09-20",
+				"CardCode": "C001",
+				"DocCurrency": "CAD",
+				"DocRate": 1.0,
+				"CashSum": 0.0,
+				"TransferSum": 107.1,
+				"TransferAccount": "1100",
+				"CounterReference": "EFT-7001",
+				"Cancelled": "tNO",
+				"CancelStatus": "csNo",
+				"PaymentChecks": [],
+				"PaymentCreditCards": [],
+				"PaymentInvoices": [
+					{
+						"LineNum": 0,
+						"DocEntry": 4,
+						"SumApplied": 107.1,
+						"InvoiceType": "it_Invoice"
+					}
+				]
+			}
+		]
+	}
+}

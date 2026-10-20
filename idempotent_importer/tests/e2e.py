@@ -22,6 +22,8 @@ from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 import frappe
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
@@ -65,6 +67,8 @@ class Business:
 	store_url: str
 	credentials: dict[str, str] = field(default_factory=dict)
 	endpoint_path: str = ""
+	# Its secret is a certificate's private key, generated when the connection is made (never committed).
+	signs_with_key: bool = False
 
 	@property
 	def site(self) -> str:
@@ -295,6 +299,43 @@ BUSINESSES = (
 		"https://inventory.zoho.com",
 		{**OAUTH_CREDENTIALS, "api_account": "20000001"},
 	),
+	Business(
+		"NS",
+		"Books N",
+		"netsuite-n",
+		"NetSuite",
+		"netsuite",
+		"netsuite-fake",
+		"https://1234567.app.netsuite.com",
+		{"api_user": "e2e-netsuite-client", "api_key_id": "e2e-certificate", "api_account": "1234567"},
+		signs_with_key=True,
+	),
+	Business(
+		"SB",
+		"Books B",
+		"sap-b",
+		"SAP Business One",
+		"sap_business_one",
+		"sap_business_one-fake",
+		"https://b1.example.test:50000",
+		# The test company's login (tests/support/sap_business_one.py) and its chart's drawers.
+		{
+			"api_user": "e2e-b1-user",
+			"api_secret": "e2e-b1-password",
+			"api_account": "SBO_NORTHWIND",
+			"field_map": '{"root_types": {"1": "Asset", "2": "Liability", "3": "Equity"}}',
+		},
+	),
+	Business(
+		"AC",
+		"Books A",
+		"acumatica-a",
+		"Acumatica",
+		"acumatica",
+		"acumatica-fake",
+		"https://summitgear.acumatica.com",
+		OAUTH_CREDENTIALS,
+	),
 )
 
 
@@ -448,6 +489,15 @@ def account(abbr: str, name: str, parent: str, account_type: str) -> str:
 	return full
 
 
+def signing_key() -> str:
+	"""A new P-256 private key, PEM: the e2e certificate's (the fake NetSuite reads its assertions' claims
+	without the public key)."""
+	key = ec.generate_private_key(ec.SECP256R1())
+	return key.private_bytes(
+		serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()
+	).decode()
+
+
 def make_business(spec: Business) -> None:
 	company, abbr, site = spec.company, spec.abbr, spec.site
 	price_list = f"{company} Prices"
@@ -526,6 +576,7 @@ def make_business(spec: Business) -> None:
 			"source": spec.source,
 			"store_url": spec.store_url,
 			**spec.credentials,
+			**({"api_secret": signing_key()} if spec.signs_with_key else {}),
 			"public_site": site,
 			"abbreviation": abbr,
 			"item_group": root_group,
@@ -591,6 +642,9 @@ def main() -> None:
 		"assert_xero": assert_xero,
 		"assert_zoho_books": assert_zoho_books,
 		"assert_zoho_inventory": assert_zoho_inventory,
+		"assert_netsuite": assert_netsuite,
+		"assert_sap_business_one": assert_sap_business_one,
+		"assert_acumatica": assert_acumatica,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2595,6 +2649,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{"api_account": "70784a63-d24b-46a9-a4db-0e70a274b056"},
 	),
+	"acumatica-a": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "scope": "api offline_access"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 	"zoho-books-b": OAuthConnect(
 		{"client_id": "e2e-oauth-client", "access_type": "offline"},
 		"oauth_callback",
@@ -2918,6 +2979,163 @@ def assert_zoho_inventory(state: str) -> None:
 			Booked("payment_entry", "CustomerPayment", "2000000000007001", "paid_amount", amount(693)),
 		],
 	)
+
+
+@check
+def assert_netsuite(state: str) -> None:
+	"""The NetSuite account of state ``state``: its chart, departments and locations, items, parties and
+	their contacts, people, documents, payments and journals. The USD cash sale's and deposit's payments
+	wait for payments in other currencies (card 386)."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "Account", "100", "account_type", "Bank"),
+		Booked("account", "Account", "600", "disabled", 1 if changed else 0),
+		Booked("cost_center", "Department", "2", "is_group", 0),
+		Booked("department", "Department", "3"),
+		Booked("warehouse", "Location", "2"),
+		Booked("product", "Item", "501", "is_stock_item", 1),
+		Booked("product", "Item", "503", retired=changed),
+		Booked("customer", "Customer", "101", "customer_type", "Company"),
+		Booked("customer", "Customer", "102", "disabled", 1 if changed else 0),
+		Booked("supplier", "Vendor", "201"),
+		Booked("lead", "Customer", "104", "company_name", "Pine Ridge Lodge"),
+		Booked("employee", "Employee", "302", "status", "Left" if changed else "Active"),
+		Booked("project", "Job", "401", "status", "Completed" if changed else "Open"),
+		Booked("opportunity", "Transaction", "602"),
+		Booked("draft_order", "Transaction", "601", "grand_total", amount("37.8")),
+		Booked("sales_order", "Transaction", "603", "grand_total", amount("147.55")),
+		Booked("purchase_order", "Transaction", "608", "grand_total", amount(90)),
+		Booked("sales_invoice", "Transaction", "604", "grand_total", amount(126)),
+		Booked("sales_invoice", "Transaction", "605", "grand_total", amount(23)),
+		Booked("sales_invoice", "Transaction", "606", "grand_total", amount("-18.9")),
+		Booked("purchase_invoice", "Transaction", "609", "grand_total", amount("120.75")),
+		Booked("payment_entry", "Transaction", "607", "paid_amount", amount("107.1")),
+		Booked("payment_entry", "Transaction", "610", "paid_amount", amount("120.75")),
+		Booked("journal_entry", "Transaction", "611", "total_debit", amount(1500), retired=changed),
+		Booked("journal_entry", "Transaction", "612", "total_debit", amount(42)),
+	]
+	if changed:
+		records += [
+			Booked("customer", "Customer", "103", "customer_name", "Harbor Yoga"),
+			Booked("sales_invoice", "Transaction", "614", "docstatus", 0),
+		]
+	assert_booked("netsuite-n", records)
+	expect(
+		frappe.db.get_value("Account", target("netsuite-n", "account", "Account", "131"), "parent_account"),
+		target("netsuite-n", "account", "Account", "130"),
+		"an account under its summary account",
+	)
+	customer = target("netsuite-n", "customer", "Customer", "101")
+	people = frappe.get_all(
+		"Dynamic Link", filters={"link_name": customer, "parenttype": "Contact"}, pluck="parent"
+	)
+	expect(
+		{
+			(
+				frappe.db.get_value("Contact", name, "first_name"),
+				frappe.db.get_value("Contact", name, "designation"),
+			)
+			for name in people
+		}
+		>= {("Rosa Diaz", "Head Chef")},
+		True,
+		"the customer's contact",
+	)
+
+
+@check
+def assert_sap_business_one(state: str) -> None:
+	"""The SAP Business One company of state ``state``: its chart, profit centers, warehouses, items,
+	business partners and their contact persons, people, documents, payments and its manual journal entry
+	(the document postings the Service Layer also lists are never booked twice). The USD invoice is
+	cancelled in v2, and its cancellation is never booked."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "Account", "1100", "account_type", "Cash"),
+		Booked(
+			"account",
+			"Account",
+			"5200",
+			"account_name",
+			"Office Supplies & Postage - SB" if changed else "Office Supplies - SB",
+		),
+		Booked("cost_center", "ProfitCenter", "OPS"),
+		Booked("warehouse", "Warehouse", "02", "disabled", 1 if changed else 0),
+		Booked("collection", "ItemGroup", "100"),
+		Booked("product", "Item", "A1000", "is_stock_item", 1),
+		Booked("product", "Item", "K200", retired=changed),
+		Booked("customer", "BusinessPartner", "C001", "customer_type", "Company"),
+		Booked("supplier", "BusinessPartner", "V001"),
+		Booked("lead", "BusinessPartner", "L002", "company_name", "Cedar Hollow Lodge"),
+		Booked("department", "Department", "2"),
+		Booked("designation", "Position", "1"),
+		Booked("employee", "Employee", "2", "status", "Left" if changed else "Active"),
+		Booked("project", "Project", "P01"),
+		Booked("opportunity", "Opportunity", "1"),
+		Booked("draft_order", "Quotation", "1", "grand_total", amount("37.8")),
+		Booked("sales_order", "Order", "2", "grand_total", amount("148.05")),
+		Booked("purchase_order", "PurchaseOrder", "3", "grand_total", amount(90)),
+		Booked("sales_invoice", "Invoice", "4", "grand_total", amount(126)),
+		Booked("sales_invoice", "Invoice", "5", "grand_total", amount(23), retired=changed),
+		Booked("sales_invoice", "CreditNote", "6", "grand_total", amount("-18.9")),
+		Booked("purchase_invoice", "PurchaseInvoice", "7", "grand_total", amount("120.75")),
+		Booked("payment_entry", "IncomingPayment", "8", "paid_amount", amount("107.1")),
+		Booked("payment_entry", "VendorPayment", "9", "paid_amount", amount("120.75")),
+		Booked("journal_entry", "JournalEntry", "10", "total_debit", amount(1500)),
+	]
+	if changed:
+		records += [
+			Booked("customer", "BusinessPartner", "L001", "customer_name", "Summit Pilates"),
+			Booked("sales_invoice", "Invoice", "13", "grand_total", amount("94.5")),
+		]
+	assert_booked("sap-b", records)
+	for absent in ("JournalEntry/11", "Invoice/12"):
+		expect(
+			frappe.db.exists(
+				"Importer Link", {"connection": "sap-b", "gid": f"gid://sap_business_one/sap-b/{absent}"}
+			),
+			None,
+			f"{absent}, never booked",
+		)
+
+
+@check
+def assert_acumatica(state: str) -> None:
+	"""The Acumatica tenant of state ``state``: its accounts, subaccounts, warehouses, items, parties and
+	their contacts, the employees' departments and titles, documents, payments and its general ledger batch.
+	The USD invoice waits for an exchange rate (the Default endpoint's invoice records none) and is voided in
+	v2."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "Account", "10100", "account_type", "Bank"),
+		Booked("account", "Account", "60000", "disabled", 1 if changed else 0),
+		Booked("cost_center", "Subaccount", "OPS-000"),
+		Booked("warehouse", "Warehouse", "RETAIL", "disabled", 1 if changed else 0),
+		Booked("collection", "ItemClass", "BOOTS"),
+		Booked("product", "Item", "HIKER-BOOT", "is_stock_item", 1),
+		Booked("product", "Item", "TRAIL-SOCK", retired=changed),
+		Booked("product", "Item", "FITTING", "is_stock_item", 0),
+		Booked("customer", "Customer", "ALPINE", "customer_type", "Company"),
+		Booked("supplier", "Vendor", "LEATHERCO"),
+		Booked("employee", "Employee", "EP002", "status", "Inactive" if changed else "Active"),
+		Booked("project", "Project", "FITOUT"),
+		Booked("lead", "Lead", "202", "company_name", "Ridge Runners Club"),
+		Booked("opportunity", "Opportunity", "OP000001"),
+		Booked("draft_order", "SalesOrder", "QT:QT000001", "grand_total", amount(252)),
+		Booked("sales_order", "SalesOrder", "SO:SO000001", "grand_total", amount("283.5")),
+		Booked("purchase_order", "PurchaseOrder", "Normal:PO000001", "grand_total", amount(600)),
+		Booked("sales_invoice", "Invoice", "Invoice:AR000001", "grand_total", amount("262.5")),
+		Booked("sales_invoice", "Invoice", "Credit Memo:AR000003", "grand_total", amount(-42)),
+		Booked("sales_invoice", "CashSale", "Cash Sale:CS000001", "grand_total", amount("31.5")),
+		Booked("purchase_invoice", "Bill", "Bill:AP000001", "grand_total", amount(651)),
+		Booked("payment_entry", "Payment", "Payment:PM000001", "paid_amount", amount("220.5")),
+		Booked("payment_entry", "Check", "Payment:CHK00001", "paid_amount", amount(651)),
+		Booked("payment_entry", "CashSale", "Cash Sale:CS000001", "paid_amount", amount("31.5")),
+		Booked("journal_entry", "JournalTransaction", "GL:GL000001", "total_debit", amount(1800)),
+	]
+	if changed:
+		records.append(Booked("sales_invoice", "Invoice", "Invoice:AR000004", "docstatus", 0))
+	assert_booked("acumatica-a", records)
 
 
 @check

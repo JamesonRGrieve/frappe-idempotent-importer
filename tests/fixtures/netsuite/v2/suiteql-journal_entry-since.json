@@ -1,0 +1,41 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id, type, posting, voided FROM transaction WHERE id > ? AND lastmodifieddate >= TO_DATE(?, 'YYYY-MM-DD') AND type IN ('Journal', 'Check') ORDER BY id"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 2,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "611",
+				"type": "Journal",
+				"posting": "F",
+				"voided": "T"
+			},
+			{
+				"links": [],
+				"id": "612",
+				"type": "Check",
+				"posting": "T",
+				"voided": "F"
+			}
+		],
+		"offset": 0,
+		"totalResults": 2
+	}
+}

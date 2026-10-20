@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/b1s/v1/Departments",
+		"query": {
+			"$orderby": "Code"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#Departments",
+		"value": [
+			{
+				"Code": 1,
+				"Name": "Sales"
+			},
+			{
+				"Code": 2,
+				"Name": "Operations"
+			}
+		]
+	}
+}

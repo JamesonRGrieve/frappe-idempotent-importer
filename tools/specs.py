@@ -23,6 +23,7 @@ import requests
 import yaml
 
 from tools.openapi import ApiSpec
+from tools.spectacle import swagger_of
 from tools.xsd import REF_PREFIX as XSD_REF_PREFIX
 from tools.xsd import XsdSchemas
 
@@ -30,7 +31,19 @@ ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / ".cache" / "specs"
 FETCH_TIMEOUT_SECONDS = 120
 USER_AGENT = "frappe-idempotent-importer spec fetch"
+# NetSuite's help center redirects any client that doesn't present itself as a browser to "page not found".
+BROWSER_USER_AGENT = f"Mozilla/5.0 (compatible; {USER_AGENT})"
 JSON, YAML = "json", "yaml"
+# An OpenAPI description published only as its Spectacle rendering (tools/spectacle.py).
+SPECTACLE = "html"
+# NetSuite's REST API Browser for the Record API, release 2026.1 (the latest published on 2026-10-19), in
+# the 28 parts its page loads, pinned to the bytes fetched that day. Its paths are relative to
+# /services/rest/record/v1.
+NETSUITE_RECORD_BROWSER = (
+	"https://system.netsuite.com/help/helpcenter/en_US/APIs/REST_API_Browser/record/v1/2026.1/"
+)
+NETSUITE_RECORD_PARTS = tuple(f"chunks/data{index:02d}.part" for index in range(28))
+NETSUITE_RECORD_SHA256 = "85a7d589100084de8b307e0ef08d91e4fbbb2452234df37cbe1d29087c7b3507"
 BIGCOMMERCE_BASE = "https://docs.bigcommerce.com/openapi/"
 # BigCommerce publishes one OpenAPI 3.1 document per API area (indexed at
 # https://docs.bigcommerce.com/openapi.json; every one has info.version 1.0.0) at an unversioned URL, so each
@@ -62,6 +75,26 @@ QUICKBOOKS_XSD_FILES = (
 	"IntuitNamesTypes.xsd",
 	"SalesTax.xsd",
 	"Report.xsd",
+)
+# SAP publishes the Service Layer's data model only as each installation's OData $metadata; these OpenAPI
+# documents are generated from it (namespace SAPB1, OData v3 at /b1s/v1) by WSO2's Ballerina connector
+# (ballerina-platform/module-ballerinax-sap.businessone, Apache-2.0, the commit of 2026-07-10), one per
+# module the adapter reads.
+SAP_B1_BASE = (
+	"https://raw.githubusercontent.com/ballerina-platform/module-ballerinax-sap.businessone/"
+	"f06691e0e4e9e571e0c1855c69ed6e224e125b07/docs/spec/"
+)
+SAP_B1_MODULES = (
+	"administration",
+	"banking",
+	"businesspartners",
+	"crm",
+	"financials",
+	"humanresources",
+	"inventory",
+	"projects",
+	"purchasing",
+	"sales",
 )
 XERO_BASE = "https://raw.githubusercontent.com/XeroAPI/Xero-OpenAPI/5a115f378321eab57cae540a5540797bc5e9ec71/"
 XERO_DOCUMENTS = (
@@ -133,6 +166,10 @@ class SpecDocument:
 	# A document published inside a zip archive (Zoho's): the archive is fetched and pinned, the document
 	# is this member of it.
 	member: str | None = None
+	# A document published in parts (NetSuite's REST API Browser): each relative to ``url``, concatenated in
+	# order, the pin covering the whole.
+	parts: tuple[str, ...] = ()
+	user_agent: str = USER_AGENT
 
 	def path(self) -> Path:
 		if self.member is not None:
@@ -150,13 +187,12 @@ class SpecDocument:
 	def fetch(self) -> Path:
 		if self.committed is not None:
 			return self.committed
-		response = requests.get(self.url, timeout=FETCH_TIMEOUT_SECONDS, headers={"User-Agent": USER_AGENT})
-		response.raise_for_status()
-		self.verify(response.content)
-		decode(self.format, self.document(response.content))
+		body = b"".join(download(self.url + part, self.user_agent) for part in self.parts or ("",))
+		self.verify(body)
+		decode(self.format, self.document(body))
 		target = self.path()
 		target.parent.mkdir(parents=True, exist_ok=True)
-		target.write_bytes(response.content)
+		target.write_bytes(body)
 		return target
 
 	def document(self, body: bytes) -> bytes:
@@ -219,7 +255,15 @@ def committed(source: str, name: str, relative: str, prefix_pattern: str) -> Spe
 	return SpecDocument(source, name, f"file://{relative}", prefix_pattern, False, committed=ROOT / relative)
 
 
+def download(url: str, user_agent: str) -> bytes:
+	response = requests.get(url, timeout=FETCH_TIMEOUT_SECONDS, headers={"User-Agent": user_agent})
+	response.raise_for_status()
+	return response.content
+
+
 def decode(format_: str, body: bytes) -> dict[str, Any]:
+	if format_ == SPECTACLE:
+		return swagger_of(body.decode())
 	document = yaml.safe_load(body) if format_ == YAML else json.loads(body)
 	if not isinstance(document, dict):
 		raise TypeError("An API document is not an object.")
@@ -357,6 +401,27 @@ def catalog() -> list[Document]:
 			"ec5435338b235f18425c23db383ea2199feffbeb19f491fe94a8f0ca2b583863",
 			ZOHO_INVENTORY_MEMBERS,
 		),
+		SpecDocument(
+			"netsuite",
+			"rest-record-2026.1",
+			NETSUITE_RECORD_BROWSER,
+			"/services/rest/record/v1",
+			False,
+			SPECTACLE,
+			NETSUITE_RECORD_SHA256,
+			parts=NETSUITE_RECORD_PARTS,
+			user_agent=BROWSER_USER_AGENT,
+		),
+		*(
+			SpecDocument("sap_business_one", module, f"{SAP_B1_BASE}{module}.json", "/b1s/v1", False)
+			for module in SAP_B1_MODULES
+		),
+		# Acumatica publishes the Default endpoint's OpenAPI document only from each instance: the entities the
+		# adapter reads, transcribed by tools/acumatica_schema.py from the official REST client's generated
+		# models of Default 24.200.001 at a pinned commit.
+		committed("acumatica", "default-24.200.001", "tests/schemas/acumatica.json", ""),
+		# SuiteQL's endpoint is outside the Record API: its response, transcribed from the official page.
+		committed("netsuite", "suiteql", "tests/schemas/netsuite-suiteql.json", ""),
 	]
 
 

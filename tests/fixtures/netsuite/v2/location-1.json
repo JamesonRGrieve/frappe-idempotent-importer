@@ -1,0 +1,38 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/location/1",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/location/1"
+			}
+		],
+		"id": "1",
+		"name": "Main Warehouse",
+		"fullName": "Main Warehouse",
+		"isInactive": false,
+		"lastModifiedDate": "2026-09-01T12:00:00Z",
+		"mainAddress": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/location/1/mainAddress"
+				}
+			],
+			"addressee": "Northwind Outfitters",
+			"addr1": "200 Granville St",
+			"city": "Vancouver",
+			"state": "BC",
+			"zip": "V6C 1S4",
+			"country": {
+				"id": "CA",
+				"refName": "Canada"
+			}
+		}
+	}
+}

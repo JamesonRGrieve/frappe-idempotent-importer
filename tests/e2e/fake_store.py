@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """A stand-in for every source the end-to-end suite imports, reachable as each of its host names:
 woo-a-fake and woo-b-fake (two WooCommerce stores), shopify-fake (Shopify's Admin GraphQL API) and woo-fake
-(the WooCommerce stores' media host). Each store answers from the fixture state run.sh wrote to
+(the WooCommerce stores' media host), and one host per other source. Each store answers from the fixture state run.sh wrote to
 <state dir>/<host>-state, through the responders the unit tests use, and only to the test credentials.
 While <state dir>/<host>-trouble holds "throttle" every API request is rate limited, and while it holds
 "reject" every API request is refused (the lockout-safety checks). Media paths (images, PDFs) return a
@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from tests.support.dynamics import ENTRA_CLIENT_SECRET, ENTRA_TOKEN
 from tests.support.fixtures import Answer, RestResponder, ShopifyResponder
+from tests.support.sap_business_one import B1_COOKIE
 
 PORT = 8080
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -83,7 +84,12 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		"dynamics_finance_operations",
 		{"Authorization": f"Bearer {ENTRA_TOKEN}"},
 	),
+	"netsuite-fake": ("netsuite", {"Authorization": "Bearer e2e-netsuite-token"}),
+	"sap_business_one-fake": ("sap_business_one", {"Cookie": B1_COOKIE}),
 }
+# The Service Layer's login, answered from the fixtures (which hold the test company's credentials) before
+# any session exists.
+B1_LOGIN_PATH = "/b1s/v1/Login"
 # The sources approved through OAuth 2, by host: their token endpoint, whether it rotates the refresh token,
 # and the headers every API request must carry with the access token it grants.
 OAUTH_ACCESS_TOKEN = "e2e-oauth-access-token"
@@ -116,8 +122,25 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		False,
 		{"Authorization": f"Zoho-oauthtoken {OAUTH_ACCESS_TOKEN}"},
 	),
+	"acumatica-fake": (
+		"acumatica",
+		"/identity/connect/token",
+		True,
+		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
+	),
 }
 XERO_CONNECTIONS = "/Connections"
+# NetSuite's machine-to-machine grant: a client assertion signed by the e2e certificate's key (generated on
+# the bench, so its signature isn't checked here), for the account's canonical token endpoint.
+NETSUITE_HOST = "netsuite-fake"
+NETSUITE_GRANT_PATH = "/services/rest/auth/oauth2/v1/token"
+NETSUITE_TOKEN = "e2e-netsuite-token"
+NETSUITE_ASSERTION = {
+	"iss": "e2e-netsuite-client",
+	"scope": "rest_webservices",
+	"aud": "https://1234567.suitetalk.api.netsuite.com" + NETSUITE_GRANT_PATH,
+}
+NETSUITE_CERTIFICATE = "e2e-certificate"
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400
 HTTP_UNAUTHORIZED = 401
@@ -169,6 +192,12 @@ class FakeStore(BaseHTTPRequestHandler):
 		if method == "POST" and self.path.endswith(ENTRA_GRANT_PATH):
 			self.send(entra_grant(body))
 			return
+		if method == "POST" and self.path == B1_LOGIN_PATH:
+			self.send(RestResponder("sap_business_one", state).answer(method, self.path, body))
+			return
+		if host == NETSUITE_HOST and method == "POST" and self.path == NETSUITE_GRANT_PATH:
+			self.send(netsuite_grant(body))
+			return
 		if host == "etsy-fake" and method == "POST" and self.path == ETSY_TOKEN_PATH:
 			self.send(Answer(200, json.dumps(ETSY_GRANT).encode()))
 			return
@@ -213,6 +242,35 @@ def entra_grant(body: bytes) -> Answer:
 	if form.get("grant_type") != ["client_credentials"] or form.get("client_secret") != [ENTRA_CLIENT_SECRET]:
 		return Answer(HTTP_UNAUTHORIZED, b'{"error":"invalid_client"}')
 	grant = {"token_type": "Bearer", "expires_in": 3599, "access_token": ENTRA_TOKEN}
+	return Answer(200, json.dumps(grant).encode())
+
+
+def jwt_part(token: str, index: int) -> dict[str, object]:
+	"""One of a JWT's JSON parts (0: the header, 1: the claims), unverified."""
+	part = token.split(".")[index]
+	decoded = json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4)))
+	return decoded if isinstance(decoded, dict) else {}
+
+
+def netsuite_grant(body: bytes) -> Answer:
+	"""NetSuite's client credentials grant: an assertion from the e2e integration, for the e2e certificate
+	and the account's token endpoint, gets the token the fake NetSuite answers to; anything else is refused
+	as NetSuite refuses it."""
+	form = parse_qs(body.decode())
+	assertion = (form.get("client_assertion") or [""])[0]
+	try:
+		header, claims = jwt_part(assertion, 0), jwt_part(assertion, 1)
+	except ValueError, IndexError:
+		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_request"}')
+	valid = (
+		form.get("grant_type") == ["client_credentials"]
+		and form.get("client_assertion_type") == ["urn:ietf:params:oauth:client-assertion-type:jwt-bearer"]
+		and header.get("kid") == NETSUITE_CERTIFICATE
+		and all(claims.get(name) == value for name, value in NETSUITE_ASSERTION.items())
+	)
+	if not valid:
+		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_client"}')
+	grant = {"access_token": NETSUITE_TOKEN, "token_type": "Bearer", "expires_in": 3600}
 	return Answer(200, json.dumps(grant).encode())
 
 

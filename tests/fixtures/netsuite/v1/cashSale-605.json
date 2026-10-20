@@ -1,0 +1,117 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/cashSale/605",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/cashSale/605"
+			}
+		],
+		"id": "605",
+		"tranId": "CS-5001",
+		"tranDate": "2026-09-16",
+		"currency": {
+			"id": "2",
+			"refName": "US Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/2"
+				}
+			]
+		},
+		"exchangeRate": 1.35,
+		"total": 23.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "102",
+			"refName": "C102 Maya Chen",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/102"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/cashSale/605/item"
+				}
+			],
+			"count": 2,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/cashSale/605/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "503",
+						"refName": "GIFT-WRAP",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/nonInventorySaleItem/503"
+							}
+						]
+					},
+					"amount": 5.0,
+					"quantity": 1.0,
+					"rate": 5.0,
+					"description": "Gift Wrap"
+				},
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/cashSale/605/item/2"
+						}
+					],
+					"line": 2,
+					"item": {
+						"id": "501",
+						"refName": "TRAIL-MUG",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+							}
+						]
+					},
+					"amount": 18.0,
+					"quantity": 1.0,
+					"rate": 18.0,
+					"description": "Trail Mug"
+				}
+			],
+			"offset": 0,
+			"totalResults": 2
+		},
+		"taxTotal": 0.0,
+		"status": {
+			"id": "C",
+			"refName": "Deposited"
+		},
+		"account": {
+			"id": "100",
+			"refName": "1000 Chequing",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+				}
+			]
+		}
+	}
+}

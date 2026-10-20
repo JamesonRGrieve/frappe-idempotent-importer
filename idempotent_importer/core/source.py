@@ -38,6 +38,9 @@ class ConnectionConfig:
 	auth_method: str = ""
 	# The account the credentials open, where a source needs one (a store hash, a site or store id).
 	account: str = ""
+	# The id of the key or certificate that signs the source's credentials, where it needs one (NetSuite's
+	# certificate ID).
+	key_id: str = ""
 	# An OAuth refresh token the source replaces on every refresh (Etsy): each new one is handed to
 	# ``save_refresh_token``, which keeps it before the access token is used.
 	refresh_token: str = field(default="", repr=False)

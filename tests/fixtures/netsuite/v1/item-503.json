@@ -1,0 +1,71 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/nonInventorySaleItem/503",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/nonInventorySaleItem/503"
+			}
+		],
+		"id": "503",
+		"itemId": "GIFT-WRAP",
+		"displayName": "Gift Wrap",
+		"itemType": {
+			"id": "NonInvtPart",
+			"refName": "Non-inventory Item"
+		},
+		"isInactive": false,
+		"isOnline": true,
+		"lastModifiedDate": "2026-09-04T10:00:00Z",
+		"price": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/nonInventorySaleItem/503/price"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/nonInventorySaleItem/503/price/1"
+						}
+					],
+					"priceLevel": {
+						"id": "1",
+						"refName": "Base Price",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/priceLevel/1"
+							}
+						]
+					},
+					"priceLevelName": "Base Price",
+					"currencyPage": {
+						"id": "1",
+						"refName": "Canadian Dollar",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+							}
+						]
+					},
+					"price": 5.0,
+					"priceQty": 0
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		}
+	}
+}

@@ -1,0 +1,95 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "NetSuite SuiteQL over REST web services: the response read by frappe-idempotent-importer",
+    "version": "2026-10-19",
+    "description": "The Record API's OpenAPI description (the REST API Browser, pinned in tools/specs.py) does not cover the query service. This schema is transcribed from the official page 'Executing SuiteQL Queries Through REST Web Services' (https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157909186990.html, fetched 2026-10-19): a POST with the query in 'q' (and bound 'params'), 'limit' and 'offset' in the URL, answered with links, count, hasMore, offset, totalResults and the rows as 'items', each with its 'links' and its selected columns under their lower-case names, every value a string (the page's example spells the count 143 as \"143\"); a NULL column is left out. The collection fields are those of every Record API collection ('nsLink' as there)."
+  },
+  "servers": [
+    {
+      "url": "https://{accountId}.suitetalk.api.netsuite.com"
+    }
+  ],
+  "paths": {
+    "/services/rest/query/v1/suiteql": {
+      "post": {
+        "externalDocs": {
+          "url": "https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_157909186990.html"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuiteQlResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SuiteQlResult": {
+        "type": "object",
+        "required": ["links", "count", "hasMore", "items", "offset", "totalResults"],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/nsLink"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Row"
+            }
+          },
+          "offset": {
+            "type": "integer"
+          },
+          "totalResults": {
+            "type": "integer"
+          }
+        }
+      },
+      "Row": {
+        "type": "object",
+        "required": ["links"],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/nsLink"
+            }
+          }
+        },
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "nsLink": {
+        "type": "object",
+        "required": ["rel", "href"],
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

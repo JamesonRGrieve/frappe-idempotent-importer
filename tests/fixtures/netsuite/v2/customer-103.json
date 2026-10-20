@@ -1,0 +1,49 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/customer/103",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/103"
+			}
+		],
+		"id": "103",
+		"entityId": "C103",
+		"isPerson": false,
+		"isInactive": false,
+		"searchStage": "Customer",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/103/addressBook"
+				}
+			],
+			"count": 0,
+			"hasMore": false,
+			"items": [],
+			"offset": 0,
+			"totalResults": 0
+		},
+		"companyName": "Harbor Yoga",
+		"email": "hello@harbor.example",
+		"phone": "+1 604 555 0103",
+		"comments": "Met at the spring trade show"
+	}
+}

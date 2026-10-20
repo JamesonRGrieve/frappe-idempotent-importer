@@ -1,0 +1,51 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/opportunity/602",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/opportunity/602"
+			}
+		],
+		"id": "602",
+		"tranId": "OPP-2001",
+		"tranDate": "2026-09-11",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 900.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "104",
+			"refName": "C104 Pine Ridge Lodge",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/104"
+				}
+			]
+		},
+		"status": {
+			"id": "A",
+			"refName": "In Progress"
+		},
+		"memo": "Mugs for every cabin",
+		"title": "Lodge mugs",
+		"projectedTotal": 900.0,
+		"probability": 40.0,
+		"expectedCloseDate": "2026-12-15"
+	}
+}

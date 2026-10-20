@@ -1,0 +1,60 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 1000,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id, itemtype FROM item WHERE id > ? ORDER BY id",
+			"params": [
+				"0"
+			]
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=1000&offset=0"
+			}
+		],
+		"count": 6,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "501",
+				"itemtype": "InvtPart"
+			},
+			{
+				"links": [],
+				"id": "502",
+				"itemtype": "Service"
+			},
+			{
+				"links": [],
+				"id": "503",
+				"itemtype": "NonInvtPart"
+			},
+			{
+				"links": [],
+				"id": "504",
+				"itemtype": "Discount"
+			},
+			{
+				"links": [],
+				"id": "505",
+				"itemtype": "Subtotal"
+			},
+			{
+				"links": [],
+				"id": "506",
+				"itemtype": "Kit"
+			}
+		],
+		"offset": 0,
+		"totalResults": 6
+	}
+}

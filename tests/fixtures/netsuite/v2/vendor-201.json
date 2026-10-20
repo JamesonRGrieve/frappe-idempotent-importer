@@ -1,0 +1,117 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/vendor/201",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201"
+			}
+		],
+		"id": "201",
+		"entityId": "V201",
+		"companyName": "Northern Paper Co",
+		"isPerson": false,
+		"isInactive": false,
+		"email": "ap@northernpaper.example",
+		"phone": "+1 604 555 0201",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"vatRegNumber": "123456789RT0001",
+		"lastModifiedDate": "2026-09-02T09:30:00Z",
+		"addressBook": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201/addressBook"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201/addressBook/31"
+						}
+					],
+					"id": 31,
+					"label": "Mill",
+					"defaultBilling": true,
+					"defaultShipping": true,
+					"addressBookAddress": {
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201/addressBook/31/addressBookAddress"
+							}
+						],
+						"addressee": "Northern Paper Co",
+						"addr1": "5 Mill Rd",
+						"city": "Prince George",
+						"state": "BC",
+						"zip": "V2L 1A1",
+						"country": {
+							"id": "CA",
+							"refName": "Canada"
+						}
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"contactList": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201/contactList"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/contact/702"
+						}
+					],
+					"id": "702",
+					"entityId": "Sam Okafor",
+					"firstName": "Sam",
+					"lastName": "Okafor",
+					"email": "sam@northernpaper.example",
+					"phone": "+1 250 555 0202",
+					"title": "Accounts Receivable Clerk",
+					"company": {
+						"id": "201",
+						"refName": "owner",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201"
+							}
+						]
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		}
+	}
+}

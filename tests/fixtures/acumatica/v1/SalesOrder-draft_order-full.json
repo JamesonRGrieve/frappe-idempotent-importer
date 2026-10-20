@@ -1,0 +1,116 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/SalesOrder",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "Details,TaxDetails,Totals",
+			"$filter": "OrderType eq 'QT'"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-00000000006f",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"OrderType": {
+				"value": "QT"
+			},
+			"OrderNbr": {
+				"value": "QT000001"
+			},
+			"CustomerID": {
+				"value": "ALPINE"
+			},
+			"Date": {
+				"value": "2026-09-10T00:00:00+00:00"
+			},
+			"Status": {
+				"value": "Open"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"CurrencyRate": {
+				"value": 1.0
+			},
+			"OrderTotal": {
+				"value": 252.0
+			},
+			"Description": {
+				"value": "Spring boots"
+			},
+			"LastModified": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"Details": [
+				{
+					"id": "00000000-0000-0000-0000-000000000457",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 1
+					},
+					"InventoryID": {
+						"value": "HIKER-BOOT"
+					},
+					"LineDescription": {
+						"value": "Hiker Boot"
+					},
+					"OrderQty": {
+						"value": 2.0
+					},
+					"UnitPrice": {
+						"value": 120.0
+					},
+					"Amount": {
+						"value": 240.0
+					},
+					"custom": {}
+				}
+			],
+			"TaxDetails": [
+				{
+					"id": "00000000-0000-0000-0000-000000000458",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"TaxID": {
+						"value": "GST"
+					},
+					"TaxAmount": {
+						"value": 12.0
+					},
+					"custom": {}
+				}
+			],
+			"Totals": {
+				"id": "00000000-0000-0000-0000-000000000459",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"DiscountTotal": {
+					"value": 0.0
+				},
+				"Freight": {
+					"value": 0.0
+				},
+				"PremiumFreight": {
+					"value": 0.0
+				},
+				"TaxTotal": {
+					"value": 12.0
+				},
+				"custom": {}
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

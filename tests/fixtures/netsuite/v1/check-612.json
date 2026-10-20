@@ -1,0 +1,87 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/check/612",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/check/612"
+			}
+		],
+		"id": "612",
+		"tranId": "CHK-1201",
+		"tranDate": "2026-09-25",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 42.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "202",
+			"refName": "V202 Bolt Logistics",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/202"
+				}
+			]
+		},
+		"expense": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/check/612/expense"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/check/612/expense/1"
+						}
+					],
+					"line": 1,
+					"account": {
+						"id": "610",
+						"refName": "6100 Office Supplies",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/610"
+							}
+						]
+					},
+					"amount": 42.0,
+					"memo": "Courier supplies"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"account": {
+			"id": "100",
+			"refName": "1000 Chequing",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+				}
+			]
+		}
+	}
+}

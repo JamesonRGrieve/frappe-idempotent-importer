@@ -1,0 +1,97 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/StockItem",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "WarehouseDetails"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000029",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"InventoryID": {
+				"value": "HIKER-BOOT"
+			},
+			"Description": {
+				"value": "Hiker Boot"
+			},
+			"ItemClass": {
+				"value": "BOOTS"
+			},
+			"ItemStatus": {
+				"value": "Active"
+			},
+			"DefaultPrice": {
+				"value": 120.0
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"WarehouseDetails": [
+				{
+					"id": "00000000-0000-0000-0000-00000000019b",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"WarehouseID": {
+						"value": "MAIN"
+					},
+					"QtyOnHand": {
+						"value": 12.0
+					},
+					"custom": {}
+				},
+				{
+					"id": "00000000-0000-0000-0000-00000000019c",
+					"rowNumber": 2,
+					"note": {
+						"value": ""
+					},
+					"WarehouseID": {
+						"value": "RETAIL"
+					},
+					"QtyOnHand": {
+						"value": 3.0
+					},
+					"custom": {}
+				}
+			],
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-00000000002a",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"InventoryID": {
+				"value": "TRAIL-SOCK"
+			},
+			"Description": {
+				"value": "Trail Sock"
+			},
+			"ItemClass": {
+				"value": "BOOTS"
+			},
+			"ItemStatus": {
+				"value": "Active"
+			},
+			"DefaultPrice": {
+				"value": 15.0
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"WarehouseDetails": [],
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

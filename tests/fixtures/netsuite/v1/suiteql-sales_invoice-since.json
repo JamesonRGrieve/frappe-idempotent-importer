@@ -1,0 +1,48 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id, type, posting, voided FROM transaction WHERE id > ? AND lastmodifieddate >= TO_DATE(?, 'YYYY-MM-DD') AND type IN ('CustInvc', 'CashSale', 'CustCred', 'CashRfnd') ORDER BY id"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 3,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "604",
+				"type": "CustInvc",
+				"posting": "T",
+				"voided": "F"
+			},
+			{
+				"links": [],
+				"id": "605",
+				"type": "CashSale",
+				"posting": "T",
+				"voided": "F"
+			},
+			{
+				"links": [],
+				"id": "606",
+				"type": "CustCred",
+				"posting": "T",
+				"voided": "F"
+			}
+		],
+		"offset": 0,
+		"totalResults": 3
+	}
+}

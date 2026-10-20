@@ -11,6 +11,7 @@ from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.http import HttpTransport, Sleeper
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.source import Adapter, ConnectionConfig, SourceReader
+from idempotent_importer.sources.acumatica.adapter import AcumaticaAdapter
 from idempotent_importer.sources.bigcommerce.adapter import BigCommerceAdapter
 from idempotent_importer.sources.dynamics_business_central.adapter import BusinessCentralAdapter
 from idempotent_importer.sources.dynamics_finance_operations.adapter import FinanceOperationsAdapter
@@ -19,8 +20,10 @@ from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
 from idempotent_importer.sources.magento.adapter import MagentoAdapter
+from idempotent_importer.sources.netsuite.adapter import NetSuiteAdapter
 from idempotent_importer.sources.odoo.adapter import OdooAdapter
 from idempotent_importer.sources.quickbooks_online.adapter import QuickBooksAdapter
+from idempotent_importer.sources.sap_business_one.adapter import SapBusinessOneAdapter
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.squarespace.adapter import SquarespaceAdapter
@@ -57,10 +60,7 @@ class ListedAdapter:
 LISTED: tuple[ListedAdapter, ...] = (
 	ListedAdapter("peoplesoft", "PeopleSoft"),
 	ListedAdapter("agendrix", "Agendrix"),
-	ListedAdapter("netsuite", "NetSuite"),
-	ListedAdapter("sap_business_one", "SAP Business One"),
 	ListedAdapter("sage", "Sage"),
-	ListedAdapter("acumatica", "Acumatica"),
 )
 
 
@@ -85,6 +85,9 @@ def all_adapters() -> dict[str, Adapter]:
 		XeroAdapter(),
 		zoho_books(),
 		zoho_inventory(),
+		NetSuiteAdapter(),
+		SapBusinessOneAdapter(),
+		AcumaticaAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

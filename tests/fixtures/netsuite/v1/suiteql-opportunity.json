@@ -1,0 +1,37 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/services/rest/query/v1/suiteql",
+		"query": {
+			"limit": 100,
+			"offset": 0
+		},
+		"body": {
+			"q": "SELECT id, type, posting, voided FROM transaction WHERE id > ? AND type IN ('Opprtnty') ORDER BY id",
+			"params": [
+				"0"
+			]
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/query/v1/suiteql?limit=100&offset=0"
+			}
+		],
+		"count": 1,
+		"hasMore": false,
+		"items": [
+			{
+				"links": [],
+				"id": "602",
+				"type": "Opprtnty",
+				"posting": "F",
+				"voided": "F"
+			}
+		],
+		"offset": 0,
+		"totalResults": 1
+	}
+}

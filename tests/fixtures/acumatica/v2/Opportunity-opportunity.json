@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Opportunity",
+		"query": {
+			"$top": 100,
+			"$skip": 0
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000065",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"OpportunityID": {
+				"value": "OP000001"
+			},
+			"Subject": {
+				"value": "Club boots"
+			},
+			"ContactID": {
+				"value": 202
+			},
+			"Status": {
+				"value": "Open"
+			},
+			"Stage": {
+				"value": "Prospect"
+			},
+			"Estimation": {
+				"value": "2026-12-01T00:00:00+00:00"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"Total": {
+				"value": 2400.0
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

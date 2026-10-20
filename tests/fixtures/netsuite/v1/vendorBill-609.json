@@ -1,0 +1,140 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/vendorBill/609",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609"
+			}
+		],
+		"id": "609",
+		"tranId": "NP-3321",
+		"tranDate": "2026-09-14",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"total": 120.75,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"entity": {
+			"id": "201",
+			"refName": "V201 Northern Paper Co",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/201"
+				}
+			]
+		},
+		"item": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609/item"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609/item/1"
+						}
+					],
+					"line": 1,
+					"item": {
+						"id": "501",
+						"refName": "TRAIL-MUG",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/inventoryItem/501"
+							}
+						]
+					},
+					"amount": 90.0,
+					"quantity": 10.0,
+					"rate": 9.0,
+					"description": "Trail Mug"
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"expense": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609/expense"
+				}
+			],
+			"count": 1,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendorBill/609/expense/2"
+						}
+					],
+					"line": 2,
+					"account": {
+						"id": "610",
+						"refName": "6100 Office Supplies",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/610"
+							}
+						]
+					},
+					"amount": 25.0,
+					"memo": "Packing paper",
+					"department": {
+						"id": "2",
+						"refName": "Operations",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/2"
+							}
+						]
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 1
+		},
+		"taxTotal": 5.75,
+		"status": {
+			"id": "B",
+			"refName": "Paid In Full"
+		},
+		"dueDate": "2026-10-14",
+		"account": {
+			"id": "200",
+			"refName": "2000 Accounts Payable",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/200"
+				}
+			]
+		}
+	}
+}

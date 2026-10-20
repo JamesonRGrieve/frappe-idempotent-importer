@@ -1,0 +1,18 @@
+{
+	"request": {
+		"path": "/b1s/v1/BusinessPartners",
+		"query": {
+			"$filter": "CardCode eq 'L001'",
+			"$select": "CardCode,CardType"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#BusinessPartners",
+		"value": [
+			{
+				"CardCode": "L001",
+				"CardType": "cLid"
+			}
+		]
+	}
+}

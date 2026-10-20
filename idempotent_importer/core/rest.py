@@ -108,14 +108,18 @@ class RestClient:
 			path, lambda auth: self._transport.get(url, {**extra, **auth}, REQUEST_TIMEOUT_SECONDS)
 		)
 
-	def query(self, path: str, body: Mapping[str, JsonValue]) -> RestResult | None:
-		"""A read-only query sent as a JSON POST (search endpoints that take their filter in the body)."""
+	def query(
+		self, path: str, body: Mapping[str, JsonValue], headers: Mapping[str, str] | None = None
+	) -> RestResult | None:
+		"""A read-only query sent as a JSON POST (search endpoints that take their filter in the body), with
+		any headers the endpoint requires besides authentication."""
 		payload = json.dumps(dict(body), separators=(",", ":")).encode()
 		url = self._base_url + path
+		extra = dict(headers or {})
 		return self._send(
 			path,
-			lambda headers: self._transport.post(
-				url, {"Content-Type": "application/json", **headers}, payload, REQUEST_TIMEOUT_SECONDS
+			lambda auth: self._transport.post(
+				url, {"Content-Type": "application/json", **extra, **auth}, payload, REQUEST_TIMEOUT_SECONDS
 			),
 		)
 

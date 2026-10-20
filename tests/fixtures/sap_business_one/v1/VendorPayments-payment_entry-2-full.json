@@ -1,0 +1,44 @@
+{
+	"request": {
+		"path": "/b1s/v1/VendorPayments",
+		"query": {
+			"$orderby": "DocEntry"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#VendorPayments",
+		"value": [
+			{
+				"DocEntry": 9,
+				"DocNum": 9001,
+				"DocType": "rSupplier",
+				"DocDate": "2026-09-21",
+				"CardCode": "V001",
+				"DocCurrency": "CAD",
+				"DocRate": 1.0,
+				"CashSum": 0.0,
+				"TransferSum": 0.0,
+				"Cancelled": "tNO",
+				"CancelStatus": "csNo",
+				"PaymentChecks": [
+					{
+						"LineNum": 0,
+						"CheckNumber": 1201,
+						"CheckSum": 120.75,
+						"CheckAccount": "1100",
+						"Currency": "CAD"
+					}
+				],
+				"PaymentCreditCards": [],
+				"PaymentInvoices": [
+					{
+						"LineNum": 0,
+						"DocEntry": 7,
+						"SumApplied": 120.75,
+						"InvoiceType": "it_PurchaseInvoice"
+					}
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"request": {
+		"path": "/b1s/v1/PurchaseCreditNotes",
+		"query": {
+			"$orderby": "DocEntry"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#PurchaseCreditNotes",
+		"value": []
+	}
+}

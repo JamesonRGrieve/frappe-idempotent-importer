@@ -202,6 +202,7 @@ def config_of(doc: Any, adapter: Adapter) -> ConnectionConfig:
 		api_secret=str(doc.get_password("api_secret", raise_exception=False) or ""),
 		auth_method=str(doc.auth_method or ""),
 		account=str(doc.api_account or ""),
+		key_id=str(doc.get("api_key_id") or ""),
 		refresh_token=str(doc.get_password("refresh_token", raise_exception=False) or ""),
 		save_refresh_token=lambda token: save_refresh_token(connection, token),
 		field_map=str(doc.get("field_map") or ""),

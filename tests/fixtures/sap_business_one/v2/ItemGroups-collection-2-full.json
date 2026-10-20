@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/b1s/v1/ItemGroups",
+		"query": {
+			"$orderby": "Number"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#ItemGroups",
+		"value": [
+			{
+				"Number": 100,
+				"GroupName": "Mugs"
+			},
+			{
+				"Number": 101,
+				"GroupName": "Services"
+			}
+		]
+	}
+}

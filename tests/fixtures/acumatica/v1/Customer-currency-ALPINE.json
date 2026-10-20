@@ -1,0 +1,23 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Customer",
+		"query": {
+			"$filter": "CustomerID eq 'ALPINE'",
+			"$select": "CustomerID,CurrencyID,EnableCurrencyOverride"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000033",
+			"CustomerID": {
+				"value": "ALPINE"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"EnableCurrencyOverride": {
+				"value": false
+			}
+		}
+	]
+}

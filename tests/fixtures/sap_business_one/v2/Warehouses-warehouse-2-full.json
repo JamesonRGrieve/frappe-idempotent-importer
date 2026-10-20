@@ -1,0 +1,28 @@
+{
+	"request": {
+		"path": "/b1s/v1/Warehouses",
+		"query": {
+			"$orderby": "WarehouseCode"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#Warehouses",
+		"value": [
+			{
+				"WarehouseCode": "01",
+				"WarehouseName": "Main Warehouse",
+				"Street": "200 Granville St",
+				"City": "Vancouver",
+				"State": "BC",
+				"ZipCode": "V6C 1S4",
+				"Country": "CA",
+				"Inactive": "tNO"
+			},
+			{
+				"WarehouseCode": "02",
+				"WarehouseName": "Overflow Bay",
+				"Inactive": "tYES"
+			}
+		]
+	}
+}

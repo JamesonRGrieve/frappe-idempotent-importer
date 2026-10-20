@@ -1,0 +1,77 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Vendor",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "MainContact,MainContact/Address,Contacts,Contacts/Contact"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-00000000003d",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"VendorID": {
+				"value": "LEATHERCO"
+			},
+			"VendorName": {
+				"value": "Prairie Leather Co"
+			},
+			"Status": {
+				"value": "Active"
+			},
+			"CurrencyID": {
+				"value": "CAD"
+			},
+			"TaxRegistrationID": {
+				"value": "111222333RT0001"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"MainContact": {
+				"id": "00000000-0000-0000-0000-000000000263",
+				"rowNumber": 1,
+				"note": {
+					"value": ""
+				},
+				"Email": {
+					"value": "sales@prairieleather.example"
+				},
+				"Phone1": {
+					"value": "+1 306 555 0199"
+				},
+				"Address": {
+					"id": "00000000-0000-0000-0000-000000002334",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"AddressLine1": {
+						"value": "9 Tannery Rd"
+					},
+					"City": {
+						"value": "Saskatoon"
+					},
+					"State": {
+						"value": "SK"
+					},
+					"PostalCode": {
+						"value": "S7K 1A1"
+					},
+					"Country": {
+						"value": "CA"
+					},
+					"custom": {}
+				},
+				"custom": {}
+			},
+			"Contacts": [],
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

@@ -1,0 +1,108 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/journalEntry/611",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/journalEntry/611"
+			}
+		],
+		"id": "611",
+		"tranId": "JE-1101",
+		"tranDate": "2026-09-30",
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"exchangeRate": 1.0,
+		"lastModifiedDate": "2026-09-05T15:00:00Z",
+		"memo": "September rent",
+		"line": {
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/journalEntry/611/line"
+				}
+			],
+			"count": 2,
+			"hasMore": false,
+			"items": [
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/journalEntry/611/line/1"
+						}
+					],
+					"line": 1,
+					"account": {
+						"id": "600",
+						"refName": "6000 Rent",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/600"
+							}
+						]
+					},
+					"memo": "Rent",
+					"debit": 1500.0,
+					"department": {
+						"id": "2",
+						"refName": "Operations",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/department/2"
+							}
+						]
+					}
+				},
+				{
+					"links": [
+						{
+							"rel": "self",
+							"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/journalEntry/611/line/2"
+						}
+					],
+					"line": 2,
+					"account": {
+						"id": "100",
+						"refName": "1000 Chequing",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+							}
+						]
+					},
+					"memo": "Rent paid",
+					"credit": 1500.0,
+					"entity": {
+						"id": "202",
+						"refName": "V202 Bolt Logistics",
+						"links": [
+							{
+								"rel": "self",
+								"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/vendor/202"
+							}
+						]
+					}
+				}
+			],
+			"offset": 0,
+			"totalResults": 2
+		}
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/100",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/100"
+			}
+		],
+		"id": "100",
+		"acctNumber": "1000",
+		"acctName": "Chequing",
+		"fullName": "1000 Chequing",
+		"acctType": {
+			"id": "Bank",
+			"refName": "Bank"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z"
+	}
+}

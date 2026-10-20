@@ -1,0 +1,314 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Invoice",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "Details,TaxDetails,DiscountDetails,ApplicationsCreditMemo"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-000000000083",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"Type": {
+				"value": "Invoice"
+			},
+			"ReferenceNbr": {
+				"value": "AR000001"
+			},
+			"Customer": {
+				"value": "ALPINE"
+			},
+			"Date": {
+				"value": "2026-09-15T00:00:00+00:00"
+			},
+			"DueDate": {
+				"value": "2026-10-15T00:00:00+00:00"
+			},
+			"Status": {
+				"value": "Open"
+			},
+			"Amount": {
+				"value": 262.5
+			},
+			"TaxTotal": {
+				"value": 12.5
+			},
+			"CustomerOrder": {
+				"value": "PO-5521"
+			},
+			"Description": {
+				"value": "Boots and fitting"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"Details": [
+				{
+					"id": "00000000-0000-0000-0000-00000000051f",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 1
+					},
+					"Qty": {
+						"value": 2.0
+					},
+					"UnitPrice": {
+						"value": 120.0
+					},
+					"Amount": {
+						"value": 240.0
+					},
+					"TransactionDescription": {
+						"value": "Hiker Boot"
+					},
+					"InventoryID": {
+						"value": "HIKER-BOOT"
+					},
+					"Account": {
+						"value": "40000"
+					},
+					"Subaccount": {
+						"value": "OPS-000"
+					},
+					"custom": {}
+				},
+				{
+					"id": "00000000-0000-0000-0000-000000000520",
+					"rowNumber": 2,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 2
+					},
+					"Qty": {
+						"value": 1.0
+					},
+					"UnitPrice": {
+						"value": 40.0
+					},
+					"Amount": {
+						"value": 40.0
+					},
+					"TransactionDescription": {
+						"value": "Boot Fitting"
+					},
+					"InventoryID": {
+						"value": "FITTING"
+					},
+					"Account": {
+						"value": "40000"
+					},
+					"custom": {}
+				}
+			],
+			"TaxDetails": [
+				{
+					"id": "00000000-0000-0000-0000-000000000521",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"TaxID": {
+						"value": "GST"
+					},
+					"TaxAmount": {
+						"value": 12.5
+					},
+					"custom": {}
+				}
+			],
+			"DiscountDetails": [
+				{
+					"id": "00000000-0000-0000-0000-000000000522",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"DiscountCode": {
+						"value": "SPRING"
+					},
+					"DiscountAmount": {
+						"value": 30.0
+					},
+					"custom": {}
+				}
+			],
+			"ApplicationsCreditMemo": [],
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000084",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"Type": {
+				"value": "Invoice"
+			},
+			"ReferenceNbr": {
+				"value": "AR000002"
+			},
+			"Customer": {
+				"value": "RIVERS"
+			},
+			"Date": {
+				"value": "2026-09-16T00:00:00+00:00"
+			},
+			"Status": {
+				"value": "Open"
+			},
+			"Amount": {
+				"value": 30.0
+			},
+			"TaxTotal": {
+				"value": 0.0
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"Details": [
+				{
+					"id": "00000000-0000-0000-0000-000000000529",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 1
+					},
+					"Qty": {
+						"value": 2.0
+					},
+					"UnitPrice": {
+						"value": 15.0
+					},
+					"Amount": {
+						"value": 30.0
+					},
+					"TransactionDescription": {
+						"value": "Trail Sock"
+					},
+					"InventoryID": {
+						"value": "TRAIL-SOCK"
+					},
+					"custom": {}
+				}
+			],
+			"TaxDetails": [],
+			"DiscountDetails": [],
+			"ApplicationsCreditMemo": [],
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-000000000085",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"Type": {
+				"value": "Credit Memo"
+			},
+			"ReferenceNbr": {
+				"value": "AR000003"
+			},
+			"Customer": {
+				"value": "ALPINE"
+			},
+			"Date": {
+				"value": "2026-09-18T00:00:00+00:00"
+			},
+			"Status": {
+				"value": "Closed"
+			},
+			"Amount": {
+				"value": 42.0
+			},
+			"TaxTotal": {
+				"value": 2.0
+			},
+			"Description": {
+				"value": "Fitting refunded"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"Details": [
+				{
+					"id": "00000000-0000-0000-0000-000000000533",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"LineNbr": {
+						"value": 1
+					},
+					"Qty": {
+						"value": 1.0
+					},
+					"UnitPrice": {
+						"value": 40.0
+					},
+					"Amount": {
+						"value": 40.0
+					},
+					"TransactionDescription": {
+						"value": "Boot Fitting"
+					},
+					"InventoryID": {
+						"value": "FITTING"
+					},
+					"custom": {}
+				}
+			],
+			"TaxDetails": [
+				{
+					"id": "00000000-0000-0000-0000-000000000534",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"TaxID": {
+						"value": "GST"
+					},
+					"TaxAmount": {
+						"value": 2.0
+					},
+					"custom": {}
+				}
+			],
+			"DiscountDetails": [],
+			"ApplicationsCreditMemo": [
+				{
+					"id": "00000000-0000-0000-0000-000000000535",
+					"rowNumber": 1,
+					"note": {
+						"value": ""
+					},
+					"DocType": {
+						"value": "Invoice"
+					},
+					"ReferenceNbr": {
+						"value": "AR000001"
+					},
+					"AmountPaid": {
+						"value": 42.0
+					},
+					"custom": {}
+				}
+			],
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

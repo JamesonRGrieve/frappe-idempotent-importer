@@ -1,0 +1,60 @@
+{
+	"request": {
+		"path": "/b1s/v1/JournalEntries",
+		"query": {
+			"$orderby": "JdtNum"
+		}
+	},
+	"response": {
+		"odata.metadata": "https://b1.example.test:50000/b1s/v1/$metadata#JournalEntries",
+		"value": [
+			{
+				"JdtNum": 10,
+				"Number": 10,
+				"ReferenceDate": "2026-09-30",
+				"Memo": "September rent",
+				"OriginalJournal": "ttJournalEntry",
+				"JournalEntryLines": [
+					{
+						"Line_ID": 0,
+						"AccountCode": "5100",
+						"ShortName": "5100",
+						"Debit": 1500.0,
+						"Credit": 0.0,
+						"CostingCode": "OPS"
+					},
+					{
+						"Line_ID": 1,
+						"AccountCode": "2100",
+						"ShortName": "V001",
+						"Debit": 0.0,
+						"Credit": 1500.0
+					}
+				]
+			},
+			{
+				"JdtNum": 11,
+				"Number": 11,
+				"ReferenceDate": "2026-09-15",
+				"Memo": "A/R Invoices - C001",
+				"OriginalJournal": "ttARInvoice",
+				"JournalEntryLines": [
+					{
+						"Line_ID": 0,
+						"AccountCode": "1200",
+						"ShortName": "C001",
+						"Debit": 126.0,
+						"Credit": 0.0
+					},
+					{
+						"Line_ID": 1,
+						"AccountCode": "4100",
+						"ShortName": "4100",
+						"Debit": 0.0,
+						"Credit": 126.0
+					}
+				]
+			}
+		]
+	}
+}

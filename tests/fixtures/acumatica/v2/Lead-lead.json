@@ -1,0 +1,78 @@
+{
+	"request": {
+		"path": "/entity/Default/24.200.001/Lead",
+		"query": {
+			"$top": 100,
+			"$skip": 0,
+			"$expand": "Address"
+		}
+	},
+	"response": [
+		{
+			"id": "00000000-0000-0000-0000-00000000005b",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"LeadID": {
+				"value": 201
+			},
+			"FirstName": {
+				"value": "Ivy"
+			},
+			"LastName": {
+				"value": "Moss"
+			},
+			"CompanyName": {
+				"value": "Moss Guiding"
+			},
+			"Email": {
+				"value": "ivy@mossguiding.example"
+			},
+			"Phone1": {
+				"value": "+1 403 555 0120"
+			},
+			"Status": {
+				"value": "Converted"
+			},
+			"Active": {
+				"value": true
+			},
+			"Description": {
+				"value": "Asked about group boot fittings"
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		},
+		{
+			"id": "00000000-0000-0000-0000-00000000005c",
+			"rowNumber": 1,
+			"note": {
+				"value": ""
+			},
+			"LeadID": {
+				"value": 202
+			},
+			"CompanyName": {
+				"value": "Ridge Runners Club"
+			},
+			"Email": {
+				"value": "hello@ridgerunners.example"
+			},
+			"Status": {
+				"value": "New"
+			},
+			"Active": {
+				"value": true
+			},
+			"LastModifiedDateTime": {
+				"value": "2026-09-01T12:00:00+00:00"
+			},
+			"custom": {},
+			"_links": {}
+		}
+	]
+}

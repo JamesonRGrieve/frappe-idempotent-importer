@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/account/110",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/account/110"
+			}
+		],
+		"id": "110",
+		"acctNumber": "1100",
+		"acctName": "Accounts Receivable",
+		"fullName": "1100 Accounts Receivable",
+		"acctType": {
+			"id": "AcctRec",
+			"refName": "Accounts Receivable"
+		},
+		"isSummary": false,
+		"isInactive": false,
+		"currency": {
+			"id": "1",
+			"refName": "Canadian Dollar",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/currency/1"
+				}
+			]
+		},
+		"lastModifiedDate": "2026-09-01T12:00:00Z"
+	}
+}

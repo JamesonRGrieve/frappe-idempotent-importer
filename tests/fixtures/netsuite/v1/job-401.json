@@ -1,0 +1,38 @@
+{
+	"request": {
+		"path": "/services/rest/record/v1/job/401",
+		"query": {
+			"expandSubResources": "true"
+		}
+	},
+	"response": {
+		"links": [
+			{
+				"rel": "self",
+				"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/job/401"
+			}
+		],
+		"id": "401",
+		"entityId": "P401",
+		"companyName": "Lakeside Cafe Renovation",
+		"parent": {
+			"id": "101",
+			"refName": "C101 Lakeside Cafe",
+			"links": [
+				{
+					"rel": "self",
+					"href": "https://1234567.suitetalk.api.netsuite.com/services/rest/record/v1/customer/101"
+				}
+			]
+		},
+		"entityStatus": {
+			"id": "2",
+			"refName": "In Progress"
+		},
+		"startDate": "2026-08-01",
+		"scheduledEndDate": "2026-11-30",
+		"isInactive": false,
+		"comments": "Counter and lighting refit",
+		"lastModifiedDate": "2026-09-06T10:00:00Z"
+	}
+}

@@ -158,6 +158,81 @@
         "paymentPlanOptions": {
           "type": "NONE"
         }
+      },
+      {
+        "id": "6e5000000000000000000046",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Scarf: buy two, get one free",
+        "trigger": {
+          "type": "AUTO"
+        },
+        "template": {
+          "type": "BUY_X_GET_Y_PERCENTAGE",
+          "discountPercentage": 100,
+          "maxApplicationsPerCart": 0
+        },
+        "criteria": {
+          "type": "BUY_X_GET_Y",
+          "criteriaAppliesTo": "PRODUCT",
+          "criteriaProductIds": [
+            "6b2000000000000000000012"
+          ],
+          "eligibleForDiscountQuantity": 1,
+          "requiredFullPriceQuantity": 2,
+          "rewardAppliesTo": "PRODUCT",
+          "rewardProductIds": [
+            "6b2000000000000000000012"
+          ]
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        }
+      },
+      {
+        "id": "6e5000000000000000000047",
+        "websiteId": "5f3c3d55ac435e1a051f7701",
+        "name": "Scarf and a board at half price",
+        "trigger": {
+          "type": "CODE",
+          "promoCode": "SQS-BOARDHALF"
+        },
+        "template": {
+          "type": "BUY_X_GET_Y_PERCENTAGE",
+          "discountPercentage": 40,
+          "maxApplicationsPerCart": 1
+        },
+        "criteria": {
+          "type": "BUY_X_GET_Y",
+          "criteriaAppliesTo": "PRODUCT",
+          "criteriaProductIds": [
+            "6b2000000000000000000012"
+          ],
+          "eligibleForDiscountQuantity": 1,
+          "requiredFullPriceQuantity": 1,
+          "rewardAppliesTo": "PRODUCT",
+          "rewardProductIds": [
+            "6b2000000000000000000011"
+          ]
+        },
+        "validFrom": "2026-09-01T00:00:00.000Z",
+        "isLimitedUses": false,
+        "isOncePerCustomer": false,
+        "status": "ACTIVE",
+        "numberOfUses": 0,
+        "subscriptionOptions": {
+          "type": "EXCLUDED"
+        },
+        "paymentPlanOptions": {
+          "type": "NONE"
+        }
       }
     ],
     "hasNextPage": false,

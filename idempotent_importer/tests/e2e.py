@@ -1383,11 +1383,7 @@ def assert_squarespace(state: str) -> None:
 		None,
 		"a mailing-list subscriber",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
-		2,
-		"the amount-off and one-product promo codes (not once-per-customer, free shipping or automatic ones)",
-	)
+	assert_squarespace_discounts(connection, state)
 	if state == "v1":
 		expect(item_price(connection, board), amount("48"), "the board's price")
 		expect(
@@ -1714,6 +1710,60 @@ def assert_wix_discounts(connection: str, state: str) -> None:
 		"card 407",
 		["fixed_price_set"],
 		"the three-for-$20 rule, held",
+	)
+
+
+def assert_squarespace_discounts(connection: str, state: str) -> None:
+	"""Every Squarespace discount: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		7,
+		"every discount",
+	)
+	discount = "6e500000000000000000004{}"
+	for number, what in (
+		(2, "the amount-off code"),
+		(4, "the scarf code"),
+		(5, "the automatic 5%"),
+		(6, "buy two scarves, get one"),
+	):
+		assert_discount(connection, "Discount", discount.format(number), None, [], f"{what}, enabled")
+	assert_discount(
+		connection,
+		"Discount",
+		discount.format(1),
+		"card 405",
+		["once_per_customer"],
+		"the once-per-customer code, held",
+	)
+	assert_discount(
+		connection, "Discount", discount.format(3), "card 405", ["free_shipping"], "the shipping code, held"
+	)
+	assert_discount(
+		connection,
+		"Discount",
+		discount.format(7),
+		"card 407",
+		["item_limit", "item_choice"],
+		"the half-price board, held",
+	)
+	third = frappe.get_doc("Pricing Rule", target(connection, "discount", "Discount", discount.format(6)))
+	expect(
+		(
+			third.coupon_code_based,
+			third.price_or_product_discount,
+			third.same_item,
+			third.is_recursive,
+			third.recurse_for,
+		),
+		(0, "Product", 1, 1, 2),
+		"the third scarf free, for every two",
+	)
+	mug = target(connection, "discount", "Discount", discount.format(7))
+	expect(
+		amount(frappe.db.get_value("Pricing Rule", mug, "discount_percentage")),
+		amount("50" if state == "v1" else "40"),
+		"the half-price board's percentage",
 	)
 
 

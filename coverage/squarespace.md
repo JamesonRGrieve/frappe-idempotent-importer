@@ -27,7 +27,7 @@ sits out the minute when limited anyway (which pauses the run).
 | Product images, tags | **File**; the Item's image; **Tag** | Images by their position. |
 | Old product URLs | **Website Route Redirect** (301) | |
 | Profiles that are customers or have an account | **Customer**, **Contact**, **Address** | The profile's one address with its phone. |
-| Promo codes: a percentage or amount off the order (any order, or above a minimum cart total), a percentage off one product | **Pricing Rule** + **Coupon Code** | Start and expiry dates, the site-wide use limit. |
+| Discounts, promo codes and automatic: a percentage or amount off the order (any order, or above a minimum cart total), a percentage or amount off one product, free shipping, buy X get Y | **Pricing Rule** (+ a **Coupon Code** for a promo code) | Enforced: the discount and what it applies to, start and expiry dates, a code's site-wide use limit; buy X get Y as the same product free for every X, or a discount on one other product once X are bought. Recorded and held (rule disabled, code not redeemable) until the Webshop fork enforces them: free shipping, once-per-customer limits and an automatic discount's use limit (card 405); an amount off one product (Squarespace doesn't say per item or in total), how many reward items are discounted and how often per cart, several products to buy or reward, discounts on subscription or payment-plan payments (card 407). An expired discount disables its rule. |
 | Orders (every payment state) | **Sales Invoice** (submitted when paid or refunded, else draft) + **Payment Entry** | Squarespace's totals, exactly; number `#<order number>`. The payment's gateway and card as the method, its transaction id as the reference. |
 | Order lines | Invoice lines at the unit price paid, on the variant's item | Option choices and product-form answers in the line's name. |
 | Promo discounts | The invoice's discount | |
@@ -43,7 +43,6 @@ sits out the minute when limited anyway (which pauses the run).
 | Squarespace | Why it isn't mirrored |
 |---|---|
 | Gift card products and gift card sales | No ERPNext home for a stored-value liability (reported). |
-| Automatic discounts, free-shipping codes, once-per-customer codes, amount-off or free shipping for one product, other criteria | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Cancelled, failed and test-mode orders | Not sales. |
 | Mailing-list subscribers and donors | Not customers. |
 | Download files | Not in the API. |

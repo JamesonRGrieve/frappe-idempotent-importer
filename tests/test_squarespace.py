@@ -25,6 +25,7 @@ from idempotent_importer.sources.squarespace.reader import (
 	SquarespaceReader,
 	squarespace_time,
 )
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = SquarespaceAdapter()
@@ -34,7 +35,9 @@ CONFIG = ConnectionConfig(
 GID = "gid://squarespace/squarespace-p"
 BOARD, SCARF, MUG, EBOOK, GIFT = (f"Product/6b200000000000000000001{n}" for n in range(1, 6))
 MARIN, NADIA, LEE = (f"Profile/6c300000000000000000002{n}" for n in range(1, 4))
-WELCOME, FIVE_OFF, SHIP_FREE, SCARF_15, AUTO = (f"Discount/6e500000000000000000004{n}" for n in range(1, 6))
+WELCOME, FIVE_OFF, SHIP_FREE, SCARF_15, AUTO, THIRD_FREE, MUG_HALF = (
+	f"Discount/6e500000000000000000004{n}" for n in range(1, 8)
+)
 ORDER_1001, ORDER_1002, ORDER_1003 = (f"Order/6d400000000000000000003{n}" for n in range(1, 4))
 NOW = datetime(2026, 10, 1, tzinfo=UTC)
 
@@ -106,7 +109,7 @@ class TestReader:
 	def test_discounts_page_by_offset(self) -> None:
 		source, transport = reader()
 		page = source.page(Kind.DISCOUNT, None, None, "")
-		assert not page.has_next_page and len(page.nodes) == 5
+		assert not page.has_next_page and len(page.nodes) == 7
 		assert "offset=0" in transport.requests[0].url and "limit=1000" in transport.requests[0].url
 
 	def test_orders_arrive_with_transactions_and_their_customers_profile(self) -> None:
@@ -228,18 +231,68 @@ class TestMappers:
 		scarf = values(Kind.DISCOUNT, SCARF_15)
 		assert (scarf.string("applies"), scarf.strings("items")) == ("items", [f"{GID}/{SCARF}"])
 
+		assert held(mapped(Kind.DISCOUNT, FIVE_OFF)) == []
+
 	@pytest.mark.parametrize(
-		("key", "refusal"),
-		[(WELCOME, "once-per-customer"), (SHIP_FREE, "FREE_SHIPPING"), (AUTO, "automatic")],
+		("key", "kinds"),
+		[(WELCOME, ["once_per_customer"]), (SHIP_FREE, ["free_shipping"]), (AUTO, [])],
 	)
-	def test_discounts_a_coupon_cannot_apply(self, key: str, refusal: str) -> None:
-		with pytest.raises(Unsupported, match=refusal):
-			mapped(Kind.DISCOUNT, key)
+	def test_what_pricing_cant_enforce_is_held(self, key: str, kinds: list[str]) -> None:
+		desired = mapped(Kind.DISCOUNT, key)
+		assert condition_kinds(desired) == kinds
+		assert held(desired) == (["card 405"] if kinds else [])
+
+	def test_automatic_and_buy_x_get_y_discounts(self) -> None:
+		auto = values(Kind.DISCOUNT, AUTO)
+		assert (auto.flag("automatic"), auto.strings("codes"), auto.decimal("value")) == (
+			True,
+			[],
+			Decimal(5),
+		)
+		third = values(Kind.DISCOUNT, THIRD_FREE)
+		assert (third.strings("items"), third.decimal("min_qty")) == ([f"{GID}/{SCARF}"], Decimal(2))
+		assert third.required_record("free").all() == {
+			"qty": Decimal(1),
+			"recursive": True,
+			"recurse_for": Decimal(2),
+		}
+		assert held(mapped(Kind.DISCOUNT, THIRD_FREE)) == []
+		half = mapped(Kind.DISCOUNT, MUG_HALF)
+		mug = values(Kind.DISCOUNT, MUG_HALF)
+		assert (mug.strings("items"), mug.required_record("other").all(), mug.decimal("value")) == (
+			[f"{GID}/{SCARF}"],
+			{"applies": "items", "target": f"{GID}/{BOARD}"},
+			Decimal(50),
+		)
+		assert values(Kind.DISCOUNT, MUG_HALF, "v2").decimal("value") == Decimal(40)
+		assert condition_kinds(half) == ["item_limit", "item_choice"]
 
 	def test_discount_edges(self) -> None:
 		five_off = nodes(Kind.DISCOUNT)[FIVE_OFF]
-		with pytest.raises(Unsupported, match="PRODUCT criteria"):
-			mapper_of(Kind.DISCOUNT).map(five_off.with_fields(criteria={"type": "PRODUCT", "productId": "x"}))
+		mapper = mapper_of(Kind.DISCOUNT)
+		on_product = mapper.map(five_off.with_fields(criteria={"type": "PRODUCT", "productId": "x"}))
+		assert condition_kinds(on_product) == ["spread_amount"]
+		limited = mapper.map(nodes(Kind.DISCOUNT)[AUTO].with_fields(isLimitedUses=True, maxUsesAllowed=5))
+		assert terms(limited, "shared_use_limit") == {"uses": 5}
+		recurring = mapper.map(five_off.with_fields(subscriptionOptions={"type": "ALL_PAYMENTS"}))
+		assert condition_kinds(recurring) == ["item_matcher"]
+		assert mapper.map(five_off.with_fields(status="EXPIRED")) is None
+		bxgy = nodes(Kind.DISCOUNT)[MUG_HALF]
+		criteria = bxgy.required_child("criteria").raw()
+		several = mapper.map(bxgy.with_fields(criteria={**criteria, "rewardProductIds": ["a", "b"]}))
+		assert condition_kinds(several) == ["item_limit", "item_choice", "item_matcher"]
+		fixed = mapper.map(
+			bxgy.with_fields(template={"type": "BUY_X_GET_Y_FIXED_AMOUNT", "discountAmount": {"value": 3}})
+		)
+		assert fixed is not None and fixed.values().string("discount") == "amount"
+		with pytest.raises(SourceError, match="no discount amount"):
+			mapper.map(bxgy.with_fields(template={"type": "BUY_X_GET_Y_FIXED_AMOUNT"}))
+		with pytest.raises(SourceError, match="without its criteria"):
+			mapper.map(bxgy.with_fields(criteria={"type": "ANY_ORDER"}))
+		with pytest.raises(SourceError, match="template"):
+			mapper.map(five_off.with_fields(template={"type": "MYSTERY"}))
+		with pytest.raises(SourceError, match="criteria"):
+			mapper.map(five_off.with_fields(criteria={"type": "MYSTERY"}))
 		with pytest.raises(SourceError, match="no discount amount"):
 			mapper_of(Kind.DISCOUNT).map(five_off.with_fields(template={"type": "FIXED_AMOUNT"}))
 

@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Squarespace, through its Commerce and Profiles APIs: store pages, products with their variants, prices,
-sales, stock and images, customer profiles, promo-code discounts, and orders with their payments, refunds
+sales, stock and images, customer profiles, discounts (promo codes and automatic), and orders with their payments, refunds
 and fulfillments. The operator creates an API key (Settings → Developer API keys) with read-only access to
 Products, Inventory, Orders, Transactions and Profiles, and enters the site's URL and the key."""
 

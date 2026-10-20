@@ -6,7 +6,7 @@ translated here. Identities arrive scoped to the connection, with Squarespace's 
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from idempotent_importer.contract import (
@@ -16,19 +16,22 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Condition,
 	Discount,
+	FreeItem,
 	LineRates,
 	OrderLine,
 	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
-	discount_fields,
+	discount_desired,
 	included_taxes,
 	line_fields,
 	order_line,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -48,6 +51,11 @@ CANCELED = "CANCELED"
 PAID = frozenset({"PAID", "REFUNDED", "REFUND_PENDING", "REFUND_FAILED"})
 FAILED = "FAILED"
 PROMO_CODE = "CODE"
+EXPIRED = "EXPIRED"
+BUY_X_GET_Y = "BUY_X_GET_Y"
+FULL = Decimal(100)
+# A discount that doesn't apply to subscription or payment-plan payments (the defaults).
+NOT_RECURRING = frozenset({"EXCLUDED", "NONE"})
 # The places of a tax rate derived from an unpaid order's tax total (ERPNext keeps a rate to nine).
 TAX_RATE_PLACES = Decimal("0.000001")
 
@@ -277,61 +285,122 @@ class ProfileMapper:
 
 
 class DiscountMapper:
-	"""A promo-code discount → a coupon Pricing Rule, when ERPNext applies it exactly: a percentage or fixed
-	amount off the order, for any order or above a minimum cart total, or a percentage off one product; with
-	its dates and site-wide use limit. Automatic discounts, free shipping, once-per-customer limits and other
-	templates or criteria are Unsupported."""
+	"""Every discount, promo code or automatic → a Pricing Rule, enforcing natively what ERPNext's pricing does
+	and recording the rest as conditions that hold it (``contract.CONDITIONS``): a percentage or amount off
+	the order, for any order or above a minimum cart total; a percentage off one product; buy X get Y (the
+	same product free, or a discount on another product) with its dates and site-wide use limit (of a code).
+	Recorded and held: free shipping, once-per-customer limits and an automatic discount's use limit (card
+	405); an amount off one product (Squarespace doesn't say per item or in total), how many reward items are
+	discounted and how often per cart, several products to buy or reward, and discounts on subscription or
+	payment-plan payments (card 407). An expired discount maps to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
+		if node.optional_string("status") == EXPIRED:
+			return None
 		name = node.string("name")
 		trigger = node.required_child("trigger")
-		if trigger.string("type") != PROMO_CODE:
-			raise Unsupported("an automatic discount has no ERPNext coupon equivalent")
+		automatic = trigger.string("type") != PROMO_CODE
+		later: list[Condition] = []
 		if node.get("isOncePerCustomer") is True:
-			raise Unsupported("a once-per-customer limit has no ERPNext coupon equivalent")
+			later.append(Condition("once_per_customer"))
+		uses = node.optional_integer("maxUsesAllowed") if node.get("isLimitedUses") is True else None
+		if uses is not None and automatic:
+			later.append(Condition("shared_use_limit", {"uses": uses}))
+		for options in ("subscriptionOptions", "paymentPlanOptions"):
+			applies_to = node.child(options)
+			if applies_to is not None and applies_to.string("type") not in NOT_RECURRING:
+				later.append(Condition("item_matcher", {"source": {options: applies_to.string("type")}}))
 		template = node.required_child("template")
+		criteria = node.required_child("criteria")
+		base = Discount(
+			codes=[] if automatic else [trigger.string("promoCode")],
+			description=name,
+			discount="percentage",
+			applies="transaction",
+			value=Decimal(0),
+			items=[],
+			groups=[],
+			min_amount=None,
+			valid_from=date_of(node.optional_time("validFrom")),
+			valid_upto=date_of(node.optional_time("validTo")),
+			max_uses=None if automatic else uses,
+			automatic=automatic,
+			conditions=later,
+		)
 		match template.string("type"):
 			case "PERCENTAGE":
-				kind, value = "percentage", template.decimal("percentage")
+				discount = replace(base, value=template.decimal("percentage"))
 			case "FIXED_AMOUNT":
 				amount = money(template, "discountAmount")
 				if amount is None:
 					raise SourceError(f'"{name}" has no discount amount.')
-				kind, value = "amount", amount
+				discount = replace(base, discount="amount", value=amount)
+			case "FREE_SHIPPING":
+				shipping: Fields = {
+					"methods": source_terms(template.get("selectedShippingOption")),
+					"source": template.optional_string("appliesToFulfillmentOptionType"),
+				}
+				later.append(Condition("free_shipping", shipping))
+				discount = base
+			case "BUY_X_GET_Y_PERCENTAGE" | "BUY_X_GET_Y_FIXED_AMOUNT":
+				return discount_desired(node.id(), self._buy_get(base, template, criteria, later))
 			case other:
-				raise Unsupported(f"a {other} discount has no ERPNext coupon equivalent")
-		criteria = node.required_child("criteria")
-		minimum: Decimal | None = None
-		products: list[str] = []
+				raise SourceError(f"A Squarespace discount template {other}.")
 		match criteria.string("type"):
 			case "ANY_ORDER":
 				pass
 			case "CART_TOTAL":
-				minimum = money(criteria, "minimumCartTotal")
-			case "PRODUCT" if kind == "percentage":
-				products = [self._context.gid("Product", criteria.string("productId"))]
+				discount = replace(discount, min_amount=money(criteria, "minimumCartTotal"))
+			case "PRODUCT":
+				product = [self._context.gid("Product", criteria.string("productId"))]
+				if discount.discount == "amount":
+					later.append(Condition("spread_amount", {"items": list[Field](product)}))
+				else:
+					discount = replace(discount, applies="items", items=product)
 			case other:
-				raise Unsupported(f"a {kind} discount with {other} criteria has no ERPNext coupon equivalent")
-		discount = Discount(
-			codes=[trigger.string("promoCode")],
-			description=name,
-			discount=kind,
-			applies="items" if products else "transaction",
-			value=value,
-			items=products,
-			groups=[],
-			min_amount=minimum,
-			valid_from=date_of(node.optional_time("validFrom")),
-			valid_upto=date_of(node.optional_time("validTo")),
-			max_uses=node.optional_integer("maxUsesAllowed") if node.get("isLimitedUses") is True else None,
+				raise SourceError(f'"{name}" has {other} criteria for a {template.string("type")} discount.')
+		return discount_desired(node.id(), discount)
+
+	def _buy_get(self, base: Discount, template: Node, criteria: Node, later: list[Condition]) -> Discount:
+		"""Buy X (at full price) of the criteria products, get Y of the reward products discounted: the same
+		single product free for every X is ERPNext's own recursive free item; another single product is a
+		discount on that other item; how many are discounted, and how often per cart, are recorded."""
+		if criteria.string("type") != BUY_X_GET_Y:
+			raise SourceError(f'"{base.description}" is a buy X get Y discount without its criteria.')
+		bought = [self._context.gid("Product", p) for p in criteria.strings("criteriaProductIds")]
+		rewards = [self._context.gid("Product", p) for p in criteria.strings("rewardProductIds")]
+		required = Decimal(criteria.integer("requiredFullPriceQuantity"))
+		eligible = Decimal(criteria.integer("eligibleForDiscountQuantity"))
+		percentage = template.optional_decimal("discountPercentage")
+		repeats = template.optional_integer("maxApplicationsPerCart") or 0
+		if percentage == FULL and len(bought) == 1 and bought == rewards and repeats == 0:
+			free = FreeItem(None, None, eligible, recursive=True, recurse_for=required)
+			return replace(base, applies="items", items=bought, min_qty=required, free=free)
+		kind, value = (
+			("percentage", percentage)
+			if percentage is not None
+			else ("amount", money(template, "discountAmount"))
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		if value is None:
+			raise SourceError(f'"{base.description}" has no discount amount.')
+		later.append(Condition("item_limit", {"qty": eligible}))
+		if repeats:
+			later.append(Condition("item_choice", {"source": {"maxApplicationsPerCart": repeats}}))
+		if len(bought) != 1 or len(rewards) != 1:
+			later.append(
+				Condition(
+					"item_matcher", {"source": {"buy": list[Field](bought), "reward": list[Field](rewards)}}
+				)
+			)
+			return replace(base, discount=kind, value=value, applies="items", items=rewards, min_qty=required)
+		discount = replace(base, discount=kind, value=value, applies="items", items=bought, min_qty=required)
+		return discount if bought == rewards else replace(discount, other=("items", rewards[0]))
 
 
 class OrderMapper:

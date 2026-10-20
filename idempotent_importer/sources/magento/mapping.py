@@ -17,29 +17,35 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Code,
+	Condition,
 	Discount,
+	FreeItem,
 	OrderLine,
 	Shipment,
+	Tier,
 	address_fields,
 	charge_fields,
 	contents_of,
 	date_of,
-	discount_fields,
+	discount_desired,
 	line_fields,
 	order_line,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Field, Fields
+from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.paths import path_of, slugify
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.html import embedded_images, hosted_on
-from idempotent_importer.sources.magento.reader import CONFIGURABLE
+from idempotent_importer.sources.magento.reader import CONFIGURABLE, NOT_VISIBLE_INDIVIDUALLY
 
 # Magento's storefront URL suffix for products and categories (its default; the setting isn't in the API).
 URL_SUFFIX = ".html"
@@ -55,10 +61,17 @@ HOME_IDENTIFIER = "home"
 # Order states: a cancelled order has no sale; a paid one is booked.
 CANCELED = "canceled"
 NO_COUPON = "NO_COUPON"
-ACTIONS = {"by_percent": "percentage", "cart_fixed": "amount"}
 NO_FREE_SHIPPING = "0"
+FREE_SHIPPING = {"1": "for the matching items only", "2": "for the shipment with matching items"}
 COMBINE_ALL, COMBINE_TRUE = "all", "1"
-SUBTOTAL, AT_LEAST = "base_subtotal", ">="
+AT_LEAST = ">="
+# A rule's cart conditions ERPNext's pricing checks: the subtotal and the quantity, at least so much.
+CART_MINIMUMS = {"base_subtotal": "min_amount", "total_qty": "min_qty"}
+# An item condition naming categories ("is", "is one of").
+CATEGORY_IDS = "category_ids"
+CATEGORY_MATCHES = frozenset({"==", "()"})
+# A tier price for every customer group.
+ALL_GROUPS = 32000
 METHOD_TITLE = "method_title"
 # ERPNext keeps an exchange rate to nine places.
 RATE_PLACES = Decimal("0.000000001")
@@ -371,10 +384,14 @@ def images(product: Node, store: Node) -> list[Field]:
 
 
 class CustomerMapper:
-	"""A customer account → a Customer, its Contact, and every saved address (the default billing first)."""
+	"""A customer account → a Customer in its customer group, its Contact, and every saved address (the
+	default billing first)."""
 
 	kind = Kind.CUSTOMER
 	version = 1
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
 		first, last = node.text("firstname"), node.text("lastname")
@@ -399,98 +416,243 @@ class CustomerMapper:
 			"phone": phone,
 			"addresses": addresses,
 		}
+		group = node.optional_integer("group_id")
+		if group is not None:
+			fields["group"] = self._context.gid("CustomerGroup", group)
 		return Desired(self.kind, node.id(), fields)
 
 
-class DiscountMapper:
-	"""A cart price rule with coupons → a coupon Pricing Rule with its codes, when ERPNext applies it exactly:
-	a percentage off every item or an amount off the cart, for every customer group, at most after a minimum
-	subtotal, with its dates and uses per coupon. Rules without a coupon, item conditions, other cart
-	conditions, caps and steps, shipping discounts and free shipping, customer groups, per-customer limits and
-	coupons with their own limits are Unsupported. An inactive rule, or one not on the store's website, maps
-	to nothing."""
+class CustomerGroupMapper:
+	"""A customer group → a Customer Group its customers and discounts name."""
 
-	kind = Kind.DISCOUNT
+	kind = Kind.CUSTOMER_GROUP
 	version = 1
 
 	def map(self, node: Node) -> Desired | None:
+		return Desired(self.kind, node.id(), {"name": node.string("code")})
+
+
+class DiscountMapper:
+	"""Every cart price rule (with coupons, or applied without one) and every product's tier prices → a
+	Pricing Rule (a Promotional Scheme for tiers), enforcing natively what ERPNext's pricing does and recording
+	the rest as conditions that hold it (``contract.CONDITIONS``).
+
+	A rule: a percentage or amount off each matching item, an amount off the cart, or buy X get Y free (the
+	same item, for every X); on every item or some categories; after a minimum subtotal or quantity; its
+	dates; for its customer groups (one, or every group, with codes; several, without); each coupon's use
+	limit and expiry. Recorded and held: per-customer limits (of a coupon: that coupon alone), discounts on
+	shipping and free shipping (card 405); a limit on the discounted quantity, discount steps, other item and
+	cart conditions, several customer groups on codes (card 407). An inactive rule, or one not on the store's
+	website, maps to nothing. Catalog price rules have no REST API (an operator decision, coverage/magento.md).
+
+	A product's tier prices (``TierPrice``, per customer group): a fixed unit price or a percentage off from
+	each quantity, a scheme on the product for the group (every group for "ALL GROUPS")."""
+
+	kind = Kind.DISCOUNT
+	version = 2
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
+
+	def map(self, node: Node) -> Desired | None:
+		if Identity.parse(node.id()).type == "TierPrice":
+			return self._tier_prices(node)
 		store = node.required_child("store")
 		if node.get("is_active") is not True or store.integer("website_id") not in node.integers(
 			"website_ids"
 		):
 			return None
-		if node.string("coupon_type") == NO_COUPON:
-			raise Unsupported("a rule that applies without a coupon has no ERPNext coupon equivalent")
+		later: list[Condition] = []
+		automatic = node.string("coupon_type") == NO_COUPON
+		groups = self._groups(node, automatic, later)
+		if uses := node.integer("uses_per_customer"):
+			later.append(Condition("per_customer_limit", {"uses": uses}))
+		min_amount, min_qty = self._cart(node.child("condition"), later)
+		categories = self._items(node, later)
+		value = amount_of(node, "discount_amount")
 		action = node.optional_string("simple_action") or ""
-		kind = ACTIONS.get(action)
-		if kind is None:
-			raise Unsupported(f"a {action} rule has no exact ERPNext coupon equivalent")
-		require_expressible(node)
+		free = None
+		match action:
+			case "by_percent":
+				kind, applies = "percentage", "groups" if categories else "transaction"
+			case "by_fixed":
+				kind, applies = "amount", "groups" if categories else "all_items"
+			case "cart_fixed":
+				kind, applies = "amount", "transaction"
+				if categories:
+					later.append(Condition("spread_amount", {"groups": list[Field](categories)}))
+					categories = []
+			case "buy_x_get_y":
+				step = node.optional_integer("discount_step") or 0
+				if step < 1:
+					raise SourceError(f'Magento rule "{node.optional_string("name")}" buys none to get some.')
+				kind, applies = "percentage", "groups" if categories else "all_items"
+				free = FreeItem(None, None, value, recursive=True, recurse_for=Decimal(step))
+				min_qty = min_qty or Decimal(step)
+				value = Decimal(0)
+			case other:
+				raise SourceError(f"A Magento rule's action {other}.")
+		self._limits(node, action, kind, value, later)
 		coupons = node.children("coupons")
-		per_coupon = node.integer("uses_per_coupon")
-		for coupon in coupons:
-			limit = coupon.optional_integer("usage_limit")
-			if (
-				(limit is not None and limit != per_coupon)
-				or coupon.optional_integer("usage_per_customer")
-				or coupon.optional_string("expiration_date")
-			):
-				raise Unsupported("a coupon with its own limits or expiry has no ERPNext coupon equivalent")
-		if per_coupon and len(coupons) > 1:
-			raise Unsupported("a use limit shared across several codes has no ERPNext coupon equivalent")
 		created = sorted(t for c in coupons if (t := c.optional_time("created_at")))
+		per_coupon = node.integer("uses_per_coupon") or None
 		discount = Discount(
-			codes=[c.string("code") for c in coupons if c.optional_string("code")],
+			codes=[] if automatic else [c.string("code") for c in coupons if c.optional_string("code")],
 			description=node.optional_string("name") or f"Rule {node.integer('rule_id')}",
 			discount=kind,
-			applies="transaction",
-			value=amount_of(node, "discount_amount"),
+			applies=applies,
+			value=value,
 			items=[],
-			groups=[],
-			min_amount=minimum_subtotal(node.child("condition")),
+			groups=categories,
+			min_amount=min_amount,
+			min_qty=min_qty,
+			mixed=min_qty is not None and free is None,
 			valid_from=rule_date(node.optional_string("from_date"))
 			or date_of(created[0] if created else None),
 			valid_upto=rule_date(node.optional_string("to_date")),
-			max_uses=per_coupon or None,
+			max_uses=per_coupon,
+			automatic=automatic,
+			customer_groups=groups,
+			free=free,
+			conditions=later,
+			code_limits={}
+			if automatic
+			else {c.string("code"): self._coupon(c) for c in coupons if c.optional_string("code")},
 		)
-		return Desired(self.kind, node.id(), discount_fields(discount))
+		return discount_desired(node.id(), discount)
 
+	def _groups(self, rule: Node, automatic: bool, later: list[Condition]) -> list[str]:
+		"""The rule's customer groups: none when it is for every group; a coupon applies one Pricing Rule, so
+		a coupon for several (but not every) group is a condition."""
+		chosen = rule.integers("customer_group_ids")
+		if not set(rule.integers("all_customer_group_ids")) - set(chosen):
+			return []
+		groups = [self._context.gid("CustomerGroup", g) for g in chosen]
+		if len(groups) > 1 and not automatic:
+			later.append(Condition("several_customer_groups", {"groups": list[Field](groups)}))
+			return []
+		return groups
 
-def require_expressible(rule: Node) -> None:
-	action_condition = rule.child("action_condition")
-	if action_condition is not None and action_condition.children("conditions"):
-		raise Unsupported("a rule for some items has no ERPNext coupon equivalent")
-	if amount_of(rule, "discount_qty") or (rule.optional_integer("discount_step") or 0) > 0:
-		raise Unsupported(
-			"a rule that caps or steps the discounted quantity has no ERPNext coupon equivalent"
+	@staticmethod
+	def _cart(condition: Node | None, later: list[Condition]) -> tuple[Decimal | None, Decimal | None]:
+		"""The rule's minimum subtotal and quantity (all of its cart conditions true); any other cart
+		condition is recorded."""
+		parts = condition.children("conditions") if condition else []
+		if condition is None or not parts:
+			return None, None
+		minimums: dict[str, Decimal] = {}
+		rest = []
+		combined = (
+			condition.optional_string("aggregator_type") == COMBINE_ALL
+			and condition.optional_string("value") == COMBINE_TRUE
 		)
-	if (
-		rule.get("apply_to_shipping") is True
-		or (rule.optional_string("simple_free_shipping") or NO_FREE_SHIPPING) != NO_FREE_SHIPPING
-	):
-		raise Unsupported("ERPNext coupons can't discount shipping")
-	if set(rule.integers("all_customer_group_ids")) - set(rule.integers("customer_group_ids")):
-		raise Unsupported("a rule for some customer groups has no ERPNext coupon equivalent")
-	if rule.integer("uses_per_customer"):
-		raise Unsupported("a per-customer use limit has no ERPNext coupon equivalent")
+		for part in parts:
+			attribute = part.optional_string("attribute_name")
+			if (
+				combined
+				and not part.children("conditions")
+				and part.optional_string("operator") == AT_LEAST
+				and attribute in CART_MINIMUMS
+			):
+				minimums[CART_MINIMUMS[attribute]] = part.decimal("value")
+			else:
+				rest.append(part)
+		if rest:
+			later.append(Condition("rule_condition", {"source": source_terms(condition.raw())}))
+		return minimums.get("min_amount"), minimums.get("min_qty")
 
+	def _items(self, rule: Node, later: list[Condition]) -> list[str]:
+		"""The categories the rule's action applies to (all of them true: an item in one of these); any other
+		item condition is recorded."""
+		action = rule.child("action_condition")
+		parts = action.children("conditions") if action else []
+		if action is None or not parts:
+			return []
+		only = parts[0] if len(parts) == 1 else None
+		if (
+			action.optional_string("aggregator_type") == COMBINE_ALL
+			and action.optional_string("value") == COMBINE_TRUE
+			and only is not None
+			and not only.children("conditions")
+			and only.optional_string("attribute_name") == CATEGORY_IDS
+			and only.optional_string("operator") in CATEGORY_MATCHES
+		):
+			ids = [i.strip() for i in only.string("value").split(",") if i.strip()]
+			if all(i.isdigit() for i in ids):
+				return [self._context.gid("Category", int(i)) for i in ids]
+		later.append(Condition("item_matcher", {"source": source_terms(action.raw())}))
+		return []
 
-def minimum_subtotal(condition: Node | None) -> Decimal | None:
-	"""The rule's minimum subtotal, the only cart condition an ERPNext coupon checks."""
-	parts = condition.children("conditions") if condition else []
-	if condition is None or not parts:
-		return None
-	only = parts[0] if len(parts) == 1 else None
-	if (
-		condition.optional_string("aggregator_type") != COMBINE_ALL
-		or condition.optional_string("value") != COMBINE_TRUE
-		or only is None
-		or only.children("conditions")
-		or only.optional_string("attribute_name") != SUBTOTAL
-		or only.optional_string("operator") != AT_LEAST
-	):
-		raise Unsupported("a rule condition beyond a minimum subtotal has no ERPNext coupon equivalent")
-	return only.decimal("value")
+	@staticmethod
+	def _limits(rule: Node, action: str, kind: str, value: Decimal, later: list[Condition]) -> None:
+		"""A cap on the discounted quantity, a step (but buy X get Y's), shipping discounts and free
+		shipping."""
+		if most := amount_of(rule, "discount_qty"):
+			later.append(Condition("item_limit", {"qty": most}))
+		step = rule.optional_integer("discount_step") or 0
+		if step > 0 and action != "buy_x_get_y":
+			later.append(Condition("item_choice", {"source": {"discount_step": step}}))
+		if rule.get("apply_to_shipping") is True:
+			later.append(Condition("shipping_discount", {"discount": kind, "value": value}))
+		free_shipping = rule.optional_string("simple_free_shipping") or NO_FREE_SHIPPING
+		if free_shipping != NO_FREE_SHIPPING:
+			later.append(
+				Condition("free_shipping", {"source": FREE_SHIPPING.get(free_shipping, free_shipping)})
+			)
+
+	@staticmethod
+	def _coupon(coupon: Node) -> Code:
+		"""A coupon's own use limit (else the rule's uses per coupon) and expiry; its per-customer limit is a
+		condition of the coupon."""
+		per_customer = coupon.optional_integer("usage_per_customer")
+		return Code(
+			max_uses=coupon.optional_integer("usage_limit") or None,
+			valid_upto=rule_date(coupon.optional_string("expiration_date")),
+			conditions=[Condition("per_customer_limit", {"uses": per_customer})] if per_customer else [],
+		)
+
+	def _tier_prices(self, node: Node) -> Desired | None:
+		"""One customer group's tier prices on a product: each from its quantity up to the next tier's."""
+		prices = sorted(node.children("tier_prices"), key=lambda t: t.decimal("qty"))
+		if not prices:
+			return None
+		tiers = []
+		for index, price in enumerate(prices):
+			following = prices[index + 1].decimal("qty") if index + 1 < len(prices) else None
+			extension = price.child("extension_attributes")
+			percentage = extension.optional_decimal("percentage_value") if extension else None
+			tiers.append(
+				Tier(
+					discount="percentage" if percentage is not None else "rate",
+					value=percentage if percentage is not None else price.decimal("value"),
+					min_qty=price.decimal("qty"),
+					max_qty=following - 1 if following is not None else None,
+				)
+			)
+		group = node.integer("customer_group_id")
+		product = node.integer("product_id")
+		# A configurable product's child is sold as one of its variants.
+		child = node.optional_integer("visibility") == NOT_VISIBLE_INDIVIDUALLY
+		return discount_desired(
+			node.id(),
+			Discount(
+				codes=[],
+				description=f"Tier prices, product {product}",
+				discount=tiers[0].discount,
+				applies="items",
+				value=Decimal(0),
+				items=[] if child else [self._context.gid("Product", product)],
+				variants=[(None, self._context.variant(product))] if child else [],
+				groups=[],
+				min_amount=None,
+				valid_from=None,
+				valid_upto=None,
+				max_uses=None,
+				automatic=True,
+				customer_groups=[] if group == ALL_GROUPS else [self._context.gid("CustomerGroup", group)],
+				tiers=tiers,
+			),
+		)
 
 
 class OrderMapper:
@@ -761,8 +923,9 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 	return [
 		CategoryMapper(context),
 		ProductMapper(context),
-		CustomerMapper(),
-		DiscountMapper(),
+		CustomerGroupMapper(),
+		CustomerMapper(context),
+		DiscountMapper(context),
 		OrderMapper(context),
 		PageMapper(urlsplit(config.store_url.strip()).hostname),
 	]

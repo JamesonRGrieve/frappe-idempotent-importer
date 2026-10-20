@@ -6,8 +6,9 @@ size); Magento answers a page past the end with the last page again, so a list e
 its ``total_count``. Every node carries its identity as ``id`` (Magento's id as ``source_id``). Products are
 the catalog-visible ones (a product "not visible individually" is a configurable product's child) and arrive
 with the store's context (media URL, website, root categories, weight unit), and a configurable product with
-its child products and the attributes it is configured by; cart price rules with their coupons and every
-customer group; orders (of the store's website's store views) with their credit memos and shipments.
+its child products and the attributes it is configured by; customer groups; a discount run reads cart
+price rules with their coupons and every customer group, then each simple product's tier prices (one node
+per customer group; the cursor is ``<phase>:<page>``); orders (of the store's website's store views) with their credit memos and shipments.
 Customers and orders are incremental (by ``updated_at``). Products aren't: Magento doesn't move a product's
 ``updated_at`` when its stock or a configurable product's child changes.
 
@@ -42,8 +43,14 @@ STORE_CODE = re.compile(r"^[a-z][a-z0-9_]*$")
 STORE_URL = re.compile(r"^https?://[^/]+", re.IGNORECASE)
 INCREMENTAL = frozenset({Kind.CUSTOMER, Kind.ORDER})
 SINGLY_READABLE = frozenset(
-	{Kind.COLLECTION, Kind.PRODUCT, Kind.CUSTOMER, Kind.DISCOUNT, Kind.ORDER, Kind.PAGE}
+	{Kind.COLLECTION, Kind.PRODUCT, Kind.CUSTOMER_GROUP, Kind.CUSTOMER, Kind.DISCOUNT, Kind.ORDER, Kind.PAGE}
 )
+PHASE_RULES, PHASE_TIERS = "rules", "tiers"
+CURSOR_SEPARATOR = ":"
+# The products that carry tier prices (a configurable product's are its children's).
+TIER_PRICED = ("type_id", "simple,virtual,downloadable", "in")
+# A tier price's own identity: its product and customer group.
+TIER_SEPARATOR = "-"
 
 type Filter = tuple[str, str, str]
 
@@ -145,9 +152,13 @@ class MagentoReader:
 				return paged(
 					[self._identified("Customer", c.integer("id"), c.raw()) for c in customers], following
 				)
+			case Kind.CUSTOMER_GROUP:
+				groups, following = self._search_page("/V1/customerGroups/search", [], None, cursor)
+				return paged(
+					[self._identified("CustomerGroup", g.integer("id"), g.raw()) for g in groups], following
+				)
 			case Kind.DISCOUNT:
-				rules, following = self._search_page("/V1/salesRules/search", [], "rule_id", cursor)
-				return paged(self._rules(rules), following)
+				return self._discounts(cursor)
 			case Kind.ORDER:
 				views = ",".join(str(i) for i in self._website_store_ids())
 				filters: list[Filter] = [("store_id", views, "in"), *changed_since(since)]
@@ -164,7 +175,10 @@ class MagentoReader:
 	def node(self, kind: Kind, gid: str) -> Node | None:
 		if kind not in SINGLY_READABLE:
 			raise SourceError(f"Magento can't read a single {kind.value}.")
-		source_id = Identity.parse(gid).id
+		identity = Identity.parse(gid)
+		if kind == Kind.DISCOUNT and identity.type == "TierPrice":
+			return self._tier_price(identity.id)
+		source_id = identity.id
 		if not source_id.isdigit():
 			raise SourceError(f"Not a Magento identity: {gid}")
 		match kind:
@@ -182,6 +196,8 @@ class MagentoReader:
 				return self._product(found[0])
 			case Kind.CUSTOMER:
 				return self._one(f"/V1/customers/{source_id}", "Customer")
+			case Kind.CUSTOMER_GROUP:
+				return self._one(f"/V1/customerGroups/{source_id}", "CustomerGroup")
 			case Kind.DISCOUNT:
 				result = self._client.get(f"/V1/salesRules/{source_id}")
 				return None if result is None else self._rules([result.node])[0]
@@ -225,6 +241,57 @@ class MagentoReader:
 				f"/V1/products/attributes/{int(attribute_id)}", {}
 			).raw()
 		return self._attributes[attribute_id]
+
+	def _discounts(self, cursor: str | None) -> Page:
+		"""Cart price rules, then the tier prices of the products that can carry them."""
+		phase, separator, page = (cursor or "").partition(CURSOR_SEPARATOR)
+		if not separator:
+			# A rules page number alone (a cursor saved before the tier phase existed).
+			phase, page = PHASE_RULES, cursor or ""
+		if phase == PHASE_RULES:
+			rules, following = self._search_page("/V1/salesRules/search", [], "rule_id", page or None)
+			if following:
+				return Page(self._rules(rules), True, f"{PHASE_RULES}{CURSOR_SEPARATOR}{following}")
+			return Page(self._rules(rules), True, f"{PHASE_TIERS}{CURSOR_SEPARATOR}")
+		if phase != PHASE_TIERS:
+			raise SourceError(f"Not a Magento discount cursor: {cursor}")
+		products, following = self._search_page("/V1/products", [TIER_PRICED], "entity_id", page or None)
+		nodes = [tier for product in products for tier in self._tier_prices(product)]
+		return paged(nodes, f"{PHASE_TIERS}{CURSOR_SEPARATOR}{following}" if following else None)
+
+	def _tier_prices(self, product: Node) -> list[Node]:
+		"""A product's tier prices on the store's website (or every website), one node per customer group."""
+		website = self._view().integer("website_id")
+		groups: dict[int, list[JsonValue]] = {}
+		for tier in product.children("tier_prices"):
+			extension = tier.child("extension_attributes")
+			on = extension.optional_integer("website_id") if extension else None
+			if on in (None, 0, website):
+				groups.setdefault(tier.integer("customer_group_id"), []).append(tier.raw())
+		product_id = product.integer("id")
+		return [
+			self._identified(
+				"TierPrice",
+				f"{product_id}{TIER_SEPARATOR}{group}",
+				{
+					"product_id": product_id,
+					"visibility": product.get("visibility"),
+					"customer_group_id": group,
+					"tier_prices": tiers,
+				},
+			)
+			for group, tiers in sorted(groups.items())
+		]
+
+	def _tier_price(self, key: str) -> Node | None:
+		product_id, _, group = key.partition(TIER_SEPARATOR)
+		if not product_id.isdigit() or not group.isdigit():
+			raise SourceError(f"Not a Magento tier price: {key}")
+		found = self._search("/V1/products", [("entity_id", product_id, "eq")], None, FIRST_PAGE).children(
+			"items"
+		)
+		tiers = self._tier_prices(found[0]) if found else []
+		return next((tier for tier in tiers if tier.string("source_id") == key), None)
 
 	def _rules(self, rules: list[Node]) -> list[Node]:
 		"""Cart price rules with their coupons (read for the page), the store's context and every customer
@@ -356,6 +423,6 @@ class MagentoReader:
 			raise SourceError(f"Magento has no {path} for this store.")
 		return result.node
 
-	def _identified(self, type_: str, id_: int, raw: Mapping[str, JsonValue]) -> Node:
+	def _identified(self, type_: str, id_: int | str, raw: Mapping[str, JsonValue]) -> Node:
 		gid = self._config.identity(type_, id_)
 		return Node({**raw, "source_id": str(id_), "id": gid}, gid)

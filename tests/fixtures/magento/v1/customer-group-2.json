@@ -1,0 +1,11 @@
+{
+  "request": {
+    "path": "/rest/default/V1/customerGroups/2"
+  },
+  "response": {
+    "id": 2,
+    "code": "Wholesale",
+    "tax_class_id": 3,
+    "tax_class_name": "Retail Customer"
+  }
+}

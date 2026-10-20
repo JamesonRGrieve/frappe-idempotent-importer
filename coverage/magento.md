@@ -6,7 +6,8 @@ Magento 2.4 / Adobe Commerce store through its REST API (`<store URL>/rest/<stor
 document pinned in `tools/specs.py`, every fixture proven against it). Its reader, mappers and fixtures are
 ported from wp-woo-idempotent-importer.
 
-Access: an integration (System → Integrations) with read access to the catalog, customers, cart price rules,
+Access: an integration (System → Integrations) with read access to the catalog, customers and customer groups,
+cart price rules,
 sales and content, its access token entered as the connection's secret; since 2.4.4 the store must allow
 integration tokens as standalone bearer tokens (`oauth/consumer/enable_integration_as_bearer`). The connection
 holds the store's URL and the store view code as the account (blank is `default`). Customers and orders are
@@ -30,8 +31,10 @@ for 100 items, under the default "Maximum Page Size" of 300; a list ends when th
 | Stock items | **Stock Reconciliation** | Products whose stock isn't managed aren't counted. |
 | Weight in the store's unit (kgs, lbs) | Item weight and UOM | |
 | Enabled gallery images | **File**; the Item's image | The base image first. |
+| Customer groups | **Customer Group** `<code> - <abbr>` | Customers are in their group. NOT LOGGED IN is mirrored too; the connection's guest customer isn't in it, so a rule for guests alone applies to nobody (never more widely than at the source). |
 | Customers | **Customer**, **Contact**, **Address** | Every saved address, the default billing first; region codes. |
-| Cart price rules with coupons: a percentage off every item or an amount off the cart, for every customer group, at most after a minimum subtotal | **Pricing Rule** + **Coupon Code** per code | From and to dates, uses per coupon. An inactive rule, or one not on the store's website, disables its rule. |
+| Cart price rules, with coupons or without (automatic) | **Pricing Rule** (+ a **Coupon Code** per coupon) | Enforced: a percentage or amount off each item (every item or some categories), an amount off the cart, buy X get Y free (the same item, for every X bought); minimum subtotal and quantity; from and to dates; customer groups (one, or every group, with coupons; several, automatic); each coupon's use limit (else the rule's uses per coupon) and expiry. Recorded and held (rule disabled, codes not redeemable) until the Webshop fork enforces them: per-customer limits (a coupon's own: that coupon alone), discounts applied to shipping and free shipping (card 405); the maximum quantity discounted, discount steps, other item conditions (SKUs, attributes, combinations), other cart conditions, an amount off the cart spread over some categories, several customer groups on coupons (card 407). An inactive rule, or one not on the store's website, disables its rule. |
+| Tier prices (simple, virtual and downloadable products, and configurable products' children) | Automatic **Promotional Scheme** on the item, per customer group (every group for ALL GROUPS), a slab per quantity | A fixed unit price or a percentage off, from each tier's quantity up to the next; tier prices of another website aren't this store's. |
 | Orders of the store's website | **Sales Invoice** (submitted when paid, else draft) + **Payment Entry** | Magento's totals in the order's currency, exactly; number `#<increment id>`. The payment method title and last transaction id. |
 | Order lines (a configurable product's parent and child lines as one) | Invoice lines at their row totals, on the child product bought | |
 | Discount, applied taxes, shipping | The invoice's discount; one charge per applied tax; shipping | The order's tax total when Magento itemises none. |
@@ -47,9 +50,8 @@ for 100 items, under the default "Maximum Page Size" of 300; a list ends when th
 |---|---|
 | Bundle products | Planned: fixed bundles as Product Bundles (card 386), dynamic ones (card 409). |
 | Grouped and gift card products; gift card order lines | Planned: gift cards (card 403); grouped products (card 409). |
-| Rules without a coupon, item conditions, other cart conditions, discount caps and steps, shipping discounts and free shipping, customer groups, per-customer limits, coupons with their own limits, a use limit shared by several codes, fixed amounts per item | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
+| Catalog price rules | Operator decision: Magento Open Source and Adobe Commerce expose no REST API for them (the pinned 2.4.9 schema has none), so they can't be read without a store-side extension or database access. |
 | Cancelled orders | Not sales. |
-| Tier and customer-group prices | Planned (card 386): a Promotional Scheme per product. |
 | Custom options, downloadable files | Planned: custom options (card 408); downloadable files have no first-party Item field (warnings). |
 | Products not on the store's website, disabled child products | Not sold in this store view. |
 | Other store views' translations | One connection mirrors one store view. |

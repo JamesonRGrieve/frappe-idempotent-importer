@@ -20,7 +20,6 @@ from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.magento.mapping import (
 	base_fields,
 	legacy_path,
-	minimum_subtotal,
 	rule_date,
 	whole,
 )
@@ -30,6 +29,7 @@ from idempotent_importer.sources.magento.reader import (
 	api_base,
 	search_query,
 )
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = MagentoAdapter()
@@ -130,6 +130,29 @@ class TestReader:
 		fall = nodes(Kind.DISCOUNT)["SalesRule/62"]
 		assert [c.string("code") for c in fall.children("coupons")] == ["MAG-FALL15"]
 		assert fall.integers("all_customer_group_ids")
+
+	def test_a_discount_run_reads_rules_then_tier_prices_by_customer_group(self) -> None:
+		source, _ = reader()
+		rules = source.page(Kind.DISCOUNT, None, None, "")
+		assert rules.end_cursor == "tiers:"
+		tiers = source.page(Kind.DISCOUNT, rules.end_cursor, None, "")
+		assert [n.id().removeprefix(f"{GID}/") for n in tiers.nodes] == [
+			"TierPrice/11-2",
+			"TierPrice/11-32000",
+			"TierPrice/122-3",
+		]
+		assert not tiers.has_next_page
+		kettle = next(n for n in tiers.nodes if n.id().endswith("/11-2"))
+		assert len(kettle.children("tier_prices")) == 1, "the other website's tier price isn't this store's"
+		assert source.page(Kind.DISCOUNT, "1", None, "").end_cursor == "tiers:", "a cursor saved before tiers"
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:1", None, "")
+		assert source.node(Kind.DISCOUNT, f"{GID}/TierPrice/11-9") is None
+		with pytest.raises(SourceError, match="tier price"):
+			source.node(Kind.DISCOUNT, f"{GID}/TierPrice/11")
+		assert set(nodes(Kind.CUSTOMER_GROUP)) == {f"CustomerGroup/{i}" for i in range(4)}
+		group = source.node(Kind.CUSTOMER_GROUP, f"{GID}/CustomerGroup/2")
+		assert group is not None and group.string("code") == "Wholesale"
 
 	def test_incremental_kinds(self) -> None:
 		source, transport = reader()
@@ -255,41 +278,156 @@ class TestMappers:
 			"2026-10-30",
 		)
 		assert mapped(Kind.DISCOUNT, "SalesRule/66") is None, "an inactive rule"
-		for key, refusal in (
-			("61", "per-customer"),
-			("63", "shipping"),
-			("64", "without a coupon"),
-			("65", "by_fixed"),
-		):
-			with pytest.raises(Unsupported, match=refusal):
-				mapped(Kind.DISCOUNT, f"SalesRule/{key}")
+		assert held(mapped(Kind.DISCOUNT, "SalesRule/62")) == []
+		welcome = mapped(Kind.DISCOUNT, "SalesRule/61")
+		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], ["card 405"])
+		assert values(Kind.DISCOUNT, "SalesRule/61").required_record("code_limits").required_record(
+			"MAG-WELCOME5"
+		).strings("held") == ["card 405"]
+		assert terms(mapped(Kind.DISCOUNT, "SalesRule/63"), "free_shipping") == {
+			"source": "for the shipment with matching items"
+		}
+		automatic = values(Kind.DISCOUNT, "SalesRule/64")
+		assert (automatic.flag("automatic"), automatic.strings("codes"), automatic.string("applies")) == (
+			True,
+			[],
+			"transaction",
+		)
+		jackets = values(Kind.DISCOUNT, "SalesRule/65")
+		assert (jackets.string("discount"), jackets.string("applies"), jackets.strings("groups")) == (
+			"amount",
+			"groups",
+			[f"{GID}/Category/4"],
+		)
+		assert held(mapped(Kind.DISCOUNT, "SalesRule/65")) == []
+
+	def test_tier_prices_and_customer_groups(self) -> None:
+		every = values(Kind.DISCOUNT, "TierPrice/11-32000")
+		assert (every.strings("items"), every.strings("customer_groups"), every.flag("automatic")) == (
+			[f"{GID}/Product/11"],
+			[],
+			True,
+		)
+		assert [t.all() for t in every.records("tiers")] == [
+			{"discount": "rate", "value": Decimal("84.99"), "min_qty": Decimal(3), "max_qty": Decimal(9)},
+			{"discount": "rate", "value": Decimal("79.99"), "min_qty": Decimal(10)},
+		]
+		assert len(values(Kind.DISCOUNT, "TierPrice/11-32000", "v2").records("tiers")) == 1
+		wholesale = values(Kind.DISCOUNT, "TierPrice/11-2")
+		assert wholesale.strings("customer_groups") == [f"{GID}/CustomerGroup/2"]
+		assert [t.all() for t in wholesale.records("tiers")] == [
+			{"discount": "percentage", "value": Decimal(15), "min_qty": Decimal(1)}
+		]
+		navy = values(Kind.DISCOUNT, "TierPrice/122-3")
+		assert (navy.strings("items"), navy.records("variants")[0].string("variant")) == (
+			[],
+			f"{GID}/Variant/122",
+		)
+		assert (
+			mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["TierPrice/122-3"].with_fields(tier_prices=[]))
+			is None
+		)
+		assert values(Kind.CUSTOMER_GROUP, "CustomerGroup/2").all() == {"name": "Wholesale"}
+		assert values(Kind.CUSTOMER, "Customer/41").optional_string("group") == f"{GID}/CustomerGroup/1"
+
+	@pytest.mark.parametrize(
+		("changes", "kinds"),
+		[
+			({"discount_qty": 2}, ["item_limit"]),
+			({"discount_step": 3}, ["item_choice"]),
+			({"apply_to_shipping": True}, ["shipping_discount"]),
+			({"uses_per_customer": 2}, ["per_customer_limit"]),
+			({"customer_group_ids": [1, 2]}, ["several_customer_groups"]),
+			(
+				{
+					"action_condition": {
+						"aggregator_type": "all",
+						"value": "1",
+						"conditions": [{"attribute_name": "sku", "operator": "==", "value": "X"}],
+					}
+				},
+				["item_matcher"],
+			),
+			(
+				{
+					"action_condition": {
+						"aggregator_type": "all",
+						"value": "1",
+						"conditions": [{"attribute_name": "category_ids", "operator": "==", "value": "x"}],
+					}
+				},
+				["item_matcher"],
+			),
+			(
+				{
+					"condition": {
+						"aggregator_type": "any",
+						"value": "1",
+						"conditions": [{"attribute_name": "base_subtotal", "operator": ">=", "value": "5"}],
+					}
+				},
+				["rule_condition"],
+			),
+			(
+				{
+					"simple_action": "cart_fixed",
+					"action_condition": {
+						"aggregator_type": "all",
+						"value": "1",
+						"conditions": [{"attribute_name": "category_ids", "operator": "()", "value": "4, 5"}],
+					},
+				},
+				["spread_amount"],
+			),
+		],
+	)
+	def test_rule_conditions_are_recorded(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
+		desired = mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(**changes))
+		assert condition_kinds(desired) == kinds
+		assert held(desired)
 
 	def test_rule_edges(self) -> None:
 		fall = nodes(Kind.DISCOUNT)["SalesRule/62"]
 		mapper = mapper_of(Kind.DISCOUNT)
-		subtotal: JsonValue = {
+		minimums: JsonValue = {
 			"aggregator_type": "all",
 			"value": "1",
 			"conditions": [
-				{"attribute_name": "base_subtotal", "operator": ">=", "value": "50", "conditions": []}
+				{"attribute_name": "base_subtotal", "operator": ">=", "value": "50", "conditions": []},
+				{"attribute_name": "total_qty", "operator": ">=", "value": "3", "conditions": []},
 			],
 		}
-		cart = mapper.map(fall.with_fields(simple_action="cart_fixed", discount_amount=5, condition=subtotal))
-		assert cart is not None and cart.values().decimal("min_amount") == Decimal(50)
-		for changes, refusal in (
-			({"discount_qty": 2}, "caps or steps"),
-			({"customer_group_ids": [1]}, "customer groups"),
-			({"action_condition": {"conditions": [{"attribute": "sku"}]}}, "some items"),
-			({"coupons": [{"code": "A", "usage_limit": 5}]}, "own limits"),
-			({"coupons": [{"code": "A"}, {"code": "B"}]}, "several codes"),
-		):
-			with pytest.raises(Unsupported, match=refusal):
-				mapper.map(fall.with_fields(**changes))
-		assert minimum_subtotal(None) is None
-		with pytest.raises(Unsupported, match="beyond a minimum subtotal"):
-			minimum_subtotal(
-				Node({"aggregator_type": "any", "value": "1", "conditions": [{"attribute_name": "x"}]}, "c")
+		cart = mapper.map(fall.with_fields(simple_action="cart_fixed", discount_amount=5, condition=minimums))
+		assert cart is not None
+		assert (cart.values().decimal("min_amount"), cart.values().decimal("min_qty")) == (
+			Decimal(50),
+			Decimal(3),
+		)
+		one_group = mapper.map(fall.with_fields(customer_group_ids=[2]))
+		assert one_group is not None and one_group.values().strings("customer_groups") == [
+			f"{GID}/CustomerGroup/2"
+		]
+		own = mapper.map(
+			fall.with_fields(
+				coupons=[{"code": "A", "usage_limit": 5, "expiration_date": "2026-12-01"}, {"code": "B"}]
 			)
+		)
+		assert own is not None
+		assert own.values().required_record("code_limits").all() == {
+			"A": {"max_uses": 5, "valid_upto": "2026-12-01"}
+		}
+		bogo = mapper.map(fall.with_fields(simple_action="buy_x_get_y", discount_step=2, discount_amount=1))
+		assert bogo is not None
+		assert bogo.values().required_record("free").all() == {
+			"qty": Decimal(1),
+			"recursive": True,
+			"recurse_for": Decimal(2),
+		}
+		assert bogo.values().decimal("min_qty") == Decimal(2)
+		with pytest.raises(SourceError, match="buys none"):
+			mapper.map(fall.with_fields(simple_action="buy_x_get_y", discount_step=0))
+		with pytest.raises(SourceError, match="action"):
+			mapper.map(fall.with_fields(simple_action="by_magic"))
 		assert rule_date("2026-09-01 00:00:00") == "2026-09-01" and rule_date(None) is None
 		with pytest.raises(SourceError, match="not a date"):
 			rule_date("soon")

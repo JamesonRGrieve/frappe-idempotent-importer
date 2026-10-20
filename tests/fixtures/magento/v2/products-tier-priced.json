@@ -1,0 +1,75 @@
+{
+  "request": {
+    "path": "/rest/default/V1/products",
+    "query": {
+      "searchCriteria[filterGroups][0][filters][0][field]": "type_id",
+      "searchCriteria[filterGroups][0][filters][0][value]": "simple,virtual,downloadable",
+      "searchCriteria[filterGroups][0][filters][0][conditionType]": "in",
+      "searchCriteria[currentPage]": 1
+    }
+  },
+  "response": {
+    "items": [
+      {
+        "id": 11,
+        "sku": "MAG-KETTLE-1",
+        "type_id": "simple",
+        "visibility": 4,
+        "tier_prices": [
+          {
+            "customer_group_id": 32000,
+            "qty": 3,
+            "value": 84.99,
+            "extension_attributes": {
+              "website_id": 0
+            }
+          },
+          {
+            "customer_group_id": 2,
+            "qty": 1,
+            "value": 0,
+            "extension_attributes": {
+              "percentage_value": 15,
+              "website_id": 1
+            }
+          },
+          {
+            "customer_group_id": 2,
+            "qty": 2,
+            "value": 0,
+            "extension_attributes": {
+              "percentage_value": 20,
+              "website_id": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": 122,
+        "sku": "MAG-JACKET-NAVY",
+        "type_id": "simple",
+        "visibility": 1,
+        "tier_prices": [
+          {
+            "customer_group_id": 3,
+            "qty": 2,
+            "value": 149
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "sku": "MAG-APRON-1",
+        "type_id": "simple",
+        "visibility": 4,
+        "tier_prices": []
+      }
+    ],
+    "search_criteria": {
+      "filter_groups": [],
+      "page_size": 100,
+      "current_page": 1
+    },
+    "total_count": 3
+  }
+}

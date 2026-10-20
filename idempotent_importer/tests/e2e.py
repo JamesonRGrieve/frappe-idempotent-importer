@@ -1576,11 +1576,7 @@ def assert_magento(state: str) -> None:
 		0,
 		"new guest order 502",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
-		1,
-		"the percentage rule (not the per-customer, free-shipping, couponless, item-conditioned or inactive ones)",
-	)
+	assert_magento_discounts(connection, state)
 	expect(
 		frappe.db.get_value("Web Page", target(connection, "page", "CmsPage", "3"), "published"),
 		0,
@@ -1601,6 +1597,58 @@ def assert_magento(state: str) -> None:
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "customer"),
 		target(connection, "customer", "Customer", "43"),
 		"new order 503, linked to the new customer",
+	)
+
+
+def assert_magento_discounts(connection: str, state: str) -> None:
+	"""Every active Magento cart price rule and tier price: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		8,
+		"five active rules and three customer groups' tier prices (not the inactive rule)",
+	)
+	assert_discount(connection, "SalesRule", "62", None, [], "the percentage rule, enabled")
+	assert_discount(
+		connection,
+		"SalesRule",
+		"61",
+		"card 405",
+		["per_customer_limit"],
+		"the per-customer rule, held",
+		{"MAG-WELCOME5": "card 405"},
+	)
+	assert_discount(
+		connection, "SalesRule", "63", "card 405", ["free_shipping"], "the free-shipping rule, held"
+	)
+	assert_discount(
+		connection, "SalesRule", "64", None, [], "the rule without a coupon, automatic and enabled"
+	)
+	assert_discount(connection, "SalesRule", "65", None, [], "the jackets' amount off each item, enabled")
+	expect(
+		frappe.db.get_value("Pricing Rule", target(connection, "discount", "SalesRule", "65"), "apply_on"),
+		"Item Group",
+		"the jackets' rule applies to their category",
+	)
+	wholesale = target(connection, "customer_group", "CustomerGroup", "2")
+	scheme = target(connection, "discount", "TierPrice", "11-2")
+	expect(
+		frappe.db.get_value("Promotional Scheme", scheme, ["applicable_for", "disable"]),
+		("Customer Group", 0),
+		"the wholesale tier price on the kettle",
+	)
+	expect(
+		frappe.get_all("Pricing Rule", filters={"promotional_scheme": scheme}, pluck="customer_group"),
+		[wholesale],
+		"one rule, for the wholesale group",
+	)
+	every = target(connection, "discount", "TierPrice", "11-32000")
+	live = frappe.get_all(
+		"Pricing Rule", filters={"promotional_scheme": every, "disable": 0}, pluck="min_qty"
+	)
+	expect(
+		sorted(amount(q) for q in live),
+		[amount("3"), amount("10")][: 2 if state == "v1" else 1],
+		"kettle tiers",
 	)
 
 

@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/batch-retrieve",
+    "body": {
+      "object_ids": [
+        "VAR_APRON_NAT"
+      ],
+      "include_related_objects": false
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "ITEM_VARIATION",
+        "id": "VAR_APRON_NAT",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_variation_data": {
+          "item_id": "ITEM_APRON",
+          "name": "Natural"
+        }
+      }
+    ]
+  }
+}

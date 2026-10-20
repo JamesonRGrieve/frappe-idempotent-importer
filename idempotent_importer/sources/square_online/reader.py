@@ -5,7 +5,10 @@ is kept as ``square_id``). Catalog items arrive with the objects they reference 
 item options — and their in-stock counts at the main location (the location Square Online sells from), as
 ``image_objects``, ``category_objects``, ``option_objects`` and ``inventory_counts``. Orders are searched
 location by location (Square takes at most ten per search) and carry ``variation_items`` (each line's
-variation id → its item id), since a line names only the variation. Every kind is incremental: catalog
+variation id → its item id), since a line names only the variation. A discount run reads the pricing rules (each with its discount,
+product sets, time periods and the type of every catalog object its sets name, as ``discount_object``,
+``product_sets``, ``time_periods`` and ``catalog_types``), then the discounts no rule applies (the cursor is
+``<phase>:<cursor>``); discounts are read in full. The other kinds are incremental: catalog
 objects by ``begin_time`` (deleted ones included, so they are retired), stock by ``updated_after`` (the
 items whose counts changed are re-read), customers and orders by ``updated_at``. The main location's
 return policy is a policy page.
@@ -42,6 +45,9 @@ ORDER_STATES = ("OPEN", "COMPLETED", "CANCELED")
 STOCK_STATE = "IN_STOCK"
 ACTIVE = "ACTIVE"
 PHASE_ITEMS, PHASE_STOCK = "items", "stock"
+PHASE_RULES, PHASE_DISCOUNTS = "rules", "discounts"
+# A product set's members: catalog items, variations, categories (or other product sets).
+SET_MEMBERS = ("product_ids_any", "product_ids_all")
 CURSOR_SEPARATOR = ":"
 TYPES = {"ITEM": "Item", "CATEGORY": "Category"}
 INCREMENTAL = frozenset({Kind.COLLECTION, Kind.PRODUCT, Kind.CUSTOMER, Kind.ORDER})
@@ -114,6 +120,7 @@ class SquareOnlineReader:
 		self._client = client
 		self._merchant: Node | None = None
 		self._locations: list[Node] | None = None
+		self._ruled: set[str] | None = None
 
 	def is_incremental(self, kind: Kind) -> bool:
 		return kind in INCREMENTAL
@@ -130,6 +137,8 @@ class SquareOnlineReader:
 				return self._customers(cursor, since)
 			case Kind.ORDER:
 				return self._orders(cursor, since)
+			case Kind.DISCOUNT:
+				return self._discounts(cursor)
 			case _:
 				raise SourceError(f"Square Online has no {kind.value}.")
 
@@ -179,6 +188,92 @@ class SquareOnlineReader:
 				},
 			)
 		]
+
+	def _discounts(self, cursor: str | None) -> Page:
+		"""Pricing rules, then the discounts no pricing rule applies (applied by staff at the point of sale)."""
+		phase, _, square_cursor = (cursor or PHASE_RULES).partition(CURSOR_SEPARATOR)
+		if phase == PHASE_RULES:
+			search = self._catalog_search("PRICING_RULE", square_cursor or None, None)
+			related = by_id(search.children("related_objects"))
+			nodes = [self._pricing_rule(rule, related) for rule in search.children("objects")]
+			following = search.optional_string("cursor")
+			after = (
+				f"{PHASE_RULES}{CURSOR_SEPARATOR}{following}"
+				if following
+				else f"{PHASE_DISCOUNTS}{CURSOR_SEPARATOR}"
+			)
+			return Page(nodes, True, after)
+		if phase != PHASE_DISCOUNTS:
+			raise SourceError(f"Not a Square discount cursor: {cursor}")
+		search = self._catalog_search("DISCOUNT", square_cursor or None, None)
+		ruled = self._ruled_discounts()
+		nodes = [
+			self._identified("Discount", d.raw())
+			for d in search.children("objects")
+			if d.string("id") not in ruled
+		]
+		following = search.optional_string("cursor")
+		return Page(
+			nodes,
+			following is not None,
+			f"{PHASE_DISCOUNTS}{CURSOR_SEPARATOR}{following}" if following else None,
+		)
+
+	def _ruled_discounts(self) -> set[str]:
+		"""The discounts pricing rules apply, read once per run."""
+		if self._ruled is None:
+			ruled: set[str] = set()
+			cursor: str | None = None
+			while True:
+				search = self._catalog_search("PRICING_RULE", cursor, None)
+				for rule in search.children("objects"):
+					data = rule.child("pricing_rule_data")
+					if data is not None and data.optional_string("discount_id"):
+						ruled.add(data.string("discount_id"))
+				cursor = search.optional_string("cursor")
+				if cursor is None:
+					break
+			self._ruled = ruled
+		return self._ruled
+
+	def _pricing_rule(self, rule: Node, related: dict[str, Node]) -> Node:
+		"""A pricing rule with its discount, product sets and time periods, and the type of each catalog object
+		its sets name (with a variation's item)."""
+		data = rule.child("pricing_rule_data")
+		if data is None or is_deleted(rule):
+			return self._identified("PricingRule", rule.raw())
+		set_ids = unique(
+			data.optional_string(f) for f in ("match_products_id", "exclude_products_id", "apply_products_id")
+		)
+		wanted = unique([data.optional_string("discount_id"), *set_ids, *data.strings("time_period_ids")])
+		related = self._with_missing(related, wanted)
+		sets = {i: related[i] for i in set_ids if i in related}
+		members = unique(
+			member
+			for product_set in sets.values()
+			for field in SET_MEMBERS
+			for member in (product_set.child("product_set_data") or Node({})).strings(field)
+		)
+		related = self._with_missing(related, members)
+		types: dict[str, JsonValue] = {}
+		for member in members:
+			found = related.get(member)
+			if found is None:
+				continue
+			variation = found.child("item_variation_data")
+			types[member] = {
+				"type": found.string("type"),
+				**({"item_id": variation.optional_string("item_id")} if variation else {}),
+			}
+		discount = related.get(data.optional_string("discount_id") or "")
+		raw: dict[str, JsonValue] = {
+			**rule.raw(),
+			"discount_object": discount.raw() if discount else None,
+			"product_sets": {i: node.raw() for i, node in sets.items()},
+			"time_periods": [related[t].raw() for t in data.strings("time_period_ids") if t in related],
+			"catalog_types": types,
+		}
+		return self._identified("PricingRule", raw)
 
 	def _categories(self, cursor: str | None, since: datetime | None) -> Page:
 		search = self._catalog_search("CATEGORY", cursor, since)

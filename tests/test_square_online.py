@@ -15,11 +15,12 @@ from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
-from idempotent_importer.core.node import Node
+from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.square_online.mapping import whole
 from idempotent_importer.sources.square_online.reader import SquareAuthorizer, SquareOnlineReader
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = SquareOnlineAdapter()
@@ -185,6 +186,109 @@ class TestMappers:
 		assert whole("2", "x") == Decimal(2)
 		with pytest.raises(Unsupported, match="fractional"):
 			whole("1.5", "x")
+
+
+GID = "gid://square_online/square-q"
+
+
+class TestDiscounts:
+	MAPPER = {m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.DISCOUNT]
+
+	def test_a_discount_run_reads_pricing_rules_then_staff_discounts(self) -> None:
+		source, _ = reader()
+		rules = source.page(Kind.DISCOUNT, None, None, "")
+		assert rules.end_cursor == "discounts:"
+		mugs = next(n for n in rules.nodes if n.string("square_id") == "PR_MUGS")
+		assert mugs.required_child("catalog_types").raw() == {"ITEM_MUG": {"type": "ITEM"}}
+		assert sorted(nodes(Kind.DISCOUNT)) == ["DISC_STAFF", "PR_APRON", "PR_MUGS"], (
+			"rules' discounts aren't staff's"
+		)
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:", None, "")
+
+	def test_pricing_rules(self) -> None:
+		mugs = values(Kind.DISCOUNT, "PR_MUGS")
+		assert (
+			mugs.flag("automatic"),
+			mugs.strings("items"),
+			mugs.decimal("value"),
+			mugs.decimal("min_qty"),
+		) == (
+			True,
+			[f"{GID}/Item/ITEM_MUG"],
+			Decimal(10),
+			Decimal(2),
+		)
+		assert mugs.optional_string("valid_from") == "2026-09-01"
+		assert held(mapped(Kind.DISCOUNT, "PR_MUGS")) == []
+		assert values(Kind.DISCOUNT, "PR_MUGS", "v2").decimal("value") == Decimal(15)
+		apron = mapped(Kind.DISCOUNT, "PR_APRON")
+		assert apron is not None and apron.values().records("variants")[0].all() == {
+			"product": f"{GID}/Item/ITEM_APRON",
+			"variant": f"{GID}/ItemVariation/VAR_APRON_NAT",
+		}
+		assert (apron.values().string("discount"), apron.values().decimal("value")) == ("amount", Decimal(5))
+		assert (condition_kinds(apron), held(apron)) == (["schedule"], ["card 405"])
+		staff = mapped(Kind.DISCOUNT, "DISC_STAFF")
+		assert (condition_kinds(staff), held(staff)) == (["applied_by_staff"], ["an operator decision"])
+
+	def test_rule_shapes(self) -> None:
+		rule = nodes(Kind.DISCOUNT)["PR_MUGS"]
+		data = rule.required_child("pricing_rule_data").raw()
+		sets = rule.required_child("product_sets").raw()
+		mug_set = rule.required_child("product_sets").required_child("PS_MUGS")
+		set_data = mug_set.required_child("product_set_data").raw()
+
+		def with_set(**changes: JsonValue) -> Desired | None:
+			product_set: JsonValue = {**mug_set.raw(), "product_set_data": {**set_data, **changes}}
+			return self.MAPPER.map(rule.with_fields(product_sets={**sets, "PS_MUGS": product_set}))
+
+		everything = with_set(product_ids_any=[], all_products=True)
+		assert everything is not None and everything.values().string("applies") == "all_items"
+		assert condition_kinds(with_set(quantity_exact=3)) == ["item_limit"]
+		assert condition_kinds(with_set(quantity_max=4)) == ["item_limit"]
+		assert condition_kinds(with_set(product_ids_all=["ITEM_MUG"])) == ["rule_condition"]
+		assert condition_kinds(with_set(product_ids_any=["NESTED_SET"])) == ["item_matcher"]
+		ruled = self.MAPPER.map(
+			rule.with_fields(
+				pricing_rule_data={
+					**data,
+					"exclude_products_id": "PS_MUGS",
+					"exclude_strategy": "LEAST_EXPENSIVE",
+					"customer_group_ids_any": ["GRP"],
+					"valid_from_local_time": "09:00:00",
+					"minimum_order_subtotal_money": {"amount": 2500, "currency": "CAD"},
+				}
+			)
+		)
+		assert condition_kinds(ruled) == ["item_choice", "schedule", "several_customer_groups"]
+		assert ruled is not None and ruled.values().decimal("min_amount") == Decimal(25)
+		capped = self.MAPPER.map(
+			rule.with_fields(
+				discount_object={
+					"type": "DISCOUNT",
+					"id": "DISC_TEN",
+					"discount_data": {
+						"discount_type": "FIXED_PERCENTAGE",
+						"percentage": "10",
+						"maximum_amount_money": {"amount": 1000, "currency": "CAD"},
+						"modify_tax_basis": "DO_NOT_MODIFY_TAX_BASIS",
+					},
+				}
+			)
+		)
+		assert terms(capped, "cap") == {"amount": Decimal(10)}
+		assert condition_kinds(capped) == ["cap", "rule_condition"]
+		assert self.MAPPER.map(rule.with_fields(is_deleted=True)) is None
+		assert condition_kinds(self.MAPPER.map(rule.with_fields(product_sets={}))) == ["item_matcher"]
+		with pytest.raises(SourceError, match="names no discount"):
+			self.MAPPER.map(rule.with_fields(discount_object=None))
+		with pytest.raises(SourceError, match="type"):
+			self.MAPPER.map(
+				rule.with_fields(
+					discount_object={"type": "DISCOUNT", "id": "X", "discount_data": {"discount_type": "ODD"}}
+				)
+			)
 
 
 def test_the_adapter() -> None:

@@ -34,6 +34,8 @@ prices, stock and presence the items mirror.
 | Orders (open, completed) at every location | **Sales Invoice** (submitted when paid or completed, else draft) + **Payment Entry** | Square's totals, exactly; number `#<order id>`. Canceled orders aren't mirrored. |
 | Order lines | Invoice lines at their pre-tax prices before discounts, on the variation's item | |
 | Discounts (catalog or ad hoc) | The invoice's discount | Square discounts aren't codes. |
+| Catalog pricing rules (automatic discounts) | Automatic **Pricing Rule** | Read in full with their discount, product sets and time periods. Enforced: a fixed percentage or amount off each matched item (items, variations or categories, or every item), the match set's minimum quantity, the minimum order subtotal, valid dates. Recorded and held (rule disabled) until the Webshop fork enforces them: time periods and local times (card 405); caps, exclusion sets and which products they exclude, exact or maximum quantities, sets needing every product, nested sets, customer groups, discounts that don't reduce the tax basis (card 407); amounts entered at the time of sale (an operator decision). A deleted rule disables its rule. |
+| Catalog discounts no pricing rule applies | Automatic **Pricing Rule**, recorded and held | Staff apply them at the point of sale: held for an operator decision (ERPNext would apply them to every order). |
 | Taxes (inclusive or additive) | One charge per tax, what Square applied | |
 | Shipping and delivery service charges | Shipping charges | A charge named for shipping or delivery (or the shipment's shipping type) on an order that ships. |
 | Other service charges, tips, cash rounding | Fee charges | |
@@ -51,7 +53,6 @@ prices, stock and presence the items mirror.
 | Stock at other locations | Planned (card 386): one Warehouse per location. |
 | Item weight and dimensions | Not exposed by the Catalog API. |
 | Modifier lists, item location presence details, custom attributes, taxes per item | No first-party Item field. |
-| Catalog discounts, pricing rules, product sets | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Return and exchange orders | Planned: itemised credit notes from return orders (card 386); in-store exchanges (card 404). |
 | Service charges apportioned into line items | Already inside the line totals; no exact invoice row (reported). |
 | Draft orders | Unsubmitted carts and API drafts, not store history. |

@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/batch-retrieve",
+    "body": {
+      "object_ids": [
+        "ITEM_MUG"
+      ],
+      "include_related_objects": false
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "ITEM",
+        "id": "ITEM_MUG",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "item_data": {
+          "name": "Ocean mug"
+        }
+      }
+    ]
+  }
+}

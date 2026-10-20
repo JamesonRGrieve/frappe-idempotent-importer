@@ -1120,6 +1120,7 @@ def assert_etsy(state: str) -> None:
 @check
 def assert_square_online(state: str) -> None:
 	connection = "square-q"
+	assert_square_discounts(connection, state)
 	mug = target(connection, "product", "Item", "ITEM_MUG")
 	expect(
 		(
@@ -1764,6 +1765,39 @@ def assert_squarespace_discounts(connection: str, state: str) -> None:
 		amount(frappe.db.get_value("Pricing Rule", mug, "discount_percentage")),
 		amount("50" if state == "v1" else "40"),
 		"the half-price board's percentage",
+	)
+
+
+def assert_square_discounts(connection: str, state: str) -> None:
+	"""Square's pricing rules and staff discounts: what ERPNext enforces enabled, the rest held."""
+	expect(
+		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount", "retired": 0}),
+		3,
+		"two pricing rules and the discount no rule applies",
+	)
+	assert_discount(
+		connection, "PricingRule", "PR_MUGS", None, [], "two mugs, ten percent off, automatic and enabled"
+	)
+	mugs = target(connection, "discount", "PricingRule", "PR_MUGS")
+	expect(
+		(
+			frappe.db.get_value("Pricing Rule", mugs, "coupon_code_based"),
+			frappe.db.get_value("Pricing Rule", mugs, "min_qty"),
+			amount(frappe.db.get_value("Pricing Rule", mugs, "discount_percentage")),
+		),
+		(0, 2, amount("10" if state == "v1" else "15")),
+		"the mugs rule's quantity and percentage",
+	)
+	assert_discount(
+		connection, "PricingRule", "PR_APRON", "card 405", ["schedule"], "the weekend apron rule, held"
+	)
+	assert_discount(
+		connection,
+		"Discount",
+		"DISC_STAFF",
+		"an operator decision",
+		["applied_by_staff"],
+		"the staff discount, held",
 	)
 
 

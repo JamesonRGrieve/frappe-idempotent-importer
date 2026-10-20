@@ -19,7 +19,7 @@ stores can import into two businesses at once and never touch each other's recor
 | WooCommerce | Built | Categories, simple and variable products with prices, sales, stock, images, brands and tags, customers, coupons, orders with payments, refunds and notes, pages and posts (their images copied, posts' tags), post categories, reviews, and the Redirection plugin's redirects — [coverage/woocommerce.md](coverage/woocommerce.md) |
 | Shopify | Built | Files, collections, products with variants, prices, stock, images and tags, customers, code and automatic discounts, orders (tax-inclusive ones too, at each line's own rates) with payments, refunds and timeline comments, draft orders, pages, shop policies, blogs, articles, comments, URL redirects and flat shipping rates — [coverage/shopify.md](coverage/shopify.md) |
 | Etsy | Built | Shop policies, sections, listings in every state with variants, prices, stock, images and tags, buyers, receipts with payments, refunds and shipment tracking, and reviews — [coverage/etsy.md](coverage/etsy.md) |
-| Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
+| Square Online | Built | Categories, items with variations, prices, main-location stock and images, customers, catalog discounts and pricing rules, orders at every location with payments, refunds and fulfillments, and the return policy — [coverage/square_online.md](coverage/square_online.md) |
 | BigCommerce | Built | Categories, products with variants, prices, sales, stock, images and brands, customer groups, customers, coupons, promotions, customer group discounts and bulk pricing, orders with payments, refunds and shipments, pages, the blog and its posts, reviews and storefront redirects — [coverage/bigcommerce.md](coverage/bigcommerce.md) |
 | Squarespace | Built | Store pages, products with variants, prices, sales, stock, images and tags, customer profiles, discounts (promo codes and automatic), and orders with payments, refunds and fulfillments — [coverage/squarespace.md](coverage/squarespace.md) |
 | Wix | Built | Stores categories or collections, V3 and V1 catalog products with variants, prices, sales, stock and images, contacts, Stores coupons and discount rules, orders with payments, refunds and fulfillments, the blog's categories and posts (rich content and its images), reviews and redirects — [coverage/wix.md](coverage/wix.md) |
@@ -266,15 +266,15 @@ Still to do:
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
 3. **ERP and HR sources** (Odoo, Dynamics 365, PeopleSoft, Agendrix, NetSuite, …): a later phase.
-4. **Native mirroring still to build (card 386):** discounts through the generalised Pricing Rule writer for
-   BigCommerce (automatic promotions, gift items, customer groups, bulk pricing tiers), Magento (rules
-   without coupons, customer groups, tier prices), Lightspeed, Ecwid (wholesale tiers), Wix (fixed price,
-   Buy X Get Y), Squarespace and Square (catalog discounts and pricing rules); multi-location stock as one
-   Warehouse per source location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist;
-   units of measure (Square's measurement units, Ecwid's carats); itemised refunds where the source gives
-   the refunded items (Square's return orders). Until built, each source's coverage page lists them as
-   planned.
-5. **Operator decision:** Shopify's Buy X Get Y and app discounts, per-location stock and bundles need new
+4. **Native mirroring still to build (card 386):** multi-location stock as one Warehouse per source
+   location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist; units of measure
+   (Square's measurement units, Ecwid's carats); itemised refunds where the source gives the refunded items
+   (Square's return orders). Until built, each source's coverage page lists them as planned.
+5. **Discount conditions held for enforcement:** every source's discounts are mirrored; what ERPNext's
+   pricing can't enforce is recorded and holds the discount until the Webshop fork enforces it (cards 405 and
+   407, decision 6). Conditions no card covers yet (other sales channels, further rules, a source's price
+   lists, staff-applied discounts) and Magento's catalog price rules (no REST API) are operator decisions.
+6. **Operator decision:** Shopify's Buy X Get Y and app discounts, per-location stock and bundles need new
    Admin query fields whose cost must be recorded from a live store (wp-woo-idempotent-importer's
    `tools/calibrate-query-cost.php`); every operation's cost is proven against such a recording.
 

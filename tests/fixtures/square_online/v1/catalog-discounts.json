@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/search",
+    "body": {
+      "object_types": [
+        "DISCOUNT"
+      ]
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "DISCOUNT",
+        "id": "DISC_TEN",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "discount_data": {
+          "name": "Ten percent",
+          "discount_type": "FIXED_PERCENTAGE",
+          "percentage": "10.0",
+          "modify_tax_basis": "MODIFY_TAX_BASIS"
+        }
+      },
+      {
+        "type": "DISCOUNT",
+        "id": "DISC_FIVE",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "discount_data": {
+          "name": "Five off",
+          "discount_type": "FIXED_AMOUNT",
+          "amount_money": {
+            "amount": 500,
+            "currency": "CAD"
+          },
+          "modify_tax_basis": "MODIFY_TAX_BASIS"
+        }
+      },
+      {
+        "type": "DISCOUNT",
+        "id": "DISC_STAFF",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "discount_data": {
+          "name": "Staff discount",
+          "discount_type": "VARIABLE_PERCENTAGE",
+          "pin_required": true,
+          "modify_tax_basis": "MODIFY_TAX_BASIS"
+        }
+      }
+    ]
+  }
+}

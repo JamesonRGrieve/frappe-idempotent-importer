@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Square Online, through the Square API (pinned to API_VERSION): the main location's return policy, catalog
-categories, items with their variations, options, images and stock at the main location, customers, and
-orders at every location with their refunds and fulfillments. Square Online's site pages and blog have no
+categories, items with their variations, options, images and stock at the main location, customers, catalog
+discounts and pricing rules, and orders at every location with their refunds and fulfillments. Square Online's site pages and blog have no
 public API. The operator enters a personal access token (or an OAuth access token) with read scopes."""
 
 from __future__ import annotations
@@ -26,7 +26,7 @@ class SquareOnlineAdapter:
 	built = True
 
 	def kinds(self) -> tuple[Kind, ...]:
-		return (Kind.COLLECTION, Kind.PRODUCT, Kind.CUSTOMER, Kind.ORDER, Kind.POLICY)
+		return (Kind.COLLECTION, Kind.PRODUCT, Kind.CUSTOMER, Kind.DISCOUNT, Kind.ORDER, Kind.POLICY)
 
 	def mappers(self, config: ConnectionConfig) -> list[Mapper]:
 		return mapping.mappers(config)

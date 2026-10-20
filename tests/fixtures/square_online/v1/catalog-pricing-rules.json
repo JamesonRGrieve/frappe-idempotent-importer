@@ -1,0 +1,118 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/v2/catalog/search",
+    "body": {
+      "object_types": [
+        "PRICING_RULE"
+      ]
+    }
+  },
+  "response": {
+    "objects": [
+      {
+        "type": "PRICING_RULE",
+        "id": "PR_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "pricing_rule_data": {
+          "name": "Two mugs, ten percent off",
+          "discount_id": "DISC_TEN",
+          "match_products_id": "PS_MUGS",
+          "valid_from_date": "2026-09-01"
+        }
+      },
+      {
+        "type": "PRICING_RULE",
+        "id": "PR_APRON",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "pricing_rule_data": {
+          "name": "Weekend aprons",
+          "discount_id": "DISC_FIVE",
+          "match_products_id": "PS_APRON",
+          "time_period_ids": [
+            "TP_WEEKEND"
+          ]
+        }
+      }
+    ],
+    "related_objects": [
+      {
+        "type": "DISCOUNT",
+        "id": "DISC_TEN",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "discount_data": {
+          "name": "Ten percent",
+          "discount_type": "FIXED_PERCENTAGE",
+          "percentage": "10.0",
+          "modify_tax_basis": "MODIFY_TAX_BASIS"
+        }
+      },
+      {
+        "type": "DISCOUNT",
+        "id": "DISC_FIVE",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "discount_data": {
+          "name": "Five off",
+          "discount_type": "FIXED_AMOUNT",
+          "amount_money": {
+            "amount": 500,
+            "currency": "CAD"
+          },
+          "modify_tax_basis": "MODIFY_TAX_BASIS"
+        }
+      },
+      {
+        "type": "PRODUCT_SET",
+        "id": "PS_MUGS",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "product_set_data": {
+          "name": "Mugs",
+          "product_ids_any": [
+            "ITEM_MUG"
+          ],
+          "quantity_min": 2
+        }
+      },
+      {
+        "type": "PRODUCT_SET",
+        "id": "PS_APRON",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "product_set_data": {
+          "name": "Natural apron",
+          "product_ids_any": [
+            "VAR_APRON_NAT"
+          ]
+        }
+      },
+      {
+        "type": "TIME_PERIOD",
+        "id": "TP_WEEKEND",
+        "updated_at": "2026-09-01T10:00:00.000Z",
+        "version": 1,
+        "is_deleted": false,
+        "present_at_all_locations": true,
+        "time_period_data": {
+          "event": "BEGIN:VEVENT\nDTSTART:20260905T000000\nDURATION:PT48H\nRRULE:FREQ=WEEKLY;BYDAY=SA\nEND:VEVENT"
+        }
+      }
+    ]
+  }
+}

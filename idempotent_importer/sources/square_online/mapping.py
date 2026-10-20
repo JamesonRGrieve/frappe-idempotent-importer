@@ -7,7 +7,7 @@ here. Identities arrive scoped to the connection, with each object's Square id a
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from idempotent_importer.contract import (
@@ -16,15 +16,19 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Condition,
+	Discount,
 	OrderLine,
 	Shipment,
 	address_fields,
 	charge_fields,
 	contents_of,
+	discount_desired,
 	line_fields,
 	order_line,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
@@ -39,6 +43,8 @@ from idempotent_importer.sources.common import ContentPageMapper, plain_html
 from idempotent_importer.sources.square_online.reader import STOCK_STATE
 
 UNKNOWN_COUNTRY = "ZZ"
+# A discount that leaves the price taxes are calculated on alone.
+KEEPS_TAX_BASIS = "DO_NOT_MODIFY_TAX_BASIS"
 # Product types sold as ordinary items; gift cards, appointments, events, donations and legacy Square Online
 # services and memberships have no ERPNext equivalent.
 PRODUCT_TYPES = frozenset({"REGULAR", "FOOD_AND_BEV", "DIGITAL"})
@@ -646,6 +652,179 @@ def pre_tax(line: Node) -> Decimal:
 	return money_or_zero(line, "total_money") - money_or_zero(line, "total_tax_money")
 
 
+class DiscountMapper:
+	"""Square's catalog discounts → automatic Pricing Rules (Square discounts have no codes), enforcing natively
+	what ERPNext's pricing does and recording the rest as conditions that hold it (``contract.CONDITIONS``).
+
+	A pricing rule (``PricingRule``) applies its discount automatically: a fixed percentage or amount off each
+	matched item (items, variations or categories, or every item), from the match set's minimum quantity, after
+	a minimum order subtotal, between its valid dates. Recorded and held: time periods and local times (card
+	405); caps, excluded products and which of them, exact or maximum quantities, sets that need every product,
+	nested sets, customer groups and discounts that don't reduce the tax basis (card 407); amounts entered at
+	the time of sale (an operator decision).
+
+	A discount no pricing rule applies (``Discount``) is applied by staff at the point of sale: recorded and
+	held (an operator decision). A deleted discount or rule maps to nothing."""
+
+	kind = Kind.DISCOUNT
+	version = 1
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
+
+	def map(self, node: Node) -> Desired | None:
+		if node.get("is_deleted") is True:
+			return None
+		if node.string("type") == "DISCOUNT":
+			later = [Condition("applied_by_staff")]
+			discount = self._discount(node.required_child("discount_data"), later)
+			return discount_desired(
+				node.id(),
+				replace(
+					discount,
+					description=node.required_child("discount_data").optional_string("name"),
+					conditions=later,
+				),
+			)
+		rule = node.required_child("pricing_rule_data")
+		later = []
+		found = node.child("discount_object")
+		if found is None:
+			raise SourceError(f"Square pricing rule {node.string('square_id')} names no discount.")
+		discount = self._discount(found.required_child("discount_data"), later)
+		sets = node.child("product_sets")
+		applies, items, groups, variants, quantities = self._match(
+			rule.optional_string("match_products_id"), sets, node, later
+		)
+		if (excluded := rule.optional_string("exclude_products_id")) or rule.optional_string(
+			"apply_products_id"
+		):
+			source: Fields = {
+				"exclude": source_terms(sets.get(excluded) if sets and excluded else None),
+				"apply": source_terms(
+					sets.get(rule.string("apply_products_id"))
+					if sets and rule.optional_string("apply_products_id")
+					else None
+				),
+				"strategy": rule.optional_string("exclude_strategy"),
+			}
+			later.append(
+				Condition("item_choice", {"source": {k: v for k, v in source.items() if v is not None}})
+			)
+		if periods := node.children("time_periods"):
+			later.append(
+				Condition("schedule", {"source": [source_terms(p.get("time_period_data")) for p in periods]})
+			)
+		times: Fields = {
+			k: rule.optional_string(k) for k in ("valid_from_local_time", "valid_until_local_time")
+		}
+		if any(v is not None for v in times.values()):
+			later.append(Condition("schedule", {"source": times}))
+		if groups_any := rule.strings("customer_group_ids_any"):
+			customer_groups: list[Field] = [self._context.gid("CustomerGroup", g) for g in groups_any]
+			later.append(Condition("several_customer_groups", {"groups": customer_groups}))
+		mapped = replace(
+			discount,
+			description=rule.optional_string("name"),
+			applies=applies,
+			items=items,
+			groups=groups,
+			variants=variants,
+			min_amount=money(rule, "minimum_order_subtotal_money"),
+			min_qty=quantities,
+			mixed=quantities is not None,
+			valid_from=rule.optional_string("valid_from_date"),
+			valid_upto=rule.optional_string("valid_until_date"),
+			conditions=later,
+		)
+		return discount_desired(node.id(), mapped)
+
+	@staticmethod
+	def _discount(data: Node, later: list[Condition]) -> Discount:
+		"""A catalog discount's percentage or amount off each item; a cap, a discount that leaves the tax basis
+		alone, and an amount entered at the time of sale are recorded."""
+		match data.string("discount_type"):
+			case "FIXED_PERCENTAGE":
+				kind, value = "percentage", decimal_of(data.string("percentage"))
+			case "FIXED_AMOUNT":
+				kind, value = "amount", money(data, "amount_money") or Decimal(0)
+			case "VARIABLE_PERCENTAGE" | "VARIABLE_AMOUNT":
+				kind, value = "percentage", Decimal(0)
+				if not any(c.kind == "applied_by_staff" for c in later):
+					later.append(Condition("applied_by_staff"))
+			case other:
+				raise SourceError(f"A Square discount of type {other}.")
+		if (cap := money(data, "maximum_amount_money")) is not None:
+			later.append(Condition("cap", {"amount": cap}))
+		if data.optional_string("modify_tax_basis") == KEEPS_TAX_BASIS:
+			later.append(Condition("rule_condition", {"source": {"modify_tax_basis": KEEPS_TAX_BASIS}}))
+		return Discount(
+			codes=[],
+			description=None,
+			discount=kind,
+			applies="all_items",
+			value=value,
+			items=[],
+			groups=[],
+			min_amount=None,
+			valid_from=None,
+			valid_upto=None,
+			max_uses=None,
+			automatic=True,
+		)
+
+	def _match(
+		self, set_id: str | None, sets: Node | None, node: Node, later: list[Condition]
+	) -> tuple[str, list[str], list[str], list[tuple[str | None, str]], Decimal | None]:
+		"""The items, variations or categories a rule's match set names, and its minimum quantity."""
+		match_set = sets.child(set_id) if sets and set_id else None
+		data = match_set.child("product_set_data") if match_set else None
+		if data is None:
+			later.append(Condition("item_matcher", {"source": {"match_products_id": set_id}}))
+			return "all_items", [], [], [], None
+		quantity = data.optional_integer("quantity_min")
+		exact, most = data.optional_integer("quantity_exact"), data.optional_integer("quantity_max")
+		if exact is not None:
+			quantity = exact
+			later.append(Condition("item_limit", {"qty": Decimal(exact)}))
+		elif most is not None:
+			later.append(Condition("item_limit", {"qty": Decimal(most)}))
+		if data.get("all_products") is True:
+			return "all_items", [], [], [], Decimal(quantity) if quantity else None
+		if data.strings("product_ids_all"):
+			later.append(
+				Condition(
+					"rule_condition",
+					{"source": {"product_ids_all": list[Field](data.strings("product_ids_all"))}},
+				)
+			)
+		types = node.child("catalog_types")
+		items: list[str] = []
+		groups: list[str] = []
+		variants: list[tuple[str | None, str]] = []
+		for product in data.strings("product_ids_any") + data.strings("product_ids_all"):
+			found = types.child(product) if types else None
+			match found.string("type") if found else None:
+				case "ITEM":
+					items.append(self._context.gid("Item", product))
+				case "ITEM_VARIATION" if found is not None:
+					variants.append(
+						(
+							self._context.gid("Item", found.string("item_id")),
+							self._context.gid("ItemVariation", product),
+						)
+					)
+				case "CATEGORY":
+					groups.append(self._context.gid("Category", product))
+				case _:
+					later.append(Condition("item_matcher", {"source": {"product_id": product}}))
+		if groups and (items or variants):
+			later.append(Condition("groups_beside_items", {"groups": list[Field](groups)}))
+			groups = []
+		applies = "items" if items or variants else "groups" if groups else "all_items"
+		return applies, items, groups, variants, Decimal(quantity) if quantity else None
+
+
 def mappers(config: ConnectionConfig) -> list[Mapper]:
 	context = Context(config)
 	return [
@@ -653,5 +832,6 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 		CategoryMapper(context),
 		ItemMapper(context),
 		CustomerMapper(),
+		DiscountMapper(context),
 		OrderMapper(context),
 	]

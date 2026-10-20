@@ -1,0 +1,26 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/customer_groups/3"
+  },
+  "response": {
+    "id": 3,
+    "name": "Wholesale",
+    "is_default": false,
+    "discount_rules": [
+      {
+        "type": "all",
+        "method": "percent",
+        "amount": "5.0000"
+      },
+      {
+        "type": "product",
+        "method": "price",
+        "amount": "18.0000",
+        "product_id": 112
+      }
+    ],
+    "date_created": "Tue, 01 Sep 2026 10:00:00 +0000",
+    "date_modified": "Tue, 01 Sep 2026 10:00:00 +0000",
+    "is_group_for_guests": false
+  }
+}

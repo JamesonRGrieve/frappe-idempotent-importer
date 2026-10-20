@@ -1,0 +1,49 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/catalog/products",
+    "query": {
+      "include": "bulk_pricing_rules",
+      "include_fields": "bulk_pricing_rules",
+      "page": 1
+    }
+  },
+  "response": {
+    "data": [
+      {
+        "id": 111,
+        "bulk_pricing_rules": [
+          {
+            "id": 1,
+            "quantity_min": 5,
+            "quantity_max": 9,
+            "type": "percent",
+            "amount": 5
+          },
+          {
+            "id": 2,
+            "quantity_min": 10,
+            "quantity_max": 0,
+            "type": "percent",
+            "amount": 10
+          }
+        ]
+      },
+      {
+        "id": 112,
+        "bulk_pricing_rules": []
+      }
+    ],
+    "meta": {
+      "pagination": {
+        "total": 2,
+        "count": 2,
+        "per_page": 250,
+        "current_page": 1,
+        "total_pages": 1,
+        "links": {
+          "current": "?page=1&limit=250"
+        }
+      }
+    }
+  }
+}

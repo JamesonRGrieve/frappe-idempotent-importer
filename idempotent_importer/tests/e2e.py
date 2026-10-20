@@ -1259,11 +1259,7 @@ def assert_bigcommerce(state: str) -> None:
 		0,
 		"pending guest order 502",
 	)
-	expect(
-		frappe.db.count("Importer Link", {"connection": connection, "kind": "discount"}),
-		0,
-		"no coupon ERPNext could enforce exactly (once-per-customer, shipping, automatic, disabled)",
-	)
+	assert_bigcommerce_discounts(connection, state)
 	expect(
 		frappe.db.get_value("Web Page", target(connection, "page", "Page", "82"), "published"),
 		0,
@@ -1605,6 +1601,57 @@ def assert_magento(state: str) -> None:
 		frappe.db.get_value("Sales Invoice", target(connection, "order", "Order", "503"), "customer"),
 		target(connection, "customer", "Customer", "43"),
 		"new order 503, linked to the new customer",
+	)
+
+
+def assert_bigcommerce_discounts(connection: str, state: str) -> None:
+	"""Every BigCommerce discount: what ERPNext enforces written enabled, the rest recorded and held."""
+	assert_discount(connection, "Coupon", "61", "card 405", ["per_customer_limit"], "coupon 61, held")
+	assert_discount(
+		connection, "Coupon", "62", "card 405", ["free_shipping"], "free-shipping coupon 62, held"
+	)
+	assert_discount(connection, "Coupon", "64", "card 405", ["shipping_discount"], "shipping coupon 64, held")
+	assert_discount(
+		connection,
+		"Promotion",
+		"71",
+		None,
+		[],
+		"promotion 71, enabled; its code held by its per-customer limit",
+		{"BC-FALL15": "card 405"},
+	)
+	assert_discount(connection, "Promotion", "72", None, [], "automatic promotion 72, enabled")
+	assert_discount(connection, "Promotion", "73", "card 407", ["cap", "item_limit"], "promotion 73, held")
+	assert_discount(
+		connection, "Promotion", "74", "card 405", ["shared_use_limit"], "gift promotion 74, held"
+	)
+	wholesale = frappe.db.get_value(
+		"Customer", target(connection, "customer", "Customer", "41"), "customer_group"
+	)
+	expect(wholesale, target(connection, "customer_group", "CustomerGroup", "3"), "customer 41 in its group")
+	everything = target(connection, "discount", "CustomerGroupRule", "3-all")
+	expect(
+		frappe.db.get_value("Pricing Rule", everything, ["applicable_for", "customer_group", "disable"]),
+		("Customer Group", wholesale, 0),
+		"the wholesale group's discount on everything",
+	)
+	assert_discount(connection, "CustomerGroupRule", "3-all", None, [], "the group's discount, enabled")
+	price = target(connection, "discount", "CustomerGroupRule", "3-product-112")
+	expect(
+		amount(frappe.db.get_value("Pricing Rule", price, "rate")),
+		amount("18" if state == "v1" else "17"),
+		"the wholesale group's fixed price on the toque",
+	)
+	scheme = target(connection, "discount", "BulkPricing", "111")
+	live = frappe.get_all(
+		"Pricing Rule",
+		filters={"promotional_scheme": scheme, "disable": 0},
+		fields=["min_qty", "discount_percentage"],
+	)
+	expect(
+		sorted((amount(r.min_qty), amount(r.discount_percentage)) for r in live),
+		[(amount("5"), amount("5")), (amount("10"), amount("10"))][: 2 if state == "v1" else 1],
+		"the mug's bulk pricing tiers",
 	)
 
 

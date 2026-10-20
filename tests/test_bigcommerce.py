@@ -17,6 +17,7 @@ from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.bigcommerce.adapter import BigCommerceAdapter
 from idempotent_importer.sources.bigcommerce.reader import BigCommerceAuthorizer, BigCommerceReader
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
 
 ADAPTER = BigCommerceAdapter()
@@ -93,7 +94,7 @@ class TestReader:
 		assert mug.children("variants")
 		assert mug.optional_string("weight_units")
 
-	def test_discounts_read_coupons_then_promotions_with_their_codes(self) -> None:
+	def test_discounts_read_coupons_promotions_group_rules_then_bulk_pricing(self) -> None:
 		source, _ = reader()
 		coupons = source.page(Kind.DISCOUNT, None, None, "")
 		assert coupons.has_next_page and coupons.end_cursor == "promotions:"
@@ -101,6 +102,28 @@ class TestReader:
 		promotions = source.page(Kind.DISCOUNT, coupons.end_cursor, None, "")
 		fall = next(node for node in promotions.nodes if node.id().endswith("/Promotion/71"))
 		assert [code.string("code") for code in fall.children("codes")] == ["BC-FALL15"]
+		assert promotions.end_cursor == "groups:"
+		groups = source.page(Kind.DISCOUNT, promotions.end_cursor, None, "")
+		assert [node.id().removeprefix(f"{GID}/") for node in groups.nodes] == [
+			"CustomerGroupRule/3-all",
+			"CustomerGroupRule/3-product-112",
+		]
+		bulk = source.page(Kind.DISCOUNT, groups.end_cursor, None, "")
+		assert [node.id().removeprefix(f"{GID}/") for node in bulk.nodes] == ["BulkPricing/111"]
+		assert not bulk.has_next_page
+		with pytest.raises(SourceError, match="discount cursor"):
+			source.page(Kind.DISCOUNT, "elsewhere:", None, "")
+
+	def test_customer_groups_and_their_rules_singly(self) -> None:
+		assert set(nodes(Kind.CUSTOMER_GROUP)) == {"CustomerGroup/3"}
+		source, _ = reader()
+		group = source.node(Kind.CUSTOMER_GROUP, f"{GID}/CustomerGroup/3")
+		assert group is not None and group.string("name") == "Wholesale"
+		rule_node = source.node(Kind.DISCOUNT, f"{GID}/CustomerGroupRule/3-product-112")
+		assert rule_node is not None and rule_node.integer("product_id") == 112
+		assert source.node(Kind.DISCOUNT, f"{GID}/CustomerGroupRule/3-category-9") is None
+		with pytest.raises(SourceError, match="customer group rule"):
+			source.node(Kind.DISCOUNT, f"{GID}/CustomerGroupRule/x-all")
 
 	def test_orders_arrive_with_their_parts_and_refunds(self) -> None:
 		order = nodes(Kind.ORDER, "v2")["Order/501"]
@@ -247,14 +270,101 @@ class TestMappers:
 		order = nodes(Kind.ORDER)["Order/501"].with_fields(status_id=status)
 		assert {m.kind: m for m in ADAPTER.mappers(CONFIG)}[Kind.ORDER].map(order) is None
 
-	def test_coupons_erpnext_cannot_enforce_exactly_are_unsupported(self) -> None:
-		with pytest.raises(Unsupported, match="per-customer"):
-			mapped(Kind.DISCOUNT, "Coupon/61")
-		with pytest.raises(Unsupported, match="free_shipping"):
-			mapped(Kind.DISCOUNT, "Coupon/62")
+	def test_what_pricing_cant_enforce_is_recorded_and_held(self) -> None:
+		welcome = mapped(Kind.DISCOUNT, "Coupon/61")
+		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], ["card 405"])
+		assert terms(welcome, "per_customer_limit") == {"uses": 1}
+		assert condition_kinds(mapped(Kind.DISCOUNT, "Coupon/62")) == ["free_shipping"]
+		half = mapped(Kind.DISCOUNT, "Coupon/64")
+		assert terms(half, "shipping_discount") == {"discount": "amount", "value": Decimal(50)}
 		assert mapped(Kind.DISCOUNT, "Coupon/63") is None, "a disabled coupon"
-		with pytest.raises(Unsupported, match="automatic"):
-			mapped(Kind.DISCOUNT, "Promotion/72")
+		automatic = values(Kind.DISCOUNT, "Promotion/72")
+		assert (
+			automatic.flag("automatic"),
+			automatic.strings("codes"),
+			automatic.optional_string("currency"),
+		) == (
+			True,
+			[],
+			"CAD",
+		)
+		assert held(mapped(Kind.DISCOUNT, "Promotion/72")) == []
+
+	def test_promotions_for_customer_groups_and_gifts(self) -> None:
+		toques = mapped(Kind.DISCOUNT, "Promotion/73")
+		wholesale = values(Kind.DISCOUNT, "Promotion/73")
+		assert (
+			wholesale.string("applies"),
+			wholesale.strings("groups"),
+			wholesale.strings("customer_groups"),
+		) == (
+			"groups",
+			[f"{GID}/Category/21"],
+			[f"{GID}/CustomerGroup/3"],
+		)
+		assert (wholesale.decimal("min_qty"), wholesale.flag("mixed")) == (Decimal(2), True)
+		assert condition_kinds(toques) == ["cap", "item_limit"]
+		assert held(toques) == ["card 407"]
+		gift = mapped(Kind.DISCOUNT, "Promotion/74")
+		gifts = values(Kind.DISCOUNT, "Promotion/74")
+		assert gifts.required_record("free").all() == {
+			"item": f"{GID}/Product/111",
+			"qty": Decimal(1),
+			"recursive": False,
+		}
+		assert (gifts.decimal("min_amount"), gifts.optional_integer("max_uses")) == (Decimal(75), None)
+		assert terms(gift, "shared_use_limit") == {"uses": 50}
+		limits = gifts.required_record("code_limits")
+		assert limits.required_record("BC-GIFT-A").all() == {"max_uses": 25}
+		assert limits.required_record("BC-GIFT-B").all() == {
+			"valid_from": "2026-10-01",
+			"conditions": [{"kind": "per_customer_limit", "card": "card 405", "terms": {"uses": 1}}],
+			"held": ["card 405"],
+		}
+
+	def test_customer_group_discounts_and_bulk_pricing(self) -> None:
+		everything = values(Kind.DISCOUNT, "CustomerGroupRule/3-all")
+		assert (everything.string("applies"), everything.string("discount"), everything.decimal("value")) == (
+			"all_items",
+			"percentage",
+			Decimal(5),
+		)
+		assert everything.strings("customer_groups") == [f"{GID}/CustomerGroup/3"]
+		price = values(Kind.DISCOUNT, "CustomerGroupRule/3-product-112")
+		assert (price.string("discount"), price.strings("items"), price.decimal("value")) == (
+			"rate",
+			[f"{GID}/Product/112"],
+			Decimal(18),
+		)
+		bulk = values(Kind.DISCOUNT, "BulkPricing/111")
+		assert [t.all() for t in bulk.records("tiers")] == [
+			{"discount": "percentage", "value": Decimal(5), "min_qty": Decimal(5), "max_qty": Decimal(9)},
+			{"discount": "percentage", "value": Decimal(10), "min_qty": Decimal(10)},
+		]
+		assert len(values(Kind.DISCOUNT, "BulkPricing/111", "v2").records("tiers")) == 1
+		group = mapper_of(Kind.DISCOUNT)
+		listed = nodes(Kind.DISCOUNT)["CustomerGroupRule/3-all"]
+		price_list = group.map(listed.with_fields(type="price_list", price_list_id=2))
+		assert terms(price_list, "price_list") == {"source": 2}
+		assert held(price_list) == ["an operator decision"]
+		category = group.map(listed.with_fields(type="category", category_id=22, method="fixed"))
+		assert category is not None and category.values().strings("groups") == [f"{GID}/Category/22"]
+		with pytest.raises(SourceError, match="of type"):
+			group.map(listed.with_fields(type="brand"))
+		with pytest.raises(SourceError, match="discount by"):
+			group.map(listed.with_fields(method="bogus"))
+		bulk_node = nodes(Kind.DISCOUNT)["BulkPricing/111"]
+		assert group.map(bulk_node.with_fields(bulk_pricing_rules=[])) is None
+		with pytest.raises(SourceError, match="bulk pricing rule"):
+			group.map(
+				bulk_node.with_fields(
+					bulk_pricing_rules=[
+						{"id": 1, "quantity_min": 1, "quantity_max": 0, "type": "odd", "amount": 1}
+					]
+				)
+			)
+		assert values(Kind.CUSTOMER_GROUP, "CustomerGroup/3").all() == {"name": "Wholesale"}
+		assert values(Kind.CUSTOMER, "Customer/41").optional_string("group") == f"{GID}/CustomerGroup/3"
 
 	def test_an_amount_off_the_order_coupon(self) -> None:
 		welcome = nodes(Kind.DISCOUNT)["Coupon/61"].with_fields(max_uses_per_customer=0)
@@ -368,18 +478,47 @@ class TestMoreMappers:
 			coupon(type="per_item_discount", applies_to={"entity": "categories", "ids": [22]})
 		)
 		assert per_item is not None and per_item.values().string("applies") == "groups"
-		with pytest.raises(Unsupported, match="countries or shipping"):
-			mapper_of(Kind.DISCOUNT).map(coupon(restricted_to={"countries": ["CA"]}))
+		limited = mapper_of(Kind.DISCOUNT).map(
+			coupon(restricted_to={"countries": ["CA"]}, shipping_methods=["ups"])
+		)
+		assert terms(limited, "shipping_limits") == {"methods": ["ups"], "source": {"countries": ["CA"]}}
+		spread = mapper_of(Kind.DISCOUNT).map(coupon(applies_to={"entity": "products", "ids": [112]}))
+		assert terms(spread, "spread_amount") == {"items": [f"{GID}/Product/112"]}
+		every_item = mapper_of(Kind.DISCOUNT).map(coupon(type="per_item_discount"))
+		assert every_item is not None and every_item.values().string("applies") == "all_items"
+		with pytest.raises(SourceError, match="of type"):
+			mapper_of(Kind.DISCOUNT).map(coupon(type="mystery"))
 		with pytest.raises(SourceError, match="unknown kind"):
 			mapper_of(Kind.DISCOUNT).map(coupon(applies_to={"entity": "brands", "ids": [5]}))
 
 	@pytest.mark.parametrize(
-		("changes", "refusal"),
+		("changes", "kinds"),
 		[
-			({"shipping_address": {"countries": [{"iso2_country_code": "CA"}]}}, "shipping_address"),
-			({"customer": {"group_ids": [1]}}, "some customers"),
-			({"rules": rule({}) * 2}, "2 rules"),
-			({"rules": rule({"shipping": {}})}, "items, shipping or gifts"),
+			({"shipping_address": {"countries": [{"iso2_country_code": "CA"}]}}, ["shipping_limits"]),
+			({"schedule": {"week_frequency": 1, "week_days": ["Monday"]}}, ["schedule"]),
+			({"channels": [{"id": 2}]}, ["channels"]),
+			({"can_be_used_with_other_promotions": False, "stop": True}, ["combination"]),
+			(
+				{
+					"customer": {
+						"group_ids": [3],
+						"excluded_group_ids": [4],
+						"minimum_order_count": 2,
+						"segments": {"id": ["x"]},
+					}
+				},
+				["excluded_customer_groups", "customer_history", "customer_segments"],
+			),
+			({"rules": rule({"cart_value": {"discount": {"fixed_amount": "5"}}}) * 2}, ["further_rules"]),
+			({"rules": rule({"shipping": {"zone_ids": [1]}})}, ["free_shipping"]),
+			(
+				{
+					"rules": rule(
+						{"shipping_discount": {"discount": {"percentage_amount": "50"}, "method_ids": "*"}}
+					)
+				},
+				["shipping_discount"],
+			),
 			(
 				{
 					"rules": rule(
@@ -391,24 +530,120 @@ class TestMoreMappers:
 						}
 					)
 				},
-				"capped",
+				["cap"],
 			),
-			({"rules": rule({"cart_value": {"discount": {}}}), "max_uses": 0}, "no amount"),
-			({"codes": [{"code": "A", "max_uses": 5}]}, "own schedule or use limit"),
-			({"codes": [{"code": "A"}, {"code": "B"}], "max_uses": 5}, "shared across several codes"),
+			({"codes": [{"code": "A"}, {"code": "B"}], "max_uses": 5}, ["shared_use_limit"]),
+			(
+				{"rules": rule({"cart_value": {"discount": {"fixed_amount": "5"}}}, {"and": [{"cart": {}}]})},
+				["rule_condition"],
+			),
 			(
 				{
 					"rules": rule(
-						{"cart_value": {"discount": {"fixed_amount": "5"}}}, {"cart": {"minimum_quantity": 2}}
+						{"cart_value": {"discount": {"fixed_amount": "5"}}},
+						{"cart": {"items": {"products": [111]}}},
 					)
 				},
-				"beyond a minimum spend",
+				["rule_condition"],
+			),
+			(
+				{
+					"rules": rule(
+						{
+							"cart_items": {
+								"discount": {"fixed_amount": "5"},
+								"items": {"brands": [1]},
+								"as_total": True,
+								"exclude_items_on_sale": True,
+								"strategy": "LEAST_EXPENSIVE",
+							}
+						}
+					)
+				},
+				["item_matcher", "excluded_sale_items", "item_choice", "spread_amount"],
+			),
+			(
+				{
+					"rules": rule(
+						{
+							"fixed_price_set": {
+								"quantity": 3,
+								"fixed_price": "20",
+								"items": {"products": [111]},
+							}
+						}
+					)
+				},
+				["fixed_price_set"],
+			),
+			(
+				{
+					"rules": rule(
+						{"fixed_price_set": {"quantity": 3, "fixed_price": "20", "items": {"brands": [1]}}}
+					)
+				},
+				["fixed_price_set"],
 			),
 		],
 	)
-	def test_promotions_coupons_cannot_express(self, changes: dict[str, JsonValue], refusal: str) -> None:
-		with pytest.raises((Unsupported, SourceError), match=refusal):
-			mapper_of(Kind.DISCOUNT).map(promotion(**changes))
+	def test_promotion_conditions_are_recorded(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
+		desired = mapper_of(Kind.DISCOUNT).map(promotion(**changes))
+		assert condition_kinds(desired) == kinds
+		assert held(desired)
+
+	def test_promotion_rules_erpnext_applies(self) -> None:
+		buy_get = mapper_of(Kind.DISCOUNT).map(
+			promotion(
+				rules=rule(
+					{"cart_items": {"discount": {"percentage_amount": "50"}, "items": {"products": [112]}}},
+					{"cart": {"items": {"categories": [21]}, "minimum_quantity": 2}},
+				)
+			)
+		)
+		assert buy_get is not None
+		bought = buy_get.values()
+		assert (
+			bought.string("applies"),
+			bought.strings("groups"),
+			bought.required_record("other").all(),
+		) == (
+			"groups",
+			[f"{GID}/Category/21"],
+			{"applies": "items", "target": f"{GID}/Product/112"},
+		)
+		variants = mapper_of(Kind.DISCOUNT).map(
+			promotion(
+				rules=rule({"cart_items": {"discount": {"fixed_amount": "2"}, "items": {"variants": [7]}}})
+			)
+		)
+		assert variants is not None and variants.values().records("variants")[0].all() == {
+			"product": None,
+			"variant": f"{GID}/Variant/7",
+		}
+		repeating = mapper_of(Kind.DISCOUNT).map(
+			promotion(
+				rules=[
+					{
+						"action": {"gift_item": {"variant_id": 5, "quantity": 1}},
+						"apply_once": False,
+						"condition": {"cart": {"items": {"products": [111]}, "minimum_quantity": 2}},
+					}
+				]
+			)
+		)
+		assert repeating is not None
+		assert repeating.values().required_record("free").all() == {
+			"variant": f"{GID}/Variant/5",
+			"qty": Decimal(1),
+			"recursive": True,
+			"recurse_for": Decimal(2),
+		}
+		with pytest.raises(SourceError, match="no rules"):
+			mapper_of(Kind.DISCOUNT).map(promotion(rules=[]))
+		with pytest.raises(SourceError, match="unknown action"):
+			mapper_of(Kind.DISCOUNT).map(promotion(rules=rule({})))
+		with pytest.raises(SourceError):
+			mapper_of(Kind.DISCOUNT).map(promotion(rules=rule({"cart_value": {"discount": {}}})))
 
 	def test_a_fixed_amount_promotion_without_conditions_and_a_disabled_one(self) -> None:
 		fixed = mapper_of(Kind.DISCOUNT).map(

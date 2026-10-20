@@ -17,7 +17,7 @@
         "registration_ip_address": "",
         "notes": "Prefers email.",
         "tax_exempt_category": "",
-        "customer_group_id": 0,
+        "customer_group_id": 3,
         "date_modified": "2026-09-01T10:00:00+00:00",
         "date_created": "2026-09-01T10:00:00+00:00",
         "address_count": 1,

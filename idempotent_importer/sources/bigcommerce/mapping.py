@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import html
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from urllib.parse import urlsplit
 
@@ -18,24 +18,30 @@ from idempotent_importer.contract import (
 	TAX,
 	Address,
 	Charge,
+	Code,
+	Condition,
 	Discount,
+	FreeItem,
 	OrderLine,
 	Shipment,
+	Tier,
 	address_fields,
 	charge_fields,
 	contents_of,
 	date_of,
-	discount_fields,
+	discount_desired,
 	line_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
 	shipment_fields,
+	source_terms,
 	variant_attributes,
 )
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Field, Fields
+from idempotent_importer.core.identity import Identity
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target, slugify
@@ -69,6 +75,13 @@ APPROVED = "approved"
 ENABLED = "ENABLED"
 ABSOLUTE = re.compile(r"^https?://", re.IGNORECASE)
 CONTENT_PAGE_TYPES = frozenset({"page", "raw"})
+# The storefront's channel: a promotion for other channels only doesn't apply on it.
+STOREFRONT_CHANNEL = 1
+ANY_CURRENCY = "*"
+# A customer group discount rule's method, and a bulk pricing rule's type, as a discount: a percentage off,
+# an amount off each unit, or a fixed price.
+GROUP_METHODS = {"percent": "percentage", "fixed": "amount", "price": "rate"}
+BULK_TYPES = {"percent": "percentage", "price": "amount", "fixed": "rate"}
 
 
 @dataclass(frozen=True)
@@ -277,10 +290,14 @@ def images(product: Node) -> list[Field]:
 
 
 class CustomerMapper:
-	"""A customer → a Customer, its Contact, and every saved address (the first as billing)."""
+	"""A customer → a Customer in its customer group, its Contact, and every saved address (the first as
+	billing)."""
 
 	kind = Kind.CUSTOMER
 	version = 1
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
 		first, last = node.text("first_name"), node.text("last_name")
@@ -310,64 +327,132 @@ class CustomerMapper:
 			"phone": node.optional_string("phone"),
 			"addresses": addresses,
 		}
+		if group := node.optional_integer("customer_group_id"):
+			fields["group"] = self._context.gid("CustomerGroup", group)
 		return Desired(self.kind, node.id(), fields)
 
 
+class CustomerGroupMapper:
+	"""A customer group → a Customer Group its customers and discounts name."""
+
+	kind = Kind.CUSTOMER_GROUP
+	version = 1
+
+	def map(self, node: Node) -> Desired | None:
+		return Desired(self.kind, node.id(), {"name": node.string("name")})
+
+
+class Matched:
+	"""What a BigCommerce item matcher picks: products, categories and variants (identities), or ``None``
+	when it picks by something else (brands, options, custom fields, combinations)."""
+
+	def __init__(self, products: list[str], groups: list[str], variants: list[str]) -> None:
+		self.products, self.groups, self.variants = products, groups, variants
+
+	def applies(self) -> str:
+		return "items" if self.products or self.variants else "groups" if self.groups else "all_items"
+
+	def terms(self) -> Fields:
+		return {
+			"items": list[Field](self.products) or None,
+			"groups": list[Field](self.groups) or None,
+			"variants": list[Field](self.variants) or None,
+		}
+
+
 class DiscountMapper:
-	"""Legacy coupons and coupon promotions → a coupon Pricing Rule with its codes. Only what ERPNext's
-	coupons apply exactly: a legacy coupon's percentage (on everything, some products or some categories),
-	fixed amount per item of some products or categories, or fixed amount off the order, with its minimum
-	spend, expiry and use limit; a promotion with codes whose one rule takes a percentage or fixed amount off
-	the order, at most after a minimum spend. Everything else is Unsupported. A disabled coupon or promotion
-	maps to nothing, so its rule is disabled."""
+	"""Every BigCommerce discount → a Pricing Rule (a Promotional Scheme for tiers), enforcing natively what
+	ERPNext's pricing does and recording the rest as conditions that hold it (``contract.CONDITIONS``):
+
+	- legacy coupons: a percentage or amount per item (everything, some products or categories), an amount
+	  off the order, free shipping or an amount off shipping; minimum spend, expiry and use limit; per-customer
+	  limits, an order amount on some products, shipping methods and countries recorded;
+	- promotions, automatic or with codes (each code's own use limit and dates): one rule's discount off the
+	  order or some items, a gift item or free shipping, after a minimum spend or quantity, for customer
+	  groups, in one currency; caps, exclusions, item limits and choices, shipping discounts, schedules,
+	  customer conditions, other channels, combination settings and further rules recorded;
+	- a customer group's discount rules (``CustomerGroupRule``): a percentage or amount off, or a fixed
+	  price, on everything, a category or a product, for the group;
+	- a product's bulk pricing rules (``BulkPricing``): its quantity tiers, a scheme on the product.
+
+	A disabled coupon or promotion maps to nothing, so its rule is disabled."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
-		return self._promotion(node) if "/Promotion/" in node.id() else self._coupon(node)
+		match Identity.parse(node.id()).type:
+			case "Promotion":
+				return self._promotion(node)
+			case "CustomerGroupRule":
+				return self._group_rule(node)
+			case "BulkPricing":
+				return self._bulk_pricing(node)
+			case _:
+				return self._coupon(node)
+
+	# -- legacy coupons ---------------------------------------------------------------------------------
 
 	def _coupon(self, node: Node) -> Desired | None:
 		if node.get("enabled") is False:
 			return None
-		name, coupon_type = node.string("name"), node.string("type")
+		later: list[Condition] = []
 		restricted = node.child("restricted_to")
-		if node.strings("shipping_methods") or (restricted is not None and restricted.raw()):
-			raise Unsupported(
-				"a coupon limited to some countries or shipping methods has no ERPNext equivalent"
-			)
-		if (node.optional_integer("max_uses_per_customer") or 0) > 0:
-			raise Unsupported("a per-customer use limit has no ERPNext coupon equivalent")
+		methods = node.strings("shipping_methods")
+		if methods or (restricted is not None and restricted.raw()):
+			shipping: Fields = {
+				"methods": list[Field](methods) or None,
+				"source": source_terms(restricted.raw())
+				if restricted is not None and restricted.raw()
+				else None,
+			}
+			later.append(Condition("shipping_limits", shipping))
+		if per_customer := node.optional_integer("max_uses_per_customer"):
+			later.append(Condition("per_customer_limit", {"uses": per_customer}))
 		products, groups = self._applies_to(node.child("applies_to"))
-		match coupon_type:
+		amount = amount_or_zero(node, "amount")
+		kind, applies, value = "percentage", "transaction", amount
+		match node.string("type"):
 			case "percentage_discount":
-				kind, applies = "percentage", "items" if products else "groups" if groups else "transaction"
-			case "per_item_discount" if products or groups:
-				kind, applies = "amount", "items" if products else "groups"
-			case "per_total_discount" if not products and not groups:
-				kind, applies = "amount", "transaction"
-			case _:
-				raise Unsupported(f"a {coupon_type} coupon on these products has no ERPNext pricing rule")
-		return Desired(
-			self.kind,
+				applies = "items" if products else "groups" if groups else "transaction"
+			case "per_item_discount":
+				kind, applies = "amount", "items" if products else "groups" if groups else "all_items"
+			case "per_total_discount":
+				kind = "amount"
+				if products or groups:
+					later.append(Condition("spread_amount", Matched(products, groups, []).terms()))
+				products, groups = [], []
+			case "free_shipping":
+				later.append(Condition("free_shipping", Matched(products, groups, []).terms()))
+				products, groups, value = [], [], Decimal(0)
+			case "shipping_discount":
+				shipping_off: Fields = {
+					"discount": "amount",
+					"value": amount,
+					**Matched(products, groups, []).terms(),
+				}
+				later.append(Condition("shipping_discount", shipping_off))
+				products, groups, value = [], [], Decimal(0)
+			case other:
+				raise SourceError(f"A BigCommerce coupon of type {other}.")
+		return discount_desired(
 			node.id(),
-			discount_fields(
-				Discount(
-					codes=[node.string("code")],
-					description=name,
-					discount=kind,
-					applies=applies,
-					value=amount_or_zero(node, "amount"),
-					items=products,
-					groups=groups,
-					min_amount=set_amount(node, "min_purchase"),
-					valid_from=date_of(node.time("date_created")),
-					valid_upto=date_of(node.optional_time("expires")),
-					max_uses=node.optional_integer("max_uses") or None,
-				)
+			Discount(
+				codes=[node.string("code")],
+				description=node.string("name"),
+				discount=kind,
+				applies=applies,
+				value=value,
+				items=products,
+				groups=groups,
+				min_amount=set_amount(node, "min_purchase"),
+				valid_from=date_of(node.time("date_created")),
+				valid_upto=date_of(node.optional_time("expires")),
+				max_uses=node.optional_integer("max_uses") or None,
+				conditions=later,
 			),
 		)
 
@@ -382,78 +467,355 @@ class DiscountMapper:
 			case _:
 				raise SourceError("A BigCommerce coupon applies to an unknown kind of object.")
 
+	# -- promotions -------------------------------------------------------------------------------------
+
 	def _promotion(self, node: Node) -> Desired | None:
 		if node.string("status") != ENABLED:
 			return None
-		if node.string("redemption_type") != COUPON_PROMOTION:
-			raise Unsupported("an automatic promotion has no ERPNext coupon equivalent")
-		for limit in ("shipping_address", "schedule"):
-			if node.child(limit) is not None:
-				raise Unsupported(f"a promotion with a {limit} condition has no ERPNext coupon equivalent")
-		customer = node.child("customer")
-		if customer is not None and (
-			customer.integers("group_ids")
-			or customer.integers("excluded_group_ids")
-			or (customer.optional_integer("minimum_order_count") or 0) > 0
-			or customer.child("segments") is not None
-		):
-			raise Unsupported("a promotion for some customers has no ERPNext coupon equivalent")
-		rules = node.children("rules")
-		if len(rules) != 1:
-			raise Unsupported(f"a promotion with {len(rules)} rules has no single ERPNext pricing rule")
-		action = rules[0].required_child("action").child("cart_value")
-		if action is None:
-			raise Unsupported(
-				"a promotion that discounts items, shipping or gifts has no ERPNext coupon equivalent"
-			)
-		if action.has("maximum_allowed_discount_amount"):
-			raise Unsupported("a capped discount has no ERPNext coupon equivalent")
-		discount = action.required_child("discount")
-		percentage = discount.optional_decimal("percentage_amount")
-		fixed = discount.optional_decimal("fixed_amount")
-		if percentage is None and fixed is None:
-			raise SourceError(f'"{node.string("name")}" has a discount with no amount.')
+		automatic = node.string("redemption_type") != COUPON_PROMOTION
+		later: list[Condition] = []
+		customer_groups = self._customer(node.child("customer"), later)
+		channels = [channel.integer("id") for channel in node.children("channels")]
+		if channels and STOREFRONT_CHANNEL not in channels:
+			later.append(Condition("channels", {"channels": list[Field](channels)}))
+		for field, kind in (("shipping_address", "shipping_limits"), ("schedule", "schedule")):
+			limit = node.child(field)
+			if limit is not None:
+				later.append(Condition(kind, {"source": source_terms(limit.raw())}))
+		combination: Fields = {
+			"exclusive": node.get("can_be_used_with_other_promotions") is False or None,
+			"stop": node.get("stop") is True or None,
+			"source": source_terms(node.get("coupon_overrides_automatic_when_offering_higher_discounts"))
+			if node.get("coupon_overrides_automatic_when_offering_higher_discounts") is True
+			else None,
+		}
+		if any(value is not None for value in combination.values()):
+			later.append(Condition("combination", combination))
 		codes = node.children("codes")
-		for code in codes:
-			if code.optional_integer("max_uses_per_customer"):
-				raise Unsupported("a per-customer use limit has no ERPNext coupon equivalent")
-			if code.child("schedule") is not None or code.optional_integer("max_uses"):
-				raise Unsupported(
-					"a code with its own schedule or use limit has no ERPNext coupon equivalent"
-				)
 		max_uses = node.optional_integer("max_uses") or None
-		if max_uses is not None and len(codes) > 1:
-			raise Unsupported("a use limit shared across several codes has no ERPNext coupon equivalent")
-		return Desired(
-			self.kind,
-			node.id(),
-			discount_fields(
-				Discount(
-					codes=[code.string("code") for code in codes],
-					description=node.string("name"),
-					discount="percentage" if percentage is not None else "amount",
-					applies="transaction",
-					value=percentage if percentage is not None else fixed or Decimal(0),
-					items=[],
-					groups=[],
-					min_amount=minimum_spend(rules[0]),
-					valid_from=date_of(node.time("start_date")),
-					valid_upto=date_of(node.optional_time("end_date")),
-					max_uses=max_uses,
+		if max_uses is not None and (automatic or len(codes) > 1):
+			later.append(Condition("shared_use_limit", {"uses": max_uses}))
+		rules = node.children("rules")
+		if not rules:
+			raise SourceError(f'BigCommerce promotion "{node.string("name")}" has no rules.')
+		if len(rules) > 1:
+			later.append(Condition("further_rules", {"source": [source_terms(r.raw()) for r in rules[1:]]}))
+		currency = node.optional_string("currency_code")
+		discount = replace(
+			self._rule(rules[0], later),
+			codes=[code.string("code") for code in codes],
+			description=node.string("name"),
+			valid_from=date_of(node.time("start_date")),
+			valid_upto=date_of(node.optional_time("end_date")),
+			max_uses=None if automatic or len(codes) > 1 else max_uses,
+			automatic=automatic,
+			customer_groups=customer_groups,
+			code_limits={code.string("code"): self._code(code) for code in codes},
+			currency=currency if currency and currency != ANY_CURRENCY else None,
+			conditions=later,
+		)
+		return discount_desired(node.id(), discount)
+
+	def _customer(self, customer: Node | None, later: list[Condition]) -> list[str]:
+		"""The customer groups a promotion is for; who else it excludes or asks for is recorded."""
+		if customer is None:
+			return []
+		if excluded := customer.integers("excluded_group_ids"):
+			groups: list[Field] = [self._context.gid("CustomerGroup", i) for i in excluded]
+			later.append(Condition("excluded_customer_groups", {"groups": groups}))
+		if orders := customer.optional_integer("minimum_order_count"):
+			later.append(Condition("customer_history", {"min_orders": orders}))
+		segments = customer.child("segments")
+		if segments is not None:
+			later.append(Condition("customer_segments", {"source": source_terms(segments.raw())}))
+		return [self._context.gid("CustomerGroup", i) for i in customer.integers("group_ids")]
+
+	@staticmethod
+	def _code(code: Node) -> Code:
+		"""A promotion code's own use limit and dates; its per-customer limit is a condition of the code."""
+		schedule = code.child("schedule")
+		per_customer = code.optional_integer("max_uses_per_customer")
+		return Code(
+			max_uses=code.optional_integer("max_uses") or None,
+			valid_from=date_of(schedule.optional_time("valid_from")) if schedule else None,
+			valid_upto=date_of(schedule.optional_time("valid_until")) if schedule else None,
+			conditions=[Condition("per_customer_limit", {"uses": per_customer})] if per_customer else [],
+		)
+
+	def _rule(self, rule: Node, later: list[Condition]) -> Discount:
+		"""A promotion's rule: its condition's minimum spend or quantity (and the items it asks for), and its
+		action's discount, gift or shipping."""
+		bought: Matched | None = None
+		min_amount = min_qty = None
+		condition = rule.child("condition")
+		if condition is not None:
+			cart = condition.child("cart")
+			if cart is None:
+				later.append(Condition("rule_condition", {"source": source_terms(condition.raw())}))
+			else:
+				min_amount = cart.optional_decimal("minimum_spend")
+				quantity = cart.optional_integer("minimum_quantity")
+				min_qty = Decimal(quantity) if quantity else None
+				matcher = cart.child("items")
+				if matcher is not None:
+					bought = self._matcher(matcher)
+					if bought is None:
+						later.append(Condition("item_matcher", {"source": source_terms(matcher.raw())}))
+		base = Discount(
+			codes=[],
+			description=None,
+			discount="percentage",
+			applies="transaction",
+			value=Decimal(0),
+			items=[],
+			groups=[],
+			min_amount=min_amount,
+			min_qty=min_qty,
+			mixed=min_qty is not None,
+			valid_from=None,
+			valid_upto=None,
+			max_uses=None,
+		)
+		action = rule.required_child("action")
+		if (cart_value := action.child("cart_value")) is not None:
+			if bought is not None:
+				# A discount off the order once the cart holds these items: ERPNext's transaction rules
+				# don't look at the items.
+				later.append(
+					Condition(
+						"rule_condition", {"source": source_terms(rule.required_child("condition").raw())}
+					)
 				)
+			self._cap(cart_value, later)
+			kind, value = self._discount(cart_value.required_child("discount"))
+			return replace(base, discount=kind, value=value)
+		if (cart_items := action.child("cart_items")) is not None:
+			return self._cart_items(base, cart_items, bought, rule, later)
+		if (gift := action.child("gift_item")) is not None:
+			return self._gift(base, gift, bought, rule)
+		if (fixed := action.child("fixed_price_set")) is not None:
+			matcher = fixed.child("items")
+			target = self._matcher(matcher) if matcher is not None else Matched([], [], [])
+			price: Fields = {
+				"qty": Decimal(fixed.integer("quantity")),
+				"price": fixed.decimal("fixed_price"),
+				**(
+					target.terms() if target else {"source": source_terms(matcher.raw() if matcher else None)}
+				),
+			}
+			later.append(Condition("fixed_price_set", price))
+			return base
+		if (shipping := action.child("shipping")) is not None:
+			zones = shipping.get("zone_ids")
+			later.append(Condition("free_shipping", {"zones": source_terms(zones)}))
+			return base
+		if (shipping_discount := action.child("shipping_discount")) is not None:
+			kind, value = self._discount(shipping_discount.required_child("discount"))
+			off: Fields = {
+				"discount": kind,
+				"value": value,
+				"cap": shipping_discount.optional_decimal("maximum_allowed_discount_amount"),
+				"methods": source_terms(shipping_discount.get("method_ids")),
+			}
+			later.append(Condition("shipping_discount", off))
+			return base
+		raise SourceError("A BigCommerce promotion rule with an unknown action.")
+
+	def _cart_items(
+		self, base: Discount, action: Node, bought: Matched | None, rule: Node, later: list[Condition]
+	) -> Discount:
+		"""A discount off matching items: per item, or once across them (``as_total``); on at most so many,
+		the cheapest or dearest first; never on sale items."""
+		matcher = action.child("items")
+		target = self._matcher(matcher) if matcher is not None else Matched([], [], [])
+		if target is None:
+			later.append(
+				Condition("item_matcher", {"source": source_terms(matcher.raw() if matcher else None)})
+			)
+			target = Matched([], [], [])
+		self._cap(action, later)
+		if most := action.optional_integer("quantity"):
+			later.append(Condition("item_limit", {"qty": Decimal(most)}))
+		if action.get("exclude_items_on_sale") is True:
+			later.append(Condition("excluded_sale_items"))
+		choice: Fields = {
+			"strategy": action.optional_string("strategy"),
+			"source": source_terms(
+				{
+					key: action.get(key)
+					for key in ("include_items_considered_by_condition", "add_free_item")
+					if action.get(key) is True
+				}
+			)
+			or None,
+		}
+		if any(value is not None for value in choice.values()):
+			later.append(Condition("item_choice", choice))
+		kind, value = self._discount(action.required_child("discount"))
+		if kind == "amount" and action.get("as_total") is True:
+			later.append(Condition("spread_amount", target.terms()))
+			return replace(base, discount=kind, value=value)
+		discounted = replace(
+			base,
+			discount=kind,
+			value=value,
+			applies=target.applies(),
+			items=target.products,
+			groups=target.groups,
+			variants=[(None, v) for v in target.variants],
+		)
+		return self._buying(discounted, bought, target, rule, later)
+
+	def _buying(
+		self, discount: Discount, bought: Matched | None, target: Matched, rule: Node, later: list[Condition]
+	) -> Discount:
+		"""The items a rule's condition asks for, when they differ from those it discounts: ERPNext applies
+		the rule on what is bought and discounts the other item or group (one of them)."""
+		if bought is None or bought.terms() == target.terms() or bought.applies() == "all_items":
+			return discount
+		other = (
+			("items", target.products[0])
+			if len(target.products) == 1 and not target.groups and not target.variants
+			else ("groups", target.groups[0])
+			if len(target.groups) == 1 and not target.products and not target.variants
+			else None
+		)
+		if other is None or len(bought.variants) > 0:
+			later.append(Condition("rule_condition", {"source": source_terms(rule.raw())}))
+			return discount
+		return replace(
+			discount,
+			applies=bought.applies(),
+			items=bought.products,
+			groups=bought.groups,
+			variants=[],
+			other=other,
+		)
+
+	def _gift(self, base: Discount, gift: Node, bought: Matched | None, rule: Node) -> Discount:
+		"""A gift item: free, once, or for every so many bought when the rule repeats (``apply_once`` off)."""
+		product, variant = gift.optional_integer("product_id"), gift.optional_integer("variant_id")
+		repeats = rule.get("apply_once") is False
+		bought = bought or Matched([], [], [])
+		free = FreeItem(
+			product=self._context.gid("Product", product) if product else None,
+			variant=self._context.gid("Variant", variant) if variant else None,
+			qty=Decimal(gift.integer("quantity")),
+			recursive=repeats,
+			recurse_for=(base.min_qty or Decimal(1)) if repeats else None,
+		)
+		return replace(
+			base,
+			applies="transaction" if bought.applies() == "all_items" else bought.applies(),
+			items=bought.products,
+			groups=bought.groups,
+			variants=[(None, v) for v in bought.variants],
+			free=free,
+		)
+
+	def _matcher(self, matcher: Node) -> Matched | None:
+		"""Products, categories or variants; anything else (brands, options, custom fields, and/or/not) is
+		None."""
+		raw = matcher.raw()
+		if set(raw) == {"products"}:
+			return Matched([self._context.gid("Product", i) for i in matcher.integers("products")], [], [])
+		if set(raw) == {"categories"}:
+			return Matched([], [self._context.gid("Category", i) for i in matcher.integers("categories")], [])
+		if set(raw) == {"variants"}:
+			return Matched([], [], [self._context.gid("Variant", i) for i in matcher.integers("variants")])
+		return None
+
+	@staticmethod
+	def _discount(discount: Node) -> tuple[str, Decimal]:
+		percentage = discount.optional_decimal("percentage_amount")
+		if percentage is not None:
+			return "percentage", percentage
+		return "amount", discount.decimal("fixed_amount")
+
+	@staticmethod
+	def _cap(action: Node, later: list[Condition]) -> None:
+		cap = action.optional_decimal("maximum_allowed_discount_amount")
+		if cap is not None:
+			later.append(Condition("cap", {"amount": cap}))
+
+	# -- customer groups and bulk pricing ---------------------------------------------------------------
+
+	def _group_rule(self, node: Node) -> Desired | None:
+		"""One of a customer group's discount rules, automatic for the group's customers."""
+		later: list[Condition] = []
+		applies, products, groups = "all_items", [], []
+		match node.string("type"):
+			case "all":
+				pass
+			case "category":
+				applies, groups = "groups", [self._context.gid("Category", node.integer("category_id"))]
+			case "product":
+				applies, products = "items", [self._context.gid("Product", node.integer("product_id"))]
+			case "price_list":
+				later.append(Condition("price_list", {"source": source_terms(node.integer("price_list_id"))}))
+			case other:
+				raise SourceError(f"A BigCommerce customer group discount of type {other}.")
+		kind = GROUP_METHODS.get(node.optional_string("method") or "percent")
+		if kind is None:
+			raise SourceError(f"A BigCommerce customer group discount by {node.optional_string('method')}.")
+		return discount_desired(
+			node.id(),
+			Discount(
+				codes=[],
+				description=f"{node.string('group_name')}: {node.string('type')}",
+				discount=kind,
+				applies=applies,
+				value=node.optional_decimal("amount") or Decimal(0),
+				items=products,
+				groups=groups,
+				min_amount=None,
+				valid_from=None,
+				valid_upto=None,
+				max_uses=None,
+				automatic=True,
+				customer_groups=[self._context.gid("CustomerGroup", node.integer("group_id"))],
+				conditions=later,
 			),
 		)
 
-
-def minimum_spend(rule: Node) -> Decimal | None:
-	"""The rule's minimum spend, the only condition an ERPNext coupon can check."""
-	condition = rule.child("condition")
-	if condition is None:
-		return None
-	cart = condition.child("cart")
-	if cart is None or set(cart.raw()) - {"minimum_spend"}:
-		raise Unsupported("a promotion condition beyond a minimum spend has no ERPNext coupon equivalent")
-	return cart.optional_decimal("minimum_spend")
+	def _bulk_pricing(self, node: Node) -> Desired | None:
+		"""A product's bulk pricing rules: a tier per quantity band (a fixed price, a percentage or an amount
+		off each unit)."""
+		tiers = []
+		for rule in node.children("bulk_pricing_rules"):
+			kind = BULK_TYPES.get(rule.string("type"))
+			if kind is None:
+				raise SourceError(f"A BigCommerce bulk pricing rule of type {rule.string('type')}.")
+			most = rule.integer("quantity_max")
+			tiers.append(
+				Tier(
+					discount=kind,
+					value=rule.decimal("amount"),
+					min_qty=Decimal(rule.integer("quantity_min")),
+					max_qty=Decimal(most) if most else None,
+				)
+			)
+		if not tiers:
+			return None
+		product = node.integer("product_id")
+		return discount_desired(
+			node.id(),
+			Discount(
+				codes=[],
+				description=f"Bulk pricing, product {product}",
+				discount=tiers[0].discount,
+				applies="items",
+				value=Decimal(0),
+				items=[self._context.gid("Product", product)],
+				groups=[],
+				min_amount=None,
+				valid_from=None,
+				valid_upto=None,
+				max_uses=None,
+				automatic=True,
+				tiers=tiers,
+			),
+		)
 
 
 # ERPNext keeps an exchange rate to nine places.
@@ -785,7 +1147,8 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 	return [
 		CategoryMapper(context),
 		ProductMapper(context),
-		CustomerMapper(),
+		CustomerGroupMapper(),
+		CustomerMapper(context),
 		DiscountMapper(context),
 		OrderMapper(context),
 		PageMapper(),

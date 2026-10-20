@@ -93,12 +93,113 @@
         "is_featured_promotion": false,
         "featured_promotion_callout_message": "",
         "created_from": "react_ui"
+      },
+      {
+        "id": 73,
+        "redemption_type": "AUTOMATIC",
+        "name": "Wholesale toques",
+        "display_name": "Wholesale toques",
+        "channels": [
+          {
+            "id": 1
+          }
+        ],
+        "customer": {
+          "group_ids": [
+            3
+          ],
+          "minimum_order_count": 0,
+          "excluded_group_ids": []
+        },
+        "rules": [
+          {
+            "action": {
+              "cart_items": {
+                "discount": {
+                  "percentage_amount": "10"
+                },
+                "items": {
+                  "categories": [
+                    21
+                  ]
+                },
+                "maximum_allowed_discount_amount": "30",
+                "quantity": 4
+              }
+            },
+            "apply_once": true,
+            "stop": false,
+            "condition": {
+              "cart": {
+                "minimum_quantity": 2
+              }
+            }
+          }
+        ],
+        "current_uses": 0,
+        "status": "ENABLED",
+        "start_date": "2026-09-01T00:00:00+00:00",
+        "end_date": "2026-12-31T23:59:59+00:00",
+        "stop": false,
+        "can_be_used_with_other_promotions": true,
+        "currency_code": "*",
+        "notifications": [],
+        "is_featured_promotion": false,
+        "featured_promotion_callout_message": "",
+        "created_from": "api"
+      },
+      {
+        "id": 74,
+        "redemption_type": "COUPON",
+        "name": "A toque with every order over 75",
+        "display_name": "A toque with every order over 75",
+        "channels": [
+          {
+            "id": 1
+          }
+        ],
+        "customer": {
+          "group_ids": [],
+          "minimum_order_count": 0,
+          "excluded_group_ids": []
+        },
+        "rules": [
+          {
+            "action": {
+              "gift_item": {
+                "product_id": 111,
+                "quantity": 1
+              }
+            },
+            "apply_once": true,
+            "stop": false,
+            "condition": {
+              "cart": {
+                "minimum_spend": "75"
+              }
+            }
+          }
+        ],
+        "current_uses": 0,
+        "status": "ENABLED",
+        "start_date": "2026-09-01T00:00:00+00:00",
+        "end_date": "2026-12-31T23:59:59+00:00",
+        "stop": false,
+        "can_be_used_with_other_promotions": true,
+        "currency_code": "*",
+        "notifications": [],
+        "is_featured_promotion": false,
+        "featured_promotion_callout_message": "",
+        "created_from": "api",
+        "coupon_overrides_automatic_when_offering_higher_discounts": false,
+        "coupon_type": "BULK",
+        "max_uses": 50
       }
     ],
     "meta": {
       "pagination": {
-        "total": 2,
-        "count": 2,
+        "total": 4,
+        "count": 4,
         "per_page": 250,
         "current_page": 1,
         "total_pages": 1,

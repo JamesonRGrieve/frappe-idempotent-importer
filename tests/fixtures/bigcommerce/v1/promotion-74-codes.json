@@ -1,0 +1,39 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v3/promotions/74/codes"
+  },
+  "response": {
+    "data": [
+      {
+        "id": 7401,
+        "code": "BC-GIFT-A",
+        "current_uses": 0,
+        "max_uses": 25,
+        "created": "2026-09-01T00:00:00+00:00"
+      },
+      {
+        "id": 7402,
+        "code": "BC-GIFT-B",
+        "current_uses": 0,
+        "max_uses_per_customer": 1,
+        "created": "2026-09-01T00:00:00+00:00",
+        "schedule": {
+          "valid_from": "2026-10-01T00:00:00+00:00",
+          "valid_until": null
+        }
+      }
+    ],
+    "meta": {
+      "cursor_pagination": {
+        "count": 2,
+        "per_page": 250,
+        "start_cursor": "7401",
+        "end_cursor": "7402",
+        "links": {
+          "previous": "",
+          "next": ""
+        }
+      }
+    }
+  }
+}

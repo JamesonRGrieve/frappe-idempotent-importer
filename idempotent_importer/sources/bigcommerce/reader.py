@@ -3,9 +3,10 @@
 many pages there are, v2 lists end at a short page), ported from wp-woo-idempotent-importer's
 BigCommerceReader. Every node carries its identity as ``id`` (BigCommerce's own id is kept as
 ``source_id``). Products arrive with their variants, brand name and the store's weight unit; orders with
-their lines, shipping addresses, taxes, coupons, shipments and refunds; coupon promotions with their codes;
-blog posts with the store's URL (their thumbnails are store paths). Coupons come before promotions in one
-discount run (the cursor is ``<phase>:<page>``). Products, customers and orders are incremental (by
+their lines, shipping addresses, taxes, coupons, shipments and refunds; promotions with their codes; blog
+posts with the store's URL (their thumbnails are store paths). A discount run reads legacy coupons, then
+promotions, then each customer group's discount rules (one node per rule), then the products that have bulk
+pricing rules (one node per product); the cursor is ``<phase>:<page>``. Products, customers and orders are incremental (by
 modification time); the other kinds are read in full.
 
 BigCommerce's quota is per plan and reported on every response: the requests left in the window and the
@@ -36,7 +37,12 @@ CUSTOMER_INCLUDES = "addresses,storecredit,attributes,formfields"
 ORDER_PARTS = ("products", "shipping_addresses", "taxes", "coupons", "shipments")
 BLOG_PAGE_TYPE = "blog"
 COUPON_PROMOTION = "COUPON"
-PHASE_COUPONS, PHASE_PROMOTIONS = "coupons", "promotions"
+PHASE_COUPONS, PHASE_PROMOTIONS, PHASE_GROUPS, PHASE_BULK = "coupons", "promotions", "groups", "bulk"
+DISCOUNT_PHASES = (PHASE_COUPONS, PHASE_PROMOTIONS, PHASE_GROUPS, PHASE_BULK)
+BULK_PRICING = "bulk_pricing_rules"
+# A customer group discount rule's own identity: its group, its type and what it targets.
+GROUP_RULE_TARGETS = {"category": "category_id", "product": "product_id", "price_list": "price_list_id"}
+GROUP_RULE_SEPARATOR = "-"
 CURSOR_SEPARATOR = ":"
 FIRST_PAGE = 1
 STORE_HASH = re.compile(r"^[a-z0-9]+$")
@@ -110,6 +116,11 @@ class BigCommerceReader:
 					query["date_modified:min"] = iso(since)
 				items, following = self._v3_page("/v3/catalog/products", query, cursor, PRODUCT_PAGE_SIZE)
 				return paged(self._products(items), following)
+			case Kind.CUSTOMER_GROUP:
+				items, following = self._v2_page("/v2/customer_groups", {}, cursor)
+				return paged(
+					[self._identified("CustomerGroup", g.integer("id"), g.raw()) for g in items], following
+				)
 			case Kind.CUSTOMER:
 				query = {"include": CUSTOMER_INCLUDES, "sort": "date_created:asc"}
 				if since is not None:
@@ -149,6 +160,8 @@ class BigCommerceReader:
 
 	def node(self, kind: Kind, gid: str) -> Node | None:
 		identity = Identity.parse(gid)
+		if kind == Kind.DISCOUNT and identity.type == "CustomerGroupRule":
+			return self._group_rule(identity.id)
 		if not identity.id.isdigit():
 			raise SourceError(f"Not a BigCommerce identity: {gid}")
 		source_id = identity.id
@@ -165,6 +178,17 @@ class BigCommerceReader:
 				return self._first(
 					"/v3/customers", {"id:in": source_id, "include": CUSTOMER_INCLUDES}, "Customer", "id"
 				)
+			case Kind.CUSTOMER_GROUP:
+				result = self._client.get(f"/v2/customer_groups/{source_id}")
+				return (
+					None
+					if result is None
+					else self._identified("CustomerGroup", source_id, result.node.raw())
+				)
+			case Kind.DISCOUNT if identity.type == "BulkPricing":
+				result = self._client.get(f"/v3/catalog/products/{source_id}", {"include": BULK_PRICING})
+				product = result.node.child("data") if result else None
+				return None if product is None else self._bulk_pricing(product)
 			case Kind.DISCOUNT if identity.type == "Promotion":
 				result = self._client.get(f"/v3/promotions/{source_id}")
 				promotion = result.node.child("data") if result else None
@@ -225,22 +249,62 @@ class BigCommerceReader:
 		return assembled
 
 	def _discounts(self, cursor: str | None) -> Page:
-		"""Legacy coupons, then promotions."""
+		"""Legacy coupons, then promotions, then customer groups' discount rules, then bulk pricing."""
 		phase, _, page = (cursor or PHASE_COUPONS).partition(CURSOR_SEPARATOR)
-		if phase == PHASE_COUPONS:
-			coupons, following = self._v2_page("/v2/coupons", {"exclude_type": "promotion"}, page or None)
-			nodes = [self._identified("Coupon", c.integer("id"), c.raw()) for c in coupons]
-			after = (
-				f"{PHASE_COUPONS}{CURSOR_SEPARATOR}{following}"
-				if following
-				else f"{PHASE_PROMOTIONS}{CURSOR_SEPARATOR}"
+		nodes: list[Node]
+		match phase:
+			case "coupons":
+				coupons, following = self._v2_page("/v2/coupons", {"exclude_type": "promotion"}, page or None)
+				nodes = [self._identified("Coupon", c.integer("id"), c.raw()) for c in coupons]
+			case "promotions":
+				promotions, following = self._v3_page("/v3/promotions", {}, page or None, PAGE_SIZE)
+				nodes = [self._with_codes(p) for p in promotions]
+			case "groups":
+				groups, following = self._v2_page("/v2/customer_groups", {}, page or None)
+				nodes = [rule for group in groups for rule in self._group_rules(group)]
+			case "bulk":
+				query: Query = {"include": BULK_PRICING, "include_fields": BULK_PRICING}
+				products, following = self._v3_page("/v3/catalog/products", query, page or None, PAGE_SIZE)
+				nodes = [self._bulk_pricing(p) for p in products if p.children(BULK_PRICING)]
+			case _:
+				raise SourceError(f"Not a BigCommerce discount cursor: {cursor}")
+		if following:
+			return Page(nodes, True, f"{phase}{CURSOR_SEPARATOR}{following}")
+		index = DISCOUNT_PHASES.index(phase)
+		if index + 1 < len(DISCOUNT_PHASES):
+			return Page(nodes, True, f"{DISCOUNT_PHASES[index + 1]}{CURSOR_SEPARATOR}")
+		return Page(nodes, False, None)
+
+	def _group_rules(self, group: Node) -> list[Node]:
+		"""A customer group's discount rules, each its own discount: identified by the group, the rule's type
+		and its target (a group has at most one rule per target)."""
+		group_id = group.integer("id")
+		nodes = []
+		for rule in group.children("discount_rules"):
+			rule_type = rule.string("type")
+			target = GROUP_RULE_TARGETS.get(rule_type)
+			key = GROUP_RULE_SEPARATOR.join(
+				(str(group_id), rule_type, *((str(rule.integer(target)),) if target else ()))
 			)
-			return Page(nodes, True, after)
-		promotions, following = self._v3_page("/v3/promotions", {}, page or None, PAGE_SIZE)
-		return paged(
-			[self._with_codes(p) for p in promotions],
-			f"{PHASE_PROMOTIONS}{CURSOR_SEPARATOR}{following}" if following else None,
-		)
+			raw = {**rule.raw(), "group_id": group_id, "group_name": group.string("name")}
+			nodes.append(self._identified("CustomerGroupRule", key, raw))
+		return nodes
+
+	def _group_rule(self, key: str) -> Node | None:
+		group_id = key.split(GROUP_RULE_SEPARATOR, 1)[0]
+		if not group_id.isdigit():
+			raise SourceError(f"Not a BigCommerce customer group rule: {key}")
+		result = self._client.get(f"/v2/customer_groups/{group_id}")
+		rules = self._group_rules(result.node) if result else []
+		return next((rule for rule in rules if rule.string("source_id") == key), None)
+
+	def _bulk_pricing(self, product: Node) -> Node:
+		product_id = product.integer("id")
+		raw: dict[str, JsonValue] = {
+			"product_id": product_id,
+			BULK_PRICING: [r.raw() for r in product.children(BULK_PRICING)],
+		}
+		return self._identified("BulkPricing", product_id, raw)
 
 	def _with_codes(self, promotion: Node) -> Node:
 		"""A promotion, with every one of its codes when customers redeem it with a code."""

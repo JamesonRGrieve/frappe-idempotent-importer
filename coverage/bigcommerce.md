@@ -6,7 +6,7 @@ Management API, v2 and v3 (the OpenAPI documents pinned by hash in `tools/specs.
 proven against them). Its reader, mappers and fixtures are ported from wp-woo-idempotent-importer.
 
 Access: a store-level API account (Settings → Store-level API accounts) with read-only scopes for Products,
-Customers, Orders, Marketing, Content, Sites & Routes and Store Information. The connection holds the
+Customers (customer groups too), Orders, Marketing, Content, Sites & Routes and Store Information. The connection holds the
 storefront URL, the store hash (the code after `/stores/` in the account's API path) as the account, and
 the account's access token as the secret; requests carry it in `X-Auth-Token`. Products, customers and
 orders are incremental (by modification time); the other kinds are read in full. BigCommerce's quota is
@@ -26,9 +26,12 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Stock (`inventory_tracking` product or variant) | **Stock Reconciliation** | Untracked products aren't counted. |
 | Weight in the store's unit | Item weight and UOM | lbs, oz, kg, g. |
 | Old storefront product and category URLs | **Website Route Redirect** (301) | |
+| Customer groups | **Customer Group** `<name> - <abbr>` | Customers are in their group. |
 | Customers | **Customer**, **Contact**, **Address** | Every saved address, the first as billing. |
-| Legacy coupons: percentage (all, some products, some categories), amount per item (some products or categories), amount off the order | **Pricing Rule** + **Coupon Code** | Minimum spend, expiry and use limit. A disabled coupon disables its rule. |
-| Coupon promotions with one rule taking a percentage or amount off the order | **Pricing Rule** + one **Coupon Code** per code | At most a minimum-spend condition; dates and use limit. |
+| Legacy coupons: percentage (all, some products, some categories), amount per item (every product, some products or categories), amount off the order, free shipping, an amount off shipping | **Pricing Rule** + **Coupon Code** | Enforced: the discount and what it applies to, minimum spend, expiry, use limit. Recorded and held (rule disabled, code not redeemable) until the Webshop fork enforces them: per-customer limits, countries and shipping methods, free shipping and shipping discounts (card 405); an order amount off only some products (card 407). A disabled coupon disables its rule. |
+| Promotions, automatic or with codes (one or many) | **Pricing Rule** (automatic, or coupon based with a **Coupon Code** per code) | Enforced: the first rule's percentage or amount off the order or off products, categories or variants (per item), a gift item (once, or for every so many bought), a discount on other items than those the condition asks for (one product or category); minimum spend and quantity; dates; the use limit of a single code and each code's own use limit and dates; customer groups; the promotion's currency. Recorded and held: per-customer limits (of a code: that code alone), a use limit shared by several codes or of an automatic promotion, countries, schedules, combination settings, free shipping and shipping discounts (card 405); caps, amounts once across items, item limits and choices, sale-item exclusions, brand, option or combined item criteria, conditions beyond spend, quantity and items, sets at a fixed price, excluded groups, order counts and segments (card 407); other channels and further rules (an operator decision). |
+| Customer group discount rules (everything, a category, a product: a percentage, an amount off, a fixed price) | Automatic **Pricing Rule** for the **Customer Group** | One per rule. A rule through a price list is recorded and held (an operator decision). The guest group's rules apply to group members only: the guest customer isn't in a group. |
+| Bulk pricing rules | Automatic **Promotional Scheme** on the product, a slab per quantity band | A percentage or amount off each unit, or a fixed unit price. |
 | Orders (every status but incomplete, cancelled, declined) | **Sales Invoice** (submitted when the payment is captured, paid or refunded, else draft) + **Payment Entry** | BigCommerce's totals, exactly; number `#<order id>`. |
 | Orders paid in another currency than the store's default | A multi-currency **Sales Invoice** in the transactional currency at BigCommerce's `store_default_to_transactional_exchange_rate` (inverted: store currency per order currency), paid at that rate | BigCommerce books no total in the store's currency, so only the order-currency total is checked (see the README's currency decision). |
 | Order lines | Invoice lines at their pre-tax prices before discounts, on the variant's item | |
@@ -49,16 +52,12 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 
 | BigCommerce | Why it isn't mirrored |
 |---|---|
-| Free-shipping and shipping-discount coupons | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
-| Coupons limited to countries or shipping methods; per-customer use limits | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
-| Automatic promotions; promotions with several rules, item, shipping or gift actions, capped discounts, customer, address or schedule conditions; codes with their own limits | Planned (card 386): the generalised Pricing Rule / Promotional Scheme writer is built (Shopify, WooCommerce); this source's mapper isn't moved to it yet. Its limits will then be planned on cards 405 (coupon limits, shipping) and 407 (caps, segments). |
 | Product-level stock on a product with option variants | Variants are mirrored untracked (a warning). |
 | Contact-form and link pages | A form and a menu link, not content (reported). |
 | Pending and disapproved reviews | Not published at the source. |
 | Blog post thumbnails | Blog Post has no image of its own. |
 | Abandoned checkouts (incomplete orders), cancelled and declined orders | Not sales. |
-| Customer groups, store credit, customer attributes and form fields | No first-party home for a storefront's segments and custom fields. |
-| Bulk pricing rules | Planned (card 386): a Promotional Scheme per product. |
+| Store credit, customer attributes and form fields | No first-party home for a storefront's custom fields. |
 | Product options and modifiers that aren't variants, related products, videos | Planned: product options (card 408); related products and videos have no first-party Item field. |
 | Wishlists | Planned (card 386): the Webshop's Wishlist. |
 | Brands' own pages, carts, channels, sites, themes, widgets, scripts, menus | Storefront presentation (menus: card 406; abandoned carts: card 415). |

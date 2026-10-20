@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """BigCommerce, through its REST Management API (v2 and v3): categories, products with their variants,
-prices, sales, stock, images and brands, customers, legacy coupons and coupon promotions, orders with their
+prices, sales, stock, images and brands, customer groups, customers, legacy coupons, promotions, customer
+group discounts and bulk pricing, orders with their
 payments, refunds and shipments, content pages, the blog and its posts, product reviews and storefront
 redirects. The operator creates a store-level API account with read-only scopes and enters the store's
 storefront URL, its store hash (the account) and the account's access token."""
@@ -30,6 +31,7 @@ class BigCommerceAdapter:
 		return (
 			Kind.COLLECTION,
 			Kind.PRODUCT,
+			Kind.CUSTOMER_GROUP,
 			Kind.CUSTOMER,
 			Kind.DISCOUNT,
 			Kind.ORDER,

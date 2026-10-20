@@ -38,6 +38,8 @@ BIGCOMMERCE_DOCUMENTS = {
 	"admin-catalog-product-variants": "8597a077b2fd0aac9b98dfa121c8af3f00d77a86fa8460fdef9fdee3d0b9fb8a",
 	"admin-catalog-brands": "66d4560b56f7ad6f09b58a159af44d708715014c15bcd658c072602f8a6b067c",
 	"admin-management-customers-v3": "5576697361ae159a2e6e18c10feca7ec8420912652c97456414cdbf40da1518f",
+	# Customer groups and their discount rules (v2), pinned to the bytes fetched on 2026-10-19.
+	"admin-management-customers-v2": "a59720bb538cada12a843dde91be47adbcb15673cbf1d0665443d8c2a804d761",
 	"admin-content-marketing": "c2469589c1752db9ca39e7eab7191312fa9c36889b1447f6b33cb4c5a49ddf34",
 	"admin-management-promotions": "8c4c0e7e2ca7f4bb226a21563c77ac71e8313d6f6a57c422b804d76ce0999d1b",
 	"admin-management-orders": "b1022156b66d9a0dd89f3f418f0e51dec626686c87906a8f42c417cdcc56c5c2",

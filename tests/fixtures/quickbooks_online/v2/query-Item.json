@@ -1,0 +1,145 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Item( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 4,
+			"Item": [
+				{
+					"Id": "1",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-04T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-04T10:00:00-07:00"
+					},
+					"Name": "Hardware",
+					"Active": true,
+					"SubItem": false,
+					"FullyQualifiedName": "Hardware",
+					"Type": "Category",
+					"Level": 0
+				},
+				{
+					"Id": "2",
+					"SyncToken": "1",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-04T10:01:00-07:00",
+						"LastUpdatedTime": "2026-10-01T09:00:00-07:00"
+					},
+					"Name": "Oak Shelf",
+					"Sku": "OAK-1",
+					"Description": "Solid oak wall shelf",
+					"Active": true,
+					"SubItem": true,
+					"ParentRef": {
+						"value": "1",
+						"name": "Hardware"
+					},
+					"Level": 1,
+					"FullyQualifiedName": "Hardware:Oak Shelf",
+					"Taxable": true,
+					"UnitPrice": 125,
+					"Type": "Inventory",
+					"IncomeAccountRef": {
+						"value": "79",
+						"name": "Sales of Product Income"
+					},
+					"PurchaseDesc": "Oak shelf, unfinished",
+					"PurchaseCost": 60,
+					"ExpenseAccountRef": {
+						"value": "80",
+						"name": "Cost of Goods Sold"
+					},
+					"AssetAccountRef": {
+						"value": "81",
+						"name": "Inventory Asset"
+					},
+					"TrackQtyOnHand": true,
+					"QtyOnHand": 12,
+					"InvStartDate": "2026-01-04",
+					"SalesTaxCodeRef": {
+						"value": "5"
+					},
+					"PurchaseTaxCodeRef": {
+						"value": "5"
+					}
+				},
+				{
+					"Id": "3",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-04T10:02:00-07:00",
+						"LastUpdatedTime": "2026-01-04T10:02:00-07:00"
+					},
+					"Name": "Installation",
+					"Description": "Installation, per hour",
+					"Active": true,
+					"SubItem": false,
+					"FullyQualifiedName": "Installation",
+					"Taxable": true,
+					"UnitPrice": 85,
+					"Type": "Service",
+					"IncomeAccountRef": {
+						"value": "1",
+						"name": "Services"
+					},
+					"TrackQtyOnHand": false,
+					"SalesTaxCodeRef": {
+						"value": "5"
+					}
+				},
+				{
+					"Id": "4",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-04T10:03:00-07:00",
+						"LastUpdatedTime": "2026-01-04T10:03:00-07:00"
+					},
+					"Name": "Brackets",
+					"Sku": "BRK-4",
+					"Active": true,
+					"SubItem": true,
+					"ParentRef": {
+						"value": "1",
+						"name": "Hardware"
+					},
+					"Level": 1,
+					"FullyQualifiedName": "Hardware:Brackets",
+					"Taxable": true,
+					"UnitPrice": 4.5,
+					"Type": "NonInventory",
+					"IncomeAccountRef": {
+						"value": "79",
+						"name": "Sales of Product Income"
+					},
+					"PurchaseCost": 2.25,
+					"ExpenseAccountRef": {
+						"value": "15",
+						"name": "Office Expenses"
+					},
+					"TrackQtyOnHand": false,
+					"SalesTaxCodeRef": {
+						"value": "5"
+					}
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

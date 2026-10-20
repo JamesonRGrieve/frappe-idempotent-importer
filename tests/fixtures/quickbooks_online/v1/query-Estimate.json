@@ -1,0 +1,89 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Estimate( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Estimate": [
+				{
+					"Id": "40",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-01T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-01T09:00:00-07:00"
+					},
+					"DocNumber": "1001",
+					"TxnDate": "2026-02-01",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"LineNum": 1,
+							"Description": "Oak Shelf",
+							"Amount": 480,
+							"DetailType": "SalesItemLineDetail",
+							"SalesItemLineDetail": {
+								"ItemRef": {
+									"value": "2",
+									"name": "Oak Shelf"
+								},
+								"UnitPrice": 120,
+								"Qty": 4,
+								"TaxCodeRef": {
+									"value": "5"
+								}
+							}
+						},
+						{
+							"Amount": 480,
+							"DetailType": "SubTotalLineDetail",
+							"SubTotalLineDetail": {}
+						}
+					],
+					"TxnTaxDetail": {
+						"TxnTaxCodeRef": {
+							"value": "5"
+						},
+						"TotalTax": 62.4,
+						"TaxLine": [
+							{
+								"Amount": 62.4,
+								"DetailType": "TaxLineDetail",
+								"TaxLineDetail": {
+									"TaxRateRef": {
+										"value": "8"
+									},
+									"PercentBased": true,
+									"TaxPercent": 13,
+									"NetAmountTaxable": 480
+								}
+							}
+						]
+					},
+					"CustomerRef": {
+						"value": "1",
+						"name": "Birch Cafe"
+					},
+					"GlobalTaxCalculation": "TaxExcluded",
+					"TotalAmt": 542.4,
+					"TxnStatus": "Pending",
+					"ExpirationDate": "2026-03-01"
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

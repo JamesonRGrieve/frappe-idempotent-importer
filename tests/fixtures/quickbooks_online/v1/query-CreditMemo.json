@@ -1,0 +1,90 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM CreditMemo( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"CreditMemo": [
+				{
+					"Id": "145",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-15T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-15T09:00:00-07:00"
+					},
+					"DocNumber": "1004",
+					"TxnDate": "2026-02-15",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"LineNum": 1,
+							"Description": "Installation",
+							"Amount": 85,
+							"DetailType": "SalesItemLineDetail",
+							"SalesItemLineDetail": {
+								"ItemRef": {
+									"value": "3",
+									"name": "Installation"
+								},
+								"UnitPrice": 85,
+								"Qty": 1,
+								"TaxCodeRef": {
+									"value": "5"
+								}
+							}
+						},
+						{
+							"Amount": 85,
+							"DetailType": "SubTotalLineDetail",
+							"SubTotalLineDetail": {}
+						}
+					],
+					"TxnTaxDetail": {
+						"TxnTaxCodeRef": {
+							"value": "5"
+						},
+						"TotalTax": 11.05,
+						"TaxLine": [
+							{
+								"Amount": 11.05,
+								"DetailType": "TaxLineDetail",
+								"TaxLineDetail": {
+									"TaxRateRef": {
+										"value": "8"
+									},
+									"PercentBased": true,
+									"TaxPercent": 13,
+									"NetAmountTaxable": 85
+								}
+							}
+						]
+					},
+					"CustomerRef": {
+						"value": "1",
+						"name": "Birch Cafe"
+					},
+					"GlobalTaxCalculation": "TaxExcluded",
+					"TotalAmt": 96.05,
+					"RemainingCredit": 96.05,
+					"PrivateNote": "Installation not needed",
+					"Balance": 96.05
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

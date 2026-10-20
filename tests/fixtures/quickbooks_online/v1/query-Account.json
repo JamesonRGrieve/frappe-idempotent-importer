@@ -1,0 +1,311 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Account( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 12,
+			"Account": [
+				{
+					"Id": "35",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Chequing",
+					"SubAccount": false,
+					"FullyQualifiedName": "Chequing",
+					"Active": true,
+					"Classification": "Asset",
+					"AccountType": "Bank",
+					"AccountSubType": "Checking",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "1000"
+				},
+				{
+					"Id": "84",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Accounts Receivable (A/R)",
+					"SubAccount": false,
+					"FullyQualifiedName": "Accounts Receivable (A/R)",
+					"Active": true,
+					"Classification": "Asset",
+					"AccountType": "Accounts Receivable",
+					"AccountSubType": "AccountsReceivable",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "1200"
+				},
+				{
+					"Id": "81",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Inventory Asset",
+					"SubAccount": false,
+					"FullyQualifiedName": "Inventory Asset",
+					"Active": true,
+					"Classification": "Asset",
+					"AccountType": "Other Current Asset",
+					"AccountSubType": "Inventory",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "1300"
+				},
+				{
+					"Id": "33",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Accounts Payable (A/P)",
+					"SubAccount": false,
+					"FullyQualifiedName": "Accounts Payable (A/P)",
+					"Active": true,
+					"Classification": "Liability",
+					"AccountType": "Accounts Payable",
+					"AccountSubType": "AccountsPayable",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "2000"
+				},
+				{
+					"Id": "41",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Visa",
+					"SubAccount": false,
+					"FullyQualifiedName": "Visa",
+					"Active": true,
+					"Classification": "Liability",
+					"AccountType": "Credit Card",
+					"AccountSubType": "CreditCard",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "2100"
+				},
+				{
+					"Id": "89",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "GST/HST Payable",
+					"SubAccount": false,
+					"FullyQualifiedName": "GST/HST Payable",
+					"Active": true,
+					"Classification": "Liability",
+					"AccountType": "Other Current Liability",
+					"AccountSubType": "GlobalTaxPayable",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "2200"
+				},
+				{
+					"Id": "3",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Opening Balance Equity",
+					"SubAccount": false,
+					"FullyQualifiedName": "Opening Balance Equity",
+					"Active": true,
+					"Classification": "Equity",
+					"AccountType": "Equity",
+					"AccountSubType": "OpeningBalanceEquity",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "3000"
+				},
+				{
+					"Id": "79",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Sales of Product Income",
+					"SubAccount": false,
+					"FullyQualifiedName": "Sales of Product Income",
+					"Active": true,
+					"Classification": "Revenue",
+					"AccountType": "Income",
+					"AccountSubType": "SalesOfProductIncome",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "4000"
+				},
+				{
+					"Id": "1",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Services",
+					"SubAccount": false,
+					"FullyQualifiedName": "Services",
+					"Active": true,
+					"Classification": "Revenue",
+					"AccountType": "Income",
+					"AccountSubType": "ServiceFeeIncome",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "4100"
+				},
+				{
+					"Id": "80",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Cost of Goods Sold",
+					"SubAccount": false,
+					"FullyQualifiedName": "Cost of Goods Sold",
+					"Active": true,
+					"Classification": "Expense",
+					"AccountType": "Cost of Goods Sold",
+					"AccountSubType": "SuppliesMaterialsCogs",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "5000"
+				},
+				{
+					"Id": "15",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Office Expenses",
+					"SubAccount": false,
+					"FullyQualifiedName": "Office Expenses",
+					"Active": true,
+					"Classification": "Expense",
+					"AccountType": "Expense",
+					"AccountSubType": "OfficeGeneralAdministrativeExpenses",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "6000"
+				},
+				{
+					"Id": "16",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-02T10:00:00-07:00",
+						"LastUpdatedTime": "2026-01-02T10:00:00-07:00"
+					},
+					"Name": "Postage",
+					"SubAccount": true,
+					"FullyQualifiedName": "Postage",
+					"Active": true,
+					"Classification": "Expense",
+					"AccountType": "Expense",
+					"AccountSubType": "OfficeGeneralAdministrativeExpenses",
+					"CurrentBalance": 0,
+					"CurrentBalanceWithSubAccounts": 0,
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"AcctNum": "6010",
+					"ParentRef": {
+						"value": "15"
+					}
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

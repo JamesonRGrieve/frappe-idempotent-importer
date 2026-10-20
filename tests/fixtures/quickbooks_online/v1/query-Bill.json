@@ -1,0 +1,110 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Bill( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Bill": [
+				{
+					"Id": "160",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-20T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-20T09:00:00-07:00"
+					},
+					"DocNumber": "NL-7781",
+					"TxnDate": "2026-02-20",
+					"DueDate": "2026-03-22",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"VendorRef": {
+						"value": "10",
+						"name": "Northern Lumber Co"
+					},
+					"APAccountRef": {
+						"value": "33",
+						"name": "Accounts Payable (A/P)"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"Description": "Oak Shelf",
+							"Amount": 600,
+							"DetailType": "ItemBasedExpenseLineDetail",
+							"ItemBasedExpenseLineDetail": {
+								"ItemRef": {
+									"value": "2",
+									"name": "Oak Shelf"
+								},
+								"UnitPrice": 60,
+								"Qty": 10,
+								"TaxCodeRef": {
+									"value": "5"
+								},
+								"BillableStatus": "NotBillable"
+							}
+						},
+						{
+							"Id": "2",
+							"Description": "Postage",
+							"Amount": 50,
+							"DetailType": "AccountBasedExpenseLineDetail",
+							"AccountBasedExpenseLineDetail": {
+								"AccountRef": {
+									"value": "16",
+									"name": "Postage"
+								},
+								"BillableStatus": "NotBillable",
+								"TaxCodeRef": {
+									"value": "9"
+								}
+							}
+						}
+					],
+					"TxnTaxDetail": {
+						"TxnTaxCodeRef": {
+							"value": "5"
+						},
+						"TotalTax": 78,
+						"TaxLine": [
+							{
+								"Amount": 78,
+								"DetailType": "TaxLineDetail",
+								"TaxLineDetail": {
+									"TaxRateRef": {
+										"value": "8"
+									},
+									"PercentBased": true,
+									"TaxPercent": 13,
+									"NetAmountTaxable": 600
+								}
+							}
+						]
+					},
+					"GlobalTaxCalculation": "TaxExcluded",
+					"TotalAmt": 728,
+					"Balance": 0,
+					"LinkedTxn": [
+						{
+							"TxnId": "170",
+							"TxnType": "BillPaymentCheck"
+						}
+					]
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

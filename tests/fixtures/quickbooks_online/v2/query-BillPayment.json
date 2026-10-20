@@ -1,0 +1,64 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM BillPayment( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"BillPayment": [
+				{
+					"Id": "170",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-27T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-27T09:00:00-07:00"
+					},
+					"DocNumber": "301",
+					"TxnDate": "2026-02-27",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"VendorRef": {
+						"value": "10",
+						"name": "Northern Lumber Co"
+					},
+					"APAccountRef": {
+						"value": "33",
+						"name": "Accounts Payable (A/P)"
+					},
+					"PayType": "Check",
+					"CheckPayment": {
+						"BankAccountRef": {
+							"value": "35",
+							"name": "Chequing"
+						},
+						"PrintStatus": "NotSet"
+					},
+					"TotalAmt": 728,
+					"Line": [
+						{
+							"Amount": 728,
+							"LinkedTxn": [
+								{
+									"TxnId": "160",
+									"TxnType": "Bill"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

@@ -1,0 +1,65 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM VendorCredit( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"VendorCredit": [
+				{
+					"Id": "165",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-21T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-21T09:00:00-07:00"
+					},
+					"DocNumber": "NL-CR-1",
+					"TxnDate": "2026-02-21",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"VendorRef": {
+						"value": "10",
+						"name": "Northern Lumber Co"
+					},
+					"APAccountRef": {
+						"value": "33",
+						"name": "Accounts Payable (A/P)"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"Description": "Office Expenses",
+							"Amount": 20,
+							"DetailType": "AccountBasedExpenseLineDetail",
+							"AccountBasedExpenseLineDetail": {
+								"AccountRef": {
+									"value": "15",
+									"name": "Office Expenses"
+								},
+								"BillableStatus": "NotBillable",
+								"TaxCodeRef": {
+									"value": "9"
+								}
+							}
+						}
+					],
+					"TotalAmt": 20,
+					"Balance": 20,
+					"GlobalTaxCalculation": "NotApplicable"
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

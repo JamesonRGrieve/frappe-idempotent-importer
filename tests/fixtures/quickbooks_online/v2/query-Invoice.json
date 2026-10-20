@@ -1,0 +1,211 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Invoice( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 2,
+			"Invoice": [
+				{
+					"Id": "130",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-10T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-10T09:00:00-07:00"
+					},
+					"DocNumber": "1001",
+					"TxnDate": "2026-02-10",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"LineNum": 1,
+							"Description": "Oak Shelf",
+							"Amount": 240,
+							"DetailType": "SalesItemLineDetail",
+							"SalesItemLineDetail": {
+								"ItemRef": {
+									"value": "2",
+									"name": "Oak Shelf"
+								},
+								"UnitPrice": 120,
+								"Qty": 2,
+								"TaxCodeRef": {
+									"value": "5"
+								},
+								"ClassRef": {
+									"value": "5000000000000012345"
+								}
+							}
+						},
+						{
+							"Id": "2",
+							"LineNum": 2,
+							"Description": "Installation",
+							"Amount": 85,
+							"DetailType": "SalesItemLineDetail",
+							"SalesItemLineDetail": {
+								"ItemRef": {
+									"value": "3",
+									"name": "Installation"
+								},
+								"UnitPrice": 85,
+								"Qty": 1,
+								"TaxCodeRef": {
+									"value": "5"
+								},
+								"ClassRef": {
+									"value": "5000000000000012345"
+								}
+							}
+						},
+						{
+							"Amount": 325,
+							"DetailType": "SubTotalLineDetail",
+							"SubTotalLineDetail": {}
+						}
+					],
+					"TxnTaxDetail": {
+						"TxnTaxCodeRef": {
+							"value": "5"
+						},
+						"TotalTax": 42.25,
+						"TaxLine": [
+							{
+								"Amount": 42.25,
+								"DetailType": "TaxLineDetail",
+								"TaxLineDetail": {
+									"TaxRateRef": {
+										"value": "8"
+									},
+									"PercentBased": true,
+									"TaxPercent": 13,
+									"NetAmountTaxable": 325
+								}
+							}
+						]
+					},
+					"CustomerRef": {
+						"value": "1",
+						"name": "Birch Cafe"
+					},
+					"GlobalTaxCalculation": "TaxExcluded",
+					"TotalAmt": 367.25,
+					"DueDate": "2026-03-12",
+					"LinkedTxn": [
+						{
+							"TxnId": "150",
+							"TxnType": "Payment"
+						}
+					],
+					"ARAccountRef": {
+						"value": "84"
+					},
+					"SalesTermRef": {
+						"value": "3"
+					},
+					"DepartmentRef": {
+						"value": "1",
+						"name": "Toronto"
+					},
+					"ProjectRef": {
+						"value": "3",
+						"name": "Cafe fit-out"
+					},
+					"Balance": 0
+				},
+				{
+					"Id": "132",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-10-01T09:00:00-07:00",
+						"LastUpdatedTime": "2026-10-01T09:00:00-07:00"
+					},
+					"DocNumber": "1006",
+					"TxnDate": "2026-10-01",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"Line": [
+						{
+							"Id": "1",
+							"LineNum": 1,
+							"Description": "Installation",
+							"Amount": 170,
+							"DetailType": "SalesItemLineDetail",
+							"SalesItemLineDetail": {
+								"ItemRef": {
+									"value": "3",
+									"name": "Installation"
+								},
+								"UnitPrice": 85,
+								"Qty": 2,
+								"TaxCodeRef": {
+									"value": "5"
+								},
+								"ClassRef": {
+									"value": "5000000000000012346"
+								}
+							}
+						},
+						{
+							"Amount": 170,
+							"DetailType": "SubTotalLineDetail",
+							"SubTotalLineDetail": {}
+						}
+					],
+					"TxnTaxDetail": {
+						"TxnTaxCodeRef": {
+							"value": "5"
+						},
+						"TotalTax": 22.1,
+						"TaxLine": [
+							{
+								"Amount": 22.1,
+								"DetailType": "TaxLineDetail",
+								"TaxLineDetail": {
+									"TaxRateRef": {
+										"value": "8"
+									},
+									"PercentBased": true,
+									"TaxPercent": 13,
+									"NetAmountTaxable": 170
+								}
+							}
+						]
+					},
+					"CustomerRef": {
+						"value": "2",
+						"name": "Dana Lee"
+					},
+					"GlobalTaxCalculation": "TaxExcluded",
+					"TotalAmt": 192.1,
+					"DueDate": "2026-10-31",
+					"LinkedTxn": [
+						{
+							"TxnId": "151",
+							"TxnType": "Payment"
+						}
+					],
+					"Balance": 0
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

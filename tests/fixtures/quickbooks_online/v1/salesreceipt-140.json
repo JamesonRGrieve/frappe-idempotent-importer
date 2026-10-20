@@ -1,0 +1,88 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/salesreceipt/140",
+		"query": {
+			"minorversion": "75"
+		}
+	},
+	"response": {
+		"SalesReceipt": {
+			"Id": "140",
+			"SyncToken": "0",
+			"domain": "QBO",
+			"sparse": false,
+			"MetaData": {
+				"CreateTime": "2026-02-12T09:00:00-07:00",
+				"LastUpdatedTime": "2026-02-12T09:00:00-07:00"
+			},
+			"DocNumber": "1003",
+			"TxnDate": "2026-02-12",
+			"CurrencyRef": {
+				"value": "CAD",
+				"name": "Canadian Dollar"
+			},
+			"Line": [
+				{
+					"Id": "1",
+					"LineNum": 1,
+					"Description": "Oak Shelf",
+					"Amount": 120,
+					"DetailType": "SalesItemLineDetail",
+					"SalesItemLineDetail": {
+						"ItemRef": {
+							"value": "2",
+							"name": "Oak Shelf"
+						},
+						"UnitPrice": 120,
+						"Qty": 1,
+						"TaxCodeRef": {
+							"value": "5"
+						}
+					}
+				},
+				{
+					"Amount": 120,
+					"DetailType": "SubTotalLineDetail",
+					"SubTotalLineDetail": {}
+				}
+			],
+			"TxnTaxDetail": {
+				"TxnTaxCodeRef": {
+					"value": "5"
+				},
+				"TotalTax": 15.6,
+				"TaxLine": [
+					{
+						"Amount": 15.6,
+						"DetailType": "TaxLineDetail",
+						"TaxLineDetail": {
+							"TaxRateRef": {
+								"value": "8"
+							},
+							"PercentBased": true,
+							"TaxPercent": 13,
+							"NetAmountTaxable": 120
+						}
+					}
+				]
+			},
+			"CustomerRef": {
+				"value": "2",
+				"name": "Dana Lee"
+			},
+			"GlobalTaxCalculation": "TaxExcluded",
+			"TotalAmt": 135.6,
+			"DepositToAccountRef": {
+				"value": "35",
+				"name": "Chequing"
+			},
+			"PaymentMethodRef": {
+				"value": "1",
+				"name": "Cash"
+			},
+			"PaymentRefNum": "R-1003",
+			"Balance": 0
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

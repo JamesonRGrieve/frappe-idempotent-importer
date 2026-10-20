@@ -1,0 +1,58 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Payment( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Payment": [
+				{
+					"Id": "150",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-02-25T09:00:00-07:00",
+						"LastUpdatedTime": "2026-02-25T09:00:00-07:00"
+					},
+					"TxnDate": "2026-02-25",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"CustomerRef": {
+						"value": "1",
+						"name": "Birch Cafe"
+					},
+					"DepositToAccountRef": {
+						"value": "35",
+						"name": "Chequing"
+					},
+					"PaymentRefNum": "CHQ-2231",
+					"TotalAmt": 367.25,
+					"UnappliedAmt": 0,
+					"ProcessPayment": false,
+					"Line": [
+						{
+							"Amount": 367.25,
+							"LinkedTxn": [
+								{
+									"TxnId": "130",
+									"TxnType": "Invoice"
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

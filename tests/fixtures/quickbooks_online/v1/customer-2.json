@@ -1,0 +1,49 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/customer/2",
+		"query": {
+			"minorversion": "75"
+		}
+	},
+	"response": {
+		"Customer": {
+			"Id": "2",
+			"SyncToken": "0",
+			"domain": "QBO",
+			"sparse": false,
+			"MetaData": {
+				"CreateTime": "2026-01-05T10:01:00-07:00",
+				"LastUpdatedTime": "2026-01-05T10:01:00-07:00"
+			},
+			"DisplayName": "Dana Lee",
+			"GivenName": "Dana",
+			"FamilyName": "Lee",
+			"FullyQualifiedName": "Dana Lee",
+			"PrintOnCheckName": "Dana Lee",
+			"Active": true,
+			"Job": false,
+			"BillWithParent": false,
+			"Taxable": true,
+			"IsProject": false,
+			"PrimaryEmailAddr": {
+				"Address": "dana.lee@example.com"
+			},
+			"BillAddr": {
+				"Id": "4",
+				"Line1": "88 King St E",
+				"City": "Hamilton",
+				"CountrySubDivisionCode": "ON",
+				"PostalCode": "L8N 1A1",
+				"Country": "Canada"
+			},
+			"CurrencyRef": {
+				"value": "CAD",
+				"name": "Canadian Dollar"
+			},
+			"Balance": 50.85,
+			"BalanceWithJobs": 50.85,
+			"PreferredDeliveryMethod": "None"
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

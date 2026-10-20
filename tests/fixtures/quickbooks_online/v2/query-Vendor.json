@@ -1,0 +1,55 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Vendor( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Vendor": [
+				{
+					"Id": "10",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-01-05T11:00:00-07:00",
+						"LastUpdatedTime": "2026-01-05T11:00:00-07:00"
+					},
+					"DisplayName": "Northern Lumber Co",
+					"CompanyName": "Northern Lumber Co",
+					"PrintOnCheckName": "Northern Lumber Co",
+					"Active": true,
+					"Vendor1099": false,
+					"PrimaryEmailAddr": {
+						"Address": "ar@northernlumber.example"
+					},
+					"PrimaryPhone": {
+						"FreeFormNumber": "(705) 555-0199"
+					},
+					"BillAddr": {
+						"Id": "11",
+						"Line1": "400 Mill Rd",
+						"City": "Sudbury",
+						"CountrySubDivisionCode": "ON",
+						"PostalCode": "P3A 1A1",
+						"Country": "Canada"
+					},
+					"BusinessNumber": "123456789RT0001",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"Balance": 0
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

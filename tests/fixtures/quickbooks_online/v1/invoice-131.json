@@ -1,0 +1,80 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/invoice/131",
+		"query": {
+			"minorversion": "75"
+		}
+	},
+	"response": {
+		"Invoice": {
+			"Id": "131",
+			"SyncToken": "0",
+			"domain": "QBO",
+			"sparse": false,
+			"MetaData": {
+				"CreateTime": "2026-02-11T09:00:00-07:00",
+				"LastUpdatedTime": "2026-02-11T09:00:00-07:00"
+			},
+			"DocNumber": "1002",
+			"TxnDate": "2026-02-11",
+			"CurrencyRef": {
+				"value": "CAD",
+				"name": "Canadian Dollar"
+			},
+			"Line": [
+				{
+					"Id": "1",
+					"LineNum": 1,
+					"Description": "Brackets",
+					"Amount": 45.0,
+					"DetailType": "SalesItemLineDetail",
+					"SalesItemLineDetail": {
+						"ItemRef": {
+							"value": "4",
+							"name": "Brackets"
+						},
+						"UnitPrice": 4.5,
+						"Qty": 10,
+						"TaxCodeRef": {
+							"value": "5"
+						}
+					}
+				},
+				{
+					"Amount": 45.0,
+					"DetailType": "SubTotalLineDetail",
+					"SubTotalLineDetail": {}
+				}
+			],
+			"TxnTaxDetail": {
+				"TxnTaxCodeRef": {
+					"value": "5"
+				},
+				"TotalTax": 5.85,
+				"TaxLine": [
+					{
+						"Amount": 5.85,
+						"DetailType": "TaxLineDetail",
+						"TaxLineDetail": {
+							"TaxRateRef": {
+								"value": "8"
+							},
+							"PercentBased": true,
+							"TaxPercent": 13,
+							"NetAmountTaxable": 45.0
+						}
+					}
+				]
+			},
+			"CustomerRef": {
+				"value": "2",
+				"name": "Dana Lee"
+			},
+			"GlobalTaxCalculation": "TaxExcluded",
+			"TotalAmt": 50.85,
+			"DueDate": "2026-03-13",
+			"Balance": 50.85
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

@@ -1,0 +1,59 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Deposit( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Deposit": [
+				{
+					"Id": "190",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-03-01T09:00:00-07:00",
+						"LastUpdatedTime": "2026-03-01T09:00:00-07:00"
+					},
+					"TxnDate": "2026-03-01",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"DepositToAccountRef": {
+						"value": "35",
+						"name": "Chequing"
+					},
+					"PrivateNote": "Consulting fee",
+					"TotalAmt": 100,
+					"Line": [
+						{
+							"Id": "1",
+							"LineNum": 1,
+							"Amount": 100,
+							"DetailType": "DepositLineDetail",
+							"DepositLineDetail": {
+								"AccountRef": {
+									"value": "1",
+									"name": "Services"
+								},
+								"Entity": {
+									"value": "1",
+									"name": "Birch Cafe"
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/query",
+		"query": {
+			"minorversion": "75"
+		},
+		"query_patterns": {
+			"query": "SELECT \\* FROM Transfer( WHERE .*)? ORDERBY MetaData\\.CreateTime STARTPOSITION 1 MAXRESULTS 1000"
+		}
+	},
+	"response": {
+		"QueryResponse": {
+			"startPosition": 1,
+			"maxResults": 1,
+			"Transfer": [
+				{
+					"Id": "195",
+					"SyncToken": "0",
+					"domain": "QBO",
+					"sparse": false,
+					"MetaData": {
+						"CreateTime": "2026-03-02T09:00:00-07:00",
+						"LastUpdatedTime": "2026-03-02T09:00:00-07:00"
+					},
+					"TxnDate": "2026-03-02",
+					"CurrencyRef": {
+						"value": "CAD",
+						"name": "Canadian Dollar"
+					},
+					"FromAccountRef": {
+						"value": "35",
+						"name": "Chequing"
+					},
+					"ToAccountRef": {
+						"value": "41",
+						"name": "Visa"
+					},
+					"Amount": 200,
+					"PrivateNote": "Card payment"
+				}
+			]
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

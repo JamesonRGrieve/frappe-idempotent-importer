@@ -1,0 +1,39 @@
+{
+	"request": {
+		"path": "/v3/company/9341452345/customer/3",
+		"query": {
+			"minorversion": "75"
+		}
+	},
+	"response": {
+		"Customer": {
+			"Id": "3",
+			"SyncToken": "0",
+			"domain": "QBO",
+			"sparse": false,
+			"MetaData": {
+				"CreateTime": "2026-01-06T10:00:00-07:00",
+				"LastUpdatedTime": "2026-01-06T10:00:00-07:00"
+			},
+			"DisplayName": "Cafe fit-out",
+			"FullyQualifiedName": "Birch Cafe:Cafe fit-out",
+			"Active": true,
+			"Job": true,
+			"BillWithParent": true,
+			"ParentRef": {
+				"value": "1",
+				"name": "Birch Cafe"
+			},
+			"Level": 1,
+			"IsProject": true,
+			"Notes": "Shelving and counters for the new location.",
+			"CurrencyRef": {
+				"value": "CAD",
+				"name": "Canadian Dollar"
+			},
+			"Balance": 0,
+			"BalanceWithJobs": 0
+		},
+		"time": "2026-10-15T09:00:00.000-07:00"
+	}
+}

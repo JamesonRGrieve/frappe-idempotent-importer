@@ -22,6 +22,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 import frappe
+from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
 
@@ -595,6 +596,57 @@ def amount(value: Any) -> Decimal:
 	return Decimal(str(value)).quantize(Decimal("0.01"))
 
 
+def assert_discount(
+	connection: str,
+	type_: str,
+	source_id: str,
+	cards: str | None,
+	kinds: list[str],
+	what: str,
+	held_codes: dict[str, str] | None = None,
+) -> None:
+	"""A mirrored discount: held awaiting ``cards`` (disabled, its conditions ``kinds`` recorded, none of its
+	codes redeemable), or, when ``cards`` is None, enabled with none recorded and its codes redeemable but
+	for ``held_codes`` (a code held by its own conditions, and the cards it awaits)."""
+	name = target(connection, "discount", type_, source_id)
+	doctype = frappe.db.get_value(
+		"Importer Link", {"connection": connection, "kind": "discount", "target_name": name}, "target_doctype"
+	)
+	record = frappe.db.get_value(
+		doctype, name, ["disable", "importer_hold", "importer_conditions"], as_dict=True
+	)
+	recorded = [c["kind"] for c in json.loads(record.importer_conditions or "[]")]
+	hold = f"held: awaiting enforcement ({cards})" if cards else None
+	expect((record.disable, record.importer_hold, recorded), (int(bool(cards)), hold, kinds), what)
+	if doctype == "Promotional Scheme":
+		return
+	live = frappe.get_all(
+		"Importer Link",
+		filters={
+			"connection": connection,
+			"kind": "coupon",
+			"gid": ["like", f"%/{type_}/{source_id}#%"],
+			"retired": 0,
+		},
+		pluck="target_name",
+	)
+	for coupon in frappe.get_all(
+		"Coupon Code", filters={"name": ["in", live or [""]]}, fields=["name", "coupon_code", "importer_hold"]
+	):
+		try:
+			validate_coupon_code(coupon.name)
+			redeemable = True
+		except frappe.ValidationError:
+			redeemable = False
+		own = (held_codes or {}).get(coupon.coupon_code)
+		code_hold = f"held: awaiting enforcement ({own})" if own and not cards else hold
+		expect(
+			(redeemable, coupon.importer_hold),
+			(not cards and not own, code_hold),
+			f"{what}: code {coupon.coupon_code}",
+		)
+
+
 @check
 def assert_woocommerce(connection: str, state: str) -> None:
 	"""The WooCommerce fixtures' state ``state`` as it should land in ERPNext."""
@@ -757,13 +809,10 @@ def assert_woocommerce(connection: str, state: str) -> None:
 		1,
 		"the deleted coupon's rule",
 	)
-	expect(
-		frappe.db.get_value(
-			"Pricing Rule", target(connection, "discount", "Coupon", "304"), ["coupon_code_based", "disable"]
-		),
-		(1, 0),
-		"the email-restricted coupon, written (its restriction planned: card 405)",
+	assert_discount(
+		connection, "Coupon", "304", "card 405", ["emails"], "the email-restricted coupon, held for card 405"
 	)
+	assert_discount(connection, "Coupon", "301", None, [], "the unlimited coupon, enabled")
 	expect(
 		frappe.db.get_value("Web Page", target(connection, "page", "Page", "702"), "published"),
 		0,
@@ -911,16 +960,25 @@ def assert_shopify(state: str) -> None:
 			"tracking_status": "In Progress",
 		},
 	)
-	for discount in ("701", "702"):
-		expect(
-			frappe.db.get_value(
-				"Pricing Rule",
-				target(connection, "discount", "DiscountCodeNode", discount),
-				"coupon_code_based",
-			),
-			1,
-			f"discount {discount}, written (its once-per-customer limit or free shipping planned: card 405)",
-		)
+	assert_discount(
+		connection,
+		"DiscountCodeNode",
+		"701",
+		"card 405",
+		["once_per_customer", "shared_use_limit"],
+		"discount 701 (once per customer, one limit for two codes), held",
+	)
+	assert_discount(
+		connection,
+		"DiscountCodeNode",
+		"702",
+		"card 405",
+		["free_shipping"],
+		"free-shipping discount 702, held",
+	)
+	assert_discount(
+		connection, "DiscountCodeNode", "704", None, [], "discount 704 (a use limit only), enabled"
+	)
 	draft = target(connection, "draft_order", "DraftOrder", "901")
 	quotation = frappe.db.get_value("Quotation", draft, ["docstatus", "grand_total", "title"], as_dict=True)
 	if state == "v1":

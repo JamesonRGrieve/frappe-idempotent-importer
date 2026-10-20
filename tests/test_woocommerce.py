@@ -19,6 +19,7 @@ from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
 from idempotent_importer.sources.woocommerce.reader import WooCommerceReader
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, woocommerce
 
 ADAPTER = WooCommerceAdapter()
@@ -297,42 +298,75 @@ class TestCoupons:
 		assert (hoodie.string("discount"), hoodie.string("applies")) == ("amount", "items")
 		assert hoodie.strings("items") == ["gid://woocommerce/woo-a/Product/102"]
 
-	def test_limits_the_webshop_enforces_are_planned(self, woo_config: ConnectionConfig) -> None:
+	def test_limits_the_webshop_enforces_are_recorded_and_held(self, woo_config: ConnectionConfig) -> None:
 		desired = mapped(woo_config, Kind.DISCOUNT, "304")
 		assert desired is not None
-		assert desired.warnings == ("its email restrictions (planned: card 405)",)
+		assert condition_kinds(desired) == ["emails"]
+		assert held(desired) == ["card 405"]
 		assert desired.values().strings("codes")
 
+	def test_an_unlimited_coupon_is_not_held(self, woo_config: ConnectionConfig) -> None:
+		welcome = mapped(woo_config, Kind.DISCOUNT, "301")
+		assert (condition_kinds(welcome), held(welcome)) == ([], [])
+
+	def test_every_limit_is_recorded_with_its_terms(self, woo_config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]
+		limited = mapper.map(
+			nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(
+				excluded_product_ids=[102],
+				excluded_product_categories=[21],
+				email_restrictions=["Avery@Example.com"],
+				exclude_sale_items=True,
+				usage_limit_per_user=1,
+				free_shipping=True,
+				limit_usage_to_x_items=3,
+			)
+		)
+		assert condition_kinds(limited) == [
+			"excluded_items",
+			"excluded_groups",
+			"emails",
+			"excluded_sale_items",
+			"per_customer_limit",
+			"free_shipping",
+			"item_limit",
+		]
+		assert terms(limited, "excluded_items") == {"items": ["gid://woocommerce/woo-a/Product/102"]}
+		assert terms(limited, "emails") == {"emails": ["avery@example.com"]}
+		assert terms(limited, "per_customer_limit") == {"uses": 1}
+		assert terms(limited, "item_limit") == {"qty": Decimal(3)}
+		assert held(limited) == ["card 405", "card 407"]
+
 	@pytest.mark.parametrize(
-		("change", "applies", "warning"),
+		("change", "applies", "condition"),
 		[
 			({"discount_type": "fixed_product"}, "all_items", None),
-			({"free_shipping": True}, "transaction", "its free shipping (planned: card 405)"),
+			({"free_shipping": True}, "transaction", "free_shipping"),
 			(
 				{"limit_usage_to_x_items": 2},
 				"transaction",
-				"its limit on the items discounted (planned: card 407)",
+				"item_limit",
 			),
 			(
 				{"discount_type": "fixed_cart", "product_ids": [102]},
 				"transaction",
-				"its amount off only the cart's qualifying products (planned: card 407)",
+				"spread_amount",
 			),
 			(
 				{"product_ids": [102], "product_categories": [21]},
 				"items",
-				"its categories beside its products (planned: card 405)",
+				"groups_beside_items",
 			),
 		],
 	)
 	def test_every_coupon_is_written(
-		self, woo_config: ConnectionConfig, change: dict[str, JsonValue], applies: str, warning: str | None
+		self, woo_config: ConnectionConfig, change: dict[str, JsonValue], applies: str, condition: str | None
 	) -> None:
 		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]
 		desired = mapper.map(nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(**change))
 		assert desired is not None
 		assert desired.values().string("applies") == applies
-		assert desired.warnings == ((warning,) if warning else ())
+		assert condition_kinds(desired) == ([condition] if condition else [])
 
 	def test_a_maximum_spend_and_a_subscription_coupon(self, woo_config: ConnectionConfig) -> None:
 		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]

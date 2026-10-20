@@ -15,7 +15,10 @@ customer     name, type ("Individual" | "Company"), first_name, last_name, compa
              addresses ([address]); optionally group (customer_group identity | None)
 discount     codes, description, discount ("percentage" | "amount"), applies ("transaction" | "items" |
              "groups"), value, items, groups (identities), min_amount, valid_from, valid_upto (dates),
-             max_uses
+             max_uses; optionally automatic, variants, min_qty, max_qty, max_amount, mixed, customers,
+             customer_groups, free, other, tiers, conditions ([{kind, card, terms}]: see ``CONDITIONS``),
+             held (the cards it awaits), code_limits ({code: {max_uses, valid_upto, conditions, held}}),
+             currency (only orders in it; the company's when absent)
 order        number, currency, created_at, submitted, customer (identity | None), guest ({name, email,
              phone} | None), billing, shipping (address | None), lines ([line]), discount, charges
              ([charge]), total, payment ({method, reference, date} | None), refunds ([{gid, date, reason,
@@ -43,6 +46,7 @@ Times are UTC ``YYYY-MM-DDTHH:MM:SSZ``; money and quantities are exact Decimals.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field, replace
 from decimal import Decimal
 
@@ -51,6 +55,7 @@ from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields, Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.money import decimal_text, exact_quotient, minor_units
+from idempotent_importer.core.node import JsonValue
 
 
 @dataclass(frozen=True)
@@ -316,16 +321,178 @@ class Tier:
 	max_amount: Decimal | None = None
 
 
+# The companion cards that enforce what ERPNext's pricing doesn't (the frappe-webshop fork's), and the hold
+# of a condition no card covers yet: it waits for the operator to choose its home.
+COUPON_LIMITS = "card 405"
+DISCOUNT_CAPS = "card 407"
+OPERATOR_DECISION = "an operator decision"
+
+# Every discount condition ERPNext's pricing doesn't enforce, and the card that will. A condition's terms are
+# the source's, in the contract's vocabulary (identities, Decimals, ISO codes; ``source`` is the source's own
+# description of it, as it sent it); the fork reads them:
+#   once_per_customer      {}                         one use per customer
+#   per_customer_limit     {uses}                     uses per customer
+#   shared_use_limit       {uses}                     one use limit across all of a discount's codes, or of a
+#                                                     discount with no code
+#   emails                 {emails}                   only these customers' email addresses
+#   excluded_items         {items?, variants?}        never these products or variants (identities)
+#   excluded_groups        {groups}                   never these collections (identities)
+#   excluded_sale_items    {}                         never items on sale
+#   groups_beside_items    {groups}                   these collections qualify beside the rule's products
+#   free_shipping          {max_shipping_price?, methods?, zones?, countries?}  free shipping
+#   shipping_discount      {discount, value, cap?, methods?}  a percentage or amount off shipping
+#   shipping_limits        {methods?, countries?, source?}  only these shipping methods or destinations
+#   schedule               {source}                   only on the source's days and times
+#   combination            {exclusive?, stop?, source?}  how it combines with other discounts
+#   customer_segments      {segments?}                only customers in these segments
+#   excluded_customer_groups {groups}                 never customers of these groups (identities)
+#   several_customers      {customers}                only these customers (a code applies one rule)
+#   several_customer_groups {groups}                  only customers of these groups (a code applies one rule)
+#   customer_history       {min_orders?, new?, returning?}  only new or returning customers
+#   cap                    {amount}                   at most this much off
+#   spread_amount          {items?, groups?, variants?}  an amount once, spread across only these items
+#   item_limit             {qty}                      on at most this many items
+#   item_choice            {strategy?, source?}       which of the qualifying items are discounted
+#   item_matcher           {source}                   items chosen by the source's other criteria (brands,
+#                                                     options, attributes, combinations of criteria)
+#   rule_condition         {source}                   a condition beyond spend, quantity and items
+#   fixed_price_set        {qty, price, items?, groups?}  so many qualifying items for one price
+#   further_rules          {source}                   the source's further rules, after the one written
+#   channels               {channels}                 only the source's other sales channels
+#   price_list             {source}                   the source's own price list
+#   applied_by_staff       {}                         applied by staff at the point of sale, never by itself
+CONDITIONS: dict[str, str] = {
+	"once_per_customer": COUPON_LIMITS,
+	"per_customer_limit": COUPON_LIMITS,
+	"shared_use_limit": COUPON_LIMITS,
+	"emails": COUPON_LIMITS,
+	"excluded_items": COUPON_LIMITS,
+	"excluded_groups": COUPON_LIMITS,
+	"excluded_sale_items": COUPON_LIMITS,
+	"groups_beside_items": COUPON_LIMITS,
+	"free_shipping": COUPON_LIMITS,
+	"shipping_discount": COUPON_LIMITS,
+	"shipping_limits": COUPON_LIMITS,
+	"schedule": COUPON_LIMITS,
+	"combination": COUPON_LIMITS,
+	"customer_segments": DISCOUNT_CAPS,
+	"excluded_customer_groups": DISCOUNT_CAPS,
+	"several_customers": DISCOUNT_CAPS,
+	"several_customer_groups": DISCOUNT_CAPS,
+	"customer_history": DISCOUNT_CAPS,
+	"cap": DISCOUNT_CAPS,
+	"spread_amount": DISCOUNT_CAPS,
+	"item_limit": DISCOUNT_CAPS,
+	"item_choice": DISCOUNT_CAPS,
+	"item_matcher": DISCOUNT_CAPS,
+	"rule_condition": DISCOUNT_CAPS,
+	"fixed_price_set": DISCOUNT_CAPS,
+	"further_rules": OPERATOR_DECISION,
+	"channels": OPERATOR_DECISION,
+	"price_list": OPERATOR_DECISION,
+	"applied_by_staff": OPERATOR_DECISION,
+}
+# The conditions the Webshop fork enforces. A discount with any other condition is held: written disabled,
+# its codes not redeemable. When the fork enforces a condition, add it here; the next run enables the
+# discounts it held.
+ENFORCED: frozenset[str] = frozenset()
+
+
+def source_terms(value: JsonValue) -> Field:
+	"""A source's own description of a condition (a JSON value) as recorded terms: numbers that aren't whole
+	are exact Decimals, as the source wrote them."""
+	if isinstance(value, float):
+		return Decimal(str(value))
+	if isinstance(value, list):
+		return [source_terms(item) for item in value]
+	if isinstance(value, dict):
+		return {key: source_terms(item) for key, item in value.items()}
+	return value
+
+
+@dataclass(frozen=True)
+class Condition:
+	"""A condition of a source's discount ERPNext's pricing doesn't enforce, recorded on the discount for
+	the companion card that will (``CONDITIONS``): its kind and the source's terms."""
+
+	kind: str
+	terms: Fields = field(default_factory=dict)
+
+	def __post_init__(self) -> None:
+		if self.kind not in CONDITIONS:
+			raise ValueError(f"{self.kind} is not a discount condition")
+
+	@property
+	def card(self) -> str:
+		return CONDITIONS[self.kind]
+
+
+def condition_fields(conditions: list[Condition]) -> list[Field]:
+	return [
+		{"kind": c.kind, "card": c.card, "terms": {k: v for k, v in c.terms.items() if v is not None}}
+		for c in conditions
+	]
+
+
+def held_for(conditions: list[Condition]) -> list[str]:
+	"""The cards a discount (or code) with these conditions is held for: those of the conditions the fork
+	doesn't enforce yet."""
+	return sorted({c.card for c in conditions if c.kind not in ENFORCED})
+
+
+def hold_label(cards: list[str]) -> str:
+	return f"held: awaiting enforcement ({', '.join(cards)})"
+
+
+def conditions_json(conditions: list[Values]) -> str | None:
+	"""Recorded conditions as the record keeps them for the fork: JSON, keys sorted, amounts as decimal
+	strings; None when there are none."""
+	if not conditions:
+		return None
+	return json.dumps([c.all() for c in conditions], default=decimal_text, sort_keys=True)
+
+
+def conditions_summary(conditions: list[Values]) -> str:
+	"""The conditions a held discount awaits, for its warning: "once_per_customer (card 405), cap (card 407)"."""
+	return ", ".join(
+		f"{c.string('kind')} ({c.string('card')})" for c in conditions if c.string("kind") not in ENFORCED
+	)
+
+
+@dataclass(frozen=True)
+class Code:
+	"""What one code of a discount holds of its own, where the source gives a code its own limits: its
+	use limit and dates (enforced by its Coupon Code), and conditions (recorded, and holding that code)."""
+
+	max_uses: int | None = None
+	valid_upto: str | None = None
+	conditions: list[Condition] = field(default_factory=list)
+	valid_from: str | None = None
+
+
+def code_fields(code: Code) -> Fields:
+	fields: Fields = {
+		"max_uses": code.max_uses,
+		"valid_from": code.valid_from,
+		"valid_upto": code.valid_upto,
+		"conditions": condition_fields(code.conditions) or None,
+		"held": list[Field](held_for(code.conditions)) or None,
+	}
+	return {key: value for key, value in fields.items() if value is not None}
+
+
 @dataclass(frozen=True)
 class Discount:
 	"""A discount as ERPNext's pricing holds it: codes (none when automatic); a percentage, an amount or a
 	fixed rate (``discount``: "percentage" | "amount" | "rate") off the transaction, some products (and
 	single ``variants``, as (product, variant) identities), some collections, or every item
 	(``applies``: "transaction" | "items" | "groups" | "all_items"), or an item given (``free``); with its
-	minimum and maximum quantity (across the items together when ``mixed``) and spend, dates and use limit;
-	for some ``customers`` or ``customer_groups`` (identities); on other items than those bought
-	(``other``: ("items" | "groups", identity)); in ``tiers``. What the source's discount holds beyond
-	that is ``planned`` (each a condition and the companion card that enforces it): the rest is written."""
+	minimum and maximum quantity (across the items together when ``mixed``) and spend, dates and use limit
+	(of each code); for some ``customers`` or ``customer_groups`` (identities); on other items than those
+	bought (``other``: ("items" | "groups", identity)); in ``tiers``; a code's own limits in ``code_limits``;
+	only in one ``currency`` (the company's when None).
+	What the source's discount holds beyond that is in ``conditions``: recorded on the discount, which is
+	held (disabled, its codes not redeemable) until the fork enforces each of them."""
 
 	codes: list[str]
 	description: str | None
@@ -349,7 +516,9 @@ class Discount:
 	free: FreeItem | None = None
 	other: tuple[str, str] | None = None
 	tiers: list[Tier] = field(default_factory=list)
-	planned: list[str] = field(default_factory=list)
+	conditions: list[Condition] = field(default_factory=list)
+	code_limits: dict[str, Code] = field(default_factory=dict)
+	currency: str | None = None
 
 
 def discount_fields(discount: Discount) -> Fields:
@@ -380,7 +549,13 @@ def discount_fields(discount: Discount) -> Fields:
 		"free": free_fields(discount.free) if discount.free else None,
 		"other": {"applies": discount.other[0], "target": discount.other[1]} if discount.other else None,
 		"tiers": [tier_fields(tier) for tier in discount.tiers] or None,
-		"planned": list[Field](discount.planned) or None,
+		"conditions": condition_fields(discount.conditions) or None,
+		"held": list[Field](held_for(discount.conditions)) or None,
+		"code_limits": {
+			code: own for code, limits in discount.code_limits.items() if (own := code_fields(limits))
+		}
+		or None,
+		"currency": discount.currency,
 	}
 	return fields | {key: value for key, value in extra.items() if value is not None}
 
@@ -410,18 +585,7 @@ def tier_fields(tier: Tier) -> Fields:
 
 
 def discount_desired(gid: str, discount: Discount) -> Desired:
-	"""A discount's desired state; what it holds that is planned companion work is reported as warnings."""
-	return Desired(Kind.DISCOUNT, gid, discount_fields(discount), warnings=tuple(discount.planned))
-
-
-# The companion cards that enforce what ERPNext's pricing doesn't (the frappe-webshop fork's).
-COUPON_LIMITS = "card 405"
-DISCOUNT_CAPS = "card 407"
-
-
-def planned(condition: str, card: str) -> str:
-	"""A discount condition ERPNext's pricing doesn't enforce, and the companion card that will."""
-	return f"{condition} (planned: {card})"
+	return Desired(Kind.DISCOUNT, gid, discount_fields(discount))
 
 
 def date_of(time: str | None) -> str | None:

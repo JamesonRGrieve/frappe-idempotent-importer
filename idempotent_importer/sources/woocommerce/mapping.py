@@ -11,10 +11,9 @@ from decimal import Decimal
 from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
-	COUPON_LIMITS,
-	DISCOUNT_CAPS,
 	Address,
 	Charge,
+	Condition,
 	Discount,
 	OrderLine,
 	Shipment,
@@ -24,7 +23,6 @@ from idempotent_importer.contract import (
 	discount_desired,
 	line_fields,
 	order_line,
-	planned,
 	rating_fraction,
 	refund_balance,
 	shipment_fields,
@@ -48,16 +46,6 @@ HIDDEN = "hidden"
 PAID_STATUSES = frozenset({"processing", "completed", "refunded"})
 # Orders awaiting payment: a draft invoice, submitted once paid.
 UNPAID_STATUSES = frozenset({"pending", "on-hold"})
-# Coupon limits ERPNext's Pricing Rule + Coupon Code don't enforce (the Webshop fork's, planned), and how a
-# coupon names them.
-COUPON_LIMIT_FIELDS = (
-	("excluded_product_ids", "excluded products"),
-	("excluded_product_categories", "excluded categories"),
-	("email_restrictions", "email restrictions"),
-	("exclude_sale_items", "exclusion of sale items"),
-	("usage_limit_per_user", "per-customer use limit"),
-	("free_shipping", "free shipping"),
-)
 WOO_MAX_RATING = 5
 
 
@@ -263,7 +251,7 @@ def woo_address(address_type: str, node: Node | None) -> Address | None:
 
 class CouponMapper:
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -271,20 +259,14 @@ class CouponMapper:
 	def map(self, node: Node) -> Desired | None:
 		"""A coupon: its percentage or amount off the cart, some products, some categories or every
 		product, its minimum and maximum spend, expiry and use limit. Exclusions, email and per-user limits,
-		sale-item exclusions and free shipping are coupon limits, and a limit on the items discounted a cap,
-		that the Webshop fork enforces (planned); the rest is written."""
+		sale-item exclusions and free shipping (card 405), and a limit on the items discounted (card 407),
+		are conditions the Webshop fork enforces: recorded, and the coupon held until it does."""
 		products = [self._context.gid("Product", pid) for pid in node.integers("product_ids")]
 		groups = [self._context.gid("ProductCategory", cid) for cid in node.integers("product_categories")]
-		later: list[str] = [
-			planned(f"its {label}", COUPON_LIMITS)
-			for field, label in COUPON_LIMIT_FIELDS
-			if node.get(field) not in (None, False, 0, "", [])
-		]
-		if node.optional_integer("limit_usage_to_x_items"):
-			later.append(planned("its limit on the items discounted", DISCOUNT_CAPS))
+		later = self._conditions(node)
 		if products and groups:
 			# A product in either list qualifies; one Pricing Rule applies to items or to groups.
-			later.append(planned("its categories beside its products", COUPON_LIMITS))
+			later.append(Condition("groups_beside_items", {"groups": list[Field](groups)}))
 			groups = []
 		discount_type = node.string("discount_type")
 		match discount_type:
@@ -292,7 +274,11 @@ class CouponMapper:
 				kind, applies = "percentage", "items" if products else "groups" if groups else "transaction"
 			case "fixed_cart":
 				if products or groups:
-					later.append(planned("its amount off only the cart's qualifying products", DISCOUNT_CAPS))
+					spread: Fields = {
+						"items": list[Field](products) or None,
+						"groups": list[Field](groups) or None,
+					}
+					later.append(Condition("spread_amount", spread))
 					products, groups = [], []
 				kind, applies = "amount", "transaction"
 			case "fixed_product":
@@ -316,9 +302,31 @@ class CouponMapper:
 			valid_upto=date_of(node.optional_time("date_expires_gmt")),
 			max_uses=node.optional_integer("usage_limit"),
 			max_amount=maximum if maximum else None,
-			planned=later,
+			conditions=later,
 		)
 		return discount_desired(node.id(), discount)
+
+	def _conditions(self, node: Node) -> list[Condition]:
+		"""What a coupon limits beyond ERPNext's pricing, in WooCommerce's order of its fields."""
+		found: list[Condition] = []
+		if excluded := node.integers("excluded_product_ids"):
+			items: list[Field] = [self._context.gid("Product", i) for i in excluded]
+			found.append(Condition("excluded_items", {"items": items}))
+		if excluded := node.integers("excluded_product_categories"):
+			groups: list[Field] = [self._context.gid("ProductCategory", i) for i in excluded]
+			found.append(Condition("excluded_groups", {"groups": groups}))
+		if emails := node.strings("email_restrictions"):
+			addresses: list[Field] = [e.lower() for e in emails]
+			found.append(Condition("emails", {"emails": addresses}))
+		if node.get("exclude_sale_items") is True:
+			found.append(Condition("excluded_sale_items"))
+		if uses := node.optional_integer("usage_limit_per_user"):
+			found.append(Condition("per_customer_limit", {"uses": uses}))
+		if node.get("free_shipping") is True:
+			found.append(Condition("free_shipping"))
+		if most := node.optional_integer("limit_usage_to_x_items"):
+			found.append(Condition("item_limit", {"qty": Decimal(most)}))
+		return found
 
 
 # ERPNext keeps an exchange rate to nine places.

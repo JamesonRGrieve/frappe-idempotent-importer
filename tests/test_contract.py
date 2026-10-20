@@ -8,11 +8,16 @@ from typing import ClassVar
 
 import pytest
 
+from idempotent_importer import contract
 from idempotent_importer.contract import (
 	Charge,
+	Code,
+	Condition,
 	Discount,
 	OrderLine,
 	booked,
+	conditions_json,
+	conditions_summary,
 	date_of,
 	discount_fields,
 	included_taxes,
@@ -146,6 +151,55 @@ def test_discount_fields_and_dates() -> None:
 	assert (fields["codes"], fields["items"], fields["max_uses"]) == (["A", "B"], ["gid://x/c/P/1"], 3)
 	assert date_of("2026-09-01T10:00:00Z") == "2026-09-01"
 	assert date_of(None) is None
+	assert "held" not in fields and "conditions" not in fields
+
+
+def test_conditions_are_recorded_and_hold_their_discount(monkeypatch: pytest.MonkeyPatch) -> None:
+	discount = Discount(
+		["A", "B"],
+		None,
+		"percentage",
+		"transaction",
+		Decimal(10),
+		[],
+		[],
+		None,
+		None,
+		None,
+		None,
+		conditions=[
+			Condition("cap", {"amount": Decimal("25.50"), "unused": None}),
+			Condition("once_per_customer"),
+		],
+		code_limits={"B": Code(max_uses=1, conditions=[Condition("per_customer_limit", {"uses": 1})])},
+	)
+	fields = discount_fields(discount)
+	assert fields["conditions"] == [
+		{"kind": "cap", "card": "card 407", "terms": {"amount": Decimal("25.50")}},
+		{"kind": "once_per_customer", "card": "card 405", "terms": {}},
+	]
+	assert fields["held"] == ["card 405", "card 407"]
+	assert fields["code_limits"] == {
+		"B": {
+			"max_uses": 1,
+			"conditions": [{"kind": "per_customer_limit", "card": "card 405", "terms": {"uses": 1}}],
+			"held": ["card 405"],
+		}
+	}
+	recorded = Values(fields).records("conditions")
+	assert conditions_json(recorded) == (
+		'[{"card": "card 407", "kind": "cap", "terms": {"amount": "25.5"}}, '
+		'{"card": "card 405", "kind": "once_per_customer", "terms": {}}]'
+	)
+	assert conditions_json([]) is None
+	assert conditions_summary(recorded) == "cap (card 407), once_per_customer (card 405)"
+	monkeypatch.setattr(contract, "ENFORCED", frozenset({"once_per_customer"}))
+	assert discount_fields(discount)["held"] == ["card 407"], "an enforced condition no longer holds it"
+	assert conditions_summary(recorded) == "cap (card 407)"
+	monkeypatch.setattr(contract, "ENFORCED", frozenset(contract.CONDITIONS))
+	assert "held" not in discount_fields(discount), "every condition enforced: the discount is enabled"
+	with pytest.raises(ValueError, match="not a discount condition"):
+		Condition("anything")
 
 
 class TestNaming:

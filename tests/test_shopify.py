@@ -44,6 +44,7 @@ from idempotent_importer.sources.shopify.queries import (
 	entity_query,
 )
 from idempotent_importer.sources.shopify.reader import ShopifyReader, search_query
+from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, scripted, shopify
 
 ADAPTER = ShopifyAdapter()
@@ -579,10 +580,13 @@ class TestMappers:
 	def test_a_voided_order_has_no_invoice(self, shopify_config: ConnectionConfig) -> None:
 		assert mapped(shopify_config, Kind.ORDER, "802") is None
 
-	def test_discount_limits_are_planned(self, shopify_config: ConnectionConfig) -> None:
-		for discount, warning in (("701", "once-per-customer"), ("702", "free shipping")):
+	def test_discount_limits_are_recorded_and_held(self, shopify_config: ConnectionConfig) -> None:
+		for discount, kinds in (
+			("701", ["once_per_customer", "shared_use_limit"]),
+			("702", ["free_shipping"]),
+		):
 			desired = mapped(shopify_config, Kind.DISCOUNT, discount)
-			assert desired is not None and warning in desired.warnings[0]
+			assert (condition_kinds(desired), held(desired)) == (kinds, ["card 405"])
 		with pytest.raises(Unsupported, match="DiscountCodeBxgy"):
 			mapped(shopify_config, Kind.DISCOUNT, "703")
 
@@ -740,7 +744,7 @@ class TestDiscounts:
 		assert self.MAPPER.map(basic_discount(status="EXPIRED")) is None
 
 	@pytest.mark.parametrize(
-		("change", "field", "wanted", "warning"),
+		("change", "field", "wanted", "condition"),
 		[
 			(
 				{
@@ -768,7 +772,7 @@ class TestDiscounts:
 				{"appliesOncePerCustomer": True},
 				"applies",
 				"transaction",
-				"its once-per-customer limit (planned: card 405)",
+				"once_per_customer",
 			),
 			(
 				{
@@ -803,12 +807,13 @@ class TestDiscounts:
 		],
 	)
 	def test_every_basic_discount_is_written(
-		self, change: JsonObject, field: str, wanted: JsonValue, warning: str | None
+		self, change: JsonObject, field: str, wanted: JsonValue, condition: str | None
 	) -> None:
 		desired = self.MAPPER.map(basic_discount(**change))
 		assert desired is not None
 		assert desired.values().all()[field] == wanted
-		assert desired.warnings == ((warning,) if warning else ())
+		assert condition_kinds(desired) == ([condition] if condition else [])
+		assert held(desired) == (["card 405"] if condition else [])
 
 	def test_automatic_and_free_shipping_discounts(self) -> None:
 		automatic = self.MAPPER.map(basic_discount(__typename="DiscountAutomaticBasic", codes=None))
@@ -834,9 +839,60 @@ class TestDiscounts:
 			)
 		)
 		assert shipping is not None
-		assert shipping.warnings == ("its free shipping (planned: card 405)",)
+		assert terms(shipping, "free_shipping") == {}
+		assert held(shipping) == ["card 405"]
 		with pytest.raises(Unsupported, match="operator decision"):
 			self.MAPPER.map(basic_discount(__typename="DiscountCodeBxgy"))
+
+	def test_what_pricing_cant_enforce_is_recorded_with_its_terms(self) -> None:
+		shared = self.MAPPER.map(
+			basic_discount(usageLimit=50, codes={"nodes": [{"code": "TEN"}, {"code": "TENNER"}]})
+		)
+		assert terms(shared, "shared_use_limit") == {"uses": 50}
+		assert shared is not None and shared.values().optional_integer("max_uses") == 50
+		spread = self.MAPPER.map(
+			basic_discount(
+				customerGets={
+					"value": {
+						"__typename": "DiscountAmount",
+						"amount": {"amount": "5"},
+						"appliesOnEachItem": False,
+					},
+					"items": {
+						"__typename": "DiscountProducts",
+						"products": {"nodes": [{"id": "gid://shopify/shop-s/Product/1"}]},
+						"productVariants": {"nodes": [{"id": "gid://shopify/shop-s/ProductVariant/2"}]},
+					},
+				}
+			)
+		)
+		assert terms(spread, "spread_amount") == {
+			"items": ["gid://shopify/shop-s/Product/1"],
+			"variants": ["gid://shopify/shop-s/ProductVariant/2"],
+		}
+		assert held(spread) == ["card 407"]
+		segments = self.MAPPER.map(basic_discount(context={"__typename": "DiscountCustomerSegments"}))
+		assert condition_kinds(segments) == ["customer_segments"]
+		several = self.MAPPER.map(
+			basic_discount(
+				context={
+					"__typename": "DiscountCustomers",
+					"customers": [
+						{"id": "gid://shopify/shop-s/Customer/1"},
+						{"id": "gid://shopify/shop-s/Customer/2"},
+					],
+				}
+			)
+		)
+		assert terms(several, "several_customers") == {
+			"customers": ["gid://shopify/shop-s/Customer/1", "gid://shopify/shop-s/Customer/2"]
+		}
+		assert several is not None and not several.values().strings("customers")
+
+	def test_an_unlimited_discount_is_not_held(self) -> None:
+		desired = self.MAPPER.map(basic_discount())
+		assert (condition_kinds(desired), held(desired)) == ([], [])
+		assert desired is not None and "held" not in desired.fields
 
 
 class TestOrderStates:

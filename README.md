@@ -202,10 +202,19 @@ Each of these is the operator's call.
    item, recursively); on the transaction, products, single variants, collections or every item; minimum
    and maximum quantity and spend, dates, use limit, a customer or customer group (source groups mirror to
    Customer Groups `<name> - <abbr>`), discounts on other items than those bought. What a source's
-   discount holds that ERPNext's pricing doesn't enforce is written without it and reported as planned
-   companion work in the frappe-webshop fork: coupon limits and shipping discounts (per-customer and
-   email limits, exclusions, free shipping: card 405), discount caps and segments (an amount spread across
-   some items, a limit on the items discounted, customer segments: card 407).
+   discount holds that ERPNext's pricing doesn't enforce fails closed: each condition is recorded on the
+   Pricing Rule, Promotional Scheme and Coupon Code (`importer_conditions`: its kind, the companion card in
+   the frappe-webshop fork that enforces it, and the source's terms), and the discount is **held**: written
+   disabled, marked "held: awaiting enforcement (card N)" (`importer_hold`), its codes not redeemable (a
+   Coupon Code has no disabled flag, so a held code is valid until yesterday; the source's dates stay on
+   its rule), with one warning per run that writes it. Coupon limits and shipping discounts are card 405
+   (per-customer, once-per-customer, shared and email limits, exclusions, free shipping, shipping
+   discounts and limits, schedules, combination settings); discount caps and segments card 407 (caps, an
+   amount spread across some items, item limits and choices, other item criteria and conditions, customer
+   segments, groups and history, several customers on a code); what no card covers yet (other sales
+   channels, further rules, a source's own price lists, staff-applied discounts) awaits an operator
+   decision. A code with conditions of its own is held alone. When the fork enforces a condition, it joins
+   `contract.ENFORCED` and the next run enables the discounts it held.
 7. **Shopify's compare-at price** becomes the Item Price, and Shopify's price an open-ended sale (a
    Pricing Rule), which is how the webshop shows a sale.
 8. **Retiring without deleting:** a Website Route Redirect row has no disabled flag, so a retired redirect's

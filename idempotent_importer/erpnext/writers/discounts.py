@@ -6,8 +6,16 @@ A rule discounts a price (a percentage, an amount, or a fixed rate) or gives an 
 the same item bought, recursively for every so many), on the transaction, some items (variants included),
 some item groups or every item of the connection; after a minimum (and up to a maximum) quantity or spend;
 for one customer or customer group; optionally on other items than the ones bought (buy X, get Y). An
-automatic discount has no codes. What a source's discount holds that ERPNext's pricing doesn't enforce is
-planned companion work: the mapper lists it (a warning), and writes the rest.
+automatic discount has no codes.
+
+What a source's discount holds that ERPNext's pricing doesn't enforce (``contract.CONDITIONS``) is recorded on
+the record, as JSON in ``importer_conditions`` (each condition's kind, the card that enforces it, and the
+source's terms), for the Webshop fork to read. A discount with any condition the fork doesn't enforce yet is
+held, failing closed: written disabled, marked in ``importer_hold`` ("held: awaiting enforcement (card N)"),
+logged once as a warning, and its codes not redeemable. A Coupon Code has no disabled flag, so a held code
+expires as a dropped code does (valid until yesterday, no start); the source's dates stay on its rule. A
+code with conditions of its own is held alone. Once the fork enforces every condition (``ENFORCED``), the
+discount's change signal changes and the next run enables it.
 
 Coupon Codes are scoped to the connection's Webshop Store (the Webshop fork makes a code unique per store, and
 a store-less code applies on every store). Two connections on different stores can hold the same code at
@@ -17,11 +25,13 @@ copy would apply on, and clash with, every store."""
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 import frappe
 from frappe.utils import add_days, nowdate
 
+from idempotent_importer.contract import conditions_json, conditions_summary, hold_label
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import UnresolvedDependency, Unsupported
 from idempotent_importer.core.fields import Values
@@ -29,6 +39,8 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity
 from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+
+logger = logging.getLogger(__name__)
 
 PRICING_RULE, SCHEME = "Pricing Rule", "Promotional Scheme"
 APPLY_ON = {
@@ -78,12 +90,24 @@ class DiscountWriter(Writer):
 		else:
 			doc.update(self._rule(values, bool(codes)))
 			self.save(doc)
+		held = sorted(
+			{
+				*values.strings("held"),
+				*(c for code in codes for c in code_limits(values, code).strings("held")),
+			}
+		)
+		if held:
+			conditions = [
+				*values.records("conditions"),
+				*(c for code in codes for c in code_limits(values, code).records("conditions")),
+			]
+			logger.warning("%s is %s: %s", desired.gid, hold_label(held), conditions_summary(conditions))
 		for code in codes:
 			self._coupon(desired.gid, code, doc.name, values)
 		for coupon in self.links.children(Kind.COUPON, f"{desired.gid}#"):
 			if coupon.gid.split("#", 1)[1] not in codes:
 				# A code the source dropped: it expires (a Coupon Code has no disabled flag).
-				frappe.db.set_value("Coupon Code", coupon.target.name, "valid_upto", add_days(nowdate(), -1))
+				frappe.db.set_value("Coupon Code", coupon.target.name, "valid_upto", yesterday())
 				self.links.retire(Kind.COUPON, coupon.gid)
 		return Target(doctype, doc.name)
 
@@ -117,10 +141,12 @@ class DiscountWriter(Writer):
 			"selling": 1,
 			"buying": 0,
 			"company": self.context.company,
-			"currency": self.context.currency,
+			"currency": values.optional_string("currency") or self.context.currency,
 			"valid_from": values.optional_string("valid_from"),
 			"valid_upto": values.optional_string("valid_upto"),
-			"disable": 0,
+			"disable": int(bool(values.strings("held"))),
+			"importer_conditions": conditions_json(values.records("conditions")),
+			"importer_hold": hold_label(values.strings("held")) if values.has("held") else None,
 			"apply_rule_on_other": "",
 			**self._applicable_for(values),
 		}
@@ -263,20 +289,40 @@ class DiscountWriter(Writer):
 		return [str(row.name) for row in rows if not row.webshop_store or row.webshop_store == store]
 
 	def _coupon(self, gid: str, code: str, rule: str, values: Values) -> None:
+		"""One code: the discount's use limit, dates and conditions, with what the source gives the code of its
+		own. A held code (its discount's conditions, or its own) is valid until yesterday."""
 		key = f"{gid}#{code}"
 		existing = self.links.target(Kind.COUPON, key)
 		doc = frappe.get_doc("Coupon Code", existing) if existing else frappe.new_doc("Coupon Code")
-		doc.update(
-			{
-				"coupon_name": self.context.suffixed(code),
-				"coupon_code": code,
-				"webshop_store": self.context.webshop_store,
-				"coupon_type": "Promotional",
-				"pricing_rule": rule,
-				"maximum_use": values.optional_integer("max_uses") or 0,
-				"valid_from": values.optional_string("valid_from"),
-				"valid_upto": values.optional_string("valid_upto"),
-			}
-		)
+		limits = code_limits(values, code)
+		conditions = [*values.records("conditions"), *limits.records("conditions")]
+		held = sorted({*values.strings("held"), *limits.strings("held")})
+		fields: dict[str, Any] = {
+			"coupon_name": self.context.suffixed(code),
+			"coupon_code": code,
+			"webshop_store": self.context.webshop_store,
+			"coupon_type": "Promotional",
+			"pricing_rule": rule,
+			# The code comes from another platform: it may name its rule while the rule is held (disabled).
+			"from_external_ecomm_platform": 1,
+			"maximum_use": limits.optional_integer("max_uses") or values.optional_integer("max_uses") or 0,
+			"valid_from": limits.optional_string("valid_from") or values.optional_string("valid_from"),
+			"valid_upto": limits.optional_string("valid_upto") or values.optional_string("valid_upto"),
+			"importer_conditions": conditions_json(conditions),
+			"importer_hold": hold_label(held) if held else None,
+		}
+		if held:
+			fields |= {"valid_from": None, "valid_upto": yesterday()}
+		doc.update(fields)
 		doc.save(ignore_permissions=True)
 		self.links.save(Kind.COUPON, key, Target("Coupon Code", doc.name), PART_HASH, 1)
+
+
+def code_limits(values: Values, code: str) -> Values:
+	"""What the source gives one code of its own (its use limit, expiry and conditions), if anything."""
+	return (values.record("code_limits") or Values({})).record(code) or Values({})
+
+
+def yesterday() -> str:
+	"""The last day a retired or held code was valid: a Coupon Code has no disabled flag."""
+	return str(add_days(nowdate(), -1))

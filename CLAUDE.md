@@ -23,7 +23,8 @@ truth for what each source mirrors and what is a gap. Python rules:
   refuses as too costly), `queries` + `graphql/{fragments,operations}`. `sources/registry.py` is the single list of sources;
   listed-but-unbuilt ones are `ListedAdapter`s that refuse to run.
 - `erpnext/` — the Frappe side: `stores` (Importer Link/Seen/Run, cursors, lock, credential hold),
-  `context` (a connection's targets), `media`, `writers/` (one writer per kind: catalog, parties,
+  `context` (a connection's targets), `media`, `custom_fields` (what the app adds to ERPNext's discount
+  records: held discounts' recorded conditions), `writers/` (one writer per kind: catalog, parties,
   discounts, sales (invoices and quotations), shipping, content), `engine` (builds and drives a run), `jobs` (scheduler + step jobs).
 - `api.py` (Sync Now), `commands.py` (`bench idempotent-import`), `hooks.py`, doctypes under
   `idempotent_importer/doctype/` (Importer Connection, Importer Link, Importer Run, Importer Seen).

@@ -46,6 +46,26 @@
           }
         },
         {
+          "id": "gid://shopify/DiscountCodeNode/704",
+          "discount": {
+            "__typename": "DiscountCodeBasic",
+            "title": "Welcome 5",
+            "status": "ACTIVE",
+            "startsAt": "2026-09-01T00:00:00Z",
+            "endsAt": null,
+            "updatedAt": "2026-09-01T12:00:00Z",
+            "usageLimit": 20,
+            "appliesOncePerCustomer": false,
+            "codes": {"pageInfo": {"hasNextPage": false, "endCursor": null}, "nodes": [{"code": "WELCOME5"}]},
+            "context": {"__typename": "DiscountBuyerSelectionAll"},
+            "minimumRequirement": null,
+            "customerGets": {
+              "value": {"__typename": "DiscountPercentage", "percentage": 0.05},
+              "items": {"__typename": "AllDiscountItems"}
+            }
+          }
+        },
+        {
           "id": "gid://shopify/DiscountCodeNode/703",
           "discount": {
             "__typename": "DiscountCodeBxgy",

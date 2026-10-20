@@ -11,14 +11,13 @@ from dataclasses import replace
 from decimal import Decimal
 
 from idempotent_importer.contract import (
-	COUPON_LIMITS,
-	DISCOUNT_CAPS,
 	FEE,
 	SHIPPING,
 	SHIPPING_TAX,
 	TAX,
 	Address,
 	Charge,
+	Condition,
 	Discount,
 	LineRates,
 	OrderLine,
@@ -30,7 +29,6 @@ from idempotent_importer.contract import (
 	included_taxes,
 	line_fields,
 	order_line,
-	planned,
 	refund_balance,
 	shipment_fields,
 )
@@ -386,14 +384,14 @@ class CustomerMapper:
 class DiscountMapper:
 	"""Code and automatic discounts: a basic one's percentage or amount off everything, some products,
 	single variants or some collections, after a minimum spend or quantity, for every customer or some;
-	a free-shipping one's code. What ERPNext's pricing doesn't enforce is planned companion work (a
-	once-per-customer limit and free shipping: coupon limits, card 405; customer segments and an amount
-	spread across some items: card 407) and the rest is written. Buy X Get Y and app discounts are
-	Unsupported: their fields aren't read (the query's cost is recorded from a live store, see
-	coverage/shopify.md)."""
+	a free-shipping one's code. What ERPNext's pricing doesn't enforce is recorded as conditions, which hold
+	the discount (a once-per-customer limit, a use limit shared by several codes and free shipping: card 405;
+	customer segments, several customers on a code and an amount spread across some items: card 407). Buy X
+	Get Y and app discounts are Unsupported: their fields aren't read (the query's cost is recorded from a
+	live store, see coverage/shopify.md)."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def map(self, node: Node) -> Desired | None:
 		discount = node.required_child("discount")
@@ -403,10 +401,19 @@ class DiscountMapper:
 		if discount.string("status") != ACTIVE:
 			return None
 		automatic = typename in AUTOMATIC
-		later: list[str] = []
-		if discount.flag("appliesOncePerCustomer"):
-			later.append(planned("its once-per-customer limit", COUPON_LIMITS))
+		later: list[Condition] = []
+		if not automatic and discount.flag("appliesOncePerCustomer"):
+			later.append(Condition("once_per_customer"))
 		customers = self._customers(discount.child("context"), automatic, later)
+		codes = (
+			[]
+			if automatic
+			else [c.string("code") for c in discount.required_child("codes").children("nodes")]
+		)
+		max_uses = None if automatic else discount.optional_integer("usageLimit")
+		if max_uses is not None and len(codes) > 1:
+			# Shopify's limit counts the discount's uses, whichever code: each code alone is held to it too.
+			later.append(Condition("shared_use_limit", {"uses": max_uses}))
 		minimum = discount.child("minimumRequirement")
 		min_amount = min_qty = None
 		if minimum is not None:
@@ -415,9 +422,7 @@ class DiscountMapper:
 			else:
 				min_qty = minimum.decimal("greaterThanOrEqualToQuantity")
 		base = Discount(
-			codes=[]
-			if automatic
-			else [c.string("code") for c in discount.required_child("codes").children("nodes")],
+			codes=codes,
 			description=discount.optional_string("title"),
 			discount="percentage",
 			applies="transaction",
@@ -429,13 +434,18 @@ class DiscountMapper:
 			mixed=min_qty is not None,
 			valid_from=date_of(discount.optional_time("startsAt")),
 			valid_upto=date_of(discount.optional_time("endsAt")),
-			max_uses=None if automatic else discount.optional_integer("usageLimit"),
+			max_uses=max_uses,
 			automatic=automatic,
 			customers=customers,
-			planned=later,
+			conditions=later,
 		)
 		if typename in FREE_SHIPPING:
-			later.append(planned("its free shipping", COUPON_LIMITS))
+			ceiling = discount.child("maximumShippingPrice")
+			later.append(
+				Condition(
+					"free_shipping", {"max_shipping_price": ceiling.decimal("amount") if ceiling else None}
+				)
+			)
 			return discount_desired(node.id(), base)
 		gets = discount.required_child("customerGets")
 		value = gets.required_child("value")
@@ -467,7 +477,12 @@ class DiscountMapper:
 				kind, amount = "amount", value.required_child("amount").decimal("amount")
 				if not value.flag("appliesOnEachItem"):
 					if applies != "all_items":
-						later.append(planned("its amount spread across some items", DISCOUNT_CAPS))
+						spread: Fields = {
+							"items": list[Field](products) or None,
+							"variants": [v for _, v in variants] or None,
+							"groups": list[Field](groups) or None,
+						}
+						later.append(Condition("spread_amount", spread))
 					applies, products, variants, groups = "transaction", [], [], []
 			case other:
 				raise SourceError(f"A discount value of type {other}.")
@@ -483,17 +498,18 @@ class DiscountMapper:
 		return discount_desired(node.id(), rule)
 
 	@staticmethod
-	def _customers(context: Node | None, automatic: bool, later: list[str]) -> list[str]:
+	def _customers(context: Node | None, automatic: bool, later: list[Condition]) -> list[str]:
 		"""The customers a discount is for: every one (none listed), or some. A code applies one Pricing
-		Rule, so a code for several customers, like one for customer segments, is planned (card 407)."""
+		Rule, so a code for several customers, like one for customer segments, is a condition (card 407).
+		Segments' ids aren't read (the query's cost is recorded from a live store)."""
 		if context is None or context.typename() == "DiscountBuyerSelectionAll":
 			return []
 		if context.typename() != "DiscountCustomers":
-			later.append(planned("its customer segments", DISCOUNT_CAPS))
+			later.append(Condition("customer_segments"))
 			return []
 		customers = [c.id() for c in context.children("customers")]
 		if len(customers) > 1 and not automatic:
-			later.append(planned("its several customers", DISCOUNT_CAPS))
+			later.append(Condition("several_customers", {"customers": list[Field](customers)}))
 			return []
 		return customers
 

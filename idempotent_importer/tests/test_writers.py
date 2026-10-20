@@ -9,6 +9,7 @@ the first business's Public Site) and is rolled back afterwards."""
 
 from __future__ import annotations
 
+import json
 import re
 import struct
 import zlib
@@ -17,11 +18,16 @@ from contextlib import contextmanager
 from dataclasses import replace
 from decimal import Decimal
 from typing import Any
+from unittest.mock import patch
 
 import frappe
+from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.doctype.tag.tag import DocTags
 from frappe.tests import IntegrationTestCase
+from frappe.utils import add_days, nowdate
 
+from idempotent_importer import contract
+from idempotent_importer.contract import Code, Condition, Discount, Tier, discount_fields
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields
@@ -390,6 +396,16 @@ class TestWriters(IntegrationTestCase):
 			(coupon.coupon_name, coupon.webshop_store, coupon.pricing_rule, coupon.maximum_use),
 			("WTEST10 - WT", self.context.webshop_store, rule, 5),
 		)
+		self.assertEqual(
+			(
+				frappe.db.get_value("Pricing Rule", rule, "disable"),
+				coupon.importer_hold,
+				coupon.importer_conditions,
+			),
+			(0, None, None),
+			"a discount with no unenforced condition is enabled",
+		)
+		validate_coupon_code(coupon.name)
 		dropped = frappe.db.get_value("Coupon Code", {"coupon_name": "WTEST11 - WT"}, "valid_upto")
 		self.assertIsNotNone(dropped, "a code dropped at the source expires")
 		frappe.db.set_value("Pricing Rule", rule, "priority", "5")
@@ -582,6 +598,94 @@ class TestWriters(IntegrationTestCase):
 			Outcome.UNSUPPORTED,
 			"customers and groups at once",
 		)
+
+	def held_discount(self, codes: list[str], *conditions: Condition, **change: Any) -> Fields:
+		"""A discount's fields as the contract maps them, with conditions ERPNext's pricing doesn't enforce."""
+		base = Discount(
+			codes=codes,
+			description="Writer test held",
+			discount="percentage",
+			applies="transaction",
+			value=Decimal(10),
+			items=[],
+			groups=[],
+			min_amount=None,
+			valid_from="2026-01-01",
+			valid_upto=None,
+			max_uses=5,
+			conditions=list(conditions),
+		)
+		return discount_fields(replace(base, **change))
+
+	def test_a_discount_with_unenforced_conditions_is_held(self) -> None:
+		key = gid("Coupon", "10")
+		limit = Condition("per_customer_limit", {"uses": 1})
+		fields = self.held_discount(["WTHELD"], limit)
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(rule.disable, rule.importer_hold, json.loads(rule.importer_conditions)),
+			(
+				1,
+				"held: awaiting enforcement (card 405)",
+				[{"card": "card 405", "kind": "per_customer_limit", "terms": {"uses": 1}}],
+			),
+		)
+		coupon = frappe.get_doc("Coupon Code", self.target(Kind.COUPON, f"{key}#WTHELD"))
+		self.assertEqual(
+			(str(coupon.valid_upto), coupon.valid_from, coupon.importer_hold, coupon.maximum_use),
+			(str(add_days(nowdate(), -1)), None, "held: awaiting enforcement (card 405)", 5),
+		)
+		with self.assertRaisesRegex(frappe.ValidationError, "expired"):
+			validate_coupon_code(coupon.name)
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.SKIPPED)
+		with patch.object(contract, "ENFORCED", frozenset({"per_customer_limit"})):
+			released = self.held_discount(["WTHELD"], limit)
+		self.assertNotIn("held", released)
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, key, released),
+			Outcome.UPDATED,
+			"once the fork enforces the condition, the next run enables the discount",
+		)
+		rule.reload()
+		coupon.reload()
+		self.assertEqual((rule.disable, rule.importer_hold), (0, None))
+		self.assertEqual((coupon.valid_upto, str(coupon.valid_from)), (None, "2026-01-01"))
+		self.assertIn("per_customer_limit", coupon.importer_conditions, "still recorded for the fork")
+		validate_coupon_code(coupon.name)
+
+	def test_a_held_scheme_and_a_code_held_alone(self) -> None:
+		tiered = self.held_discount(
+			[],
+			Condition("cap", {"amount": Decimal("40")}),
+			automatic=True,
+			tiers=[
+				Tier("percentage", Decimal(5), min_qty=Decimal(10)),
+				Tier("percentage", Decimal(10), min_qty=Decimal(20)),
+			],
+			max_uses=None,
+		)
+		key = gid("Discount", "11")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, tiered), Outcome.CREATED)
+		scheme = self.target(Kind.DISCOUNT, key)
+		self.assertEqual(
+			frappe.db.get_value("Promotional Scheme", scheme, ["disable", "importer_hold"]),
+			(1, "held: awaiting enforcement (card 407)"),
+		)
+		rules = frappe.get_all("Pricing Rule", filters={"promotional_scheme": scheme}, pluck="disable")
+		self.assertTrue(rules and all(rules), "every rule of a held scheme is disabled")
+		code_held = self.held_discount(
+			["WTOPEN", "WTOWN"],
+			code_limits={"WTOWN": Code(max_uses=2, conditions=[Condition("once_per_customer")])},
+		)
+		key = gid("Coupon", "12")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, code_held), Outcome.CREATED)
+		self.assertEqual(frappe.db.get_value("Pricing Rule", self.target(Kind.DISCOUNT, key), "disable"), 0)
+		validate_coupon_code(self.target(Kind.COUPON, f"{key}#WTOPEN"))
+		own = frappe.get_doc("Coupon Code", self.target(Kind.COUPON, f"{key}#WTOWN"))
+		self.assertEqual((own.maximum_use, own.importer_hold), (2, "held: awaiting enforcement (card 405)"))
+		with self.assertRaisesRegex(frappe.ValidationError, "expired"):
+			validate_coupon_code(own.name)
 
 	def test_a_code_held_on_the_store_is_not_taken_over(self) -> None:
 		frappe.get_doc(

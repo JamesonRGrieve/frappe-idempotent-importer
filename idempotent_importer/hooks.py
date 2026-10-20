@@ -15,6 +15,10 @@ app_version = _version
 # Public Site router (each connection belongs to one Public Site).
 required_apps = ["frappe", "erpnext", "webshop", "blog", "public_site_router"]
 
+# The fields this app adds to ERPNext's discount records.
+after_install = "idempotent_importer.erpnext.custom_fields.install"
+after_migrate = "idempotent_importer.erpnext.custom_fields.install"
+
 scheduler_events = {
 	# Every enabled connection: what changed since its last clean run, hourly; everything, daily.
 	"hourly_long": ["idempotent_importer.erpnext.jobs.scheduled_incremental"],

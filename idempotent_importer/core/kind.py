@@ -43,6 +43,23 @@ class Kind(StrEnum):
 	LEGACY_REDIRECT = "legacy_redirect"
 	DELIVERY_PROFILE = "delivery_profile"
 	SHIPPING_RULE = "shipping_rule"
+	# The books and the business around them (ERP and HR sources).
+	ACCOUNT = "account"
+	COST_CENTER = "cost_center"
+	WAREHOUSE = "warehouse"
+	SUPPLIER = "supplier"
+	PROJECT = "project"
+	LEAD = "lead"
+	OPPORTUNITY = "opportunity"
+	DEPARTMENT = "department"
+	DESIGNATION = "designation"
+	EMPLOYEE = "employee"
+	SALES_ORDER = "sales_order"
+	PURCHASE_ORDER = "purchase_order"
+	SALES_INVOICE = "sales_invoice"
+	PURCHASE_INVOICE = "purchase_invoice"
+	PAYMENT_ENTRY = "payment_entry"
+	JOURNAL_ENTRY = "journal_entry"
 
 	@classmethod
 	def parse(cls, value: str) -> Kind:
@@ -53,14 +70,30 @@ class Kind(StrEnum):
 
 
 SYNC_ORDER: tuple[Kind, ...] = (
+	Kind.ACCOUNT,
+	Kind.COST_CENTER,
+	Kind.WAREHOUSE,
 	Kind.ASSET,
 	Kind.COLLECTION,
 	Kind.PRODUCT,
 	Kind.CUSTOMER_GROUP,
 	Kind.CUSTOMER,
+	Kind.SUPPLIER,
+	Kind.DEPARTMENT,
+	Kind.DESIGNATION,
+	Kind.EMPLOYEE,
+	Kind.PROJECT,
+	Kind.LEAD,
+	Kind.OPPORTUNITY,
 	Kind.DISCOUNT,
 	Kind.ORDER,
 	Kind.DRAFT_ORDER,
+	Kind.SALES_ORDER,
+	Kind.PURCHASE_ORDER,
+	Kind.SALES_INVOICE,
+	Kind.PURCHASE_INVOICE,
+	Kind.PAYMENT_ENTRY,
+	Kind.JOURNAL_ENTRY,
 	Kind.PAGE,
 	Kind.POLICY,
 	Kind.BLOG,

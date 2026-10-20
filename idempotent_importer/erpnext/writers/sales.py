@@ -76,6 +76,8 @@ INVOICE_FIELDS = (
 OPTIONAL_INVOICE_FIELDS = ("taxes_included", "exchange_rate", "base_total")
 RETIRED_REMARK = "Retired: the order was cancelled at the source."
 RETIRED_MARK = "[Removed at source] "
+# The account type a party's documents book to, and the document field that names it.
+PARTY_ACCOUNTS = {"Customer": ("Receivable", "debit_to"), "Supplier": ("Payable", "credit_to")}
 
 
 class OrderMismatch(Exception):
@@ -86,9 +88,12 @@ class SalesDocuments(Writer):
 	"""What an invoice, a credit note and a quotation share: their lines, charges, currency and the exact
 	check of their totals."""
 
-	def currency(self, values: Values, party: str | None = None) -> dict[str, Any]:
+	def currency(
+		self, values: Values, party: str | None = None, party_type: str = "Customer"
+	) -> dict[str, Any]:
 		"""The document's currency fields: the company's, or the order's own at the rate the source recorded
-		(its total in the company's currency, when the source booked one, is then checked too)."""
+		(its total in the company's currency, when the source booked one, is then checked too). A
+		supplier's documents book to a payable account as a customer's do to a receivable one."""
 		currency = values.string("currency")
 		if currency == self.context.currency:
 			return {"currency": currency, "conversion_rate": 1}
@@ -107,25 +112,26 @@ class SalesDocuments(Writer):
 		if frappe.db.get_single_value("Accounts Settings", MULTI_CURRENCY_SETTING):
 			# The customer's own receivable, in the company's currency, whatever the invoice's.
 			return fields
-		# Otherwise ERPNext books a customer's invoices in the currency of its receivable account, and a
-		# customer's ledger in one currency.
-		receivable = frappe.db.get_value(
+		# Otherwise ERPNext books a party's invoices in the currency of its receivable (or payable) account,
+		# and a party's ledger in one currency.
+		account_type, account_field = PARTY_ACCOUNTS[party_type]
+		party_account = frappe.db.get_value(
 			"Account",
 			{
 				"company": self.context.company,
-				"account_type": "Receivable",
+				"account_type": account_type,
 				"account_currency": currency,
 				"is_group": 0,
 			},
 		)
-		booked_in = get_party_gle_currency("Customer", party, self.context.company) if party else None
-		if not receivable or (booked_in and booked_in != currency):
+		booked_in = get_party_gle_currency(party_type, party, self.context.company) if party else None
+		if not party_account or (booked_in and booked_in != currency):
 			raise Unsupported(
 				f"the order is in {currency}: enable Accounts Settings' \"Allow multi-currency invoices against "
-				f'single party account" (or give {self.context.company} a receivable account in {currency}, '
-				"for customers who buy only in it)"
+				f'single party account" (or give {self.context.company} a {account_type.lower()} account in '
+				f"{currency}, for parties who trade only in it)"
 			)
-		return fields | {"debit_to": receivable}
+		return fields | {account_field: party_account}
 
 	def customer_of(self, values: Values) -> str:
 		"""The order's customer: its mirrored Customer, or the connection's guest customer."""
@@ -590,7 +596,7 @@ class OrderWriter(SalesDocuments):
 			else frappe.new_doc("Address")
 		)
 		doc.update(address_values(address))
-		link_to(doc, customer)
+		link_to(doc, customer, "Customer")
 		doc.save(ignore_permissions=True)
 		self.links.save(Kind.ADDRESS, key, Target("Address", doc.name), PART_HASH, 1)
 		return str(doc.name)

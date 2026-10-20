@@ -256,6 +256,20 @@ Each of these is the operator's call.
 19. **Tags** are Frappe document tags; a tag the source drops is removed, tags a person added are kept.
 20. **A kind the credentials may not read** (Shopify's policies without `read_legal_policies`) is skipped
     with a warning: its existing copies stay, and the run still completes.
+21. **ERP and HR sources' books** (their own invoices, orders, payments and journals): customer invoices
+    and vendor bills are Sales and Purchase Invoices (credit and debit notes their returns, against the
+    invoice they return when the source names it), each line on its mirrored income or expense account,
+    taxes as "Actual" amounts on their mirrored accounts; payments are Payment Entries allocated to the
+    invoices they settle (an invoice must be posted before a payment is allocated to it); journal entries
+    are Journal Entries on the mirrored accounts. Sales and Purchase Orders are submitted once confirmed
+    and never move stock. The source's chart of accounts, cost centers, warehouses and departments go
+    under the company's roots, named with the connection's abbreviation. Payments and journals in another
+    currency than the company's are planned (card 386).
+22. **Employees without a gender, date of birth or date of joining** (ERPNext requires all three) are
+    saved without them, never with an invented value; a person fills them in before editing the record.
+23. **Leads sharing an email:** ERPNext refuses a second Lead with the same email unless CRM Settings'
+    "Allow Lead Duplication based on Emails" is on; turn it on when several connections (or a source)
+    hold leads with one address, or the later ones aren't mirrored (reported).
 
 ## Next steps
 

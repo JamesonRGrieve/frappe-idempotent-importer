@@ -38,6 +38,14 @@ from idempotent_importer.erpnext.stores import (
 	now_utc,
 )
 from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.books import (
+	AccountWriter,
+	CostCenterWriter,
+	JournalEntryWriter,
+	PaymentEntryWriter,
+	ProjectWriter,
+	WarehouseWriter,
+)
 from idempotent_importer.erpnext.writers.catalog import CollectionWriter, ProductWriter
 from idempotent_importer.erpnext.writers.content import (
 	ArticleWriter,
@@ -50,10 +58,18 @@ from idempotent_importer.erpnext.writers.content import (
 	ReviewWriter,
 	flush_redirect_cache,
 )
+from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter
+from idempotent_importer.erpnext.writers.hr import DepartmentWriter, DesignationWriter, EmployeeWriter
+from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter, SupplierWriter
 from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
+from idempotent_importer.erpnext.writers.trade import (
+	PurchaseInvoiceWriter,
+	PurchaseOrderWriter,
+	SalesInvoiceWriter,
+	SalesOrderWriter,
+)
 from idempotent_importer.sources.registry import by_label
 
 LOGGER = "idempotent_importer"
@@ -81,6 +97,22 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.REVIEW: ReviewWriter,
 	Kind.URL_REDIRECT: RedirectWriter,
 	Kind.DELIVERY_PROFILE: DeliveryProfileWriter,
+	Kind.ACCOUNT: AccountWriter,
+	Kind.COST_CENTER: CostCenterWriter,
+	Kind.WAREHOUSE: WarehouseWriter,
+	Kind.SUPPLIER: SupplierWriter,
+	Kind.PROJECT: ProjectWriter,
+	Kind.LEAD: LeadWriter,
+	Kind.OPPORTUNITY: OpportunityWriter,
+	Kind.DEPARTMENT: DepartmentWriter,
+	Kind.DESIGNATION: DesignationWriter,
+	Kind.EMPLOYEE: EmployeeWriter,
+	Kind.SALES_ORDER: SalesOrderWriter,
+	Kind.PURCHASE_ORDER: PurchaseOrderWriter,
+	Kind.SALES_INVOICE: SalesInvoiceWriter,
+	Kind.PURCHASE_INVOICE: PurchaseInvoiceWriter,
+	Kind.PAYMENT_ENTRY: PaymentEntryWriter,
+	Kind.JOURNAL_ENTRY: JournalEntryWriter,
 }
 # The connection's "What to Mirror" switch for each kind.
 SWITCHES: dict[Kind, str] = {
@@ -100,6 +132,22 @@ SWITCHES: dict[Kind, str] = {
 	Kind.REVIEW: "import_reviews",
 	Kind.URL_REDIRECT: "import_redirects",
 	Kind.DELIVERY_PROFILE: "import_shipping",
+	Kind.ACCOUNT: "import_accounts",
+	Kind.COST_CENTER: "import_accounts",
+	Kind.WAREHOUSE: "import_warehouses",
+	Kind.SUPPLIER: "import_suppliers",
+	Kind.PROJECT: "import_projects",
+	Kind.LEAD: "import_crm",
+	Kind.OPPORTUNITY: "import_crm",
+	Kind.DEPARTMENT: "import_hr",
+	Kind.DESIGNATION: "import_hr",
+	Kind.EMPLOYEE: "import_hr",
+	Kind.SALES_ORDER: "import_sales_orders",
+	Kind.PURCHASE_ORDER: "import_purchases",
+	Kind.SALES_INVOICE: "import_invoices",
+	Kind.PURCHASE_INVOICE: "import_purchases",
+	Kind.PAYMENT_ENTRY: "import_payments",
+	Kind.JOURNAL_ENTRY: "import_journal_entries",
 }
 
 

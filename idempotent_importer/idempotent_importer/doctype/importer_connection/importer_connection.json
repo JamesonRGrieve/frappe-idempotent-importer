@@ -55,6 +55,19 @@
   "import_comments",
   "import_reviews",
   "import_redirects",
+  "erp_kinds_section",
+  "import_accounts",
+  "import_warehouses",
+  "import_suppliers",
+  "import_projects",
+  "import_sales_orders",
+  "import_invoices",
+  "column_break_erp_kinds",
+  "import_purchases",
+  "import_payments",
+  "import_journal_entries",
+  "import_crm",
+  "import_hr",
   "filters",
   "status_section",
   "last_run",
@@ -392,6 +405,82 @@
    "default": "1"
   },
   {
+   "fieldname": "erp_kinds_section",
+   "fieldtype": "Section Break",
+   "label": "What to Mirror: the Books and People",
+   "description": "Kinds an ERP or HR source holds; a source mirrors the ones it has."
+  },
+  {
+   "fieldname": "import_accounts",
+   "fieldtype": "Check",
+   "label": "Chart of accounts and cost centers → Accounts, Cost Centers",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_warehouses",
+   "fieldtype": "Check",
+   "label": "Locations → Warehouses",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_suppliers",
+   "fieldtype": "Check",
+   "label": "Vendors → Suppliers",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_projects",
+   "fieldtype": "Check",
+   "label": "Projects → Projects",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_sales_orders",
+   "fieldtype": "Check",
+   "label": "Sales orders → Sales Orders",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_invoices",
+   "fieldtype": "Check",
+   "label": "Customer invoices and credit notes → Sales Invoices",
+   "default": "1"
+  },
+  {
+   "fieldname": "column_break_erp_kinds",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "import_purchases",
+   "fieldtype": "Check",
+   "label": "Purchase orders and vendor bills → Purchase Orders, Purchase Invoices",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_payments",
+   "fieldtype": "Check",
+   "label": "Payments → Payment Entries",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_journal_entries",
+   "fieldtype": "Check",
+   "label": "Journal entries → Journal Entries",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_crm",
+   "fieldtype": "Check",
+   "label": "Leads and opportunities → Leads, Opportunities",
+   "default": "1"
+  },
+  {
+   "fieldname": "import_hr",
+   "fieldtype": "Check",
+   "label": "Departments, job titles and employees → Departments, Designations, Employees",
+   "default": "1"
+  },
+  {
    "fieldname": "filters",
    "fieldtype": "Code",
    "label": "Filters",
@@ -452,7 +541,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-17 09:00:00.000000",
+ "modified": "2026-10-19 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

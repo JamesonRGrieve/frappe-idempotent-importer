@@ -35,6 +35,7 @@ from idempotent_importer.erpnext.stores import (
 	now_utc,
 )
 from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING
+from idempotent_importer.sources.registry import LISTED
 
 STATE_DIR = Path("/state")
 FISCAL_YEAR_START = "2026-01-01"
@@ -253,6 +254,25 @@ CONTENT_DOCTYPES = (
 	"Shipment",
 	"Tag",
 	"Tag Link",
+	"Supplier",
+	"Cost Center",
+	"Warehouse",
+	"Project",
+	"Lead",
+	"Opportunity",
+	"CRM Note",
+	"Department",
+	"Designation",
+	"Employee",
+	"Sales Order",
+	"Sales Order Item",
+	"Purchase Order",
+	"Purchase Order Item",
+	"Purchase Invoice",
+	"Purchase Invoice Item",
+	"Purchase Taxes and Charges",
+	"Journal Entry",
+	"Journal Entry Account",
 )
 # Columns that change without anything being mirrored (Frappe's bookkeeping of reads and caches).
 VOLATILE_COLUMNS = frozenset({"_seen", "_liked_by", "_comments"})
@@ -2257,17 +2277,21 @@ def sync_now_in_background(connection: str) -> None:
 
 @check
 def assert_listed_sources_refuse(template: str) -> None:
-	"""A connection to a listed source (Odoo) can be saved, but its run refuses to start, says why, and
-	touches nothing."""
-	connection = "odoo-e2e"
+	"""A connection to a listed source (the first still listed) can be saved, but its run refuses to start,
+	says why, and touches nothing."""
+	if not LISTED:
+		print("every source is built: none is listed")
+		return
+	listed = LISTED[0]
+	connection = "listed-e2e"
 	if not frappe.db.exists("Importer Connection", connection):
 		doc = frappe.copy_doc(frappe.get_doc("Importer Connection", template))
 		doc.update(
 			{
 				"connection_id": connection,
-				"source": "Odoo",
-				"store_url": "https://odoo.example.test",
-				"abbreviation": "OD",
+				"source": listed.label,
+				"store_url": "https://listed.example.test",
+				"abbreviation": "LI",
 				"cursors": None,
 				"last_run": None,
 			}

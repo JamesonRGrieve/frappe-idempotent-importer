@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from decimal import Decimal
 from typing import ClassVar
 
@@ -10,26 +11,51 @@ import pytest
 
 from idempotent_importer import contract
 from idempotent_importer.contract import (
+	RECEIVE,
+	Allocation,
 	Charge,
 	Code,
 	Condition,
 	Discount,
+	Employee,
+	JournalLine,
+	Lead,
+	LedgerAccount,
+	Opportunity,
 	OrderLine,
+	Party,
+	Payment,
+	TradeDocument,
+	TradeLine,
+	TradeTax,
+	account_fields,
 	booked,
 	conditions_json,
 	conditions_summary,
 	date_of,
 	discount_fields,
+	employee_fields,
 	included_taxes,
+	journal_fields,
+	lead_fields,
 	line_fields,
+	opportunity_fields,
 	order_line,
 	order_remarks,
+	party_fields,
+	payment_fields,
+	project_fields,
 	rating_fraction,
 	refund_balance,
+	required_date,
+	trade_fields,
+	tree_fields,
 	variant_attributes,
+	warehouse_fields,
 )
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Fields, Values
+from idempotent_importer.core.kind import Kind
 from idempotent_importer.naming import (
 	item_code,
 	named_after,
@@ -228,3 +254,139 @@ class TestNaming:
 	def test_plain_text(self) -> None:
 		assert plain_text("<p>So <b>warm</b> &amp; soft.</p>") == "So warm & soft."
 		assert plain_text(None) == ""
+
+
+class TestBooks:
+	"""The ERP and HR sources' contract: documents that must add up, payments that can't over-allocate,
+	journals that must balance, and the closed vocabularies writers rely on."""
+
+	def document(self, total: str, date: str = "2026-03-01", due_date: str | None = None) -> TradeDocument:
+		line = TradeLine(
+			order_line("1", "gid://x/c/Product/1", None, "Bolts", Decimal(4), Decimal("10.00"), "CAD"),
+			account="gid://x/c/Account/400",
+		)
+		return TradeDocument(
+			number="INV/1",
+			date=date,
+			due_date=due_date,
+			party="gid://x/c/Partner/7",
+			currency="CAD",
+			lines=[line],
+			taxes=[TradeTax("GST 5%", Decimal("0.50"), "gid://x/c/Account/220")],
+			total=Decimal(total),
+			submitted=True,
+		)
+
+	def test_a_trade_document_must_make_its_total(self) -> None:
+		fields = trade_fields(self.document("10.50"))
+		assert fields["total"] == Decimal("10.50")
+		lines = fields["lines"]
+		assert isinstance(lines, list) and isinstance(lines[0], dict)
+		assert (lines[0]["rate"], lines[0]["account"], lines[0]["cost_center"]) == (
+			Decimal("2.50"),
+			"gid://x/c/Account/400",
+			None,
+		)
+		assert fields["taxes"] == [
+			{"description": "GST 5%", "amount": Decimal("0.50"), "account": "gid://x/c/Account/220"}
+		]
+		with pytest.raises(Unsupported, match=r"come to 10\.5, not its total 11"):
+			trade_fields(self.document("11"))
+
+	def test_a_trade_document_needs_real_dates(self) -> None:
+		with pytest.raises(ValueError, match="date"):
+			trade_fields(self.document("10.50", date="01/03/2026"))
+		assert trade_fields(self.document("10.50", due_date="2026-04-01"))["due_date"] == "2026-04-01"
+		assert trade_fields(self.document("10.50"))["return_settles"] is True
+		with pytest.raises(ValueError, match="missing"):
+			required_date(None, "a date")
+
+	def test_payments_allocate_no_more_than_they_are(self) -> None:
+		allocation = Allocation(Kind.SALES_INVOICE, "gid://x/c/Move/1", Decimal("10.50"))
+		payment = Payment(
+			RECEIVE, "Customer", "gid://x/c/Partner/7", "2026-03-02", Decimal(20), "CAD", [allocation]
+		)
+		fields = payment_fields(payment)
+		assert fields["allocations"] == [
+			{"kind": "sales_invoice", "document": "gid://x/c/Move/1", "amount": Decimal("10.50")}
+		]
+		with pytest.raises(Unsupported, match=r"allocated 10\.5"):
+			payment_fields(replace(payment, amount=Decimal(5)))
+		with pytest.raises(Unsupported):
+			payment_fields(replace(payment, amount=Decimal(0), allocations=[]))
+		with pytest.raises(ValueError, match="party type"):
+			payment_fields(replace(payment, party_type="Vendor"))
+		with pytest.raises(ValueError, match="payment type"):
+			payment_fields(replace(payment, payment_type="Refund"))
+		assert payment_fields(replace(payment, submitted=False))["submitted"] is False
+
+	def test_journals_balance(self) -> None:
+		lines = [
+			JournalLine("gid://x/c/Account/1", Decimal(5), Decimal(0), "Supplier", "gid://x/c/Partner/9"),
+			JournalLine("gid://x/c/Account/2", Decimal(0), Decimal(5)),
+			JournalLine("gid://x/c/Account/3", Decimal(0), Decimal(0)),
+		]
+		lines[1] = replace(lines[1], against=(Kind.PURCHASE_INVOICE, "gid://x/c/Move/4"))
+		fields = journal_fields("MISC/1", "2026-03-03", lines, True, "Accrual")
+		assert isinstance(fields["lines"], list) and len(fields["lines"]) == 2, "an empty line is left out"
+		assert isinstance(fields["lines"][1], dict)
+		assert fields["lines"][1]["against"] == {"kind": "purchase_invoice", "document": "gid://x/c/Move/4"}
+		with pytest.raises(Unsupported, match="doesn't balance"):
+			journal_fields("MISC/2", "2026-03-03", lines[:1], True)
+		with pytest.raises(Unsupported, match="both a debit and a credit"):
+			journal_fields(
+				"MISC/3",
+				"2026-03-03",
+				[JournalLine("a", Decimal(5), Decimal(5)), JournalLine("b", Decimal(0), Decimal(0))],
+				True,
+			)
+		with pytest.raises(ValueError, match="party type"):
+			journal_fields(
+				"MISC/4",
+				"2026-03-03",
+				[
+					JournalLine("a", Decimal(1), Decimal(0), "Vendor", "p"),
+					JournalLine("b", Decimal(0), Decimal(1)),
+				],
+				True,
+			)
+
+	def test_parties_and_accounts(self) -> None:
+		party = Party("Acme Ltd", "Company", company="Acme Ltd", tax_id="123")
+		assert party_fields(party)["tax_id"] == "123"
+		assert "currency" not in party_fields(party), "absent extras keep older change signals"
+		with pytest.raises(ValueError, match="party type"):
+			party_fields(Party("Acme", "Partnership"))
+		account = account_fields(LedgerAccount("4000", "Sales", "Income", "Income Account"))
+		assert (account["root_type"], account["is_group"], account["parent"]) == ("Income", False, None)
+		with pytest.raises(ValueError, match="root type"):
+			account_fields(LedgerAccount(None, "Odd", "Revenue"))
+		assert tree_fields("Main", None) == {"name": "Main", "parent": None, "is_group": False}
+		assert warehouse_fields("WH", "gid://x/c/Warehouse/1", True, None)["address"] is None
+
+	def test_crm_and_projects(self) -> None:
+		assert project_fields("Fit-out", "Open", start="2026-01-01")["start"] == "2026-01-01"
+		with pytest.raises(ValueError, match="project status"):
+			project_fields("Fit-out", "Running")
+		assert lead_fields(Lead("Open", company="Acme"))["company"] == "Acme"
+		with pytest.raises(Unsupported, match="no name"):
+			lead_fields(Lead("Open"))
+		opportunity = Opportunity(
+			Kind.LEAD, "gid://x/c/Lead/1", "Fit-out", "Open", "2026-02-01", "CAD", Decimal(500)
+		)
+		assert opportunity_fields(opportunity)["party_kind"] == "lead"
+		with pytest.raises(ValueError, match="lead or a customer"):
+			opportunity_fields(replace(opportunity, party_kind=Kind.SUPPLIER))
+		with pytest.raises(ValueError, match="opportunity status"):
+			opportunity_fields(replace(opportunity, status="Won"))
+
+	def test_employees(self) -> None:
+		employee = Employee(
+			"Avery", "Active", last_name="Writer", gender="Female", date_of_joining="2024-05-01"
+		)
+		fields = employee_fields(employee)
+		assert (fields["gender"], fields["date_of_birth"]) == ("Female", None), "an unknown date stays empty"
+		with pytest.raises(ValueError, match="gender"):
+			employee_fields(replace(employee, gender="F"))
+		with pytest.raises(ValueError, match="employee status"):
+			employee_fields(replace(employee, status="Gone"))

@@ -12,7 +12,7 @@ import pytest
 
 from idempotent_importer.core.errors import SourceError
 from idempotent_importer.core.source import ConnectionConfig
-from idempotent_importer.sources.registry import adapter_for, all_adapters, by_label
+from idempotent_importer.sources.registry import LISTED, ListedAdapter, adapter_for, all_adapters, by_label
 from tests.support.transport import RecordingSleeper, scripted
 from tools.proofs import first_difference, invalid_rest_fixtures, response_schema_pointer
 
@@ -45,13 +45,14 @@ def test_every_source_has_a_coverage_page(adapter_id: str) -> None:
 	assert adapter_for(adapter_id).label in page.read_text()
 
 
-def test_listed_sources_refuse_to_run() -> None:
-	odoo = adapter_for("odoo")
-	assert not odoo.built
-	config = ConnectionConfig("odoo", "erp", "https://odoo.example")
+@pytest.mark.parametrize("listed", LISTED, ids=lambda adapter: adapter.id)
+def test_listed_sources_refuse_to_run(listed: ListedAdapter) -> None:
+	assert not listed.built
+	assert listed.kinds() == () and listed.filter_hint() is None
+	config = ConnectionConfig(listed.id, "erp", "https://erp.example")
 	with pytest.raises(SourceError, match="not built yet"):
-		odoo.reader(config, scripted(), RecordingSleeper())
-	assert odoo.mappers(config) == []
+		listed.reader(config, scripted(), RecordingSleeper())
+	assert listed.mappers(config) == []
 
 
 def test_lookups() -> None:

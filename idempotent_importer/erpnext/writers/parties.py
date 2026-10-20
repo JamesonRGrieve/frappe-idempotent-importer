@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""Customers, with a Contact (name, email, phone) and an Address per source address, linked to them, in the
-Customer Group their source group is mirrored to (else the connection's)."""
+"""Customers and Suppliers, each with a Contact (name, email, phone) and an Address per source address,
+linked to them; customers in the Customer Group their source group is mirrored to (else the
+connection's)."""
 
 from __future__ import annotations
 
@@ -26,6 +27,7 @@ def country_of(code: str | None) -> str:
 
 CUSTOMER_GROUP = "Customer Group"
 ROOT_CUSTOMER_GROUP = "All Customer Groups"
+ROOT_SUPPLIER_GROUP = "All Supplier Groups"
 
 
 class CustomerGroupWriter(Writer):
@@ -49,37 +51,50 @@ class CustomerGroupWriter(Writer):
 		"""Nothing to switch off: a Customer Group has no disabled state, and its customers keep it."""
 
 
-class CustomerWriter(Writer):
+class PartyWriter(Writer):
+	"""What a Customer and a Supplier share: the party itself, a Contact (name, email, phone) and an
+	Address per source address linked to it, and its primary contact and address."""
+
+	doctype: str
+	name_field: str
+	type_field: str
+
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
-		doc = self.existing(link) or frappe.new_doc("Customer")
+		doc = self.existing(link) or frappe.new_doc(self.doctype)
 		if doc.is_new():
-			doc.update({"customer_group": self.context.customer_group, "territory": self.context.territory})
-		if values.has("group"):
-			group = values.optional_string("group")
-			doc.customer_group = (
-				self.dependency(Kind.CUSTOMER_GROUP, group) if group else self.context.customer_group
-			)
-		doc.update({"customer_name": values.string("name"), "customer_type": values.string("type")})
+			doc.update(self.defaults())
+		self.fill(doc, values)
+		doc.update({self.name_field: values.string("name"), self.type_field: values.string("type")})
+		if values.has("tax_id"):
+			doc.tax_id = values.string("tax_id")
 		doc.save(ignore_permissions=True)
 		contact = self._contact(desired.gid, doc.name, values)
 		addresses = [
 			self._address(f"{desired.gid}#address:{index}", doc.name, address)
 			for index, address in enumerate(values.records("addresses"))
 		]
+		prefix = self.doctype.lower()
 		primary = {
-			"customer_primary_contact": contact,
-			"customer_primary_address": addresses[0] if addresses else None,
+			f"{prefix}_primary_contact": contact,
+			f"{prefix}_primary_address": addresses[0] if addresses else None,
 		}
 		if any(doc.get(field) != value for field, value in primary.items()):
 			doc.update(primary)
 			doc.save(ignore_permissions=True)
-		return Target("Customer", doc.name)
+		return Target(self.doctype, doc.name)
 
 	def retire(self, link: Link) -> None:
-		frappe.db.set_value("Customer", link.target.name, "disabled", 1)
+		frappe.db.set_value(self.doctype, link.target.name, "disabled", 1)
 
-	def _contact(self, gid: str, customer: str, values: Values) -> str | None:
+	def defaults(self) -> dict[str, Any]:
+		"""A new record's fields the source doesn't map."""
+		return {}
+
+	def fill(self, doc: Any, values: Values) -> None:
+		"""The party's own mapped fields beyond its name, type and tax id."""
+
+	def _contact(self, gid: str, party: str, values: Values) -> str | None:
 		email, phone = values.optional_string("email"), values.optional_string("phone")
 		if not (email or phone or values.optional_string("first_name")):
 			return None
@@ -102,12 +117,12 @@ class CustomerWriter(Writer):
 		doc.set(
 			"phone_nos", [{"phone": phone, "is_primary_phone": 1, "is_primary_mobile_no": 1}] if phone else []
 		)
-		link_to(doc, customer)
+		link_to(doc, party, self.doctype)
 		doc.save(ignore_permissions=True)
 		self.links.save(Kind.CONTACT, key, Target("Contact", doc.name), PART_HASH, 1)
 		return str(doc.name)
 
-	def _address(self, key: str, customer: str, address: Values) -> str:
+	def _address(self, key: str, party: str, address: Values) -> str:
 		existing = self.links.target(Kind.ADDRESS, key)
 		doc = (
 			frappe.get_doc("Address", existing)
@@ -115,10 +130,45 @@ class CustomerWriter(Writer):
 			else frappe.new_doc("Address")
 		)
 		doc.update(address_values(address))
-		link_to(doc, customer)
+		link_to(doc, party, self.doctype)
 		doc.save(ignore_permissions=True)
 		self.links.save(Kind.ADDRESS, key, Target("Address", doc.name), PART_HASH, 1)
 		return str(doc.name)
+
+
+class CustomerWriter(PartyWriter):
+	"""A Customer, in the Customer Group its source group is mirrored to (else the connection's)."""
+
+	doctype = "Customer"
+	name_field = "customer_name"
+	type_field = "customer_type"
+
+	def defaults(self) -> dict[str, Any]:
+		return {"customer_group": self.context.customer_group, "territory": self.context.territory}
+
+	def fill(self, doc: Any, values: Values) -> None:
+		if values.has("group"):
+			group = values.optional_string("group")
+			doc.customer_group = (
+				self.dependency(Kind.CUSTOMER_GROUP, group) if group else self.context.customer_group
+			)
+		if values.has("currency"):
+			doc.default_currency = values.string("currency")
+
+
+class SupplierWriter(PartyWriter):
+	"""A Supplier, in the root Supplier Group (a source's vendor groups have no home of their own yet)."""
+
+	doctype = "Supplier"
+	name_field = "supplier_name"
+	type_field = "supplier_type"
+
+	def defaults(self) -> dict[str, Any]:
+		return {"supplier_group": ROOT_SUPPLIER_GROUP}
+
+	def fill(self, doc: Any, values: Values) -> None:
+		if values.has("currency"):
+			doc.default_currency = values.string("currency")
 
 
 def address_values(address: Values) -> dict[str, Any]:
@@ -138,6 +188,7 @@ def address_values(address: Values) -> dict[str, Any]:
 	}
 
 
-def link_to(doc: Any, customer: str) -> None:
-	if not any(row.link_doctype == "Customer" and row.link_name == customer for row in doc.links):
-		doc.append("links", {"link_doctype": "Customer", "link_name": customer})
+def link_to(doc: Any, name: str, doctype: str = "Customer") -> None:
+	"""Links a Contact or Address to its party (once)."""
+	if not any(row.link_doctype == doctype and row.link_name == name for row in doc.links):
+		doc.append("links", {"link_doctype": doctype, "link_name": name})

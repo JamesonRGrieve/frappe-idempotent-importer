@@ -27,7 +27,36 @@ from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, nowdate
 
 from idempotent_importer import contract
-from idempotent_importer.contract import Code, Condition, Discount, Tier, discount_fields
+from idempotent_importer.contract import (
+	Allocation,
+	Code,
+	Condition,
+	Discount,
+	Employee,
+	JournalLine,
+	Lead,
+	LedgerAccount,
+	Opportunity,
+	Party,
+	Payment,
+	Tier,
+	TradeDocument,
+	TradeLine,
+	TradeTax,
+	account_fields,
+	discount_fields,
+	employee_fields,
+	journal_fields,
+	lead_fields,
+	opportunity_fields,
+	order_line,
+	party_fields,
+	payment_fields,
+	project_fields,
+	trade_fields,
+	tree_fields,
+	warehouse_fields,
+)
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields
@@ -38,6 +67,14 @@ from idempotent_importer.erpnext.context import ConnectionContext
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
 from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.books import (
+	AccountWriter,
+	CostCenterWriter,
+	JournalEntryWriter,
+	PaymentEntryWriter,
+	ProjectWriter,
+	WarehouseWriter,
+)
 from idempotent_importer.erpnext.writers.catalog import CollectionWriter, ProductWriter
 from idempotent_importer.erpnext.writers.content import (
 	ArticleWriter,
@@ -49,10 +86,18 @@ from idempotent_importer.erpnext.writers.content import (
 	RedirectWriter,
 	ReviewWriter,
 )
+from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter
+from idempotent_importer.erpnext.writers.hr import DepartmentWriter, DesignationWriter, EmployeeWriter
+from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter, SupplierWriter
 from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING, DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
+from idempotent_importer.erpnext.writers.trade import (
+	PurchaseInvoiceWriter,
+	PurchaseOrderWriter,
+	SalesInvoiceWriter,
+	SalesOrderWriter,
+)
 
 TEMPLATE = "woo-a"
 CONNECTION = "writer-test"
@@ -109,6 +154,13 @@ def savepoint_scope() -> Iterator[None]:
 	except BaseException:
 		frappe.db.rollback(save_point="writer_test")
 		raise
+
+
+def address_of(party: Fields) -> Fields:
+	"""A party's first address."""
+	addresses = party["addresses"]
+	assert isinstance(addresses, list) and isinstance(addresses[0], dict)
+	return addresses[0]
 
 
 def modified(doctype: str, name: str) -> Any:
@@ -1383,3 +1435,461 @@ class TestWriters(IntegrationTestCase):
 		)
 		self.retire(Kind.URL_REDIRECT, RedirectWriter, key)
 		self.assertFalse(frappe.db.exists("Website Route Redirect", row))
+
+	# -- the books and people (ERP and HR sources) ------------------------------------------------------
+
+	def supplier(self, name: str = "Writer Supply Co") -> Fields:
+		return party_fields(
+			Party(
+				name,
+				"Company",
+				first_name="Sam",
+				last_name="Supplier",
+				company=name,
+				email="sam@supply.example.test",
+				addresses=[address_of(self.customer())],
+				tax_id="RT0001",
+			)
+		)
+
+	def test_suppliers(self) -> None:
+		key = gid("Vendor", "1")
+		_, name = self.assert_lifecycle(
+			Kind.SUPPLIER, SupplierWriter, key, self.supplier(), self.supplier("Writer Supplies Ltd")
+		)
+		supplier = frappe.get_doc("Supplier", name)
+		self.assertEqual(
+			(supplier.supplier_name, supplier.supplier_type, supplier.tax_id),
+			("Writer Supplies Ltd", "Company", "RT0001"),
+		)
+		self.assertTrue(supplier.supplier_primary_contact and supplier.supplier_primary_address)
+		frappe.db.set_value("Supplier", name, "on_hold", 1)
+		self.mirror(Kind.SUPPLIER, SupplierWriter, key, self.supplier("Writer Supplies Inc"))
+		self.assertEqual(frappe.db.get_value("Supplier", name, "on_hold"), 1, "an unmapped field is kept")
+		self.retire(Kind.SUPPLIER, SupplierWriter, key)
+		self.assertEqual(frappe.db.get_value("Supplier", name, "disabled"), 1)
+
+	def ledger(self, number: str, name: str, root_type: str, account_type: str | None = None) -> str:
+		"""A mirrored account (by its number), for the documents that book to it."""
+		key = gid("Account", number)
+		self.mirror(
+			Kind.ACCOUNT,
+			AccountWriter,
+			key,
+			account_fields(LedgerAccount(number, name, root_type, account_type)),
+		)
+		return key
+
+	def test_accounts_and_cost_centers(self) -> None:
+		group = gid("Account", "4")
+		self.mirror(
+			Kind.ACCOUNT,
+			AccountWriter,
+			group,
+			account_fields(LedgerAccount("4", "Writer Revenue", "Income", None, None, True)),
+		)
+		key = gid("Account", "4100")
+		first = account_fields(LedgerAccount("4100", "Writer Sales", "Income", "Income Account", group))
+		_, name = self.assert_lifecycle(
+			Kind.ACCOUNT, AccountWriter, key, first, {**first, "name": "Writer Product Sales"}
+		)
+		account = frappe.get_doc("Account", name)
+		self.assertEqual(
+			(account.account_name, account.account_number, account.parent_account, account.root_type),
+			("Writer Product Sales - WT", "4100", self.target(Kind.ACCOUNT, group), "Income"),
+		)
+		root = frappe.db.get_value("Account", self.target(Kind.ACCOUNT, group), "parent_account")
+		self.assertEqual(
+			frappe.db.get_value("Account", root, "root_type"), "Income", "under the company's root"
+		)
+		self.retire(Kind.ACCOUNT, AccountWriter, key)
+		self.assertEqual(frappe.db.get_value("Account", name, "disabled"), 1)
+
+		center = gid("AnalyticAccount", "1")
+		_, cost_center = self.assert_lifecycle(
+			Kind.COST_CENTER,
+			CostCenterWriter,
+			center,
+			tree_fields("Workshop", None),
+			tree_fields("Studio", None),
+		)
+		self.assertEqual(frappe.db.get_value("Cost Center", cost_center, "cost_center_name"), "Studio - WT")
+		self.retire(Kind.COST_CENTER, CostCenterWriter, center)
+		self.assertEqual(frappe.db.get_value("Cost Center", cost_center, "disabled"), 1)
+
+	def test_warehouses(self) -> None:
+		group = gid("Warehouse", "1")
+		self.mirror(
+			Kind.WAREHOUSE, WarehouseWriter, group, warehouse_fields("Writer Sites", None, True, None)
+		)
+		key = gid("Warehouse", "2")
+		address = address_of(self.customer())
+		_, name = self.assert_lifecycle(
+			Kind.WAREHOUSE,
+			WarehouseWriter,
+			key,
+			warehouse_fields("Writer Depot", group, False, address),
+			warehouse_fields("Writer Depot", group, False, {**address, "city": "Edmonton"}),
+		)
+		warehouse = frappe.get_doc("Warehouse", name)
+		self.assertEqual(
+			(warehouse.warehouse_name, warehouse.parent_warehouse, warehouse.city),
+			("Writer Depot - WT", self.target(Kind.WAREHOUSE, group), "Edmonton"),
+		)
+		self.retire(Kind.WAREHOUSE, WarehouseWriter, key)
+		self.assertEqual(frappe.db.get_value("Warehouse", name, "disabled"), 1)
+
+	def test_projects_leads_and_opportunities(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		key = gid("Project", "1")
+		first = project_fields("Writer Fit-out", "Open", gid("Customer", "1"), "2026-03-01", "2026-04-30")
+		_, project = self.assert_lifecycle(
+			Kind.PROJECT, ProjectWriter, key, first, {**first, "status": "Completed"}
+		)
+		self.assertEqual(
+			frappe.db.get_value("Project", project, ["status", "customer"]),
+			("Completed", self.target(Kind.CUSTOMER, gid("Customer", "1"))),
+		)
+		self.retire(Kind.PROJECT, ProjectWriter, key)
+		self.assertEqual(frappe.db.get_value("Project", project, "is_active"), "No")
+
+		lead_key = gid("Lead", "1")
+		lead = lead_fields(
+			Lead("Open", "Rae", "Lead", "Writer Prospects", "rae.lead@example.test", notes="Met at the expo")
+		)
+		_, name = self.assert_lifecycle(Kind.LEAD, LeadWriter, lead_key, lead, {**lead, "status": "Replied"})
+		self.assertEqual(
+			frappe.db.get_value("Lead", name, ["status", "company_name"]), ("Replied", "Writer Prospects")
+		)
+		opportunity_key = gid("Opportunity", "1")
+		opportunity = opportunity_fields(
+			Opportunity(
+				Kind.LEAD,
+				lead_key,
+				"Writer showroom",
+				"Open",
+				"2026-03-02",
+				"CAD",
+				Decimal("1200.00"),
+				Decimal(40),
+			)
+		)
+		_, deal = self.assert_lifecycle(
+			Kind.OPPORTUNITY,
+			OpportunityWriter,
+			opportunity_key,
+			opportunity,
+			{**opportunity, "probability": Decimal(60)},
+		)
+		self.assertEqual(
+			frappe.db.get_value("Opportunity", deal, ["opportunity_from", "party_name", "probability"]),
+			("Lead", name, 60.0),
+		)
+		self.retire(Kind.OPPORTUNITY, OpportunityWriter, opportunity_key)
+		self.assertEqual(frappe.db.get_value("Opportunity", deal, "status"), "Closed")
+		self.retire(Kind.LEAD, LeadWriter, lead_key)
+		self.assertEqual(frappe.db.get_value("Lead", name, "disabled"), 1)
+
+	def test_departments_designations_and_employees(self) -> None:
+		department = gid("Department", "1")
+		_, team = self.assert_lifecycle(
+			Kind.DEPARTMENT,
+			DepartmentWriter,
+			department,
+			tree_fields("Writers", None),
+			tree_fields("Writing", None),
+		)
+		self.assertEqual(frappe.db.get_value("Department", team, "parent_department"), "All Departments")
+		job = gid("Job", "1")
+		self.assertEqual(
+			self.mirror(Kind.DESIGNATION, DesignationWriter, job, {"name": "Writer"}), Outcome.CREATED
+		)
+		self.assertEqual(self.target(Kind.DESIGNATION, job), "Writer - WT")
+		manager = gid("Employee", "1")
+		self.mirror(
+			Kind.EMPLOYEE,
+			EmployeeWriter,
+			manager,
+			employee_fields(
+				Employee(
+					"Morgan",
+					"Active",
+					gender="Female",
+					date_of_birth="1980-01-02",
+					date_of_joining="2020-01-06",
+				)
+			),
+		)
+		key = gid("Employee", "2")
+		first = employee_fields(
+			Employee(
+				"Avery",
+				"Active",
+				last_name="Writer",
+				department=department,
+				designation=job,
+				reports_to=manager,
+			)
+		)
+		_, employee = self.assert_lifecycle(
+			Kind.EMPLOYEE, EmployeeWriter, key, first, {**first, "last_name": "Wright"}
+		)
+		doc = frappe.get_doc("Employee", employee)
+		self.assertEqual(
+			(doc.employee_name, doc.department, doc.designation, doc.reports_to, doc.date_of_birth),
+			("Avery Wright", team, "Writer - WT", self.target(Kind.EMPLOYEE, manager), None),
+			"what the source doesn't keep (a date of birth) stays empty",
+		)
+		self.retire(Kind.EMPLOYEE, EmployeeWriter, key)
+		self.assertEqual(frappe.db.get_value("Employee", employee, "status"), "Inactive")
+		self.retire(Kind.DEPARTMENT, DepartmentWriter, department)
+		self.assertEqual(frappe.db.get_value("Department", team, "disabled"), 1)
+
+	def trade(
+		self, party: str, qty: str = "2", submitted: bool = True, account: str | None = None
+	) -> TradeDocument:
+		line = order_line(
+			gid("Line", "1"), gid("Product", "1"), None, "Wool Toque", Decimal(qty), Decimal(qty) * 25, "CAD"
+		)
+		return TradeDocument(
+			number="WT/2026/0001",
+			date="2026-06-01",
+			party=party,
+			currency="CAD",
+			lines=[TradeLine(line, account=account)],
+			taxes=[TradeTax("GST 5%", Decimal(qty) * Decimal("1.25"))],
+			total=Decimal(qty) * Decimal("26.25"),
+			submitted=submitted,
+			due_date="2026-07-01",
+			reference="PO-77",
+		)
+
+	def test_sales_and_purchase_orders(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.SUPPLIER, SupplierWriter, gid("Vendor", "1"), self.supplier())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		for kind, writer, doctype, party, planned in (
+			(Kind.SALES_ORDER, SalesOrderWriter, "Sales Order", gid("Customer", "1"), "delivery_date"),
+			(Kind.PURCHASE_ORDER, PurchaseOrderWriter, "Purchase Order", gid("Vendor", "1"), "schedule_date"),
+		):
+			key = gid("Order", doctype.replace(" ", ""))
+			_, order = self.assert_lifecycle(
+				kind,
+				writer,
+				key,
+				trade_fields(self.trade(party, submitted=False)),
+				trade_fields(self.trade(party)),
+			)
+			doc = frappe.get_doc(doctype, order)
+			self.assertEqual(
+				(doc.docstatus, Decimal(str(doc.grand_total)), str(doc.get(planned)), doc.title),
+				(1, Decimal("52.5"), "2026-07-01", "WT/2026/0001"),
+				f"a confirmed {doctype}",
+			)
+			self.assertEqual(
+				self.stock_of(self.target(Kind.PRODUCT, gid("Product", "1"))),
+				Decimal(12),
+				"orders move no stock",
+			)
+			self.mirror(kind, writer, key, trade_fields(self.trade(party, qty="3")))
+			amended = self.target(kind, key)
+			self.assertEqual(
+				frappe.db.get_value(doctype, amended, "amended_from"), order, "changed after confirming"
+			)
+			self.retire(kind, writer, key)
+			self.assertEqual(frappe.db.get_value(doctype, amended, "docstatus"), 2)
+
+	def test_invoices_returns_and_payments(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.SUPPLIER, SupplierWriter, gid("Vendor", "1"), self.supplier())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		income = self.ledger("4200", "Writer Income", "Income", "Income Account")
+		expense = self.ledger("5200", "Writer Purchases", "Expense", "Expense Account")
+		for kind, writer, doctype, party, account, field, payment_type, party_type in (
+			(
+				Kind.SALES_INVOICE,
+				SalesInvoiceWriter,
+				"Sales Invoice",
+				gid("Customer", "1"),
+				income,
+				"income_account",
+				"Receive",
+				"Customer",
+			),
+			(
+				Kind.PURCHASE_INVOICE,
+				PurchaseInvoiceWriter,
+				"Purchase Invoice",
+				gid("Vendor", "1"),
+				expense,
+				"expense_account",
+				"Pay",
+				"Supplier",
+			),
+		):
+			key = gid("Move", doctype.replace(" ", ""))
+			_, invoice = self.assert_lifecycle(
+				kind,
+				writer,
+				key,
+				trade_fields(self.trade(party, submitted=False, account=account)),
+				trade_fields(self.trade(party, account=account)),
+			)
+			doc = frappe.get_doc(doctype, invoice)
+			# A stock item bought without a receipt books where ERPNext's perpetual inventory puts it.
+			booked_to = (
+				self.target(Kind.ACCOUNT, account)
+				if kind is Kind.SALES_INVOICE
+				else frappe.get_cached_value("Company", self.context.company, "stock_received_but_not_billed")
+			)
+			self.assertEqual(
+				(doc.docstatus, doc.update_stock, Decimal(str(doc.grand_total)), doc.items[0].get(field)),
+				(1, 0, Decimal("52.5"), booked_to),
+				f"a posted {doctype}, on its account",
+			)
+			returned = gid("Move", f"{doctype.replace(' ', '')}Return")
+			note = replace(
+				self.trade(party, qty="-1", account=account),
+				number="WT/RET/1",
+				is_return=True,
+				return_against=key,
+			)
+			self.assertEqual(self.mirror(kind, writer, returned, trade_fields(note)), Outcome.CREATED)
+			credit = frappe.get_doc(doctype, self.target(kind, returned))
+			self.assertEqual(
+				(
+					credit.is_return,
+					credit.return_against,
+					Decimal(str(credit.grand_total)),
+					credit.update_outstanding_for_self,
+				),
+				(1, invoice, Decimal("-26.25"), 0),
+				"a return against the invoice, settling it",
+			)
+			payment_key = gid("Payment", doctype.replace(" ", ""))
+			paid = payment_fields(
+				Payment(
+					payment_type,
+					party_type,
+					party,
+					"2026-06-05",
+					Decimal("26.25"),
+					"CAD",
+					[Allocation(kind, key, Decimal("26.25"))],
+					reference="CHQ-1",
+				)
+			)
+			_, entry = self.assert_lifecycle(
+				Kind.PAYMENT_ENTRY, PaymentEntryWriter, payment_key, paid, {**paid, "reference": "CHQ-2"}
+			)
+			self.assertEqual(
+				Decimal(str(frappe.db.get_value(doctype, invoice, "outstanding_amount"))),
+				Decimal(0),
+				"the return and the payment settle the invoice",
+			)
+			self.assertEqual(
+				frappe.db.get_value("Payment Entry", entry, ["docstatus", "reference_no"]), (1, "CHQ-2")
+			)
+			self.retire(Kind.PAYMENT_ENTRY, PaymentEntryWriter, payment_key)
+			self.assertEqual(frappe.db.get_value("Payment Entry", entry, "docstatus"), 2)
+			self.retire(kind, writer, returned)
+			self.retire(kind, writer, key)
+			self.assertEqual(frappe.db.get_value(doctype, invoice, "docstatus"), 2)
+
+	def test_a_payment_of_a_draft_invoice_is_not_booked(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		key = gid("Move", "Draft")
+		self.mirror(
+			Kind.SALES_INVOICE,
+			SalesInvoiceWriter,
+			key,
+			trade_fields(self.trade(gid("Customer", "1"), submitted=False)),
+		)
+		paid = payment_fields(
+			Payment(
+				"Receive",
+				"Customer",
+				gid("Customer", "1"),
+				"2026-06-05",
+				Decimal(10),
+				"CAD",
+				[Allocation(Kind.SALES_INVOICE, key, Decimal(10))],
+			)
+		)
+		self.assertEqual(
+			self.mirror(Kind.PAYMENT_ENTRY, PaymentEntryWriter, gid("Payment", "D"), paid),
+			Outcome.UNSUPPORTED,
+		)
+		draft = self.target(Kind.SALES_INVOICE, key)
+		self.retire(Kind.SALES_INVOICE, SalesInvoiceWriter, key)
+		self.assertIn(
+			"Retired",
+			str(frappe.db.get_value("Sales Invoice", draft, "remarks")),
+			"a retired draft is marked",
+		)
+
+	def test_journal_entries(self) -> None:
+		self.mirror(Kind.SUPPLIER, SupplierWriter, gid("Vendor", "1"), self.supplier())
+		rent = self.ledger("6100", "Writer Rent", "Expense", "Expense Account")
+		bank = self.ledger("1010", "Writer Bank", "Asset", "Bank")
+		key = gid("Move", "Journal")
+
+		def entry(amount: str) -> Fields:
+			lines = [
+				JournalLine(rent, Decimal(amount), Decimal(0)),
+				JournalLine(bank, Decimal(0), Decimal(amount)),
+			]
+			return journal_fields("MISC/2026/0001", "2026-06-10", lines, True, "June rent")
+
+		_, journal = self.assert_lifecycle(
+			Kind.JOURNAL_ENTRY, JournalEntryWriter, key, entry("900"), entry("950")
+		)
+		doc = frappe.get_doc("Journal Entry", journal)
+		self.assertEqual(
+			(doc.docstatus, Decimal(str(doc.total_debit)), doc.user_remark),
+			(1, Decimal(950), "MISC/2026/0001: June rent"),
+		)
+		self.assertIsNotNone(doc.amended_from, "a posted entry that changed is cancelled and amended")
+		self.retire(Kind.JOURNAL_ENTRY, JournalEntryWriter, key)
+		self.assertEqual(frappe.db.get_value("Journal Entry", journal, "docstatus"), 2)
+
+	def test_a_journal_settles_an_invoice_on_the_sources_receivable(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		receivable = self.ledger("1200", "Writer Receivable", "Asset", "Receivable")
+		bank = self.ledger("1010", "Writer Bank", "Asset", "Bank")
+		invoice_key = gid("Move", "Receivable")
+		invoice = replace(self.trade(gid("Customer", "1")), party_account=receivable)
+		self.mirror(Kind.SALES_INVOICE, SalesInvoiceWriter, invoice_key, trade_fields(invoice))
+		invoice_name = self.target(Kind.SALES_INVOICE, invoice_key)
+		self.assertEqual(
+			frappe.db.get_value("Sales Invoice", invoice_name, "debit_to"),
+			self.target(Kind.ACCOUNT, receivable),
+		)
+		lines = [
+			JournalLine(bank, Decimal("52.50"), Decimal(0)),
+			JournalLine(
+				receivable,
+				Decimal(0),
+				Decimal("52.50"),
+				"Customer",
+				gid("Customer", "1"),
+				against=(Kind.SALES_INVOICE, invoice_key),
+			),
+		]
+		key = gid("Move", "Statement")
+		self.assertEqual(
+			self.mirror(
+				Kind.JOURNAL_ENTRY,
+				JournalEntryWriter,
+				key,
+				journal_fields("BNK/1", "2026-06-12", lines, True),
+			),
+			Outcome.CREATED,
+		)
+		self.assertEqual(
+			Decimal(str(frappe.db.get_value("Sales Invoice", invoice_name, "outstanding_amount"))),
+			Decimal(0),
+			"a bank statement's entry settles the invoice it was reconciled with",
+		)

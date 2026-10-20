@@ -42,11 +42,38 @@ comment      article (identity), author_name, author_email, html, published_on (
 review       product (identity), author_name, author_email, text, rating (0..1), published_on (date)
 url_redirect source (path), target (path or URL), status (HTTP code)
 
+The books and the business around them (ERP and HR sources; dates are ``YYYY-MM-DD``):
+
+supplier     as a customer (``party_fields``), without a group
+account      number, name, root_type, account_type, parent (identity | None), is_group, currency
+cost_center  name, parent (identity | None), is_group (``tree_fields``)
+warehouse    name, parent, is_group, address (address | None)
+project      name, status, customer, cost_center (identities | None), start, end, notes
+lead         status, first_name, last_name, company, email, phone, mobile, job_title, website, notes
+opportunity  party_kind ("lead" | "customer"), party, title, status, date, currency, amount, probability,
+             expected_closing, notes
+department   name, parent (identity | None), is_group
+designation  name
+employee     first_name, middle_name, last_name, gender, date_of_birth, date_of_joining, relieving_date,
+             status, employee_number, department, designation, reports_to (identities | None),
+             company_email, personal_email, phone
+sales_order, purchase_order, sales_invoice, purchase_invoice
+             number, date, due_date (an order's delivery date), party (customer or supplier identity),
+             currency, exchange_rate, lines ([line + account, cost_center, project]), taxes
+             ([{description, amount, account}]), total, submitted, is_return, return_against, reference,
+             remarks, party_account (identity | None), base_total, return_settles (``trade_fields``:
+             lines and taxes make the total exactly)
+payment_entry  payment_type, party_type, party, date, amount, currency, exchange_rate, account,
+             party_account, submitted, reference, remarks, allocations ([{kind, document, amount}])
+journal_entry  number, date, remarks, submitted, lines ([{account, debit, credit, party_type, party,
+             cost_center, project, against ({kind, document} | None)}]: balanced exactly)
+
 Times are UTC ``YYYY-MM-DDTHH:MM:SSZ``; money and quantities are exact Decimals."""
 
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field, replace
 from decimal import Decimal
 
@@ -611,3 +638,475 @@ def rating_fraction(rating: int, scale: int) -> Decimal:
 	if not 0 <= rating <= scale:
 		raise Unsupported(f"a rating of {rating} is outside 0..{scale}")
 	return Decimal(rating) / Decimal(scale)
+
+
+# -- The books and the business around them (ERP and HR sources) ---------------------------------------
+
+DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+ROOT_TYPES = frozenset({"Asset", "Liability", "Equity", "Income", "Expense"})
+CUSTOMER_PARTY, SUPPLIER_PARTY, EMPLOYEE_PARTY = "Customer", "Supplier", "Employee"
+# The party types a journal line or a payment can name, and the kind each is mirrored as.
+PARTY_KINDS: dict[str, Kind] = {
+	CUSTOMER_PARTY: Kind.CUSTOMER,
+	SUPPLIER_PARTY: Kind.SUPPLIER,
+	EMPLOYEE_PARTY: Kind.EMPLOYEE,
+}
+RECEIVE, PAY = "Receive", "Pay"
+PROJECT_STATUSES = frozenset({"Open", "On hold", "Completed", "Cancelled"})
+LEAD_STATUSES = frozenset(
+	{
+		"Lead",
+		"Open",
+		"Replied",
+		"Opportunity",
+		"Quotation",
+		"Lost Quotation",
+		"Interested",
+		"Converted",
+		"Do Not Contact",
+	}
+)
+OPPORTUNITY_STATUSES = frozenset({"Open", "Quotation", "Converted", "Lost", "Replied", "Closed"})
+EMPLOYEE_STATUSES = frozenset({"Active", "Inactive", "Suspended", "Left"})
+# ERPNext's own Gender records (setup's install fixtures).
+GENDERS = frozenset(
+	{"Male", "Female", "Transgender", "Genderqueer", "Non-Conforming", "Prefer not to say", "Other"}
+)
+
+
+def checked_date(value: str | None, what: str) -> str | None:
+	"""A ``YYYY-MM-DD`` date, or None; anything else is a mapper's mistake."""
+	if value is not None and not DATE.match(value):
+		raise ValueError(f"{what} is not a YYYY-MM-DD date: {value!r}")
+	return value
+
+
+def required_date(value: str | None, what: str) -> str:
+	checked = checked_date(value, what)
+	if checked is None:
+		raise ValueError(f"{what} is missing")
+	return checked
+
+
+def one_of(value: str, allowed: frozenset[str], what: str) -> str:
+	if value not in allowed:
+		raise ValueError(f"{what} {value!r} is not one of {sorted(allowed)}")
+	return value
+
+
+@dataclass(frozen=True)
+class Party:
+	"""A customer or a supplier: its name and type ("Individual" | "Company"), the person to contact,
+	its addresses (``address_fields``), and its tax id; for a customer, the group it belongs to."""
+
+	name: str
+	type: str
+	first_name: str | None = None
+	last_name: str | None = None
+	company: str | None = None
+	email: str | None = None
+	phone: str | None = None
+	addresses: list[Fields] = field(default_factory=list)
+	tax_id: str | None = None
+	currency: str | None = None
+
+
+def party_fields(party: Party) -> Fields:
+	"""The ``customer`` (and ``supplier``) fields; tax id and currency only when the source has them, so a
+	customer mapped before they existed keeps its change signal."""
+	fields: Fields = {
+		"name": party.name,
+		"type": one_of(party.type, frozenset({"Individual", "Company"}), "party type"),
+		"first_name": party.first_name,
+		"last_name": party.last_name,
+		"company": party.company,
+		"email": party.email,
+		"phone": party.phone,
+		"addresses": list[Field](party.addresses),
+	}
+	extra: Fields = {"tax_id": party.tax_id, "currency": party.currency}
+	return fields | {key: value for key, value in extra.items() if value is not None}
+
+
+@dataclass(frozen=True)
+class LedgerAccount:
+	"""An account of the source's chart: its number and name, root type, ERPNext account type (None for an
+	ordinary one), parent (an account identity; None for a top-level one, which goes under the company's
+	root of its type), whether it is a group, and its currency (None for the company's)."""
+
+	number: str | None
+	name: str
+	root_type: str
+	account_type: str | None = None
+	parent: str | None = None
+	is_group: bool = False
+	currency: str | None = None
+
+
+def account_fields(account: LedgerAccount) -> Fields:
+	return {
+		"number": account.number,
+		"name": account.name,
+		"root_type": one_of(account.root_type, ROOT_TYPES, "root type"),
+		"account_type": account.account_type,
+		"parent": account.parent,
+		"is_group": account.is_group,
+		"currency": account.currency,
+	}
+
+
+def tree_fields(name: str, parent: str | None, is_group: bool = False) -> Fields:
+	"""A node of a tree the company keeps (a cost center, a warehouse, a department): its name, its parent
+	(an identity of the same kind; None for one under the company's root), and whether it is a group."""
+	return {"name": name, "parent": parent, "is_group": is_group}
+
+
+def warehouse_fields(name: str, parent: str | None, is_group: bool, address: Fields | None) -> Fields:
+	return tree_fields(name, parent, is_group) | {"address": address}
+
+
+@dataclass(frozen=True)
+class TradeLine:
+	"""One line of an order or an invoice: what was sold or bought (``line``, exact), and where it books
+	(an account, cost center and project identity, each None for the document's defaults)."""
+
+	line: OrderLine
+	account: str | None = None
+	cost_center: str | None = None
+	project: str | None = None
+
+
+@dataclass(frozen=True)
+class TradeTax:
+	"""A tax (or another charge) on a document, as an amount: its description, amount and the account it
+	books to (an account identity; None for the connection's tax account)."""
+
+	description: str
+	amount: Decimal
+	account: str | None = None
+
+
+@dataclass(frozen=True)
+class TradeDocument:
+	"""A sales or purchase order or invoice: its number, date (and due or delivery date), party (a customer
+	or supplier identity), currency and the rate the source recorded for another than the company's, its
+	lines and taxes, and its total, which they must make exactly. ``submitted`` when the source has
+	confirmed or posted it; a return (credit or debit note: negative quantities) against the identity it
+	returns, when the source names one. ``reference`` is the party's own number (a supplier's bill).
+	``party_account`` is the receivable or payable account (an identity) an invoice books its party's
+	balance to, when the source keeps its own (else the party's default in ERPNext); in another currency,
+	``base_total`` is the total in the company's currency as the source booked it (checked exactly). A return
+	against an invoice settles that invoice's balance (``return_settles``), unless the source settled it on
+	its own (a refund paid out), when it keeps its own balance."""
+
+	number: str
+	date: str
+	party: str
+	currency: str
+	lines: list[TradeLine]
+	taxes: list[TradeTax]
+	total: Decimal
+	submitted: bool
+	due_date: str | None = None
+	exchange_rate: Decimal | None = None
+	is_return: bool = False
+	return_against: str | None = None
+	reference: str | None = None
+	remarks: str | None = None
+	party_account: str | None = None
+	base_total: Decimal | None = None
+	return_settles: bool = True
+
+
+def trade_line_fields(line: TradeLine) -> Fields:
+	return line_fields(line.line) | {
+		"account": line.account,
+		"cost_center": line.cost_center,
+		"project": line.project,
+	}
+
+
+def trade_fields(document: TradeDocument) -> Fields:
+	"""A ``sales_order`` / ``purchase_order`` / ``sales_invoice`` / ``purchase_invoice``'s fields. Its lines
+	and taxes must add up to its total exactly, or it can't be booked as the source has it (Unsupported)."""
+	made = sum((item.line.qty * item.line.rate for item in document.lines), Decimal(0)) + sum(
+		(tax.amount for tax in document.taxes), Decimal(0)
+	)
+	if made != document.total:
+		raise Unsupported(
+			f"{document.number}'s lines and taxes come to {decimal_text(made)}, not its total "
+			f"{decimal_text(document.total)}"
+		)
+	return {
+		"number": document.number,
+		"date": required_date(document.date, f"{document.number}'s date"),
+		"due_date": checked_date(document.due_date, f"{document.number}'s due date"),
+		"party": document.party,
+		"currency": document.currency,
+		"exchange_rate": document.exchange_rate,
+		"lines": [trade_line_fields(line) for line in document.lines],
+		"taxes": [
+			{"description": tax.description, "amount": tax.amount, "account": tax.account}
+			for tax in document.taxes
+		],
+		"total": document.total,
+		"submitted": document.submitted,
+		"is_return": document.is_return,
+		"return_against": document.return_against,
+		"reference": document.reference,
+		"remarks": document.remarks,
+		"party_account": document.party_account,
+		"base_total": document.base_total,
+		"return_settles": document.return_settles,
+	}
+
+
+@dataclass(frozen=True)
+class Allocation:
+	"""Part of a payment settling one document: its kind (``sales_invoice``, ``purchase_invoice``, or a
+	storefront ``order``), its identity, and the amount allocated to it."""
+
+	kind: Kind
+	document: str
+	amount: Decimal
+
+
+@dataclass(frozen=True)
+class Payment:
+	"""A payment received from or paid to a party (``payment_type``: "Receive" | "Pay"; ``party_type`` a
+	key of PARTY_KINDS), on a date, of an amount in its currency (at the rate the source recorded, for
+	another than the company's), into or out of an account (an identity; None for the connection's deposit
+	account), allocated to the documents it settles; anything unallocated is an advance. ``party_account``
+	is the receivable or payable account it settles on (an identity; None for the party's default).
+	``submitted`` once the source has posted it (a draft payment stays a draft)."""
+
+	payment_type: str
+	party_type: str
+	party: str
+	date: str
+	amount: Decimal
+	currency: str
+	allocations: list[Allocation] = field(default_factory=list)
+	exchange_rate: Decimal | None = None
+	account: str | None = None
+	reference: str | None = None
+	remarks: str | None = None
+	party_account: str | None = None
+	submitted: bool = True
+
+
+def payment_fields(payment: Payment) -> Fields:
+	"""A ``payment_entry``'s fields. It can't allocate more than it is, or a negative amount."""
+	allocated = sum((allocation.amount for allocation in payment.allocations), Decimal(0))
+	if payment.amount <= 0 or allocated > payment.amount or any(a.amount <= 0 for a in payment.allocations):
+		raise Unsupported(
+			f"a payment of {decimal_text(payment.amount)} allocated {decimal_text(allocated)} can't be booked"
+		)
+	return {
+		"payment_type": one_of(payment.payment_type, frozenset({RECEIVE, PAY}), "payment type"),
+		"party_type": one_of(payment.party_type, frozenset(PARTY_KINDS), "party type"),
+		"party": payment.party,
+		"date": required_date(payment.date, "the payment's date"),
+		"amount": payment.amount,
+		"currency": payment.currency,
+		"exchange_rate": payment.exchange_rate,
+		"account": payment.account,
+		"party_account": payment.party_account,
+		"submitted": payment.submitted,
+		"reference": payment.reference,
+		"remarks": payment.remarks,
+		"allocations": [
+			{"kind": allocation.kind.value, "document": allocation.document, "amount": allocation.amount}
+			for allocation in payment.allocations
+		],
+	}
+
+
+@dataclass(frozen=True)
+class JournalLine:
+	"""One line of a journal entry: an account identity, its debit or credit, and the party, cost center
+	and project (identities) it is for; on a receivable or payable account, the invoice it settles
+	(``against``: its kind and identity), when the source reconciled it with one."""
+
+	account: str
+	debit: Decimal
+	credit: Decimal
+	party_type: str | None = None
+	party: str | None = None
+	cost_center: str | None = None
+	project: str | None = None
+	against: tuple[Kind, str] | None = None
+
+
+def journal_fields(
+	number: str, date: str, lines: list[JournalLine], submitted: bool, remarks: str | None = None
+) -> Fields:
+	"""A ``journal_entry``'s fields: it must balance exactly, and every line must be a debit or a credit."""
+	debits = sum((line.debit for line in lines), Decimal(0))
+	credits = sum((line.credit for line in lines), Decimal(0))
+	if not lines or debits != credits:
+		raise Unsupported(
+			f"journal entry {number} doesn't balance (debits {decimal_text(debits)}, credits "
+			f"{decimal_text(credits)})"
+		)
+	if any(line.debit < 0 or line.credit < 0 or (line.debit and line.credit) for line in lines):
+		raise Unsupported(f"journal entry {number} has a line that is both a debit and a credit, or negative")
+	for line in lines:
+		if line.party_type is not None:
+			one_of(line.party_type, frozenset(PARTY_KINDS), "party type")
+	return {
+		"number": number,
+		"date": required_date(date, f"journal entry {number}'s date"),
+		"remarks": remarks,
+		"submitted": submitted,
+		"lines": [
+			{
+				"account": line.account,
+				"debit": line.debit,
+				"credit": line.credit,
+				"party_type": line.party_type,
+				"party": line.party,
+				"cost_center": line.cost_center,
+				"project": line.project,
+				"against": {"kind": line.against[0].value, "document": line.against[1]}
+				if line.against
+				else None,
+			}
+			for line in lines
+			if line.debit or line.credit
+		],
+	}
+
+
+def project_fields(
+	name: str,
+	status: str,
+	customer: str | None = None,
+	start: str | None = None,
+	end: str | None = None,
+	notes: str | None = None,
+	cost_center: str | None = None,
+) -> Fields:
+	"""A ``project``: its name, status (PROJECT_STATUSES), customer, cost center (identities), expected
+	start and end dates, and notes."""
+	return {
+		"name": name,
+		"status": one_of(status, PROJECT_STATUSES, "project status"),
+		"customer": customer,
+		"cost_center": cost_center,
+		"start": checked_date(start, f"{name}'s start"),
+		"end": checked_date(end, f"{name}'s end"),
+		"notes": notes,
+	}
+
+
+@dataclass(frozen=True)
+class Lead:
+	"""A sales lead: the person and their organisation, how to reach them, and its status
+	(LEAD_STATUSES)."""
+
+	status: str
+	first_name: str | None = None
+	last_name: str | None = None
+	company: str | None = None
+	email: str | None = None
+	phone: str | None = None
+	mobile: str | None = None
+	job_title: str | None = None
+	website: str | None = None
+	notes: str | None = None
+
+
+def lead_fields(lead: Lead) -> Fields:
+	if not (lead.first_name or lead.last_name or lead.company):
+		raise Unsupported("a lead with no name and no organisation")
+	return {
+		"status": one_of(lead.status, LEAD_STATUSES, "lead status"),
+		"first_name": lead.first_name,
+		"last_name": lead.last_name,
+		"company": lead.company,
+		"email": lead.email,
+		"phone": lead.phone,
+		"mobile": lead.mobile,
+		"job_title": lead.job_title,
+		"website": lead.website,
+		"notes": lead.notes,
+	}
+
+
+@dataclass(frozen=True)
+class Opportunity:
+	"""A sales opportunity with a lead or a customer (``party_kind`` and its identity): its title, status
+	(OPPORTUNITY_STATUSES), date, expected closing, amount in its currency and probability (percent)."""
+
+	party_kind: Kind
+	party: str
+	title: str
+	status: str
+	date: str
+	currency: str | None = None
+	amount: Decimal | None = None
+	probability: Decimal | None = None
+	expected_closing: str | None = None
+	notes: str | None = None
+
+
+def opportunity_fields(opportunity: Opportunity) -> Fields:
+	if opportunity.party_kind not in (Kind.LEAD, Kind.CUSTOMER):
+		raise ValueError(f"an opportunity is with a lead or a customer, not a {opportunity.party_kind}")
+	return {
+		"party_kind": opportunity.party_kind.value,
+		"party": opportunity.party,
+		"title": opportunity.title,
+		"status": one_of(opportunity.status, OPPORTUNITY_STATUSES, "opportunity status"),
+		"date": required_date(opportunity.date, f"{opportunity.title}'s date"),
+		"currency": opportunity.currency,
+		"amount": opportunity.amount,
+		"probability": opportunity.probability,
+		"expected_closing": checked_date(opportunity.expected_closing, f"{opportunity.title}'s closing"),
+		"notes": opportunity.notes,
+	}
+
+
+@dataclass(frozen=True)
+class Employee:
+	"""A person employed: their names, gender (GENDERS), dates of birth, joining and leaving, status
+	(EMPLOYEE_STATUSES), the source's employee number, department and designation and manager
+	(identities), and their work and personal email and phone. A date or gender the source doesn't keep is
+	None: ERPNext requires them, so the record is saved without them, never with an invented value."""
+
+	first_name: str
+	status: str
+	last_name: str | None = None
+	middle_name: str | None = None
+	gender: str | None = None
+	date_of_birth: str | None = None
+	date_of_joining: str | None = None
+	relieving_date: str | None = None
+	employee_number: str | None = None
+	department: str | None = None
+	designation: str | None = None
+	reports_to: str | None = None
+	company_email: str | None = None
+	personal_email: str | None = None
+	phone: str | None = None
+
+
+def employee_fields(employee: Employee) -> Fields:
+	return {
+		"first_name": employee.first_name,
+		"middle_name": employee.middle_name,
+		"last_name": employee.last_name,
+		"gender": one_of(employee.gender, GENDERS, "gender") if employee.gender else None,
+		"date_of_birth": checked_date(employee.date_of_birth, "a date of birth"),
+		"date_of_joining": checked_date(employee.date_of_joining, "a date of joining"),
+		"relieving_date": checked_date(employee.relieving_date, "a relieving date"),
+		"status": one_of(employee.status, EMPLOYEE_STATUSES, "employee status"),
+		"employee_number": employee.employee_number,
+		"department": employee.department,
+		"designation": employee.designation,
+		"reports_to": employee.reports_to,
+		"company_email": employee.company_email,
+		"personal_email": employee.personal_email,
+		"phone": employee.phone,
+	}

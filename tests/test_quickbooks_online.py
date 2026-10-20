@@ -18,7 +18,7 @@ from idempotent_importer.core.errors import CredentialsRejected, RetryLater, Sou
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.http import HttpResponse
 from idempotent_importer.core.kind import Kind
-from idempotent_importer.core.node import Node
+from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.oauth import TokenGrant
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.quickbooks_online.adapter import GRANT_PATH, QuickBooksAdapter
@@ -309,6 +309,26 @@ class TestMappers:
 		assert lines[0].optional_string("project") == gid("Customer", "3")
 		assert [t.decimal("amount") for t in invoice.records("taxes")] == [Decimal("42.25")]
 		assert invoice.decimal("total") == Decimal("367.25") and invoice.flag("submitted")
+
+	def test_a_discount_and_shipping_are_the_documents_own(self, config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(config)}[Kind.SALES_INVOICE]
+		invoice = nodes(config, Kind.SALES_INVOICE)["Invoice/130"]
+		lines: list[JsonValue] = [
+			*(line.raw() for line in invoice.children("Line")),
+			{"Amount": 25, "DetailType": "DiscountLineDetail", "DiscountLineDetail": {"PercentBased": False}},
+			{
+				"Amount": 15,
+				"DetailType": "SalesItemLineDetail",
+				"SalesItemLineDetail": {"ItemRef": {"value": "SHIPPING_ITEM_ID"}},
+			},
+		]
+		desired = mapper.map(invoice.with_fields(Line=lines, TotalAmt=357.25))
+		assert desired is not None
+		fields = desired.values()
+		assert fields.decimal("discount") == Decimal(25)
+		shipping = fields.records("taxes")[-1]
+		assert (shipping.string("role"), shipping.decimal("amount")) == ("shipping", Decimal(15))
+		assert len(fields.records("lines")) == 2
 
 	def test_returns_are_negative(self, config: ConnectionConfig) -> None:
 		credit = values(config, Kind.SALES_INVOICE, "CreditMemo/145")

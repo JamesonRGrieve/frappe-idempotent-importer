@@ -14,8 +14,8 @@ from idempotent_importer.contract import (
 	CUSTOMER_PARTY,
 	PAY,
 	RECEIVE,
+	SHIPPING,
 	SUPPLIER_PARTY,
-	TAX,
 	Address,
 	Allocation,
 	Charge,
@@ -406,17 +406,26 @@ class Document:
 					project=self.zoho.of("Project", line, "project_id"),
 				)
 			)
-		for field, label in (("shipping_charge", "Shipping"), ("adjustment", "Adjustment")):
+		# A purchase's shipping charge and any document's adjustment are lines of their own (ERPNext's freight
+		# charge is a sale's).
+		extra = (
+			(("adjustment", "Adjustment"),)
+			if self.sales
+			else (("shipping_charge", "Shipping"), ("adjustment", "Adjustment"))
+		)
+		for field, label in extra:
 			value = text_decimal(self.node, field)
 			if value:
 				lines.append(TradeLine(OrderLine(field, None, None, label, self.sign, value)))
-		discount = self.discount(lines)
-		if discount:
-			lines.append(TradeLine(OrderLine("discount", None, None, "Discount", self.sign, -discount)))
 		return lines
 
+	@property
+	def sales(self) -> bool:
+		return self.type in SALES_TYPES
+
 	def taxes(self) -> list[TradeTax]:
-		"""The document's taxes by name; a document that itemises none (a sales receipt) its tax total."""
+		"""The document's taxes by name (a document that itemises none, a sales receipt, its tax total), and
+		a sale's shipping charge as freight."""
 		taxes = [
 			TradeTax(tax.string("tax_name"), self.sign * text_decimal(tax, "tax_amount"))
 			for tax in every(self.node, "taxes")
@@ -425,6 +434,9 @@ class Document:
 		total = text_decimal(self.node, "tax_total")
 		if not taxes and total:
 			taxes.append(TradeTax("Tax", self.sign * total))
+		shipping = text_decimal(self.node, "shipping_charge")
+		if self.sales and shipping:
+			taxes.append(TradeTax("Shipping", self.sign * shipping, role=SHIPPING))
 		return taxes
 
 	def total(self) -> Decimal:
@@ -439,14 +451,16 @@ class Document:
 			Decimal(0),
 		)
 
-	def discount(self, lines: list[TradeLine]) -> Decimal:
-		"""The document's entity-level discount, as the amount its lines, taxes and charges come to beyond
-		its total (Zoho gives the discount as a percentage or an amount, and its total after it)."""
+	def discount(self, lines: list[TradeLine], taxes: list[TradeTax]) -> Decimal | None:
+		"""The document's entity-level discount (in the document's sign), as the amount its lines, taxes and
+		charges come to beyond its total (Zoho gives the discount as a percentage or an amount, and its total
+		after it); None without one."""
 		if not text_decimal(self.node, "discount") and not text_decimal(self.node, "discount_amount"):
-			return Decimal(0)
-		made = sum((line.line.qty * line.line.rate for line in lines), Decimal(0)) * self.sign
-		taxes = sum((text_decimal(tax, "tax_amount") for tax in every(self.node, "taxes")), Decimal(0))
-		return made + taxes - self.total()
+			return None
+		made = sum((line.line.qty * line.line.rate for line in lines), Decimal(0)) + sum(
+			(tax.amount for tax in taxes), Decimal(0)
+		)
+		return made - self.sign * self.total()
 
 	def number(self) -> str:
 		for field in DOCUMENT_NUMBERS:
@@ -481,14 +495,15 @@ class TradeMapper:
 		if status in VOID:
 			return None
 		document = Document(self.zoho, node)
-		sales = document.type in SALES_TYPES
+		lines, taxes = document.lines(), document.taxes()
 		trade = TradeDocument(
 			number=document.number(),
 			date=required_day(node.optional_string("date"), node.path),
-			party=self.zoho.required("Contact", node, "customer_id" if sales else "vendor_id"),
+			party=self.zoho.required("Contact", node, "customer_id" if document.sales else "vendor_id"),
 			currency=document.currency(),
-			lines=document.lines(),
-			taxes=document.taxes(),
+			lines=lines,
+			taxes=taxes,
+			discount=document.discount(lines, taxes),
 			total=document.sign * document.total(),
 			submitted=status not in DRAFT,
 			due_date=node.optional_string("due_date")
@@ -516,7 +531,7 @@ class EstimateMapper:
 		if node.text("status") in ("declined", "expired", *VOID):
 			return None
 		document = Document(self.zoho, node)
-		lines = document.lines()
+		lines, taxes = document.lines(), document.taxes()
 		fields: Fields = {
 			"number": document.number(),
 			"currency": document.currency(),
@@ -526,8 +541,8 @@ class EstimateMapper:
 			"billing": None,
 			"shipping": None,
 			"lines": list[Field](line_fields(line.line) for line in lines),
-			"discount": Decimal(0),
-			"charges": [charge_fields(Charge(TAX, tax.description, tax.amount)) for tax in document.taxes()],
+			"discount": document.discount(lines, taxes) or Decimal(0),
+			"charges": [charge_fields(Charge(tax.role, tax.description, tax.amount)) for tax in taxes],
 			"total": document.total(),
 			"remarks": node.optional_string("notes"),
 		}

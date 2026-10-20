@@ -299,6 +299,15 @@ class TestBooksMappers:
 			gid("zoho_books", "Account", "460000000000361"),
 		]
 
+	def test_a_discount_and_shipping_are_the_documents_own(self) -> None:
+		mapper = {m.kind: m for m in BOOKS.mappers(BOOKS_CONFIG)}[Kind.SALES_INVOICE]
+		invoice = nodes(BOOKS, BOOKS_CONFIG, Kind.SALES_INVOICE)["Invoice/460000000001001"]
+		desired = mapper.map(invoice.with_fields(discount=10, shipping_charge="5.00", total="231.25"))
+		assert desired is not None
+		fields = desired.values()
+		assert fields.decimal("discount") == Decimal(10)
+		assert fields.records("taxes")[-1].string("role") == "shipping"
+
 	def test_what_is_planned(self) -> None:
 		mapper = {m.kind: m for m in BOOKS.mappers(BOOKS_CONFIG)}[Kind.SALES_INVOICE]
 		invoice = nodes(BOOKS, BOOKS_CONFIG, Kind.SALES_INVOICE)["Invoice/460000000001001"]

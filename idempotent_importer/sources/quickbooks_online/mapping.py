@@ -14,8 +14,8 @@ from idempotent_importer.contract import (
 	EMPLOYEE_PARTY,
 	PAY,
 	RECEIVE,
+	SHIPPING,
 	SUPPLIER_PARTY,
-	TAX,
 	Address,
 	Allocation,
 	Charge,
@@ -390,7 +390,9 @@ class ProjectMapper:
 
 
 class Lines:
-	"""A transaction's lines as trade lines, exact: each line's rate times its quantity is its amount."""
+	"""A transaction's lines as trade lines, exact: each line's rate times its quantity is its amount. A
+	discount line is the document's discount (``discount``), and a sale's shipping line its freight
+	(``freight``)."""
 
 	def __init__(self, books: QuickBooks, node: Node, currency: str, sign: Decimal) -> None:
 		self.books = books
@@ -398,6 +400,8 @@ class Lines:
 		self.currency = currency
 		self.sign = sign
 		self.project = books.of("Customer", node.child("ProjectRef"))
+		self.discount = Decimal(0)
+		self.freight: list[TradeTax] = []
 
 	def trade(self) -> list[TradeLine]:
 		lines: list[TradeLine] = []
@@ -414,6 +418,11 @@ class Lines:
 			raise Unsupported(f"{line.path} has no {detail_type}")
 		key = line.optional_string("Id") or str(line.path)
 		match detail_type:
+			case "SalesItemLineDetail" if self._shipping(detail):
+				self.freight.append(
+					TradeTax(self._name(line, "Shipping"), self.sign * amount(line), role=SHIPPING)
+				)
+				return []
 			case "SalesItemLineDetail" | "ItemBasedExpenseLineDetail":
 				return [self._item(key, line, detail)]
 			case "GroupLineDetail":
@@ -428,24 +437,19 @@ class Lines:
 					)
 				]
 			case "DiscountLineDetail":
-				return [
-					TradeLine(
-						OrderLine(key, None, None, self._name(line, "Discount"), self.sign, -amount(line)),
-						account=self.books.of("Account", detail.child("DiscountAccountRef")),
-						cost_center=self.books.cost_center(detail, self.node),
-						project=self.project,
-					)
-				]
+				self.discount += self.sign * amount(line)
+				return []
 			case _:
 				raise Unsupported(f"a {detail_type} line ({PLANNED})")
 
+	@staticmethod
+	def _shipping(detail: Node) -> bool:
+		item = detail.child("ItemRef")
+		return item is not None and item.optional_string("value") == SHIPPING_ITEM
+
 	def _item(self, key: str, line: Node, detail: Node) -> TradeLine:
 		item = detail.child("ItemRef")
-		product = (
-			None
-			if item is None or item.optional_string("value") == SHIPPING_ITEM
-			else self.books.of("Item", item)
-		)
+		product = self.books.of("Item", item)
 		qty = detail.optional_decimal("Qty")
 		total = amount(line)
 		if qty is None or qty == 0:
@@ -516,13 +520,16 @@ def document(books: QuickBooks, node: Node, party_entity: str, party_field: str)
 	kind = entity(node)
 	sign = Decimal(-1) if kind in RETURNS else Decimal(1)
 	currency = currency_of(node)
+	lines = Lines(books, node, currency, sign)
+	trade = lines.trade()
 	return TradeDocument(
 		number=node.optional_string("DocNumber") or f"{kind} {node.string('Id')}",
 		date=required_day(node.optional_string("TxnDate"), node.path),
 		party=books.required(party_entity, node, party_field),
 		currency=currency,
-		lines=Lines(books, node, currency, sign).trade(),
-		taxes=taxes(node, sign),
+		lines=trade,
+		taxes=[*taxes(node, sign), *lines.freight],
+		discount=lines.discount or None,
 		total=sign * amount(node, "TotalAmt"),
 		submitted=True,
 		due_date=node.optional_string("DueDate"),
@@ -576,13 +583,9 @@ class EstimateMapper:
 
 	def map(self, node: Node) -> Desired:
 		currency = currency_of(node)
-		lines: list[Fields] = []
-		discount = Decimal(0)
-		for trade in Lines(self.books, node, currency, Decimal(1)).trade():
-			if trade.line.product is None and trade.line.rate < 0:
-				discount -= trade.line.qty * trade.line.rate
-				continue
-			lines.append(line_fields(trade.line))
+		read = Lines(self.books, node, currency, Decimal(1))
+		lines = [line_fields(trade.line) for trade in read.trade()]
+		charges = [*taxes(node, Decimal(1)), *read.freight]
 		fields: Fields = {
 			"number": node.optional_string("DocNumber") or f"Estimate {node.string('Id')}",
 			"currency": currency,
@@ -592,10 +595,8 @@ class EstimateMapper:
 			"billing": None,
 			"shipping": None,
 			"lines": list[Field](lines),
-			"discount": discount,
-			"charges": [
-				charge_fields(Charge(TAX, tax.description, tax.amount)) for tax in taxes(node, Decimal(1))
-			],
+			"discount": read.discount,
+			"charges": [charge_fields(Charge(tax.role, tax.description, tax.amount)) for tax in charges],
 			"total": amount(node, "TotalAmt"),
 			"remarks": node.optional_string("PrivateNote"),
 		}

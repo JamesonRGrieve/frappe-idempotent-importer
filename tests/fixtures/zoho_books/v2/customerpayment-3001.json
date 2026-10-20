@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/books/v3/customerpayments/460000000003001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"payment": {
+			"payment_id": "460000000003001",
+			"payment_mode": "banktransfer",
+			"amount": 236.25,
+			"amount_refunded": 0,
+			"bank_charges": 0,
+			"date": "2026-02-20",
+			"status": "success",
+			"reference_number": "EFT-5512",
+			"description": "",
+			"customer_id": "460000000000101",
+			"customer_name": "Lakeview Dental",
+			"email": "office@lakeviewdental.example",
+			"invoices": [
+				{
+					"invoice_id": "460000000001001",
+					"invoice_number": "INV-000001",
+					"date": "2026-02-10",
+					"invoice_amount": 236.25,
+					"amount_applied": 236.25,
+					"balance_amount": 0,
+					"tax_amount_withheld": 0
+				}
+			],
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"location_id": "460000000000901",
+			"location_name": "Head Office"
+		}
+	}
+}

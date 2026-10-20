@@ -1,0 +1,63 @@
+{
+	"request": {
+		"path": "/books/v3/estimates/460000000006001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"estimate": {
+			"estimate_id": "460000000006001",
+			"estimate_number": "EST-000001",
+			"date": "2026-02-01",
+			"reference_number": "",
+			"status": "sent",
+			"customer_id": "460000000000101",
+			"customer_name": "Lakeview Dental",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"exchange_rate": 1,
+			"expiry_date": "2026-03-01",
+			"discount": 0,
+			"is_discount_before_tax": true,
+			"discount_type": "entity_level",
+			"is_inclusive_tax": false,
+			"line_items": [
+				{
+					"line_item_id": "4600000000061",
+					"item_id": "460000000000501",
+					"name": "Desk Lamp",
+					"description": "Desk Lamp",
+					"item_order": 1,
+					"bcy_rate": 45,
+					"rate": 45,
+					"quantity": 10,
+					"unit": "pcs",
+					"discount_amount": 0,
+					"discount": 0,
+					"tax_id": "4600000000000000077",
+					"tax_name": "GST",
+					"tax_type": "tax",
+					"tax_percentage": 5,
+					"item_total": 450
+				}
+			],
+			"shipping_charge": "0.00",
+			"adjustment": 0,
+			"sub_total": 450,
+			"total": 472.5,
+			"tax_total": 22.5,
+			"price_precision": 2,
+			"taxes": [
+				{
+					"tax_name": "GST (5%)",
+					"tax_amount": 22.5
+				}
+			],
+			"created_time": "2026-02-01T09:00:00-0500",
+			"last_modified_time": "2026-02-01T09:00:00-0500"
+		}
+	}
+}

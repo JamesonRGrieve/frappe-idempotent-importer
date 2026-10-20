@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/inventory/v1/organizations",
+		"query": {}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"organizations": [
+			{
+				"organization_id": "20000001",
+				"name": "Tidewater Gear",
+				"contact_name": "Mo Grant",
+				"email": "mo@tidewater.example",
+				"is_default_org": true,
+				"plan_name": "Standard",
+				"language_code": "en",
+				"time_zone": "America/Vancouver",
+				"currency_id": "2000000000000000099",
+				"currency_code": "CAD",
+				"currency_symbol": "$",
+				"price_precision": 2
+			}
+		]
+	}
+}

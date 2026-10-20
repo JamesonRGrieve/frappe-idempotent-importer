@@ -1,0 +1,53 @@
+{
+	"request": {
+		"path": "/books/v3/items",
+		"query": {
+			"organization_id": "10234695",
+			"filter_by": "Status.All",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"items": [
+			{
+				"item_id": "460000000000501",
+				"name": "Desk Lamp",
+				"status": "active",
+				"description": "LED desk lamp",
+				"rate": 49,
+				"unit": "pcs",
+				"tax_id": "4600000000000000077",
+				"tax_name": "GST",
+				"tax_percentage": "5",
+				"tax_type": "tax",
+				"sku": "LAMP-1",
+				"product_type": "goods",
+				"custom_fields": []
+			},
+			{
+				"item_id": "460000000000502",
+				"name": "Setup visit",
+				"status": "active",
+				"description": "On-site setup",
+				"rate": 90,
+				"unit": "hrs",
+				"tax_id": "4600000000000000077",
+				"tax_name": "GST",
+				"tax_percentage": "5",
+				"tax_type": "tax",
+				"sku": "",
+				"product_type": "service",
+				"custom_fields": []
+			}
+		],
+		"page_context": {
+			"page": 1,
+			"per_page": 200,
+			"has_more_page": false,
+			"sort_column": "created_time",
+			"sort_order": "D"
+		}
+	}
+}

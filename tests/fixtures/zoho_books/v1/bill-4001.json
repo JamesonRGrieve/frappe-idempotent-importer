@@ -1,0 +1,68 @@
+{
+	"request": {
+		"path": "/books/v3/bills/460000000004001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"bill": {
+			"bill_id": "460000000004001",
+			"vendor_id": "460000000000103",
+			"vendor_name": "Northwind Office Supply",
+			"status": "paid",
+			"bill_number": "NW-4410",
+			"date": "2026-02-14",
+			"due_date": "2026-03-16",
+			"payment_terms": 30,
+			"payment_terms_label": "Net 30",
+			"reference_number": "",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"price_precision": 2,
+			"exchange_rate": 1,
+			"adjustment": 0,
+			"adjustment_description": "",
+			"is_inclusive_tax": false,
+			"line_items": [
+				{
+					"line_item_id": "4600000000041",
+					"item_id": "",
+					"name": "Toner",
+					"account_id": "460000000000368",
+					"account_name": "Printer Ink",
+					"description": "Toner cartridges",
+					"bcy_rate": 30,
+					"rate": 30,
+					"quantity": 4,
+					"tax_id": "4600000000000000077",
+					"tax_name": "GST",
+					"tax_type": "tax",
+					"tax_percentage": 5,
+					"item_total": 120,
+					"item_order": 1,
+					"unit": "pcs"
+				}
+			],
+			"sub_total": 120,
+			"tax_total": 6,
+			"total": 126,
+			"payment_made": 126,
+			"vendor_credits_applied": 0,
+			"taxes": [
+				{
+					"tax_name": "GST (5%)",
+					"tax_amount": "6.00"
+				}
+			],
+			"balance": 0,
+			"created_time": "2026-02-14T09:00:00-0500",
+			"last_modified_time": "2026-02-21T09:00:00-0500",
+			"notes": "",
+			"terms": ""
+		}
+	}
+}

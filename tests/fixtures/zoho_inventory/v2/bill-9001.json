@@ -1,0 +1,66 @@
+{
+	"request": {
+		"path": "/inventory/v1/bills/2000000000009001",
+		"query": {
+			"organization_id": "20000001"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"bill": {
+			"bill_id": "2000000000009001",
+			"purchaseorder_id": "2000000000008001",
+			"vendor_id": "2000000000000103",
+			"vendor_name": "Coast Textiles",
+			"status": "paid",
+			"bill_number": "CT-1188",
+			"date": "2026-01-30",
+			"due_date": "2026-02-14",
+			"reference_number": "PO-00001",
+			"currency_id": "2000000000000000099",
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"price_precision": 2,
+			"exchange_rate": 1,
+			"line_items": [
+				{
+					"line_item_id": "2000000000009011",
+					"item_id": "2000000000000421",
+					"name": "Wool Socks",
+					"account_id": "2000000000000811",
+					"account_name": "Inventory Asset",
+					"description": "",
+					"bcy_rate": 6,
+					"rate": 6,
+					"quantity": 50,
+					"tax_id": "2000000000000000077",
+					"tax_name": "GST",
+					"tax_type": "tax",
+					"tax_percentage": 5,
+					"item_total": 300,
+					"item_order": 1,
+					"unit": "pcs",
+					"location_id": "2000000000000901",
+					"location_name": "Main Warehouse"
+				}
+			],
+			"location_id": "2000000000000901",
+			"location_name": "Main Warehouse",
+			"taxes": [
+				{
+					"tax_name": "GST (5%)",
+					"tax_amount": 15
+				}
+			],
+			"vendor_credits_applied": 0,
+			"sub_total": 300,
+			"tax_total": 15,
+			"balance": 0,
+			"created_time": "2026-01-30T09:00:00-0500",
+			"last_modified_time": "2026-10-01T09:00:00-0500",
+			"notes": "",
+			"terms": ""
+		}
+	}
+}

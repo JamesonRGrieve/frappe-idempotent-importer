@@ -1,0 +1,52 @@
+{
+	"request": {
+		"path": "/books/v3/journals/460000000007001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"journal": {
+			"journal_id": "460000000007001",
+			"entry_number": "1",
+			"reference_number": "ADJ-1",
+			"notes": "Reclassify ink",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"exchange_rate": 1,
+			"journal_date": "2026-02-28",
+			"journal_type": "both",
+			"line_items": [
+				{
+					"line_id": "4600000000071",
+					"account_id": "460000000000368",
+					"account_name": "Printer Ink",
+					"description": "Ink",
+					"debit_or_credit": "debit",
+					"amount": 40,
+					"bcy_amount": 40
+				},
+				{
+					"line_id": "4600000000072",
+					"account_id": "460000000000367",
+					"account_name": "Office Supplies",
+					"description": "Ink",
+					"debit_or_credit": "credit",
+					"amount": 40,
+					"bcy_amount": 40
+				}
+			],
+			"line_item_total": 40,
+			"total": 40,
+			"bcy_total": 40,
+			"price_precision": 2,
+			"taxes": [],
+			"created_time": "2026-02-28T09:00:00-0500",
+			"last_modified_time": "2026-10-01T09:00:00-0500",
+			"status": "published"
+		}
+	}
+}

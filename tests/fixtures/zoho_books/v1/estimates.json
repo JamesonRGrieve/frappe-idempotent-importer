@@ -1,0 +1,28 @@
+{
+	"request": {
+		"path": "/books/v3/estimates",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"estimates": [
+			{
+				"estimate_id": "460000000006001",
+				"customer_name": "Lakeview Dental"
+			}
+		],
+		"page_context": [
+			{
+				"page": 1,
+				"per_page": 200,
+				"has_more_page": false,
+				"sort_column": "created_time",
+				"sort_order": "D"
+			}
+		]
+	}
+}

@@ -1,0 +1,42 @@
+{
+	"request": {
+		"path": "/books/v3/vendorpayments/460000000005001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"vendorpayment": {
+			"payment_id": "460000000005001",
+			"vendor_id": "460000000000103",
+			"vendor_name": "Northwind Office Supply",
+			"payment_mode": "cheque",
+			"payment_number": 1,
+			"description": "",
+			"date": "2026-02-21",
+			"reference_number": "CHQ-310",
+			"exchange_rate": 1,
+			"amount": 126,
+			"balance": 0,
+			"currency_id": "4600000000000000099",
+			"currency_symbol": "$",
+			"created_time": "2026-02-21T09:00:00-0500",
+			"last_modified_time": "2026-02-21T09:00:00-0500",
+			"paid_through_account_id": "460000000000362",
+			"paid_through_account_name": "Business Chequing",
+			"paid_through_account_type": "bank",
+			"is_paid_via_print_check": false,
+			"is_ach_payment": false,
+			"bills": [
+				{
+					"bill_payment_id": "460000000005011",
+					"bill_id": "460000000004001",
+					"amount_applied": 126,
+					"tax_amount_withheld": 0
+				}
+			]
+		}
+	}
+}

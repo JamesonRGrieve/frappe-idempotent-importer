@@ -1,0 +1,46 @@
+{
+	"request": {
+		"path": "/books/v3/salesreceipts/460000000002001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"salesreceipt": {
+			"sales_receipt_id": "460000000002001",
+			"receipt_number": "SR-00001",
+			"date": "2026-02-12",
+			"status": "paid",
+			"payment_mode": "cash",
+			"customer_id": "460000000000102",
+			"customer_name": "Omar Haddad",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"exchange_rate": 1,
+			"line_items": [
+				{
+					"item_id": "460000000000501",
+					"name": "Desk Lamp",
+					"description": "Desk Lamp",
+					"rate": 45,
+					"quantity": 1,
+					"unit": "pcs",
+					"item_total": 45,
+					"tax_id": "4600000000000000077",
+					"tax_name": "GST",
+					"tax_percentage": 5
+				}
+			],
+			"sub_total": 45,
+			"tax_total": 2.25,
+			"total": 47.25,
+			"notes": "",
+			"terms": "",
+			"created_time": "2026-02-12T09:00:00-0500",
+			"last_modified_time": "2026-02-12T09:00:00-0500"
+		}
+	}
+}

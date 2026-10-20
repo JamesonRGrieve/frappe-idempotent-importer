@@ -1,0 +1,28 @@
+{
+	"request": {
+		"path": "/books/v3/customerpayments",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"customer_payments": [
+			{
+				"payment_id": "460000000003001",
+				"date": "2026-02-20",
+				"payment_mode": "banktransfer",
+				"amount": 236.25
+			}
+		],
+		"page_context": {
+			"page": 1,
+			"per_page": 200,
+			"has_more_page": false,
+			"sort_column": "created_time",
+			"sort_order": "D"
+		}
+	}
+}

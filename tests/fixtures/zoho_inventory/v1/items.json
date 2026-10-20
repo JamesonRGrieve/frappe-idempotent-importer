@@ -1,0 +1,58 @@
+{
+	"request": {
+		"path": "/inventory/v1/items",
+		"query": {
+			"organization_id": "20000001",
+			"filter_by": "Status.All",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"items": [
+			{
+				"group_id": "2000000000000401",
+				"group_name": "Rain Jacket",
+				"item_id": "2000000000000411",
+				"name": "Rain Jacket-M",
+				"status": "active",
+				"source": "user",
+				"item_type": "inventory",
+				"description": "",
+				"rate": 120,
+				"is_taxable": true,
+				"tax_id": "2000000000000000077",
+				"tax_name": "GST",
+				"tax_percentage": 5,
+				"purchase_description": "",
+				"purchase_rate": 55,
+				"product_type": "goods",
+				"reorder_level": 5,
+				"sku": "RJ-M",
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500"
+			},
+			{
+				"item_id": "2000000000000421",
+				"name": "Wool Socks",
+				"status": "active",
+				"source": "user",
+				"item_type": "inventory",
+				"description": "Merino socks",
+				"rate": 18,
+				"is_taxable": true,
+				"tax_id": "2000000000000000077",
+				"tax_name": "GST",
+				"tax_percentage": 5,
+				"purchase_description": "",
+				"purchase_rate": 6,
+				"product_type": "goods",
+				"reorder_level": 20,
+				"sku": "SOCK-1",
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500"
+			}
+		]
+	}
+}

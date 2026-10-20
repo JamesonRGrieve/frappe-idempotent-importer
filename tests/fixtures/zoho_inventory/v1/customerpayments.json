@@ -1,0 +1,22 @@
+{
+	"request": {
+		"path": "/inventory/v1/customerpayments",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"customerpayments": [
+			{
+				"payment_id": "2000000000007001",
+				"date": "2026-02-15",
+				"amount": 693,
+				"customer_id": "2000000000000101",
+				"customer_name": "Summit Outfitters"
+			}
+		]
+	}
+}

@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/inventory/v1/categories",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"categories": [
+			{
+				"category_id": "2000000000000301",
+				"name": "Apparel",
+				"description": "Clothing",
+				"url": "",
+				"parent_category_id": "",
+				"sibling_order": 1,
+				"visibility": true,
+				"show_in_menu": true,
+				"depth": 0,
+				"has_active_items": true,
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500"
+			}
+		],
+		"page_context": {
+			"page": 1,
+			"per_page": 200,
+			"has_more_page": false,
+			"sort_column": "created_time",
+			"sort_order": "D"
+		}
+	}
+}

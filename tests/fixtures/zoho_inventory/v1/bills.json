@@ -1,0 +1,23 @@
+{
+	"request": {
+		"path": "/inventory/v1/bills",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"bills": [
+			{
+				"bill_id": "2000000000009001",
+				"vendor_id": "2000000000000103",
+				"vendor_name": "Coast Textiles",
+				"status": "open",
+				"bill_number": "CT-1188",
+				"date": "2026-01-30"
+			}
+		]
+	}
+}

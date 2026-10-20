@@ -1,0 +1,14 @@
+{
+	"request": {
+		"path": "/inventory/v1/vendorcredits",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"vendorcredits": []
+	}
+}

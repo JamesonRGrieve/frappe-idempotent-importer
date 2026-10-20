@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/inventory/v1/locations",
+		"query": {
+			"organization_id": "20000001"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"locations": [
+			{
+				"type": "general",
+				"email": "warehouse@tidewater.example",
+				"phone": "604-555-0100",
+				"address": {
+					"city": "Vancouver",
+					"state": "British Columbia",
+					"country": "Canada",
+					"attention": "",
+					"state_code": "BC",
+					"street_address1": "9 Dock Rd",
+					"street_address2": ""
+				},
+				"location_id": "2000000000000901",
+				"location_name": "Main Warehouse",
+				"parent_location_id": "",
+				"associated_series_ids": [],
+				"is_all_users_selected": true,
+				"associated_users": []
+			}
+		]
+	}
+}

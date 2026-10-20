@@ -1,0 +1,63 @@
+{
+	"request": {
+		"path": "/inventory/v1/itemgroups/2000000000000401",
+		"query": {
+			"organization_id": "20000001"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"group_id": "2000000000000401",
+		"group_name": "Rain Jacket",
+		"brand": "Tidewater",
+		"manufacturer": "",
+		"unit": "pcs",
+		"description": "Waterproof shell",
+		"is_taxable": true,
+		"tax_id": "2000000000000000077",
+		"tax_name": "GST",
+		"tax_percentage": 5,
+		"tax_type": "tax",
+		"attribute_id1": "2000000000000451",
+		"attribute_name1": "Size",
+		"status": "active",
+		"source": "user",
+		"image_id": "",
+		"image_name": "",
+		"image_type": "",
+		"custom_fields": [],
+		"items": {
+			"item_id": "2000000000000411",
+			"name": "Rain Jacket-M",
+			"status": "active",
+			"rate": 120,
+			"purchase_rate": 55,
+			"reorder_level": 5,
+			"initial_stock": 10,
+			"initial_stock_rate": 55,
+			"vendor_id": "2000000000000103",
+			"vendor_name": "Coast Textiles",
+			"stock_on_hand": 8,
+			"sku": "RJ-M",
+			"isbn": "",
+			"part_number": "",
+			"attribute_option_id1": "2000000000000461",
+			"image_id": "",
+			"image_name": "",
+			"image_type": ""
+		},
+		"attributes": {
+			"id": "2000000000000451",
+			"name": "Size",
+			"options": {
+				"id": "2000000000000461",
+				"name": "M"
+			}
+		},
+		"options": {
+			"id": "2000000000000461",
+			"name": "M"
+		}
+	}
+}

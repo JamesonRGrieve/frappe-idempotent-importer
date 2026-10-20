@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/books/v3/expenses",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"expenses": [
+			{
+				"expense_id": "460000000008001"
+			}
+		],
+		"page_context": [
+			{
+				"page": "1",
+				"per_page": "200",
+				"sort_column": "created_time"
+			}
+		]
+	}
+}

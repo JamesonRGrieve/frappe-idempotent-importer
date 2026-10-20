@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/inventory/v1/invoices",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"invoices": [
+			{
+				"invoice_id": "2000000000006001",
+				"customer_name": "Summit Outfitters",
+				"customer_id": "2000000000000101",
+				"status": "paid",
+				"invoice_number": "INV-00001",
+				"date": "2026-02-10",
+				"total": "693.00",
+				"balance": "0.00"
+			}
+		]
+	}
+}

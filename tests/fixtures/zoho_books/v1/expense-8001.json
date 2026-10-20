@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/books/v3/expenses/460000000008001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"expense": {
+			"expense_id": "460000000008001",
+			"transaction_type": "expense",
+			"paid_through_account_name": "Petty Cash",
+			"tax_amount": 0,
+			"is_itemized_expense": false,
+			"account_id": "460000000000367",
+			"account_name": "Office Supplies",
+			"date": "2026-03-01",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"exchange_rate": 1,
+			"sub_total": 15,
+			"total": 15,
+			"bcy_total": 15,
+			"amount": 15,
+			"is_inclusive_tax": false,
+			"reference_number": "R-55",
+			"description": "Courier",
+			"is_billable": false,
+			"is_personal": false,
+			"last_modified_time": "2026-03-01T09:00:00-0500",
+			"status": "nonbillable"
+		}
+	}
+}

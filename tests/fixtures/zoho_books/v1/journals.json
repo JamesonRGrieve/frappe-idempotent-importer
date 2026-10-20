@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/books/v3/journals",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"journals": [
+			{
+				"journal_id": "460000000007001",
+				"journal_date": "2026-02-28",
+				"entry_number": "1",
+				"total": 25
+			}
+		]
+	}
+}

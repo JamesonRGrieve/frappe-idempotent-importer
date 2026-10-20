@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/books/v3/locations",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"locations": [
+			{
+				"type": "general",
+				"email": "ops@lakeshore.example",
+				"phone": "416-555-0100",
+				"address": {
+					"city": "Toronto",
+					"state": "Ontario",
+					"country": "Canada",
+					"attention": "",
+					"state_code": "ON",
+					"street_address1": "200 Bay St",
+					"street_address2": ""
+				},
+				"location_id": "460000000000901",
+				"location_name": "Head Office",
+				"parent_location_id": "",
+				"associated_series_ids": [],
+				"is_all_users_selected": true,
+				"associated_users": []
+			}
+		]
+	}
+}

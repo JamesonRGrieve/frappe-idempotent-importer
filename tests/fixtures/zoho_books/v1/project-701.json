@@ -1,0 +1,40 @@
+{
+	"request": {
+		"path": "/books/v3/projects/460000000000701",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"project": {
+			"project_id": "460000000000701",
+			"project_name": "Clinic refit",
+			"customer_id": "460000000000101",
+			"customer_name": "Lakeview Dental",
+			"currency_code": "CAD",
+			"description": "New lighting for the clinic",
+			"status": "active",
+			"billing_type": "based_on_task_hours",
+			"rate": 0,
+			"budget_type": "",
+			"total_hours": "0:00",
+			"total_amount": 0,
+			"billed_hours": "0:00",
+			"billed_amount": 0,
+			"un_billed_hours": "0:00",
+			"un_billed_amount": 0,
+			"billable_hours": "0:00",
+			"billable_amount": 0,
+			"non_billable_hours": "0:00",
+			"non_billable_amount": 0,
+			"cost_budget_amount": 0,
+			"is_recurrence_associated": false,
+			"recurring_invoices": [],
+			"created_time": "2026-01-05T10:00:00-0500",
+			"show_in_dashboard": true,
+			"tasks": []
+		}
+	}
+}

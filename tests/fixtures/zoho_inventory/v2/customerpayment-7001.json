@@ -1,0 +1,43 @@
+{
+	"request": {
+		"path": "/inventory/v1/customerpayments/2000000000007001",
+		"query": {
+			"organization_id": "20000001"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"payment": {
+			"payment_id": "2000000000007001",
+			"payment_mode": "banktransfer",
+			"amount": 693,
+			"amount_refunded": 0,
+			"bank_charges": 0,
+			"date": "2026-02-15",
+			"status": "success",
+			"reference_number": "EFT-77",
+			"description": "",
+			"customer_id": "2000000000000101",
+			"customer_name": "Summit Outfitters",
+			"email": "buy@summit.example",
+			"tax_amount_withheld": 0,
+			"invoices": [
+				{
+					"invoice_id": "2000000000006001",
+					"invoice_number": "INV-00001",
+					"invoice_amount": 693,
+					"amount_applied": 693,
+					"balance_amount": 0
+				}
+			],
+			"exchange_rate": 1,
+			"currency_id": "2000000000000000099",
+			"currency_code": "CAD",
+			"currency_symbol": "$",
+			"account_id": "2000000000000801",
+			"account_name": "Business Chequing",
+			"unused_amount": 0
+		}
+	}
+}

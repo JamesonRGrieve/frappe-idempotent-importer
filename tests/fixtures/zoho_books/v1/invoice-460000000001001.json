@@ -1,0 +1,101 @@
+{
+	"request": {
+		"path": "/books/v3/invoices/460000000001001",
+		"query": {
+			"organization_id": "10234695"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"invoice": {
+			"invoice_id": "460000000001001",
+			"invoice_number": "INV-000001",
+			"date": "2026-02-10",
+			"status": "paid",
+			"payment_terms": 30,
+			"payment_terms_label": "Net 30",
+			"due_date": "2026-03-12",
+			"reference_number": "PO 77",
+			"customer_id": "460000000000101",
+			"customer_name": "Lakeview Dental",
+			"currency_id": "4600000000000000099",
+			"currency_code": "CAD",
+			"exchange_rate": 1,
+			"discount": 0,
+			"is_discount_before_tax": true,
+			"discount_type": "entity_level",
+			"is_inclusive_tax": false,
+			"location_id": "460000000000901",
+			"location_name": "Head Office",
+			"line_items": [
+				{
+					"line_item_id": "4600000000011",
+					"item_id": "460000000000501",
+					"name": "Desk Lamp",
+					"description": "Desk Lamp",
+					"item_order": 1,
+					"bcy_rate": 45,
+					"rate": 45,
+					"quantity": 3,
+					"unit": "pcs",
+					"discount_amount": 0,
+					"discount": 0,
+					"tax_id": "4600000000000000077",
+					"tax_name": "GST",
+					"tax_type": "tax",
+					"tax_percentage": 5,
+					"item_total": 135
+				},
+				{
+					"line_item_id": "4600000000012",
+					"item_id": "460000000000502",
+					"name": "Setup visit",
+					"description": "Setup visit",
+					"item_order": 1,
+					"bcy_rate": 90,
+					"rate": 90,
+					"quantity": 1,
+					"unit": "pcs",
+					"discount_amount": 0,
+					"discount": 0,
+					"tax_id": "4600000000000000077",
+					"tax_name": "GST",
+					"tax_type": "tax",
+					"tax_percentage": 5,
+					"item_total": 90
+				}
+			],
+			"shipping_charge": "0.00",
+			"adjustment": 0,
+			"adjustment_description": "",
+			"sub_total": 225,
+			"tax_total": 11.25,
+			"total": "236.25",
+			"taxes": [
+				{
+					"tax_name": "GST (5%)",
+					"tax_amount": 11.25
+				}
+			],
+			"payment_made": 236.25,
+			"credits_applied": 0,
+			"balance": "0.00",
+			"write_off_amount": 0,
+			"price_precision": 2,
+			"billing_address": {
+				"address": "200 Bay St",
+				"street2": "",
+				"city": "Toronto",
+				"state": "ON",
+				"zip": "M5J 2J1",
+				"country": "Canada",
+				"fax": ""
+			},
+			"notes": "Thanks for your business.",
+			"terms": "",
+			"created_time": "2026-02-10T09:00:00-0500",
+			"last_modified_time": "2026-02-20T09:00:00-0500"
+		}
+	}
+}

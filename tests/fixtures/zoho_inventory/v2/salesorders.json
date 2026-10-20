@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/inventory/v1/salesorders",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"salesorders": [
+			{
+				"salesorder_id": "2000000000005001",
+				"customer_name": "Summit Outfitters",
+				"customer_id": "2000000000000101",
+				"status": "void",
+				"salesorder_number": "SO-00001",
+				"date": "2026-02-03",
+				"total": 693,
+				"created_time": "2026-02-03T09:00:00-0500",
+				"last_modified_time": "2026-02-03T09:00:00-0500"
+			}
+		]
+	}
+}

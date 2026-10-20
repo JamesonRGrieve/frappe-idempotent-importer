@@ -1,0 +1,14 @@
+{
+	"request": {
+		"path": "/books/v3/salesreceipts",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"salesreceipts": []
+	}
+}

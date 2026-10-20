@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/books/v3/invoices",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"invoices": [
+			{
+				"invoice_id": "460000000001001",
+				"customer_name": "Lakeview Dental",
+				"customer_id": "460000000000101",
+				"status": "paid",
+				"invoice_number": "INV-000001",
+				"reference_number": "PO 77",
+				"date": "2026-02-10",
+				"due_date": "2026-03-12",
+				"currency_id": "4600000000000000099",
+				"currency_code": "CAD",
+				"total": "236.25",
+				"balance": "0.00",
+				"created_time": "2026-02-10T09:00:00-0500",
+				"last_modified_time": "2026-02-20T09:00:00-0500",
+				"exchange_rate": 1
+			}
+		],
+		"page_context": [
+			{
+				"page": 1,
+				"per_page": 200,
+				"has_more_page": false,
+				"sort_column": "created_time",
+				"sort_order": "D"
+			}
+		]
+	}
+}

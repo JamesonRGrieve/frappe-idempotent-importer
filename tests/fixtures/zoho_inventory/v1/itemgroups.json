@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/inventory/v1/itemgroups",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"itemgroups": [
+			{
+				"group_id": "2000000000000401",
+				"group_name": "Rain Jacket",
+				"brand": "Tidewater",
+				"unit": "pcs",
+				"description": "Waterproof shell",
+				"status": "active",
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500"
+			}
+		]
+	}
+}

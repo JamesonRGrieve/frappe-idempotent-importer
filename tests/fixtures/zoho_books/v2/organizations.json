@@ -1,0 +1,28 @@
+{
+	"request": {
+		"path": "/books/v3/organizations",
+		"query": {}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"organizations": [
+			{
+				"organization_id": "10234695",
+				"name": "Lakeshore Supply Co",
+				"contact_name": "Alex Rowe",
+				"email": "alex@lakeshore.example",
+				"is_default_org": true,
+				"plan_name": "Standard",
+				"language_code": "en",
+				"fiscal_year_start_month": 0,
+				"time_zone": "America/Toronto",
+				"is_org_active": true,
+				"currency_id": "4600000000000000099",
+				"currency_code": "CAD",
+				"currency_symbol": "$",
+				"price_precision": 2
+			}
+		]
+	}
+}

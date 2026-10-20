@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/books/v3/projects",
+		"query": {
+			"organization_id": "10234695",
+			"filter_by": "Status.All",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"projects": [
+			{
+				"project_id": "460000000000701",
+				"project_name": "Clinic refit",
+				"customer_id": "460000000000101",
+				"customer_name": "Lakeview Dental",
+				"description": "New lighting for the clinic",
+				"status": "active",
+				"billing_type": "based_on_task_hours",
+				"rate": 0,
+				"created_time": "2026-01-05T10:00:00-0500"
+			}
+		],
+		"page_context": [
+			{
+				"page": 1,
+				"per_page": 200,
+				"has_more_page": false,
+				"sort_column": "created_time",
+				"sort_order": "D"
+			}
+		]
+	}
+}

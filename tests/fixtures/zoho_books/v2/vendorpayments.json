@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/books/v3/vendorpayments",
+		"query": {
+			"organization_id": "10234695",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"vendorpayments": [
+			{
+				"payment_id": "460000000005001",
+				"vendor_id": "460000000000103",
+				"date": "2026-02-21",
+				"amount": 126
+			}
+		]
+	}
+}

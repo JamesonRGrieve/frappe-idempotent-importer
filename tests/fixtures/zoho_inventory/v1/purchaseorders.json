@@ -1,0 +1,24 @@
+{
+	"request": {
+		"path": "/inventory/v1/purchaseorders",
+		"query": {
+			"organization_id": "20000001",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"purchaseorders": [
+			{
+				"purchaseorder_id": "2000000000008001",
+				"vendor_id": "2000000000000103",
+				"vendor_name": "Coast Textiles",
+				"status": "billed",
+				"purchaseorder_number": "PO-00001",
+				"date": "2026-01-20",
+				"total": 315
+			}
+		]
+	}
+}

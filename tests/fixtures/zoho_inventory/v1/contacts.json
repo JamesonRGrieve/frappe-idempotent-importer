@@ -1,0 +1,56 @@
+{
+	"request": {
+		"path": "/inventory/v1/contacts",
+		"query": {
+			"organization_id": "20000001",
+			"filter_by": "Status.All",
+			"page": "1"
+		}
+	},
+	"response": {
+		"code": 0,
+		"message": "success",
+		"contacts": [
+			{
+				"contact_id": "2000000000000101",
+				"contact_name": "Summit Outfitters",
+				"company_name": "Summit Outfitters Ltd",
+				"contact_type": "customer",
+				"status": "active",
+				"payment_terms": 15,
+				"payment_terms_label": "Net 15",
+				"currency_id": "2000000000000000099",
+				"currency_code": "CAD",
+				"outstanding_receivable_amount": 0,
+				"unused_credits_receivable_amount": 0,
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500",
+				"first_name": "Lee",
+				"last_name": "Park",
+				"email": "buy@summit.example",
+				"phone": "604-555-0150",
+				"mobile": ""
+			},
+			{
+				"contact_id": "2000000000000103",
+				"contact_name": "Coast Textiles",
+				"company_name": "Coast Textiles Inc",
+				"contact_type": "vendor",
+				"status": "active",
+				"payment_terms": 15,
+				"payment_terms_label": "Net 15",
+				"currency_id": "2000000000000000099",
+				"currency_code": "CAD",
+				"outstanding_receivable_amount": 0,
+				"unused_credits_receivable_amount": 0,
+				"created_time": "2026-01-05T10:00:00-0500",
+				"last_modified_time": "2026-01-05T10:00:00-0500",
+				"first_name": "Ana",
+				"last_name": "Silva",
+				"email": "sales@coasttextiles.example",
+				"phone": "604-555-0150",
+				"mobile": ""
+			}
+		]
+	}
+}

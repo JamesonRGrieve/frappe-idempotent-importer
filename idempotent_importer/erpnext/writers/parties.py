@@ -68,8 +68,10 @@ class PartyWriter(Writer):
 		doc.update({self.name_field: values.string("name"), self.type_field: values.string("type")})
 		if values.has("tax_id"):
 			doc.tax_id = values.string("tax_id")
+		doc.disabled = int(bool(values.all().get("disabled")))
 		doc.save(ignore_permissions=True)
 		contact = self._contact(desired.gid, doc.name, values)
+		self._people(desired.gid, doc.name, values.records("contacts"))
 		addresses = [
 			self._address(f"{desired.gid}#address:{index}", doc.name, address)
 			for index, address in enumerate(values.records("addresses"))
@@ -121,6 +123,47 @@ class PartyWriter(Writer):
 		doc.save(ignore_permissions=True)
 		self.links.save(Kind.CONTACT, key, Target("Contact", doc.name), PART_HASH, 1)
 		return str(doc.name)
+
+	def _people(self, gid: str, party: str, people: list[Values]) -> None:
+		"""A Contact for each of the party's other people; one the source drops is unlinked from the party
+		(a Contact has no disabled state)."""
+		wanted: set[str] = set()
+		for person in people:
+			key = f"{gid}#person:{person.string('gid')}"
+			wanted.add(key)
+			existing = self.links.target(Kind.CONTACT, key)
+			doc = (
+				frappe.get_doc("Contact", existing)
+				if existing and frappe.db.exists("Contact", existing)
+				else frappe.new_doc("Contact")
+			)
+			email, phone = person.optional_string("email"), person.optional_string("phone")
+			doc.update(
+				{
+					"first_name": person.string("name"),
+					"designation": person.optional_string("job_title"),
+					"is_primary_contact": 0,
+				}
+			)
+			doc.set("email_ids", [{"email_id": email, "is_primary": 1}] if email else [])
+			doc.set("phone_nos", [{"phone": phone, "is_primary_phone": 1}] if phone else [])
+			link_to(doc, party, self.doctype)
+			doc.save(ignore_permissions=True)
+			self.links.save(Kind.CONTACT, key, Target("Contact", doc.name), PART_HASH, 1)
+		for link in self.links.children(Kind.CONTACT, f"{gid}#person:"):
+			if link.gid not in wanted:
+				if frappe.db.exists("Contact", link.target.name):
+					contact = frappe.get_doc("Contact", link.target.name)
+					contact.set(
+						"links",
+						[
+							row
+							for row in contact.links
+							if not (row.link_doctype == self.doctype and row.link_name == party)
+						],
+					)
+					contact.save(ignore_permissions=True)
+				self.links.retire(Kind.CONTACT, link.gid)
 
 	def _address(self, key: str, party: str, address: Values) -> str:
 		existing = self.links.target(Kind.ADDRESS, key)

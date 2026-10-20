@@ -22,8 +22,9 @@ from typing import Any
 
 import frappe
 
-from idempotent_importer.contract import PARTY_KINDS, TAX
+from idempotent_importer.contract import FEE, PARTY_KINDS, SHIPPING, TAX
 from idempotent_importer.core.desired import Desired
+from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
@@ -167,6 +168,8 @@ class TradeWriter(SalesDocuments):
 			own = values.optional_string("party_account")
 			if own:
 				doc.set("debit_to" if spec.selling else "credit_to", self.dependency(Kind.ACCOUNT, own))
+		discount = values.optional_decimal("discount")
+		doc.update({"apply_discount_on": "Net Total", "discount_amount": money(discount) if discount else 0})
 		doc.set("items", [self._trade_line(line, planned) for line in values.records("lines")])
 		doc.set("taxes", [self._tax(tax) for tax in values.records("taxes")])
 
@@ -191,7 +194,7 @@ class TradeWriter(SalesDocuments):
 		account = tax.optional_string("account")
 		row: dict[str, Any] = {
 			"charge_type": "Actual",
-			"account_head": self.dependency(Kind.ACCOUNT, account) if account else self.context.tax_account,
+			"account_head": self.dependency(Kind.ACCOUNT, account) if account else self._role_account(tax),
 			"description": tax.string("description")[:REMARK_LENGTH],
 			"tax_amount": money(tax.decimal("amount")),
 			"cost_center": self.context.cost_center,
@@ -199,6 +202,17 @@ class TradeWriter(SalesDocuments):
 		if not self.spec.selling:
 			row |= {"category": "Total", "add_deduct_tax": "Add"}
 		return row
+
+	def _role_account(self, tax: Values) -> str:
+		"""The connection's account for a charge the source books to none of its own: its tax account, or
+		on a sale its shipping or fee account (a purchase's freight or fee needs the source's account)."""
+		role = tax.optional_string("role") or TAX
+		if role == TAX:
+			return self.context.tax_account
+		account = {SHIPPING: self.context.shipping_account, FEE: self.context.fee_account}.get(role)
+		if not self.spec.selling or account is None:
+			raise Unsupported(f'its {role} "{tax.string("description")}" names no account to book to')
+		return account
 
 
 class SalesOrderWriter(TradeWriter):

@@ -60,7 +60,7 @@ class TreeWriter(Writer):
 				self.parent_field: self.dependency(self.kind, parent) if parent else self.root(values),
 				"company": self.context.company,
 				"is_group": int(values.flag("is_group")),
-				"disabled": 0,
+				"disabled": int(bool(values.all().get("disabled"))),
 			}
 		)
 		self.fill(doc, values)

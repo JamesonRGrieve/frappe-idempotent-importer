@@ -298,6 +298,25 @@ class TestBooks:
 			trade_fields(self.document("10.50", date="01/03/2026"))
 		assert trade_fields(self.document("10.50", due_date="2026-04-01"))["due_date"] == "2026-04-01"
 		assert trade_fields(self.document("10.50"))["return_settles"] is True
+		assert "discount" not in trade_fields(self.document("10.50")), (
+			"absent extras keep older change signals"
+		)
+
+	def test_a_document_discount_and_freight(self) -> None:
+		freight = TradeTax("Freight", Decimal("5.00"), role="shipping")
+		document = replace(
+			self.document("14.50"), taxes=[*self.document("0").taxes, freight], discount=Decimal("1.00")
+		)
+		fields = trade_fields(document)
+		assert (fields["discount"], fields["taxes"]) == (
+			Decimal("1.00"),
+			[
+				{"description": "GST 5%", "amount": Decimal("0.50"), "account": "gid://x/c/Account/220"},
+				{"description": "Freight", "amount": Decimal("5.00"), "account": None, "role": "shipping"},
+			],
+		)
+		with pytest.raises(ValueError, match="charge role"):
+			trade_fields(replace(document, taxes=[TradeTax("Odd", Decimal("5.50"), role="duty")]))
 		with pytest.raises(ValueError, match="missing"):
 			required_date(None, "a date")
 
@@ -369,7 +388,7 @@ class TestBooks:
 		with pytest.raises(ValueError, match="project status"):
 			project_fields("Fit-out", "Running")
 		assert lead_fields(Lead("Open", company="Acme"))["company"] == "Acme"
-		with pytest.raises(Unsupported, match="no name"):
+		with pytest.raises(Unsupported, match="no name, organisation or email"):
 			lead_fields(Lead("Open"))
 		opportunity = Opportunity(
 			Kind.LEAD, "gid://x/c/Lead/1", "Fit-out", "Open", "2026-02-01", "CAD", Decimal(500)

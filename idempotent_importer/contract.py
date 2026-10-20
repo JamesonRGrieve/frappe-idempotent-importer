@@ -44,12 +44,14 @@ url_redirect source (path), target (path or URL), status (HTTP code)
 
 The books and the business around them (ERP and HR sources; dates are ``YYYY-MM-DD``):
 
-supplier     as a customer (``party_fields``), without a group
+supplier     as a customer (``party_fields``: optionally tax_id, currency, contacts ([{gid, name, email,
+             phone, job_title}]) and disabled), without a group
 account      number, name, root_type, account_type, parent (identity | None), is_group, currency
-cost_center  name, parent (identity | None), is_group (``tree_fields``)
+cost_center  name, parent (identity | None), is_group, optionally disabled (``tree_fields``)
 warehouse    name, parent, is_group, address (address | None)
 project      name, status, customer, cost_center (identities | None), start, end, notes
-lead         status, first_name, last_name, company, email, phone, mobile, job_title, website, notes
+lead         status, first_name, last_name, company, email, phone, mobile, job_title, website, notes,
+             optionally disabled
 opportunity  party_kind ("lead" | "customer"), party, title, status, date, currency, amount, probability,
              expected_closing, notes
 department   name, parent (identity | None), is_group
@@ -61,8 +63,9 @@ sales_order, purchase_order, sales_invoice, purchase_invoice
              number, date, due_date (an order's delivery date), party (customer or supplier identity),
              currency, exchange_rate, lines ([line + account, cost_center, project]), taxes
              ([{description, amount, account}]), total, submitted, is_return, return_against, reference,
-             remarks, party_account (identity | None), base_total, return_settles (``trade_fields``:
-             lines and taxes make the total exactly)
+             remarks, party_account (identity | None), base_total, return_settles, optionally a
+             discount on the net total and a tax row's role ("shipping" | "fee") (``trade_fields``:
+             lines and taxes, less the discount, make the total exactly)
 payment_entry  payment_type, party_type, party, date, amount, currency, exchange_rate, account,
              party_account, submitted, reference, remarks, allocations ([{kind, document, amount}])
 journal_entry  number, date, remarks, submitted, lines ([{account, debit, credit, party_type, party,
@@ -695,9 +698,22 @@ def one_of(value: str, allowed: frozenset[str], what: str) -> str:
 
 
 @dataclass(frozen=True)
+class ContactPerson:
+	"""One of a party's people (beyond its main contact): their identity, name, email, phone and job."""
+
+	gid: str
+	name: str
+	email: str | None = None
+	phone: str | None = None
+	job_title: str | None = None
+
+
+@dataclass(frozen=True)
 class Party:
 	"""A customer or a supplier: its name and type ("Individual" | "Company"), the person to contact,
-	its addresses (``address_fields``), and its tax id; for a customer, the group it belongs to."""
+	its addresses (``address_fields``), and its tax id and currency; its other people (``contacts``); and
+	whether the source has archived it (``disabled``: it stays a live record, disabled, so the history that
+	names it still books)."""
 
 	name: str
 	type: str
@@ -709,11 +725,13 @@ class Party:
 	addresses: list[Fields] = field(default_factory=list)
 	tax_id: str | None = None
 	currency: str | None = None
+	contacts: list[ContactPerson] = field(default_factory=list)
+	disabled: bool = False
 
 
 def party_fields(party: Party) -> Fields:
-	"""The ``customer`` (and ``supplier``) fields; tax id and currency only when the source has them, so a
-	customer mapped before they existed keeps its change signal."""
+	"""The ``customer`` (and ``supplier``) fields; tax id, currency, contacts and ``disabled`` only when
+	the source has them, so a customer mapped before they existed keeps its change signal."""
 	fields: Fields = {
 		"name": party.name,
 		"type": one_of(party.type, frozenset({"Individual", "Company"}), "party type"),
@@ -724,7 +742,22 @@ def party_fields(party: Party) -> Fields:
 		"phone": party.phone,
 		"addresses": list[Field](party.addresses),
 	}
-	extra: Fields = {"tax_id": party.tax_id, "currency": party.currency}
+	extra: Fields = {
+		"tax_id": party.tax_id,
+		"currency": party.currency,
+		"contacts": [
+			{
+				"gid": person.gid,
+				"name": person.name,
+				"email": person.email,
+				"phone": person.phone,
+				"job_title": person.job_title,
+			}
+			for person in party.contacts
+		]
+		or None,
+		"disabled": party.disabled or None,
+	}
 	return fields | {key: value for key, value in extra.items() if value is not None}
 
 
@@ -755,10 +788,12 @@ def account_fields(account: LedgerAccount) -> Fields:
 	}
 
 
-def tree_fields(name: str, parent: str | None, is_group: bool = False) -> Fields:
+def tree_fields(name: str, parent: str | None, is_group: bool = False, disabled: bool = False) -> Fields:
 	"""A node of a tree the company keeps (a cost center, a warehouse, a department): its name, its parent
-	(an identity of the same kind; None for one under the company's root), and whether it is a group."""
-	return {"name": name, "parent": parent, "is_group": is_group}
+	(an identity of the same kind; None for one under the company's root), whether it is a group, and
+	whether the source has archived it (only when it has: a disabled node stays live for what names it)."""
+	fields: Fields = {"name": name, "parent": parent, "is_group": is_group}
+	return fields | {"disabled": True} if disabled else fields
 
 
 def warehouse_fields(name: str, parent: str | None, is_group: bool, address: Fields | None) -> Fields:
@@ -779,11 +814,13 @@ class TradeLine:
 @dataclass(frozen=True)
 class TradeTax:
 	"""A tax (or another charge) on a document, as an amount: its description, amount and the account it
-	books to (an account identity; None for the connection's tax account)."""
+	books to (an account identity; None for the connection's account of its ``role``: TAX, or on a sale
+	SHIPPING (freight) or FEE)."""
 
 	description: str
 	amount: Decimal
 	account: str | None = None
+	role: str = TAX
 
 
 @dataclass(frozen=True)
@@ -816,6 +853,7 @@ class TradeDocument:
 	party_account: str | None = None
 	base_total: Decimal | None = None
 	return_settles: bool = True
+	discount: Decimal | None = None
 
 
 def trade_line_fields(line: TradeLine) -> Fields:
@@ -826,18 +864,27 @@ def trade_line_fields(line: TradeLine) -> Fields:
 	}
 
 
+def trade_tax_fields(tax: TradeTax) -> Fields:
+	fields: Fields = {"description": tax.description, "amount": tax.amount, "account": tax.account}
+	if tax.role != TAX:
+		fields["role"] = one_of(tax.role, frozenset({SHIPPING, FEE}), "charge role")
+	return fields
+
+
 def trade_fields(document: TradeDocument) -> Fields:
 	"""A ``sales_order`` / ``purchase_order`` / ``sales_invoice`` / ``purchase_invoice``'s fields. Its lines
 	and taxes must add up to its total exactly, or it can't be booked as the source has it (Unsupported)."""
-	made = sum((item.line.qty * item.line.rate for item in document.lines), Decimal(0)) + sum(
-		(tax.amount for tax in document.taxes), Decimal(0)
+	made = (
+		sum((item.line.qty * item.line.rate for item in document.lines), Decimal(0))
+		+ sum((tax.amount for tax in document.taxes), Decimal(0))
+		- (document.discount or Decimal(0))
 	)
 	if made != document.total:
 		raise Unsupported(
 			f"{document.number}'s lines and taxes come to {decimal_text(made)}, not its total "
 			f"{decimal_text(document.total)}"
 		)
-	return {
+	fields: Fields = {
 		"number": document.number,
 		"date": required_date(document.date, f"{document.number}'s date"),
 		"due_date": checked_date(document.due_date, f"{document.number}'s due date"),
@@ -845,10 +892,7 @@ def trade_fields(document: TradeDocument) -> Fields:
 		"currency": document.currency,
 		"exchange_rate": document.exchange_rate,
 		"lines": [trade_line_fields(line) for line in document.lines],
-		"taxes": [
-			{"description": tax.description, "amount": tax.amount, "account": tax.account}
-			for tax in document.taxes
-		],
+		"taxes": [trade_tax_fields(tax) for tax in document.taxes],
 		"total": document.total,
 		"submitted": document.submitted,
 		"is_return": document.is_return,
@@ -859,6 +903,9 @@ def trade_fields(document: TradeDocument) -> Fields:
 		"base_total": document.base_total,
 		"return_settles": document.return_settles,
 	}
+	if document.discount:
+		fields["discount"] = document.discount
+	return fields
 
 
 @dataclass(frozen=True)
@@ -1015,12 +1062,15 @@ class Lead:
 	job_title: str | None = None
 	website: str | None = None
 	notes: str | None = None
+	disabled: bool = False
 
 
 def lead_fields(lead: Lead) -> Fields:
-	if not (lead.first_name or lead.last_name or lead.company):
-		raise Unsupported("a lead with no name and no organisation")
-	return {
+	"""A ``lead``'s fields; ``disabled`` (a lead the source has closed, kept for the opportunities that
+	name it) only when it is."""
+	if not (lead.first_name or lead.last_name or lead.company or lead.email):
+		raise Unsupported("a lead with no name, organisation or email")
+	fields: Fields = {
 		"status": one_of(lead.status, LEAD_STATUSES, "lead status"),
 		"first_name": lead.first_name,
 		"last_name": lead.last_name,
@@ -1032,6 +1082,7 @@ def lead_fields(lead: Lead) -> Fields:
 		"website": lead.website,
 		"notes": lead.notes,
 	}
+	return fields | {"disabled": True} if lead.disabled else fields
 
 
 @dataclass(frozen=True)

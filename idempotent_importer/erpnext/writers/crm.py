@@ -34,7 +34,7 @@ class LeadWriter(Writer):
 				"mobile_no": values.optional_string("mobile"),
 				"job_title": values.optional_string("job_title"),
 				"website": values.optional_string("website"),
-				"disabled": 0,
+				"disabled": int(bool(values.all().get("disabled"))),
 			}
 		)
 		notes = values.optional_string("notes")

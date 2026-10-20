@@ -31,6 +31,7 @@ from idempotent_importer.contract import (
 	Allocation,
 	Code,
 	Condition,
+	ContactPerson,
 	Discount,
 	Employee,
 	JournalLine,
@@ -1892,4 +1893,80 @@ class TestWriters(IntegrationTestCase):
 			Decimal(str(frappe.db.get_value("Sales Invoice", invoice_name, "outstanding_amount"))),
 			Decimal(0),
 			"a bank statement's entry settles the invoice it was reconciled with",
+		)
+
+	def test_a_partys_people_and_archiving(self) -> None:
+		key = gid("Partner", "7")
+		people = [
+			ContactPerson(gid("Partner", "8"), "Douglas Fletcher", "douglas@example.test", None, "Buyer")
+		]
+		first = party_fields(Party("Writer Interiors", "Company", contacts=people))
+		_, customer = self.assert_lifecycle(
+			Kind.CUSTOMER,
+			CustomerWriter,
+			key,
+			first,
+			party_fields(Party("Writer Interiors", "Company", disabled=True)),
+		)
+		person = frappe.db.get_value(
+			"Importer Link",
+			{"connection": CONNECTION, "gid": f"{key}#person:{gid('Partner', '8')}"},
+			"target_name",
+		)
+		self.assertEqual(frappe.db.get_value("Contact", person, "designation"), "Buyer")
+		self.assertFalse(
+			frappe.db.exists(
+				"Dynamic Link", {"parent": person, "link_doctype": "Customer", "link_name": customer}
+			),
+			"a person the source drops is no longer the customer's",
+		)
+		self.assertEqual(
+			frappe.db.get_value("Customer", customer, "disabled"), 1, "archived: disabled, still live"
+		)
+		self.assertEqual(self.target(Kind.CUSTOMER, key), customer)
+		self.mirror(Kind.CUSTOMER, CustomerWriter, key, first)
+		self.assertEqual(frappe.db.get_value("Customer", customer, "disabled"), 0, "restored at the source")
+		department = gid("Department", "9")
+		self.mirror(Kind.DEPARTMENT, DepartmentWriter, department, tree_fields("Archive", None, False, True))
+		self.assertEqual(
+			frappe.db.get_value("Department", self.target(Kind.DEPARTMENT, department), "disabled"), 1
+		)
+		lead = gid("Lead", "9")
+		self.mirror(
+			Kind.LEAD, LeadWriter, lead, lead_fields(Lead("Open", email="closed@example.test", disabled=True))
+		)
+		self.assertEqual(frappe.db.get_value("Lead", self.target(Kind.LEAD, lead), "disabled"), 1)
+
+	def test_a_documents_discount_and_freight(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		self.mirror(Kind.SUPPLIER, SupplierWriter, gid("Vendor", "1"), self.supplier())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		freight = TradeTax("Freight", Decimal("10.00"), role="shipping")
+		document = replace(
+			self.trade(gid("Customer", "1")),
+			taxes=[*self.trade(gid("Customer", "1")).taxes, freight],
+			discount=Decimal("5.00"),
+			total=Decimal("57.50"),
+		)
+		key = gid("Order", "Discounted")
+		self.assertEqual(
+			self.mirror(Kind.SALES_ORDER, SalesOrderWriter, key, trade_fields(document)), Outcome.CREATED
+		)
+		order = frappe.get_doc("Sales Order", self.target(Kind.SALES_ORDER, key))
+		self.assertEqual(
+			(
+				Decimal(str(order.discount_amount)),
+				order.taxes[-1].account_head,
+				Decimal(str(order.grand_total)),
+			),
+			(Decimal(5), self.context.shipping_account, Decimal("57.5")),
+			"the discount on the net total, freight on the connection's shipping account",
+		)
+		bought = replace(document, party=gid("Vendor", "1"))
+		self.assertEqual(
+			self.mirror(
+				Kind.PURCHASE_ORDER, PurchaseOrderWriter, gid("Order", "Freight"), trade_fields(bought)
+			),
+			Outcome.UNSUPPORTED,
+			"a purchase's freight needs the source's account",
 		)

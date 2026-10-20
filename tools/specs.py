@@ -162,6 +162,25 @@ def catalog() -> list[SpecDocument]:
 		# Odoo publishes no OpenAPI document (each database describes itself at /doc): the JSON-2 answers the
 		# adapter reads, transcribed by tools/odoo_schema.py from Odoo 19's model definitions at a pinned commit.
 		committed("odoo", "json2-model-reference", "tests/schemas/odoo.json", ""),
+		# Business Central publishes no OpenAPI document for API v2.0 (only v1.0's): the entities the adapter
+		# reads, transcribed by tools/bc_schema.py from the API (v2.0) resource-type pages.
+		committed(
+			"dynamics_business_central",
+			"api-v2.0-reference",
+			"tests/schemas/dynamics_business_central.json",
+			"",
+		),
+		# Dataverse publishes no static OpenAPI document: the tables the Dynamics 365 Sales adapter reads,
+		# transcribed by tools/dataverse_schema.py from Microsoft's table reference pages.
+		committed("dynamics_sales", "dataverse-table-reference", "tests/schemas/dynamics_sales.json", ""),
+		# Finance and operations apps publish no static OpenAPI document: the documented fields of the data
+		# entities the adapter reads by default, transcribed by tools/fo_schema.py from the entity reference.
+		committed(
+			"dynamics_finance_operations",
+			"data-entity-reference",
+			"tests/schemas/dynamics_finance_operations.json",
+			"",
+		),
 	]
 
 

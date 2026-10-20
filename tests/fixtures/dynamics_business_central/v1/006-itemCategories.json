@@ -1,0 +1,17 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/itemCategories"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/itemCategories",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O131\"",
+				"id": "00000083-0000-4000-8000-000000000083",
+				"code": "FURNITURE",
+				"displayName": "Office Furniture",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

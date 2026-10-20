@@ -1,0 +1,17 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/dimensions"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/dimensions",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O111\"",
+				"id": "0000006f-0000-4000-8000-00000000006f",
+				"code": "DEPARTMENT",
+				"displayName": "Department",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

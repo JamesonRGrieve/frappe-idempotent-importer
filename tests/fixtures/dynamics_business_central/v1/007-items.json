@@ -1,0 +1,83 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/items",
+		"query": {
+			"$expand": "itemVariants"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/items",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O201\"",
+				"id": "000000c9-0000-4000-8000-0000000000c9",
+				"number": "1896-S",
+				"displayName": "ATHENS Desk",
+				"type": "Inventory",
+				"itemCategoryId": "00000083-0000-4000-8000-000000000083",
+				"itemCategoryCode": "FURNITURE",
+				"blocked": false,
+				"gtin": "0601234567890",
+				"inventory": 4,
+				"unitPrice": 1000,
+				"priceIncludesTax": false,
+				"unitCost": 600,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"itemVariants": []
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O202\"",
+				"id": "000000ca-0000-4000-8000-0000000000ca",
+				"number": "1900-S",
+				"displayName": "PARIS Guest Chair",
+				"type": "Inventory",
+				"itemCategoryId": "00000083-0000-4000-8000-000000000083",
+				"itemCategoryCode": "FURNITURE",
+				"blocked": false,
+				"gtin": "",
+				"inventory": 10,
+				"unitPrice": 190,
+				"priceIncludesTax": false,
+				"unitCost": 95,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"itemVariants": [
+					{
+						"@odata.etag": "W/\"JzQ0O203\"",
+						"id": "000000cb-0000-4000-8000-0000000000cb",
+						"itemId": "000000ca-0000-4000-8000-0000000000ca",
+						"itemNumber": "1900-S",
+						"code": "BLACK",
+						"description": "Black",
+						"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+					},
+					{
+						"@odata.etag": "W/\"JzQ0O204\"",
+						"id": "000000cc-0000-4000-8000-0000000000cc",
+						"itemId": "000000ca-0000-4000-8000-0000000000ca",
+						"itemNumber": "1900-S",
+						"code": "RED",
+						"description": "Red",
+						"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+					}
+				]
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O205\"",
+				"id": "000000cd-0000-4000-8000-0000000000cd",
+				"number": "SERVICE",
+				"displayName": "Installation",
+				"type": "Service",
+				"itemCategoryId": "00000000-0000-0000-0000-000000000000",
+				"itemCategoryCode": "",
+				"blocked": false,
+				"gtin": "",
+				"inventory": 0,
+				"unitPrice": 100,
+				"priceIncludesTax": false,
+				"unitCost": 0,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"itemVariants": []
+			}
+		]
+	}
+}

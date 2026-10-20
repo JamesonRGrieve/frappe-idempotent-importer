@@ -1,0 +1,52 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/products",
+		"query": {
+			"$select": "productid,name,productnumber,description,price,quantityonhand,producttypecode,productstructure,statecode,modifiedon"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#products",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"productid": "d000000b-0000-4000-8000-00000000000b",
+				"name": "Standing Desk",
+				"productnumber": "SD-100",
+				"description": "Electric standing desk",
+				"price": 850,
+				"quantityonhand": 6,
+				"producttypecode": 1,
+				"productstructure": 1,
+				"statecode": 0,
+				"modifiedon": "2026-04-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"productid": "d000000c-0000-4000-8000-00000000000c",
+				"name": "Installation",
+				"productnumber": "SVC-INSTALL",
+				"description": null,
+				"price": 150,
+				"quantityonhand": 0,
+				"producttypecode": 3,
+				"productstructure": 1,
+				"statecode": 0,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"productid": "d000000d-0000-4000-8000-00000000000d",
+				"name": "Desk family",
+				"productnumber": "FAM-DESK",
+				"description": null,
+				"price": null,
+				"quantityonhand": 0,
+				"producttypecode": 1,
+				"productstructure": 2,
+				"statecode": 0,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

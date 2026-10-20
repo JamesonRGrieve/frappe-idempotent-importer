@@ -1,0 +1,55 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/contacts",
+		"query": {
+			"$select": "contactid,firstname,middlename,lastname,fullname,jobtitle,emailaddress1,telephone1,mobilephone,address1_line1,address1_line2,address1_city,address1_stateorprovince,address1_postalcode,address1_country,_parentcustomerid_value,statecode,modifiedon"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#contacts",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"contactid": "d000001f-0000-4000-8000-00000000001f",
+				"firstname": "Yvonne",
+				"middlename": null,
+				"lastname": "McKay",
+				"fullname": "Yvonne McKay",
+				"jobtitle": "Purchasing Manager",
+				"emailaddress1": "yvonne@contoso.example",
+				"telephone1": "+1 403 555 0131",
+				"mobilephone": null,
+				"address1_line1": null,
+				"address1_line2": null,
+				"address1_city": null,
+				"address1_stateorprovince": null,
+				"address1_postalcode": null,
+				"address1_country": null,
+				"_parentcustomerid_value": "d0000015-0000-4000-8000-000000000015",
+				"statecode": 0,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"contactid": "d0000020-0000-4000-8000-000000000020",
+				"firstname": "Susan",
+				"middlename": null,
+				"lastname": "Burk",
+				"fullname": "Susan Burk",
+				"jobtitle": null,
+				"emailaddress1": "susan.burk@example.test",
+				"telephone1": null,
+				"mobilephone": "+1 587 555 0132",
+				"address1_line1": "9 Elm Street",
+				"address1_line2": null,
+				"address1_city": "Edmonton",
+				"address1_stateorprovince": "AB",
+				"address1_postalcode": "T5J 0N3",
+				"address1_country": "CA",
+				"_parentcustomerid_value": null,
+				"statecode": 0,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

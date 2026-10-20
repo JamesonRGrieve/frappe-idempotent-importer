@@ -23,6 +23,7 @@ from urllib.parse import parse_qs
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from tests.support.dynamics import ENTRA_CLIENT_SECRET, ENTRA_TOKEN
 from tests.support.fixtures import Answer, RestResponder, ShopifyResponder
 
 PORT = 8080
@@ -41,6 +42,8 @@ SHOPIFY_CLIENT_GRANT = {
 	"client_secret": ["e2e-client-secret"],
 }
 ETSY_TOKEN_PATH = "/v3/public/oauth/token"
+# Microsoft Entra ID's token endpoint, under the tenant (Dynamics 365's app grant).
+ENTRA_GRANT_PATH = "/oauth2/v2.0/token"
 # Etsy's grant for the connected shop owner (user 7001), with a new refresh token every time.
 ETSY_GRANT = {
 	"access_token": "7001.fixture-access-token",
@@ -71,6 +74,15 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 	),
 	"ecwid-fake": ("ecwid", {"Authorization": "Bearer e2e-ecwid-token"}),
 	"odoo-fake": ("odoo", {"Authorization": "bearer e2e-odoo-key", "X-Odoo-Database": "harbour"}),
+	"dynamics_business_central-fake": (
+		"dynamics_business_central",
+		{"Authorization": f"Bearer {ENTRA_TOKEN}"},
+	),
+	"dynamics_sales-fake": ("dynamics_sales", {"Authorization": f"Bearer {ENTRA_TOKEN}"}),
+	"dynamics_finance_operations-fake": (
+		"dynamics_finance_operations",
+		{"Authorization": f"Bearer {ENTRA_TOKEN}"},
+	),
 }
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400
@@ -120,6 +132,9 @@ class FakeStore(BaseHTTPRequestHandler):
 				return
 			self.send(ShopifyResponder(state).answer(body))
 			return
+		if method == "POST" and self.path.endswith(ENTRA_GRANT_PATH):
+			self.send(entra_grant(body))
+			return
 		if host == "etsy-fake" and method == "POST" and self.path == ETSY_TOKEN_PATH:
 			self.send(Answer(200, json.dumps(ETSY_GRANT).encode()))
 			return
@@ -144,6 +159,16 @@ class FakeStore(BaseHTTPRequestHandler):
 
 	def log_message(self, format: str, *args: object) -> None:
 		sys.stderr.write(f"{self.headers.get('Host')} {format % args}\n")
+
+
+def entra_grant(body: bytes) -> Answer:
+	"""Microsoft Entra ID's client credentials grant (Dynamics 365): the e2e app's secret gets the token the
+	Dynamics fakes answer to; anything else is refused as Entra refuses it."""
+	form = parse_qs(body.decode())
+	if form.get("grant_type") != ["client_credentials"] or form.get("client_secret") != [ENTRA_CLIENT_SECRET]:
+		return Answer(HTTP_UNAUTHORIZED, b'{"error":"invalid_client"}')
+	grant = {"token_type": "Bearer", "expires_in": 3599, "access_token": ENTRA_TOKEN}
+	return Answer(200, json.dumps(grant).encode())
 
 
 def shopify_grant(body: bytes) -> Answer:

@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/vendors"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/vendors",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O311\"",
+				"id": "00000137-0000-4000-8000-000000000137",
+				"number": "30000",
+				"displayName": "Fabrikam, Inc.",
+				"addressLine1": "51 Radcliff Street",
+				"addressLine2": "",
+				"city": "Edmonton",
+				"state": "AB",
+				"country": "CA",
+				"postalCode": "T5K 2M3",
+				"phoneNumber": "",
+				"email": "sales@fabrikam.example",
+				"website": "",
+				"taxRegistrationNumber": "",
+				"currencyCode": "",
+				"blocked": " ",
+				"balance": 0,
+				"taxLiable": true,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

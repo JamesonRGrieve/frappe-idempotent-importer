@@ -1,0 +1,54 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/quotes",
+		"query": {
+			"$select": "quoteid,quotenumber,effectivefrom,name,_customerid_value,_transactioncurrencyid_value,exchangerate,totallineitemamount,discountamount,discountpercentage,totaldiscountamount,freightamount,totaltax,totalamount,totalamount_base,description,statecode,createdon,modifiedon",
+			"$expand": "quote_details($select=quotedetailid,_productid_value,productdescription,isproductoverridden,quantity,priceperunit,baseamount,manualdiscountamount,volumediscountamount,tax,extendedamount,sequencenumber)"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#quotes",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"quoteid": "d000003d-0000-4000-8000-00000000003d",
+				"quotenumber": "QUO-01001",
+				"name": "QUO-01001 for 0015",
+				"_customerid_value": "d0000015-0000-4000-8000-000000000015",
+				"_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": "account",
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"exchangerate": 1,
+				"discountamount": 0,
+				"discountpercentage": 0,
+				"freightamount": 50,
+				"description": null,
+				"statecode": 0,
+				"createdon": "2026-02-25T17:00:00Z",
+				"modifiedon": "2026-03-01T09:00:00Z",
+				"totallineitemamount": 1500,
+				"totaldiscountamount": 100,
+				"totaltax": 75,
+				"totalamount": 1625,
+				"totalamount_base": 1625,
+				"effectivefrom": "2026-02-25",
+				"quote_details": [
+					{
+						"@odata.etag": "W/\"1001\"",
+						"quotedetailid": "d000003e-0000-4000-8000-00000000003e",
+						"_productid_value": "d000000b-0000-4000-8000-00000000000b",
+						"productdescription": "Standing Desk",
+						"isproductoverridden": false,
+						"quantity": 2,
+						"priceperunit": 800.0,
+						"baseamount": 1600,
+						"manualdiscountamount": 100,
+						"volumediscountamount": 0,
+						"tax": 75,
+						"extendedamount": 1575,
+						"sequencenumber": 2
+					}
+				]
+			}
+		]
+	}
+}

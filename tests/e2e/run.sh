@@ -53,6 +53,9 @@ SOURCES=(
 	lightspeed-l:lightspeed-fake:assert_lightspeed
 	ecwid-c:ecwid-fake:assert_ecwid
 	odoo-o:odoo-fake:assert_odoo
+	business-central-b:dynamics_business_central-fake:assert_business_central
+	dynamics-sales-d:dynamics_sales-fake:assert_dynamics_sales
+	finance-operations-f:dynamics_finance_operations-fake:assert_finance_operations
 )
 # The connections approved through OAuth 2: Connect is proven on each.
 OAUTH_CONNECTIONS=(etsy-e)

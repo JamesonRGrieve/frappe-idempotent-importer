@@ -110,6 +110,9 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"lightspeed",
 		"ecwid",
 		"odoo",
+		"dynamics_business_central",
+		"dynamics_sales",
+		"dynamics_finance_operations",
 	}
 	assert all(document.committed or document.sha256 or "/" in document.url for document in catalog())
 	assert [document.name for document in for_source("wix")] == ["rest-reference"]

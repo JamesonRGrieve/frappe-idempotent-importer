@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/data/CustomersV3",
+		"query": {
+			"cross-company": "true",
+			"$filter": "dataAreaId eq 'hpt'"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.operations.dynamics.com/data/$metadata#CustomersV3",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"CUSTOMERACCOUNT": "US-001",
+				"ORGANIZATIONNAME": "Contoso Retail San Diego",
+				"PARTYTYPE": "Organization",
+				"PERSONFIRSTNAME": "",
+				"PERSONMIDDLENAME": "",
+				"PERSONLASTNAME": "",
+				"SALESCURRENCYCODE": "CAD",
+				"ADDRESSCITY": "Calgary",
+				"ADDRESSSTATE": "AB",
+				"ADDRESSZIPCODE": "T2P 1J9",
+				"ADDRESSCOUNTRYREGIONID": "CAN",
+				"CUSTOMERGROUPID": "30"
+			}
+		],
+		"@odata.nextLink": "https://harbourpine.operations.dynamics.com/data/CustomersV3?cross-company=true&%24filter=dataAreaId%20eq%20%27hpt%27&%24skiptoken=1000001"
+	}
+}

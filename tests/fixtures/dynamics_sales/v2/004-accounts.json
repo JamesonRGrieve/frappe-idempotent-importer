@@ -1,0 +1,32 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/accounts",
+		"query": {
+			"$skiptoken": "<cookie pagenumber=\"2\" />"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#accounts",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"accountid": "d0000016-0000-4000-8000-000000000016",
+				"name": "Fourth Coffee",
+				"accountnumber": "FC-002",
+				"emailaddress1": "hello@fourthcoffee.example",
+				"telephone1": null,
+				"websiteurl": null,
+				"address1_line1": "22 Bean Street",
+				"address1_line2": null,
+				"address1_city": "Red Deer",
+				"address1_stateorprovince": "AB",
+				"address1_postalcode": "T4N 1A1",
+				"address1_country": "Canada",
+				"statecode": 1,
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"modifiedon": "2026-04-01T09:00:00Z",
+				"contact_customer_accounts": []
+			}
+		]
+	}
+}

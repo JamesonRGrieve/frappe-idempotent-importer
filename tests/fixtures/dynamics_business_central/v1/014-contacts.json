@@ -1,0 +1,60 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/contacts"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/contacts",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O341\"",
+				"id": "00000155-0000-4000-8000-000000000155",
+				"number": "CT000001",
+				"type": "Company",
+				"displayName": "Adatum Corporation",
+				"companyNumber": "CT000001",
+				"companyName": "Adatum Corporation",
+				"jobTitle": "",
+				"addressLine1": "192 Market Square",
+				"addressLine2": "",
+				"city": "Calgary",
+				"state": "AB",
+				"country": "CA",
+				"postalCode": "T2P 1J9",
+				"phoneNumber": "+1 403 555 0100",
+				"mobilePhoneNumber": "",
+				"email": "robert.townes@adatum.example",
+				"website": "",
+				"searchName": "ADATUM CORPORATION",
+				"privacyBlocked": false,
+				"taxRegistrationNumber": "",
+				"contactBusinessRelation": "Customer",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O342\"",
+				"id": "00000156-0000-4000-8000-000000000156",
+				"number": "CT000002",
+				"type": "Person",
+				"displayName": "Robin Lead",
+				"companyNumber": "",
+				"companyName": "Northwind Interiors",
+				"jobTitle": "Office Manager",
+				"addressLine1": "",
+				"addressLine2": "",
+				"city": "",
+				"state": "",
+				"country": "",
+				"postalCode": "",
+				"phoneNumber": "",
+				"mobilePhoneNumber": "+1 587 555 0144",
+				"email": "robin@northwind.example",
+				"website": "",
+				"searchName": "ROBIN LEAD",
+				"privacyBlocked": false,
+				"taxRegistrationNumber": "",
+				"contactBusinessRelation": "None",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"request": {
+		"path": "/data/CustomersV3",
+		"query": {
+			"$skiptoken": "1000001"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.operations.dynamics.com/data/$metadata#CustomersV3",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"CUSTOMERACCOUNT": "US-027",
+				"ORGANIZATIONNAME": "",
+				"PARTYTYPE": "Person",
+				"PERSONFIRSTNAME": "Birch",
+				"PERSONMIDDLENAME": "",
+				"PERSONLASTNAME": "Lake",
+				"SALESCURRENCYCODE": "CAD",
+				"ADDRESSCITY": "Edmonton",
+				"ADDRESSSTATE": "AB",
+				"ADDRESSZIPCODE": "T5J 0N3",
+				"ADDRESSCOUNTRYREGIONID": "CAN",
+				"CUSTOMERGROUPID": "10"
+			}
+		]
+	}
+}

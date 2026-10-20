@@ -198,6 +198,46 @@ BUSINESSES = (
 		{"auth_method": "JSON-2 API Key", "api_account": "harbour", "api_secret": "e2e-odoo-key"},
 	),
 	Business(
+		"DB",
+		"Store N",
+		"business-central-b",
+		"Dynamics 365 Business Central",
+		"dynamics_business_central",
+		"dynamics_business_central-fake",
+		"https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production",
+		{
+			"api_user": "e2e-entra-client",
+			"api_secret": "e2e-entra-secret",
+			"api_account": "c0ffee00-0000-4000-8000-000000000001",
+		},
+	),
+	Business(
+		"DS",
+		"Store Y",
+		"dynamics-sales-d",
+		"Dynamics 365 Sales",
+		"dynamics_sales",
+		"dynamics_sales-fake",
+		"https://harbourpine.crm3.dynamics.com",
+		{"api_user": "e2e-entra-client", "api_secret": "e2e-entra-secret", "api_account": "e2e-tenant"},
+	),
+	Business(
+		"DF",
+		"Store T",
+		"finance-operations-f",
+		"Dynamics 365 Finance & Operations",
+		"dynamics_finance_operations",
+		"dynamics_finance_operations-fake",
+		"https://harbourpine.operations.dynamics.com",
+		{
+			"api_user": "e2e-entra-client",
+			"api_secret": "e2e-entra-secret",
+			"api_account": "e2e-tenant/hpt",
+			# The test environment's order-date field (the entity reference documents none).
+			"field_map": '{"sales_order": {"fields": {"date": "ORDERDATE"}}}',
+		},
+	),
+	Business(
 		"EC",
 		"Store W",
 		"ecwid-c",
@@ -496,6 +536,9 @@ def main() -> None:
 		"assert_lightspeed": assert_lightspeed,
 		"assert_ecwid": assert_ecwid,
 		"assert_odoo": assert_odoo,
+		"assert_business_central": assert_business_central,
+		"assert_dynamics_sales": assert_dynamics_sales,
+		"assert_finance_operations": assert_finance_operations,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2205,6 +2248,212 @@ def assert_odoo(state: str) -> None:
 		0,
 		"a draft invoice",
 	)
+
+
+def bc(n: int) -> str:
+	"""A Business Central fixture id (tools/bc_fixtures.py)."""
+	return f"{n:08x}-0000-4000-8000-{n:012x}"
+
+
+@check
+def assert_business_central(state: str) -> None:
+	"""Business Central's chart, items, parties, people, pipeline, orders, invoices and credit memos."""
+	connection = "business-central-b"
+	expect(
+		frappe.db.get_value("Account", target(connection, "account", "Account", bc(102)), "account_type"),
+		"Bank",
+		"the checking account",
+	)
+	expect(
+		frappe.db.get_value(
+			"Importer Link", {"connection": connection, "gid": ["like", f"%/Account/{bc(101)}"]}
+		),
+		None,
+		"a heading of the chart",
+	)
+	desk = target(connection, "product", "Item", bc(201))
+	expect(
+		(desk, stock_of(connection, desk)), ("DB-1896-S", amount("4")), "the desk: its number and inventory"
+	)
+	expect(
+		frappe.db.get_value("Item", part(connection, "variant", f"ItemVariant/{bc(204)}"), "item_code"),
+		"DB-1900-S-RED",
+		"the red chair",
+	)
+	invoice = target(connection, "sales_invoice", "SalesInvoice", bc(421))
+	expect(
+		[amount(v) for v in frappe.db.get_value("Sales Invoice", invoice, ["docstatus", "grand_total"])],
+		[amount("1"), amount("1155")],
+		"S-INV1001",
+	)
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice",
+			target(connection, "sales_invoice", "SalesCreditMemo", bc(441)),
+			["is_return", "return_against"],
+		),
+		(1, invoice),
+		"the credit memo, against its invoice",
+	)
+	expect(
+		amount(
+			frappe.db.get_value(
+				"Purchase Invoice",
+				target(connection, "purchase_invoice", "PurchaseInvoice", bc(461)),
+				"grand_total",
+			)
+		),
+		amount("3150"),
+		"P-INV1001",
+	)
+	draft = target(connection, "sales_invoice", "SalesInvoice", bc(431))
+	order = target(connection, "sales_order", "SalesOrder", bc(411))
+	employee = target(connection, "employee", "Employee", bc(321))
+	opportunity = target(connection, "opportunity", "Opportunity", bc(351))
+	if state == "v1":
+		expect(item_price(connection, desk), amount("1000"), "the desk's price")
+		expect(frappe.db.get_value("Sales Invoice", draft, "docstatus"), 0, "a draft invoice")
+		expect(frappe.db.get_value("Sales Order", order, "docstatus"), 1, "an open order")
+		expect(
+			frappe.db.get_value("Opportunity", opportunity, "status"), "Open", "an opportunity in progress"
+		)
+		return
+	expect(item_price(connection, desk), amount("1050"), "the desk's new price")
+	expect(
+		frappe.db.get_value(
+			"Sales Invoice", target(connection, "sales_invoice", "SalesInvoice", bc(431)), "docstatus"
+		),
+		1,
+		"the draft invoice, posted",
+	)
+	expect(
+		frappe.db.get_value("Sales Order", order, "docstatus"),
+		2,
+		"an order Business Central deleted once invoiced",
+	)
+	expect(frappe.db.get_value("Employee", employee, "status"), "Left", "a terminated employee")
+	expect(frappe.db.get_value("Opportunity", opportunity, "status"), "Converted", "a won opportunity")
+	expect(
+		frappe.db.get_value("Customer", target(connection, "customer", "Customer", bc(302)), "disabled"),
+		1,
+		"a blocked customer",
+	)
+
+
+def dataverse(n: int) -> str:
+	"""A Dynamics 365 Sales fixture id (tools/dataverse_fixtures.py)."""
+	return f"d{n:07x}-0000-4000-8000-{n:012x}"
+
+
+@check
+def assert_dynamics_sales(state: str) -> None:
+	"""Dynamics 365 Sales' products, customers, pipeline, quotes, orders and invoices (one in US dollars)."""
+	connection = "dynamics-sales-d"
+	desk = target(connection, "product", "Product", dataverse(11))
+	expect((desk, stock_of(connection, desk)), ("DS-SD-100", amount("6")), "the standing desk")
+	contoso = target(connection, "customer", "Account", dataverse(21))
+	expect(frappe.db.get_value("Customer", contoso, "customer_type"), "Company", "Contoso")
+	usd = target(connection, "sales_invoice", "Invoice", dataverse(81))
+	expect(
+		[
+			amount(v)
+			for v in frappe.db.get_value(
+				"Sales Invoice", usd, ["grand_total", "conversion_rate", "base_grand_total"]
+			)
+		],
+		[amount("630"), amount("1.37"), amount("863.1")],
+		"INV-01001 in US dollars, at the rate its totals imply",
+	)
+	expect(
+		frappe.db.get_value("Sales Invoice", usd, "customer"),
+		target(connection, "customer", "Contact", dataverse(32)),
+		"an invoice to a contact",
+	)
+	order = target(connection, "sales_order", "SalesOrder", dataverse(71))
+	expect(
+		amount(frappe.db.get_value("Sales Order", order, "discount_amount")),
+		amount("90"),
+		"the order's discount",
+	)
+	expect(
+		frappe.db.get_value(
+			"Quotation", target(connection, "draft_order", "Quote", dataverse(61)), "docstatus"
+		),
+		0,
+		"the draft quote",
+	)
+	opportunity = target(connection, "opportunity", "Opportunity", dataverse(52))
+	expect(
+		frappe.db.get_value("Opportunity", opportunity, ["opportunity_from", "party_name"]),
+		("Lead", target(connection, "lead", "Lead", dataverse(41))),
+		"an opportunity with the lead it came from",
+	)
+	if state == "v1":
+		expect(item_price(connection, desk), amount("800"), "the desk's price")
+		expect(frappe.db.get_value("Sales Order", order, "docstatus"), 1, "a submitted order")
+		return
+	expect(item_price(connection, desk), amount("850"), "the desk's new price")
+	expect(frappe.db.get_value("Sales Order", order, "docstatus"), 2, "a cancelled order")
+	expect(
+		frappe.db.get_value("Customer", target(connection, "customer", "Account", dataverse(22)), "disabled"),
+		1,
+		"a deactivated account",
+	)
+	expect(
+		frappe.db.get_value(
+			"Opportunity", target(connection, "opportunity", "Opportunity", dataverse(51)), "status"
+		),
+		"Converted",
+		"a won opportunity",
+	)
+
+
+@check
+def assert_finance_operations(state: str) -> None:
+	"""Finance & Operations' documented entities: products, customers and draft sales orders; vendors and
+	purchase orders wait for the field map to name their entities."""
+	connection = "finance-operations-f"
+	speaker = target(connection, "product", "Item", "D0001")
+	expect(speaker, "DF-D0001", "the speaker's item code")
+	expect(
+		frappe.db.get_value("Importer Link", {"connection": connection, "gid": ["like", "%/Item/D0004"]}),
+		None,
+		"a product master (planned)",
+	)
+	expect(
+		frappe.db.get_value(
+			"Customer", target(connection, "customer", "Customer", "US-027"), "customer_type"
+		),
+		"Individual",
+		"a person customer",
+	)
+	order = target(connection, "sales_order", "SalesOrder", "000701")
+	expect(
+		[amount(v) for v in frappe.db.get_value("Sales Order", order, ["docstatus", "grand_total"])],
+		[amount("0"), amount("360")],
+		"a draft sales order totalling its lines",
+	)
+	expect(
+		frappe.db.count(
+			"Importer Link", {"connection": connection, "kind": ["in", ["supplier", "purchase_order"]]}
+		),
+		0,
+		"vendors and purchase orders, not yet mapped",
+	)
+	if state == "v1":
+		expect(item_price(connection, speaker), amount("180"), "the speaker's price")
+		return
+	expect(item_price(connection, speaker), amount("189"), "the speaker's new price")
+	removed = frappe.db.get_value(
+		"Importer Link",
+		{"connection": connection, "gid": ["like", "%/SalesOrder/000702"]},
+		["target_name", "retired"],
+		as_dict=True,
+	)
+	expect(removed.retired, 1, "a sales order removed at the source")
+	title = str(frappe.db.get_value("Sales Order", removed.target_name, "title"))
+	if not title.startswith("[Removed at source]"):
+		raise AssertionError(f"the removed draft order isn't marked: {title}")
 
 
 @check

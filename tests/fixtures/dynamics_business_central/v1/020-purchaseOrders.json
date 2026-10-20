@@ -1,0 +1,50 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/purchaseOrders",
+		"query": {
+			"$expand": "purchaseOrderLines"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/purchaseOrders",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O451\"",
+				"id": "000001c3-0000-4000-8000-0000000001c3",
+				"number": "P-ORD1001",
+				"status": "Open",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 3000,
+				"totalTaxAmount": 150,
+				"totalAmountIncludingTax": 3150,
+				"vendorId": "00000137-0000-4000-8000-000000000137",
+				"vendorNumber": "30000",
+				"vendorName": "Fabrikam, Inc.",
+				"orderDate": "2026-02-27",
+				"postingDate": "2026-02-27",
+				"requestedReceiptDate": "2026-03-06",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"purchaseOrderLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O452\"",
+						"id": "000001c4-0000-4000-8000-0000000001c4",
+						"documentId": "000001c3-0000-4000-8000-0000000001c3",
+						"sequence": 30000,
+						"lineType": "Item",
+						"lineObjectNumber": "1896-S",
+						"description": "ATHENS Desk",
+						"quantity": 5,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 3000,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 3000,
+						"netTaxAmount": 150,
+						"netAmountIncludingTax": 3150,
+						"itemId": "000000c9-0000-4000-8000-0000000000c9"
+					}
+				]
+			}
+		]
+	}
+}

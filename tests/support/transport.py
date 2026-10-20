@@ -7,11 +7,14 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from dataclasses import dataclass, field
+from urllib.parse import parse_qs
 
 from idempotent_importer.core.http import HttpResponse
+from tests.support.dynamics import ENTRA_CLIENT_SECRET, ENTRA_TOKEN
 from tests.support.fixtures import Answer, RestResponder, ShopifyResponder
 
 ETSY_TOKEN_PATH = "/v3/public/oauth/token"
+ENTRA_GRANT_PATH = "/oauth2/v2.0/token"
 # The fixtures' shop owner (user 7001), as Etsy's access tokens name their user.
 ETSY_ACCESS_TOKEN = "7001.fixture-access-token"
 ETSY_ROTATED_REFRESH_TOKEN = "fixture-refresh-token"
@@ -78,6 +81,27 @@ def etsy(state: str) -> FakeTransport:
 				"refresh_token": ETSY_ROTATED_REFRESH_TOKEN,
 			}
 			return HttpResponse(200, json.dumps(grant).encode())
+		return response(responder.answer(method, url, body))
+
+	return FakeTransport(route)
+
+
+def entra(source: str, state: str) -> FakeTransport:
+	"""A Dynamics 365 source as the tests see it: Microsoft Entra ID's token endpoint grants the e2e app's
+	client credentials a token, and the source answers from its fixtures to that token only."""
+	responder = RestResponder(source, state)
+
+	def route(method: str, url: str, body: bytes, headers: dict[str, str]) -> HttpResponse:
+		if method == "POST" and url.endswith(ENTRA_GRANT_PATH):
+			form = parse_qs(body.decode())
+			if form.get("client_secret") != [ENTRA_CLIENT_SECRET] or form.get("grant_type") != [
+				"client_credentials"
+			]:
+				return HttpResponse(401, b'{"error":"invalid_client"}')
+			grant = {"token_type": "Bearer", "expires_in": 3599, "access_token": ENTRA_TOKEN}
+			return HttpResponse(200, json.dumps(grant).encode())
+		if headers.get("Authorization") != f"Bearer {ENTRA_TOKEN}":
+			return HttpResponse(401, b'{"error":{"code":"Authentication_InvalidCredentials"}}')
 		return response(responder.answer(method, url, body))
 
 	return FakeTransport(route)

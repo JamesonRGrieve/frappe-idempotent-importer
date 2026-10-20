@@ -15,6 +15,7 @@
   "api_user",
   "api_secret",
   "api_account",
+  "field_map",
   "refresh_token",
   "target_section",
   "public_site",
@@ -101,7 +102,7 @@
    "fieldname": "source",
    "fieldtype": "Select",
    "label": "Source",
-   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Finance & Operations\nDynamics 365 Sales\nPeopleSoft\nAgendrix\nNetSuite\nSAP Business One\nQuickBooks Online\nXero\nSage\nZoho Books\nZoho Inventory\nAcumatica",
+   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nPeopleSoft\nAgendrix\nNetSuite\nSAP Business One\nQuickBooks Online\nXero\nSage\nZoho Books\nZoho Inventory\nAcumatica",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1
@@ -115,7 +116,7 @@
    "fieldtype": "Data",
    "label": "Store URL",
    "reqd": 1,
-   "description": "The storefront's https:// address (its old URLs redirect to the mirrored records). Shopify: the store's <name>.myshopify.com domain. Magento: the store's base URL, which its REST API is under. Odoo: the database's URL (https://mycompany.odoo.com)."
+   "description": "The storefront's https:// address (its old URLs redirect to the mirrored records). Shopify: the store's <name>.myshopify.com domain. Magento: the store's base URL, which its REST API is under. Odoo: the database's URL (https://mycompany.odoo.com). Business Central: https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>. Dynamics 365 Sales: https://<org>.crm.dynamics.com. Finance & Operations: https://<environment>.operations.dynamics.com."
   },
   {
    "fieldname": "auth_method",
@@ -130,19 +131,27 @@
    "fieldname": "api_user",
    "fieldtype": "Data",
    "label": "User, Key or Client ID",
-   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login."
+   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login. Dynamics 365: the Microsoft Entra app's client ID."
   },
   {
    "fieldname": "api_secret",
    "fieldtype": "Password",
    "label": "Secret",
-   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). Never shown again or logged."
+   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). or a Microsoft Entra app's client secret (Dynamics 365). Never shown again or logged."
   },
   {
    "fieldname": "api_account",
    "fieldtype": "Data",
    "label": "Account",
-   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code (blank for default), Lightspeed eCom cluster and shop language (e.g. us1/en), Ecwid store ID, Odoo database (<database>:<company id> for one company of several)."
+   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code (blank for default), Lightspeed eCom cluster and shop language (e.g. us1/en), Ecwid store ID, Odoo database (<database>:<company id> for one company of several), Business Central company id, Dynamics 365 Sales tenant (id or domain), Finance & Operations <tenant>/<legal entity>."
+  },
+  {
+   "fieldname": "field_map",
+   "fieldtype": "Code",
+   "label": "Field Map",
+   "options": "JSON",
+   "depends_on": "eval:doc.source==\"Dynamics 365 Finance & Operations\"",
+   "description": "Finance & Operations: which data entity and fields each kind is read from, where your environment differs from (or the entity reference doesn't document) the defaults, e.g. {\"sales_order\": {\"fields\": {\"date\": \"OrderDate\"}}, \"supplier\": {\"entity\": \"VendorsV2\", \"fields\": {\"key\": \"VendorAccountNumber\", \"name\": \"VendorOrganizationName\"}}}. See coverage/dynamics_finance_operations.md."
   },
   {
    "fieldname": "refresh_token",
@@ -541,7 +550,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-19 13:00:00.000000",
+ "modified": "2026-10-20 13:00:00.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

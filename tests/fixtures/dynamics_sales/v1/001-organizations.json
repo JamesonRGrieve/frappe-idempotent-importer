@@ -1,0 +1,19 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/organizations",
+		"query": {
+			"$select": "organizationid,name,_basecurrencyid_value"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#organizations",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"organizationid": "d0000001-0000-4000-8000-000000000001",
+				"name": "Harbour Pine Trading",
+				"_basecurrencyid_value": "c0000000-0000-4000-8000-0000000000ca"
+			}
+		]
+	}
+}

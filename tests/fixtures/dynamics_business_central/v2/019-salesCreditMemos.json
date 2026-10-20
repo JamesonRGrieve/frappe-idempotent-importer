@@ -1,0 +1,53 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/salesCreditMemos",
+		"query": {
+			"$expand": "salesCreditMemoLines"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/salesCreditMemos",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O441\"",
+				"id": "000001b9-0000-4000-8000-0000000001b9",
+				"number": "S-CR1001",
+				"status": "Open",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 100,
+				"totalTaxAmount": 5,
+				"totalAmountIncludingTax": 105,
+				"customerId": "0000012d-0000-4000-8000-00000000012d",
+				"customerNumber": "10000",
+				"customerName": "Adatum Corporation",
+				"creditMemoDate": "2026-03-08",
+				"postingDate": "2026-03-08",
+				"dueDate": "2026-03-08",
+				"invoiceId": "000001a5-0000-4000-8000-0000000001a5",
+				"invoiceNumber": "S-INV1001",
+				"externalDocumentNumber": "",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"salesCreditMemoLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O442\"",
+						"id": "000001ba-0000-4000-8000-0000000001ba",
+						"documentId": "000001b9-0000-4000-8000-0000000001b9",
+						"sequence": 30000,
+						"lineType": "Account",
+						"lineObjectNumber": "40100",
+						"description": "Installation refund",
+						"quantity": 1,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 100,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 100,
+						"netTaxAmount": 5,
+						"netAmountIncludingTax": 105,
+						"accountId": "00000069-0000-4000-8000-000000000069"
+					}
+				]
+			}
+		]
+	}
+}

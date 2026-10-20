@@ -27,7 +27,10 @@ stores can import into two businesses at once and never touch each other's recor
 | Lightspeed eCom (C-Series) | Built | Categories, products with variants, prices, sales, stock, images and brands, customers, discount codes and rules, orders with payments, credit notes and shipments, text pages, blogs and articles, reviews and redirects — [coverage/lightspeed.md](coverage/lightspeed.md) |
 | Ecwid | Built | Categories, products with variations, prices, sales, stock and images, customers, discount coupons, wholesale price tiers, orders with payments, refunds and shipping labels, reviews and Instant Site redirects — [coverage/ecwid.md](coverage/ecwid.md) |
 | Odoo | Built | The chart of accounts, analytic accounts, warehouses, product categories and products with variants and stock, customers and suppliers with contacts and addresses, departments, job positions and employees, projects, leads and opportunities, quotations, sale and purchase orders, invoices and bills with credit notes, payments allocated to what they settle, and journal entries — [coverage/odoo.md](coverage/odoo.md) |
-| Dynamics 365 (Business Central, Finance & Operations, Sales), PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Dynamics 365 Business Central | Built | Posting accounts, dimensions, locations, item categories and items with variants and inventory, customers, vendors, employees, projects, contacts and opportunities, sales quotes, sales and purchase orders, and sales and purchase invoices and credit memos — [coverage/dynamics_business_central.md](coverage/dynamics_business_central.md) |
+| Dynamics 365 Sales | Built | Products, accounts with their contacts, contacts, leads, opportunities, quotes, orders and invoices (other currencies too) — [coverage/dynamics_sales.md](coverage/dynamics_sales.md) |
+| Dynamics 365 Finance & Operations | Built | One legal entity's customers, released products and sales orders through the documented data entities, and vendors and purchase orders through the entities its field map names — [coverage/dynamics_finance_operations.md](coverage/dynamics_finance_operations.md) |
+| PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -128,6 +131,18 @@ This is the operator's decision to confirm (see below).
      apps in [coverage/odoo.md](coverage/odoo.md); enter the database's URL, the database name as the account
      (`<database>:<company id>` for one company of several) and the key as the secret, and choose **JSON-2
      API Key** (Odoo 19 and later) or **JSON-RPC API Key** (Odoo 17 and 18, with the user's login).
+   - **Dynamics 365 Business Central and Sales:** register an app in Microsoft Entra ID (Business Central:
+     its `API.ReadWrite.All` application permission, the app added on Business Central's "Microsoft Entra
+     Applications" page with read permission sets; Sales: the app added to the environment as an application
+     user with a read-only role). Enter the app's client ID as the user and its secret as the secret; for
+     Business Central the environment's API URL (`https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>`)
+     and the company's id as the account; for Sales the environment's URL (`https://<org>.crm.dynamics.com`)
+     and the tenant as the account. The importer reads as the app through the client credentials grant.
+   - **Dynamics 365 Finance & Operations:** register an app in Microsoft Entra ID and add it on the
+     environment's "Microsoft Entra applications" page mapped to a user with read access; enter the
+     environment's URL, `<tenant>/<legal entity>` as the account, the app's client ID and secret, and the
+     **Field Map** naming what your environment's entities call the fields the entity reference doesn't
+     document ([coverage/dynamics_finance_operations.md](coverage/dynamics_finance_operations.md)).
    - **Ecwid:** create a custom app with the read scopes in [coverage/ecwid.md](coverage/ecwid.md); enter the
      store's URL, its store ID as the account and the app's secret access token as the secret.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
@@ -280,6 +295,13 @@ Each of these is the operator's call.
     books.
 25. **A stock item bought without a receipt** books to Stock Received But Not Billed, as ERPNext's perpetual
     inventory requires, not to the expense account the source's bill line names.
+26. **Payments a source doesn't expose with their party aren't invented:** Business Central's API v2.0 gives
+    posted payments only as G/L entries naming no customer or vendor, and Dataverse keeps none, so their
+    invoices stay outstanding in ERPNext. Mirroring them needs Business Central's customer and vendor ledger
+    entry pages published as OData web services (or a custom API page): the operator's call.
+27. **Finance & Operations reads through a per-connection field map:** the defaults name only what
+    Microsoft's entity reference documents; whatever else a kind needs (an order date, a product name,
+    vendors' and purchase orders' entities) the operator maps for their environment.
 
 ## Next steps
 

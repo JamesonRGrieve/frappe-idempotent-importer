@@ -1,0 +1,110 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/salesInvoices",
+		"query": {
+			"$expand": "salesInvoiceLines"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/salesInvoices",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O421\"",
+				"id": "000001a5-0000-4000-8000-0000000001a5",
+				"number": "S-INV1001",
+				"status": "Paid",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 1100,
+				"totalTaxAmount": 55,
+				"totalAmountIncludingTax": 1155,
+				"customerId": "0000012d-0000-4000-8000-00000000012d",
+				"customerNumber": "10000",
+				"customerName": "Adatum Corporation",
+				"invoiceDate": "2026-03-05",
+				"postingDate": "2026-03-05",
+				"dueDate": "2026-04-04",
+				"externalDocumentNumber": "AD-PO-77",
+				"remainingAmount": 0,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"salesInvoiceLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O422\"",
+						"id": "000001a6-0000-4000-8000-0000000001a6",
+						"documentId": "000001a5-0000-4000-8000-0000000001a5",
+						"sequence": 30000,
+						"lineType": "Item",
+						"lineObjectNumber": "1896-S",
+						"description": "ATHENS Desk",
+						"quantity": 1,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 1000,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 1000,
+						"netTaxAmount": 50,
+						"netAmountIncludingTax": 1050,
+						"itemId": "000000c9-0000-4000-8000-0000000000c9"
+					},
+					{
+						"@odata.etag": "W/\"JzQ0O423\"",
+						"id": "000001a7-0000-4000-8000-0000000001a7",
+						"documentId": "000001a5-0000-4000-8000-0000000001a5",
+						"sequence": 40000,
+						"lineType": "Account",
+						"lineObjectNumber": "40100",
+						"description": "Installation",
+						"quantity": 1,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 100,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 100,
+						"netTaxAmount": 5,
+						"netAmountIncludingTax": 105,
+						"accountId": "00000069-0000-4000-8000-000000000069"
+					}
+				]
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O431\"",
+				"id": "000001af-0000-4000-8000-0000000001af",
+				"number": "S-INV1002",
+				"status": "Draft",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 380,
+				"totalTaxAmount": 19,
+				"totalAmountIncludingTax": 399,
+				"customerId": "0000012d-0000-4000-8000-00000000012d",
+				"customerNumber": "10000",
+				"customerName": "Adatum Corporation",
+				"invoiceDate": "2026-03-28",
+				"postingDate": "2026-03-28",
+				"dueDate": "2026-04-27",
+				"externalDocumentNumber": "",
+				"remainingAmount": 399,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"salesInvoiceLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O432\"",
+						"id": "000001b0-0000-4000-8000-0000000001b0",
+						"documentId": "000001af-0000-4000-8000-0000000001af",
+						"sequence": 30000,
+						"lineType": "Item",
+						"lineObjectNumber": "1900-S",
+						"description": "PARIS Guest Chair, red",
+						"quantity": 2,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 380,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 380,
+						"netTaxAmount": 19,
+						"netAmountIncludingTax": 399,
+						"itemId": "000000ca-0000-4000-8000-0000000000ca",
+						"itemVariantId": "000000cc-0000-4000-8000-0000000000cc"
+					}
+				]
+			}
+		]
+	}
+}

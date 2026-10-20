@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/data/ReleasedProductsV2",
+		"query": {
+			"cross-company": "true",
+			"$filter": "dataAreaId eq 'hpt'"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.operations.dynamics.com/data/$metadata#ReleasedProductsV2",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"ItemNumber": "D0001",
+				"PRODUCTNUMBER": "D0001",
+				"SEARCHNAME": "MidRangeSpeaker",
+				"PRODUCTSUBTYPE": "Product",
+				"SALESPRICE": 180.0,
+				"PURCHASEPRICE": 90.0,
+				"ITEMGROUP": "Audio"
+			},
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"ItemNumber": "D0004",
+				"PRODUCTNUMBER": "D0004",
+				"SEARCHNAME": "HighEndSpeaker",
+				"PRODUCTSUBTYPE": "ProductMaster",
+				"SALESPRICE": 0.0,
+				"PURCHASEPRICE": 0.0,
+				"ITEMGROUP": "Audio"
+			}
+		]
+	}
+}

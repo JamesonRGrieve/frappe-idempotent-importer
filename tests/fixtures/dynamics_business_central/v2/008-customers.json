@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/customers",
+		"query": {
+			"$skiptoken": "eyJza2lwIjoxfQ"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/customers",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O302\"",
+				"id": "0000012e-0000-4000-8000-00000000012e",
+				"number": "20000",
+				"displayName": "Trey Research",
+				"type": "Company",
+				"addressLine1": "153 Thomas Drive",
+				"addressLine2": "",
+				"city": "Red Deer",
+				"state": "AB",
+				"country": "CA",
+				"postalCode": "T4N 1A1",
+				"phoneNumber": "",
+				"email": "helen.ray@treyresearch.example",
+				"website": "",
+				"taxRegistrationNumber": "",
+				"currencyCode": "",
+				"blocked": "All",
+				"balanceDue": 0,
+				"creditLimit": 0,
+				"taxLiable": true,
+				"lastModifiedDateTime": "2026-04-01T09:00:00Z"
+			}
+		]
+	}
+}

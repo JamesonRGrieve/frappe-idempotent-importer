@@ -1,0 +1,6018 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Business Central API v2.0 answers read by frappe-idempotent-importer",
+  "version": "v2.0",
+  "description": "Microsoft publishes no OpenAPI document for API v2.0. Transcribed by tools/bc_schema.py from the Properties tables of the API (v2.0) resource-type pages (each schema cites its page): only the entities the Business Central adapter reads."
+ },
+ "paths": {
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/companyList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/companyInformation": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/companyInformationList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/accounts": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/accountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/dimensions": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/dimensionList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/dimensionValues": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/dimensionValueList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/locations": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/locationList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/itemCategories": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/itemCategoryList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/items": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/itemList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/itemVariants": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/itemVariantList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/customers": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/customerList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/vendors": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/vendorList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/contacts": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/contactList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/employees": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/employeeList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/projects": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/projectList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/opportunities": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/opportunityList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesQuotes": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesQuoteList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesQuoteLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesQuoteLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesOrders": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesOrderLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesInvoices": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesInvoiceList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesInvoiceLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesInvoiceLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesCreditMemos": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesCreditMemoList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/salesCreditMemoLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesCreditMemoLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseOrders": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseOrderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseOrderLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseOrderLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseInvoices": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseInvoiceList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseInvoiceLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseInvoiceLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseCreditMemos": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseCreditMemoList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/purchaseCreditMemoLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/purchaseCreditMemoLineList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/v2.0/{tenant}/{environment}/api/v2.0/companies({company})/dimensions({dimension})/dimensionValues": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/dimensionValueList"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "company": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_company (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "systemVersion": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "timestamp": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "businessProfileId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "systemCreatedAt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "systemCreatedBy": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "systemModifiedAt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "systemModifiedBy": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "companyInformation": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_companyinformation (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "faxNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxRegistrationNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currentFiscalYearStartDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "industry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "picture": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "experience": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "account": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_account (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "category": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "subCategory": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "blocked": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "accountType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "directPosting": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "netChange": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "consolidationTranslationMethod": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "consolidationDebitAccount": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "consolidationCreditAccount": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "excludeFromConsolidation": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "dimension": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_dimension (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "consolidationCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "dimensionValue": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_dimensionvalue (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dimensionId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "consolidationCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "location": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_location (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "itemCategory": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_itemcategory (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "item": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_item (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemCategoryId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemCategoryCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "blocked": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "gtin": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "inventory": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "priceIncludesTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "unitCost": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxGroupId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxGroupCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "baseUnitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "baseUnitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "generalProductPostingGroupId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "generalProductPostingGroupCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "inventoryPostingGroupId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "inventoryPostingGroupCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemVariants": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/itemVariant"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "itemVariant": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_itemvariant (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "customer": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_customer (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salespersonCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "balanceDue": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "creditLimit": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxLiable": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "taxAreaId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxAreaDisplayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxRegistrationNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "blocked": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "vendor": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_vendor (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxRegistrationNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "irs1099Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxLiable": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "blocked": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "balance": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "contact": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_contact (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "jobTitle": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "companyNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "companyName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contactBusinessRelation": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "mobilePhoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "searchName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "privacyBlocked": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "taxRegistrationNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastInteractionDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "employee": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_employee (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "givenName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "middleName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "surname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "jobTitle": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "addressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "mobilePhone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "personalEmail": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "employmentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "terminationDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "birthDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statisticsGroupCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "bankBranchNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "bankAccountNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "iban": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "project": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_project (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "displayName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "opportunity": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_opportunity (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contactNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contactName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contactCompanyName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salespersonCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "closed": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "creationDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dateClosed": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "calculatedCurrentValue": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "chancesOfSuccessPrc": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "completedPrc": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "estimatedClosingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "estimatedValue": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "systemCreatedAt": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesQuote": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesquote (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "externalDocumentNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dueDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesperson": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "validUntilDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "acceptedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesQuoteLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesQuoteLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesQuoteLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesquoteline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesOrder": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesorder (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "externalDocumentNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesperson": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "partialShipping": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "requestedDeliveryDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "fullyShipped": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesOrderLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesOrderLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesOrderLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesorderline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "shipmentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shippedQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoicedQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "shipQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesInvoice": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesinvoice (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "externalDocumentNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dueDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "promisedPayDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerPurchaseOrderReference": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesperson": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "disputeStatusId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "disputeStatus": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "remainingAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesInvoiceLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesInvoiceLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesInvoiceLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salesinvoiceline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "shipmentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesCreditMemo": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salescreditmemo (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "externalDocumentNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "creditMemoDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dueDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCustomerNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sellToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesperson": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phoneNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerReturnReasonId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "salesCreditMemoLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesCreditMemoLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "salesCreditMemoLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_salescreditmemoline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "shipmentDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseOrder": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchaseorder (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaser": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "requestedReceiptDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "fullyReceived": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaseOrderLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseOrderLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseOrderLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchaseorderline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "directUnitCost": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "expectedReceiptDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "receivedQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoicedQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "receiveQuantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseInvoice": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchaseinvoice (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dueDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorInvoiceNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToContact": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "orderNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaser": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaseInvoiceLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseInvoiceLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseInvoiceLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchaseinvoiceline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitCost": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "expectedReceiptDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseCreditMemo": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchasecreditmemo (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "creditMemoDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postingDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "dueDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorCreditMemoNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToVendorNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "buyFromPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToAddressLine2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payToPostCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension1Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shortcutDimension2Code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paymentTermsId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "shipmentMethodId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaser": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "pricesIncludeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "totalAmountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastModifiedDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoiceNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorReturnReasonId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "purchaseCreditMemoLines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseCreditMemoLine"
+      }
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "purchaseCreditMemoLine": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_purchasecreditmemoline (docs commit b17c2215165d2e2a935aa3bcd2e7e2709a8b3d91)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "documentId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sequence": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "itemId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lineObjectNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitOfMeasureCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unitCost": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountAppliedBeforeTax": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "amountExcludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "taxCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxPercent": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "amountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "invoiceDiscountAllocation": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netTaxAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "netAmountIncludingTax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "itemVariantId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "locationId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "id"
+    ]
+   },
+   "companyList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/company"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "companyInformationList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/companyInformation"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "accountList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/account"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "dimensionList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/dimension"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "dimensionValueList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/dimensionValue"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "locationList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/location"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "itemCategoryList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/itemCategory"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "itemList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/item"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "itemVariantList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/itemVariant"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "customerList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/customer"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "vendorList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/vendor"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "contactList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/contact"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "employeeList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/employee"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "projectList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/project"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "opportunityList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/opportunity"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesQuoteList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesQuote"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesQuoteLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesQuoteLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesOrderList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesOrder"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesOrderLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesOrderLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesInvoiceList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesInvoice"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesInvoiceLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesInvoiceLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesCreditMemoList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesCreditMemo"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesCreditMemoLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesCreditMemoLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseOrderList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseOrder"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseOrderLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseOrderLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseInvoiceList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseInvoice"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseInvoiceLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseInvoiceLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseCreditMemoList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseCreditMemo"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "purchaseCreditMemoLineList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/purchaseCreditMemoLine"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   }
+  }
+ }
+}

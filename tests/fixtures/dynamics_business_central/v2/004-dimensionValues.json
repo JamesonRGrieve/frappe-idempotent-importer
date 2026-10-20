@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/dimensionValues"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/dimensionValues",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O112\"",
+				"id": "00000070-0000-4000-8000-000000000070",
+				"code": "ADM",
+				"dimensionId": "0000006f-0000-4000-8000-00000000006f",
+				"displayName": "Administration",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O113\"",
+				"id": "00000071-0000-4000-8000-000000000071",
+				"code": "SALES",
+				"dimensionId": "0000006f-0000-4000-8000-00000000006f",
+				"displayName": "Sales",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

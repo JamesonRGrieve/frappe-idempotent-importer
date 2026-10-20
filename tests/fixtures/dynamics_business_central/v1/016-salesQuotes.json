@@ -1,0 +1,49 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/salesQuotes",
+		"query": {
+			"$expand": "salesQuoteLines"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/salesQuotes",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O401\"",
+				"id": "00000191-0000-4000-8000-000000000191",
+				"number": "S-QUO1001",
+				"status": "Draft",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 2000,
+				"totalTaxAmount": 100,
+				"totalAmountIncludingTax": 2100,
+				"customerId": "0000012d-0000-4000-8000-00000000012d",
+				"customerNumber": "10000",
+				"customerName": "Adatum Corporation",
+				"documentDate": "2026-02-25",
+				"postingDate": "2026-02-25",
+				"validUntilDate": "2026-03-25",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"salesQuoteLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O402\"",
+						"id": "00000192-0000-4000-8000-000000000192",
+						"documentId": "00000191-0000-4000-8000-000000000191",
+						"sequence": 30000,
+						"lineType": "Item",
+						"lineObjectNumber": "1896-S",
+						"description": "ATHENS Desk",
+						"quantity": 2,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 2000,
+						"netAmount": 2000,
+						"netTaxAmount": 100,
+						"netAmountIncludingTax": 2100,
+						"itemId": "000000c9-0000-4000-8000-0000000000c9"
+					}
+				]
+			}
+		]
+	}
+}

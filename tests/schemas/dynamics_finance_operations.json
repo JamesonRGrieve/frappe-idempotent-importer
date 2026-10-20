@@ -1,0 +1,682 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Finance and operations data entities read by frappe-idempotent-importer",
+  "version": "reference",
+  "description": "Microsoft publishes no static OpenAPI document for finance and operations apps. Transcribed by tools/fo_schema.py from the data entity reference pages (each schema cites its page): the documented fields of the entities the adapter reads by default."
+ },
+ "paths": {
+  "/data/CustomersV3": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/CustomersV3List"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/data/ReleasedProductsV2": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ReleasedProductsV2List"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/data/SalesOrderHeadersV2": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SalesOrderHeadersV2List"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/data/SalesOrderLines": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SalesOrderLinesList"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "CustomersV3": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/data-entities/entity-customers-v3-customerv3 (docs commit d148ccce78445e40b199f2a563de29835093cb98)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "dataAreaId": {
+      "type": "string"
+     },
+     "CUSTOMERACCOUNT": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ADDRESSCITY": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ADDRESSCOUNTRYREGIONID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ADDRESSCOUNTY": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ADDRESSSTATE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ADDRESSZIPCODE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "CUSTOMERGROUPID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "DEFAULTDIMENSIONDISPLAYVALUE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "INVOICEACCOUNT": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ORGANIZATIONNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PARTYTYPE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PAYMENTMETHOD": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PAYMENTTERMS": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PERSONFIRSTNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PERSONMIDDLENAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PERSONLASTNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALECURRENCYCODE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESTAXGROUP": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "dataAreaId"
+    ],
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "CustomersV3List": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/CustomersV3"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "ReleasedProductsV2": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/data-entities/entity-released-products-v2-releasedproductv2 (docs commit d148ccce78445e40b199f2a563de29835093cb98)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "dataAreaId": {
+      "type": "string"
+     },
+     "ItemNumber": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "COSTCALCULATIONGROUPID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "INVENTORYUNITSYMBOL": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ITEMGROUP": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ITEMMODELGROUPID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PRIMARYVENDORACCOUNTNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PRODUCTNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PRODUCTSUBTYPE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PURCHASEPRICE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PURCHASEPRICEQUANTITY": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PURCHUNITSYMBOL": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESPRICE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESPRICEQUANTITY": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESUNITSYMBOL": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SEARCHNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "UNITCOST": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "dataAreaId"
+    ],
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "ReleasedProductsV2List": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/ReleasedProductsV2"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "SalesOrderHeadersV2": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/data-entities/entity-sales-order-headers-v2-salesorderheaderv2 (docs commit d148ccce78445e40b199f2a563de29835093cb98)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "dataAreaId": {
+      "type": "string"
+     },
+     "SALESDORDERNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "CURRENCYCODE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "CUSTOMERPAYMENTMETHODNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "CUSTOMERPOSTINGPROFILEID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "DELIVERYTERMSCODE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "INVOICECUSTOMERACCOUNTNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ORDERINGCUSTOMERACCOUNTNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "PAYMENTTERMSNAME": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "REQUESTEDRECEIPTDATE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "REQUESTEDSHIPPINGDATE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESTAXGROUPCODE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "dataAreaId"
+    ],
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "SalesOrderHeadersV2List": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/SalesOrderHeadersV2"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "SalesOrderLines": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/fin-ops-core/dev-itpro/data-entities/entity-sales-order-lines-v2-salesorderline (docs commit d148ccce78445e40b199f2a563de29835093cb98)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "dataAreaId": {
+      "type": "string"
+     },
+     "INVENTORYLOTID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "DELIVERYADDRESSLOCATIONID": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ITEMNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "LINEAMOUNT": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "ORDEREDSALESQUANTITY": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "REQUESTEDSHIPPINGDATE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESORDERNUMBER": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESPRICE": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     },
+     "SALESUNITSYMBOL": {
+      "type": [
+       "string",
+       "number",
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "required": [
+     "dataAreaId"
+    ],
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "SalesOrderLinesList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/SalesOrderLines"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   }
+  }
+ }
+}

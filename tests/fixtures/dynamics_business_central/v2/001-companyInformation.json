@@ -1,0 +1,19 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/companyInformation"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/companyInformation",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O1\"",
+				"id": "00000001-0000-4000-8000-000000000001",
+				"displayName": "Harbour Pine Trading",
+				"currencyCode": "CAD",
+				"country": "CA",
+				"city": "Edmonton",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

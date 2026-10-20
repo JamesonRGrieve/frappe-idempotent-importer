@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/customers"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/customers",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O301\"",
+				"id": "0000012d-0000-4000-8000-00000000012d",
+				"number": "10000",
+				"displayName": "Adatum Corporation",
+				"type": "Company",
+				"addressLine1": "192 Market Square",
+				"addressLine2": "",
+				"city": "Calgary",
+				"state": "AB",
+				"country": "CA",
+				"postalCode": "T2P 1J9",
+				"phoneNumber": "+1 403 555 0100",
+				"email": "robert.townes@adatum.example",
+				"website": "",
+				"taxRegistrationNumber": "CA123456789",
+				"currencyCode": "",
+				"blocked": " ",
+				"balanceDue": 0,
+				"creditLimit": 0,
+				"taxLiable": true,
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		],
+		"@odata.nextLink": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/customers?$skiptoken=eyJza2lwIjoxfQ"
+	}
+}

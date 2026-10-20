@@ -1,0 +1,94 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/invoices",
+		"query": {
+			"$select": "invoiceid,invoicenumber,duedate,name,_customerid_value,_transactioncurrencyid_value,exchangerate,totallineitemamount,discountamount,discountpercentage,totaldiscountamount,freightamount,totaltax,totalamount,totalamount_base,description,statecode,createdon,modifiedon",
+			"$expand": "invoice_details($select=invoicedetailid,_productid_value,productdescription,isproductoverridden,quantity,priceperunit,baseamount,manualdiscountamount,volumediscountamount,tax,extendedamount,sequencenumber)"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#invoices",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"invoiceid": "d0000051-0000-4000-8000-000000000051",
+				"invoicenumber": "INV-01001",
+				"name": "INV-01001 for 0020",
+				"_customerid_value": "d0000020-0000-4000-8000-000000000020",
+				"_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": "contact",
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000a5",
+				"exchangerate": 0.7299270073,
+				"discountamount": 0,
+				"discountpercentage": 0,
+				"freightamount": 0,
+				"description": null,
+				"statecode": 0,
+				"createdon": "2026-03-06T17:00:00Z",
+				"modifiedon": "2026-03-01T09:00:00Z",
+				"totallineitemamount": 600,
+				"totaldiscountamount": 0,
+				"totaltax": 30,
+				"totalamount": 630,
+				"totalamount_base": 863.1,
+				"duedate": "2026-04-05",
+				"invoice_details": [
+					{
+						"@odata.etag": "W/\"1001\"",
+						"invoicedetailid": "d0000052-0000-4000-8000-000000000052",
+						"_productid_value": "d000000b-0000-4000-8000-00000000000b",
+						"productdescription": "Standing Desk",
+						"isproductoverridden": false,
+						"quantity": 1,
+						"priceperunit": 600.0,
+						"baseamount": 600,
+						"manualdiscountamount": 0,
+						"volumediscountamount": 0,
+						"tax": 30,
+						"extendedamount": 630,
+						"sequencenumber": 2
+					}
+				]
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"invoiceid": "d0000053-0000-4000-8000-000000000053",
+				"invoicenumber": "INV-01002",
+				"name": "INV-01002 for 0015",
+				"_customerid_value": "d0000015-0000-4000-8000-000000000015",
+				"_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": "account",
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"exchangerate": 1,
+				"discountamount": 0,
+				"discountpercentage": 0,
+				"freightamount": 0,
+				"description": null,
+				"statecode": 2,
+				"createdon": "2026-03-09T17:00:00Z",
+				"modifiedon": "2026-03-01T09:00:00Z",
+				"totallineitemamount": 150,
+				"totaldiscountamount": 0,
+				"totaltax": 7.5,
+				"totalamount": 157.5,
+				"totalamount_base": 157.5,
+				"duedate": "2026-04-08",
+				"invoice_details": [
+					{
+						"@odata.etag": "W/\"1001\"",
+						"invoicedetailid": "d0000054-0000-4000-8000-000000000054",
+						"_productid_value": "d000000c-0000-4000-8000-00000000000c",
+						"productdescription": "Installation",
+						"isproductoverridden": false,
+						"quantity": 1,
+						"priceperunit": 150.0,
+						"baseamount": 150,
+						"manualdiscountamount": 0,
+						"volumediscountamount": 0,
+						"tax": 7.5,
+						"extendedamount": 157.5,
+						"sequencenumber": 4
+					}
+				]
+			}
+		]
+	}
+}

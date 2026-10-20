@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/transactioncurrencies",
+		"query": {
+			"$select": "transactioncurrencyid,isocurrencycode,currencyname"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#transactioncurrencies",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"transactioncurrencyid": "c0000000-0000-4000-8000-0000000000ca",
+				"isocurrencycode": "CAD",
+				"currencyname": "Canadian Dollar"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"transactioncurrencyid": "c0000000-0000-4000-8000-0000000000a5",
+				"isocurrencycode": "USD",
+				"currencyname": "US Dollar"
+			}
+		]
+	}
+}

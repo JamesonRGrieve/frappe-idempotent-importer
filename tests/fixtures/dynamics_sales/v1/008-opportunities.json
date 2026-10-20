@@ -1,0 +1,44 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/opportunities",
+		"query": {
+			"$select": "opportunityid,name,_customerid_value,_originatingleadid_value,estimatedvalue,closeprobability,estimatedclosedate,description,statecode,_transactioncurrencyid_value,createdon,modifiedon"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#opportunities",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"opportunityid": "d0000033-0000-4000-8000-000000000033",
+				"name": "12 desks for Contoso",
+				"_customerid_value": "d0000015-0000-4000-8000-000000000015",
+				"_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": "account",
+				"_originatingleadid_value": null,
+				"estimatedvalue": 9600,
+				"closeprobability": 60,
+				"estimatedclosedate": "2026-04-30",
+				"description": null,
+				"statecode": 0,
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"createdon": "2026-02-20T17:00:00Z",
+				"modifiedon": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"opportunityid": "d0000034-0000-4000-8000-000000000034",
+				"name": "Northwind fit-out",
+				"_customerid_value": null,
+				"_originatingleadid_value": "d0000029-0000-4000-8000-000000000029",
+				"estimatedvalue": 4000,
+				"closeprobability": 20,
+				"estimatedclosedate": null,
+				"description": null,
+				"statecode": 0,
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"createdon": "2026-02-22T17:00:00Z",
+				"modifiedon": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

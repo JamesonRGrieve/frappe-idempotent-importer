@@ -1,0 +1,1633 @@
+{
+ "openapi": "3.1.0",
+ "info": {
+  "title": "Dataverse Web API (v9.2) answers read by frappe-idempotent-importer's Dynamics 365 Sales adapter",
+  "version": "v9.2",
+  "description": "Dataverse publishes no static OpenAPI document. Transcribed by tools/dataverse_schema.py from the table/entity reference pages (each schema cites its page): only the tables and columns the Dynamics 365 Sales adapter reads."
+ },
+ "paths": {
+  "/api/data/v9.2/transactioncurrencies": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/transactioncurrencyList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/organizations": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/organizationList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/products": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/productList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/accounts": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/accountList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/contacts": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/contactList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/leads": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/leadList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/opportunities": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/opportunityList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/quotes": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/quoteList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/salesorders": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/salesorderList"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/data/v9.2/invoices": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/invoiceList"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "transactioncurrency": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/transactioncurrency (docs commit 68e77af30d17c24ac01d1d65262dfb4ea0930a16)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "transactioncurrencyid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "isocurrencycode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currencyname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "transactioncurrencyList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/transactioncurrency"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "organization": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/organization (docs commit 68e77af30d17c24ac01d1d65262dfb4ea0930a16)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "organizationid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_basecurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_basecurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     }
+    }
+   },
+   "organizationList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/organization"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "product": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/product (docs commit c55de32e78271ab8ce82a563c4290ae2c9312540)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "productid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "productnumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "price": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "quantityonhand": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "producttypecode": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "productstructure": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       3,
+       null
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "productList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/product"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "account": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/account (docs commit 68e77af30d17c24ac01d1d65262dfb4ea0930a16)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "accountid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountnumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "emailaddress1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "telephone1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "websiteurl": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_line1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_line2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_stateorprovince": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_postalcode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       null
+      ]
+     },
+     "_transactioncurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "contact_customer_accounts": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/accountContact"
+      }
+     }
+    }
+   },
+   "accountContact": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/contact (docs commit 68e77af30d17c24ac01d1d65262dfb4ea0930a16)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "contactid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "fullname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "jobtitle": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "emailaddress1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "telephone1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       null
+      ]
+     }
+    }
+   },
+   "accountList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/account"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "contact": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/contact (docs commit 68e77af30d17c24ac01d1d65262dfb4ea0930a16)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "contactid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "firstname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "middlename": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "fullname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "jobtitle": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "emailaddress1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "telephone1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "mobilephone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_line1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_line2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_stateorprovince": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_postalcode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "address1_country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_parentcustomerid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_parentcustomerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       null
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "contactList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/contact"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "lead": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/lead (docs commit c55de32e78271ab8ce82a563c4290ae2c9312540)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "leadid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "subject": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "firstname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lastname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "companyname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "jobtitle": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "emailaddress1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "telephone1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "mobilephone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "websiteurl": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       null
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "leadList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/lead"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "opportunity": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/opportunity (docs commit c55de32e78271ab8ce82a563c4290ae2c9312540)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "opportunityid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "_originatingleadid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_originatingleadid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "estimatedvalue": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "closeprobability": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "estimatedclosedate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       null
+      ]
+     },
+     "_transactioncurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "createdon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    }
+   },
+   "opportunityList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/opportunity"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "quote": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/quote (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "quoteid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quotenumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "effectivefrom": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "_transactioncurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "exchangerate": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totallineitemamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountpercentage": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaldiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "freightamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaltax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount_base": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       3,
+       null
+      ]
+     },
+     "createdon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quote_details": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/quotedetail"
+      }
+     }
+    }
+   },
+   "quotedetail": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/quotedetail (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "quotedetailid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "productdescription": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "isproductoverridden": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "priceperunit": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "baseamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "manualdiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "volumediscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "tax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "extendedamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "sequencenumber": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    }
+   },
+   "quoteList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/quote"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "salesorder": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/salesorder (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "salesorderid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ordernumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "datefulfilled": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "requestdeliveryby": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "_transactioncurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "exchangerate": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totallineitemamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountpercentage": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaldiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "freightamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaltax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount_base": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       null
+      ]
+     },
+     "createdon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "order_details": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesorderdetail"
+      }
+     }
+    }
+   },
+   "salesorderdetail": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/salesorderdetail (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "salesorderdetailid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "productdescription": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "isproductoverridden": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "priceperunit": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "baseamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "manualdiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "volumediscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "tax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "extendedamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "sequencenumber": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    }
+   },
+   "salesorderList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/salesorder"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   },
+   "invoice": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/invoice (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "invoiceid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoicenumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "duedate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "_transactioncurrencyid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "exchangerate": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totallineitemamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "discountpercentage": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaldiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "freightamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totaltax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "totalamount_base": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "statecode": {
+      "enum": [
+       0,
+       1,
+       2,
+       3,
+       null
+      ]
+     },
+     "createdon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "modifiedon": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoice_details": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/invoicedetail"
+      }
+     }
+    }
+   },
+   "invoicedetail": {
+    "type": "object",
+    "description": "Transcribed from https://learn.microsoft.com/en-us/dynamics365/developer/reference/entities/invoicedetail (docs commit 7f72fdf96b0d092099676e7fdf069a328cb2af88)",
+    "properties": {
+     "@odata.etag": {
+      "type": "string"
+     },
+     "invoicedetailid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "_productid_value@Microsoft.Dynamics.CRM.lookuplogicalname": {
+      "type": "string"
+     },
+     "productdescription": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "isproductoverridden": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "priceperunit": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "baseamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "manualdiscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "volumediscountamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "tax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "extendedamount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "sequencenumber": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    }
+   },
+   "invoiceList": {
+    "type": "object",
+    "properties": {
+     "@odata.context": {
+      "type": "string"
+     },
+     "@odata.nextLink": {
+      "type": "string"
+     },
+     "value": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/invoice"
+      }
+     }
+    },
+    "required": [
+     "value"
+    ]
+   }
+  }
+ }
+}

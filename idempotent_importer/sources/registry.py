@@ -12,6 +12,9 @@ from idempotent_importer.core.http import HttpTransport, Sleeper
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.source import Adapter, ConnectionConfig, SourceReader
 from idempotent_importer.sources.bigcommerce.adapter import BigCommerceAdapter
+from idempotent_importer.sources.dynamics_business_central.adapter import BusinessCentralAdapter
+from idempotent_importer.sources.dynamics_finance_operations.adapter import FinanceOperationsAdapter
+from idempotent_importer.sources.dynamics_sales.adapter import DynamicsSalesAdapter
 from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
@@ -48,9 +51,6 @@ class ListedAdapter:
 
 
 LISTED: tuple[ListedAdapter, ...] = (
-	ListedAdapter("dynamics_business_central", "Dynamics 365 Business Central"),
-	ListedAdapter("dynamics_finance_operations", "Dynamics 365 Finance & Operations"),
-	ListedAdapter("dynamics_sales", "Dynamics 365 Sales"),
 	ListedAdapter("peoplesoft", "PeopleSoft"),
 	ListedAdapter("agendrix", "Agendrix"),
 	ListedAdapter("netsuite", "NetSuite"),
@@ -78,6 +78,9 @@ def all_adapters() -> dict[str, Adapter]:
 		LightspeedAdapter(),
 		EcwidAdapter(),
 		OdooAdapter(),
+		BusinessCentralAdapter(),
+		DynamicsSalesAdapter(),
+		FinanceOperationsAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

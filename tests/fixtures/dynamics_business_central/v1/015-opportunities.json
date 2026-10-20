@@ -1,0 +1,30 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/opportunities"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/opportunities",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O351\"",
+				"id": "0000015f-0000-4000-8000-00000000015f",
+				"number": "OP000001",
+				"contactNumber": "CT000002",
+				"contactName": "Robin Lead",
+				"contactCompanyName": "Northwind Interiors",
+				"salespersonCode": "AH",
+				"description": "Desks for the new office",
+				"status": "In Progress",
+				"closed": false,
+				"creationDate": "2026-02-20",
+				"dateClosed": "0001-01-01",
+				"calculatedCurrentValue": 2500,
+				"chancesOfSuccessPrc": 50,
+				"completedPrc": 40,
+				"estimatedValue": 5000,
+				"estimatedClosingDate": "2026-04-30",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

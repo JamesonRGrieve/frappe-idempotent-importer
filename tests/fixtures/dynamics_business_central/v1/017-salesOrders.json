@@ -1,0 +1,68 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/salesOrders",
+		"query": {
+			"$expand": "salesOrderLines"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/salesOrders",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O411\"",
+				"id": "0000019b-0000-4000-8000-00000000019b",
+				"number": "S-ORD1001",
+				"status": "Open",
+				"currencyCode": "",
+				"totalAmountExcludingTax": 1000,
+				"totalTaxAmount": 50,
+				"totalAmountIncludingTax": 1050,
+				"customerId": "0000012d-0000-4000-8000-00000000012d",
+				"customerNumber": "10000",
+				"customerName": "Adatum Corporation",
+				"orderDate": "2026-03-02",
+				"postingDate": "2026-03-02",
+				"requestedDeliveryDate": "2026-03-20",
+				"externalDocumentNumber": "AD-PO-77",
+				"lastModifiedDateTime": "2026-03-01T09:00:00Z",
+				"salesOrderLines": [
+					{
+						"@odata.etag": "W/\"JzQ0O412\"",
+						"id": "0000019c-0000-4000-8000-00000000019c",
+						"documentId": "0000019b-0000-4000-8000-00000000019b",
+						"sequence": 30000,
+						"lineType": "Item",
+						"lineObjectNumber": "1896-S",
+						"description": "ATHENS Desk",
+						"quantity": 1,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 1000,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 1000,
+						"netTaxAmount": 50,
+						"netAmountIncludingTax": 1050,
+						"itemId": "000000c9-0000-4000-8000-0000000000c9"
+					},
+					{
+						"@odata.etag": "W/\"JzQ0O413\"",
+						"id": "0000019d-0000-4000-8000-00000000019d",
+						"documentId": "0000019b-0000-4000-8000-00000000019b",
+						"sequence": 40000,
+						"lineType": "Comment",
+						"lineObjectNumber": "",
+						"description": "Deliver to the loading dock",
+						"quantity": 0,
+						"discountAmount": 0,
+						"discountPercent": 0,
+						"amountExcludingTax": 0,
+						"invoiceDiscountAllocation": 0,
+						"netAmount": 0,
+						"netTaxAmount": 0,
+						"netAmountIncludingTax": 0
+					}
+				]
+			}
+		]
+	}
+}

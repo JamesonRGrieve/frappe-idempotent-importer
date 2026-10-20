@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/employees"
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/employees",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O321\"",
+				"id": "00000141-0000-4000-8000-000000000141",
+				"number": "AH",
+				"displayName": "Alicia Hansen",
+				"givenName": "Alicia",
+				"middleName": "",
+				"surname": "Hansen",
+				"jobTitle": "Sales Manager",
+				"addressLine1": "",
+				"addressLine2": "",
+				"city": "",
+				"state": "",
+				"country": "",
+				"postalCode": "",
+				"phoneNumber": "",
+				"mobilePhone": "+1 780 555 0102",
+				"email": "alicia@harbourpine.example",
+				"personalEmail": "",
+				"employmentDate": "2021-04-12",
+				"terminationDate": "2026-03-31",
+				"status": "Terminated",
+				"birthDate": "0001-01-01",
+				"lastModifiedDateTime": "2026-04-01T09:00:00Z"
+			}
+		]
+	}
+}

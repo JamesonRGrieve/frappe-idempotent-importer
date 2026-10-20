@@ -1,0 +1,23 @@
+{
+	"request": {
+		"path": "/v2.0/e2e-tenant/production/api/v2.0/companies(c0ffee00-0000-4000-8000-000000000001)/contacts",
+		"query": {
+			"$select": "id,number"
+		}
+	},
+	"response": {
+		"@odata.context": "https://api.businesscentral.dynamics.com/v2.0/e2e-tenant/production/api/v2.0/$metadata#companies(c0ffee00-0000-4000-8000-000000000001)/contacts",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzQ0O341\"",
+				"id": "00000155-0000-4000-8000-000000000155",
+				"number": "CT000001"
+			},
+			{
+				"@odata.etag": "W/\"JzQ0O342\"",
+				"id": "00000156-0000-4000-8000-000000000156",
+				"number": "CT000002"
+			}
+		]
+	}
+}

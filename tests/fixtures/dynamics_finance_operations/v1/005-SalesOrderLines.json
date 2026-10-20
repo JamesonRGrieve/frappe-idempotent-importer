@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/data/SalesOrderLines",
+		"query": {
+			"cross-company": "true",
+			"$filter": "dataAreaId eq 'hpt'"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.operations.dynamics.com/data/$metadata#SalesOrderLines",
+		"value": [
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"SALESORDERNUMBER": "000701",
+				"ITEMNUMBER": "D0001",
+				"ORDEREDSALESQUANTITY": 2.0,
+				"SALESPRICE": 180.0,
+				"LINEAMOUNT": 360.0,
+				"SALESUNITSYMBOL": "ea"
+			},
+			{
+				"@odata.etag": "W/\"JzEsNTYzNzE0NDU3NjsxLDU2MzcxNDQ1NzYn\"",
+				"dataAreaId": "hpt",
+				"SALESORDERNUMBER": "000702",
+				"ITEMNUMBER": "D0001",
+				"ORDEREDSALESQUANTITY": 1.0,
+				"SALESPRICE": 180.0,
+				"LINEAMOUNT": 180.0,
+				"SALESUNITSYMBOL": "ea"
+			}
+		]
+	}
+}

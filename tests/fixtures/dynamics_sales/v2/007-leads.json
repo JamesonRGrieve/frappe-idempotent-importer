@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/leads",
+		"query": {
+			"$select": "leadid,subject,firstname,lastname,companyname,jobtitle,emailaddress1,telephone1,mobilephone,websiteurl,description,statecode,modifiedon"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#leads",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"leadid": "d0000029-0000-4000-8000-000000000029",
+				"subject": "Interested in standing desks",
+				"firstname": "Nancy",
+				"lastname": "Anderson",
+				"companyname": "Northwind Traders",
+				"jobtitle": "Office Manager",
+				"emailaddress1": "nancy@northwind.example",
+				"telephone1": null,
+				"mobilephone": null,
+				"websiteurl": null,
+				"description": null,
+				"statecode": 0,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			},
+			{
+				"@odata.etag": "W/\"1001\"",
+				"leadid": "d000002a-0000-4000-8000-00000000002a",
+				"subject": "Showroom visit",
+				"firstname": "Rene",
+				"lastname": "Valdes",
+				"companyname": "Adventure Works",
+				"jobtitle": null,
+				"emailaddress1": "rene@adventureworks.example",
+				"telephone1": null,
+				"mobilephone": null,
+				"websiteurl": null,
+				"description": "Came to the showroom",
+				"statecode": 1,
+				"modifiedon": "2026-03-01T09:00:00Z"
+			}
+		]
+	}
+}

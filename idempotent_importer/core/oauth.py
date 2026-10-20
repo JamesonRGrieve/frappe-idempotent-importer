@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """OAuth 2's authorization-code grant (RFC 6749 §4.1), shared by every source that connects that way
 (Etsy, QuickBooks Online, Xero, Zoho): the URL where the account's owner approves read access, the code
-exchange, and every refresh. A source that rotates its refresh token (a new one in every token response)
+exchange, and every refresh; and the client credentials grant (RFC 6749 §4.4) of a source whose app reads as
+itself (Microsoft Entra ID's, for Dynamics 365), which has no refresh token at all. A source that rotates its refresh token (a new one in every token response)
 has it handed to the connection's store (``save``) before the access token is used, since the old one stops
 working; one that keeps it (Zoho) sends none back, and the stored one is kept. The client authenticates as
 the provider says: HTTP Basic (RFC 6749 §2.3.1), the secret in the form, or a public client with PKCE
@@ -15,6 +16,7 @@ import json
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Protocol
 from urllib.parse import urlencode
 
 from idempotent_importer.core.errors import CredentialsRejected, RetryLater, SourceError
@@ -126,7 +128,7 @@ class OAuthClient:
 		form = {"grant_type": "authorization_code", "redirect_uri": redirect_uri, "code": code}
 		if self.provider.pkce:
 			form["code_verifier"] = verifier
-		return self._token(form, needs_refresh_token=True)
+		return self.token(form, needs_refresh_token=True)
 
 	def refresh(self) -> str:
 		"""A new access token from the stored refresh token (which a rotating source replaces)."""
@@ -137,12 +139,13 @@ class OAuthClient:
 			raise CredentialsRejected(
 				f"{self.provider.label} is not connected: use Connect on the connection."
 			)
-		return self._token(
+		return self.token(
 			{"grant_type": "refresh_token", "refresh_token": self._refresh_token},
 			needs_refresh_token=self.provider.rotates_refresh_token,
 		)
 
-	def _token(self, form: dict[str, str], needs_refresh_token: bool) -> TokenGrant:
+	def token(self, form: dict[str, str], needs_refresh_token: bool) -> TokenGrant:
+		"""One token request of ``form``'s grant, the client authenticated as the provider says."""
 		headers = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
 		match self.provider.client_auth:
 			case ClientAuth.BASIC:
@@ -194,13 +197,68 @@ class OAuthClient:
 		return f"OAuthClient({self.provider.label}, [redacted])"
 
 
+class AccessTokens(Protocol):
+	"""Where a BearerAuthorizer gets a fresh access token."""
+
+	def refresh(self) -> str: ...
+
+
+@dataclass(frozen=True)
+class ClientCredentialsProvider:
+	"""One source's token endpoint for the client credentials grant, the scope its app asks for (e.g. a
+	Dynamics 365 resource's ``<resource>/.default``), how the app authenticates, and what the operator is
+	told when the grant is refused."""
+
+	label: str
+	token_url: str
+	scopes: tuple[str, ...]
+	reconnect: str
+	client_auth: ClientAuth = ClientAuth.FORM
+
+
+class ClientCredentials:
+	"""The client credentials grant: the app's own access token, fetched again whenever it lapses (there is
+	no refresh token, and nothing to save)."""
+
+	def __init__(self, provider: ClientCredentialsProvider, app: OAuthApp, transport: HttpTransport) -> None:
+		if not app.client_id or not app.client_secret:
+			raise SourceError(
+				f"{provider.label} is not configured: enter the app's client ID and client secret."
+			)
+		self._provider = provider
+		self._app = app
+		self._transport = transport
+
+	def refresh(self) -> str:
+		oauth = OAuthClient(
+			OAuthProvider(
+				self._provider.label,
+				"",
+				self._provider.token_url,
+				self._provider.scopes,
+				self._provider.client_auth,
+				self._provider.reconnect,
+				rotates_refresh_token=False,
+			),
+			self._app,
+			self._transport,
+			"",
+			lambda _token: None,
+		)
+		form = {"grant_type": "client_credentials", "scope": " ".join(self._provider.scopes)}
+		return oauth.token(form, needs_refresh_token=False).access_token
+
+	def __repr__(self) -> str:
+		return f"ClientCredentials({self._provider.label}, [redacted])"
+
+
 class BearerAuthorizer:
 	"""``core.rest.RequestAuthorizer`` for an OAuth source: the access token (fetched on first use, and again
 	whenever the source rejects it) under the source's scheme ("Bearer", Zoho's "Zoho-oauthtoken"), and any
 	headers the source needs on every request (Xero's tenant)."""
 
 	def __init__(
-		self, oauth: OAuthClient, scheme: str = BEARER, headers: Mapping[str, str] | None = None
+		self, oauth: AccessTokens, scheme: str = BEARER, headers: Mapping[str, str] | None = None
 	) -> None:
 		self._oauth = oauth
 		self._scheme = scheme

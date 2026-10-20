@@ -1,0 +1,70 @@
+{
+	"request": {
+		"path": "/api/data/v9.2/salesorders",
+		"query": {
+			"$select": "salesorderid,ordernumber,datefulfilled,requestdeliveryby,name,_customerid_value,_transactioncurrencyid_value,exchangerate,totallineitemamount,discountamount,discountpercentage,totaldiscountamount,freightamount,totaltax,totalamount,totalamount_base,description,statecode,createdon,modifiedon",
+			"$expand": "order_details($select=salesorderdetailid,_productid_value,productdescription,isproductoverridden,quantity,priceperunit,baseamount,manualdiscountamount,volumediscountamount,tax,extendedamount,sequencenumber)"
+		}
+	},
+	"response": {
+		"@odata.context": "https://harbourpine.crm3.dynamics.com/api/data/v9.2/$metadata#salesorders",
+		"value": [
+			{
+				"@odata.etag": "W/\"1001\"",
+				"salesorderid": "d0000047-0000-4000-8000-000000000047",
+				"ordernumber": "ORD-01001",
+				"name": "ORD-01001 for 0015",
+				"_customerid_value": "d0000015-0000-4000-8000-000000000015",
+				"_customerid_value@Microsoft.Dynamics.CRM.lookuplogicalname": "account",
+				"_transactioncurrencyid_value": "c0000000-0000-4000-8000-0000000000ca",
+				"exchangerate": 1,
+				"discountamount": 0,
+				"discountpercentage": 10,
+				"freightamount": 0,
+				"description": null,
+				"statecode": 2,
+				"createdon": "2026-03-02T17:00:00Z",
+				"modifiedon": "2026-04-01T09:00:00Z",
+				"totallineitemamount": 900,
+				"totaldiscountamount": 90,
+				"totaltax": 40.5,
+				"totalamount": 850.5,
+				"totalamount_base": 850.5,
+				"datefulfilled": null,
+				"requestdeliveryby": "2026-03-20",
+				"order_details": [
+					{
+						"@odata.etag": "W/\"1001\"",
+						"salesorderdetailid": "d0000048-0000-4000-8000-000000000048",
+						"_productid_value": "d000000b-0000-4000-8000-00000000000b",
+						"productdescription": "Standing Desk",
+						"isproductoverridden": false,
+						"quantity": 1,
+						"priceperunit": 800.0,
+						"baseamount": 800,
+						"manualdiscountamount": 0,
+						"volumediscountamount": 0,
+						"tax": 0,
+						"extendedamount": 800,
+						"sequencenumber": 2
+					},
+					{
+						"@odata.etag": "W/\"1001\"",
+						"salesorderdetailid": "d0000049-0000-4000-8000-000000000049",
+						"_productid_value": null,
+						"productdescription": "Delivery setup",
+						"isproductoverridden": true,
+						"quantity": 1,
+						"priceperunit": 100.0,
+						"baseamount": 100,
+						"manualdiscountamount": 0,
+						"volumediscountamount": 0,
+						"tax": 0,
+						"extendedamount": 100,
+						"sequencenumber": 3
+					}
+				]
+			}
+		]
+	}
+}

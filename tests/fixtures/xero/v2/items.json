@@ -1,0 +1,49 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Items",
+		"query": {}
+	},
+	"response": {
+		"Items": [
+			{
+				"ItemID": "00000000-0000-4000-8000-000000000201",
+				"Code": "MUG-01",
+				"Name": "Stoneware Mug",
+				"Description": "Hand-thrown stoneware mug",
+				"PurchaseDescription": "Mug blank",
+				"IsSold": true,
+				"IsPurchased": true,
+				"IsTrackedAsInventory": true,
+				"InventoryAssetAccountCode": "630",
+				"TotalCostPool": 120,
+				"QuantityOnHand": 24,
+				"SalesDetails": {
+					"UnitPrice": 18,
+					"AccountCode": "200",
+					"TaxType": "OUTPUT"
+				},
+				"PurchaseDetails": {
+					"UnitPrice": 5,
+					"COGSAccountCode": "310",
+					"TaxType": "INPUT"
+				},
+				"UpdatedDateUTC": "/Date(1767520800000+0000)/"
+			},
+			{
+				"ItemID": "00000000-0000-4000-8000-000000000202",
+				"Code": "DESIGN",
+				"Name": "Design hour",
+				"Description": "Design work, per hour",
+				"IsSold": true,
+				"IsPurchased": false,
+				"IsTrackedAsInventory": false,
+				"SalesDetails": {
+					"UnitPrice": 60,
+					"AccountCode": "200",
+					"TaxType": "OUTPUT"
+				},
+				"UpdatedDateUTC": "/Date(1767520860000+0000)/"
+			}
+		]
+	}
+}

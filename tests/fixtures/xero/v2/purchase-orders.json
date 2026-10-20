@@ -1,0 +1,52 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/PurchaseOrders",
+		"query": {
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 1
+		},
+		"PurchaseOrders": [
+			{
+				"PurchaseOrderID": "00000000-0000-4000-8000-000000001101",
+				"PurchaseOrderNumber": "PO-0001",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000103",
+					"Name": "Paper Mill Supply"
+				},
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000011011",
+						"Description": "Mug blanks",
+						"Quantity": 100,
+						"UnitAmount": 5,
+						"AccountCode": "429",
+						"TaxType": "INPUT",
+						"TaxAmount": 25.0,
+						"LineAmount": 500
+					}
+				],
+				"Date": "/Date(1770508800000+0000)/",
+				"DeliveryDate": "/Date(1771372800000+0000)/",
+				"LineAmountTypes": "Exclusive",
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "AUTHORISED",
+				"SentToContact": true,
+				"SubTotal": 500,
+				"TotalTax": 25,
+				"Total": 525,
+				"TotalDiscount": 0,
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1770552000000+0000)/"
+			}
+		]
+	}
+}

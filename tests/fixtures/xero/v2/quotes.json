@@ -1,0 +1,51 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Quotes",
+		"query": {
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"Quotes": [
+			{
+				"QuoteID": "00000000-0000-4000-8000-000000001001",
+				"QuoteNumber": "QU-0001",
+				"Reference": "Wedding set",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000101",
+					"Name": "Harbour Bakery"
+				},
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000010011",
+						"Description": "Stoneware Mug",
+						"Quantity": 40,
+						"UnitAmount": 18,
+						"AccountCode": "200",
+						"TaxType": "OUTPUT",
+						"TaxAmount": 36.0,
+						"LineAmount": 720,
+						"ItemCode": "MUG-01",
+						"Item": {
+							"Code": "MUG-01",
+							"Name": "Stoneware Mug",
+							"ItemID": "00000000-0000-4000-8000-000000000201"
+						}
+					}
+				],
+				"Date": "/Date(1770249600000+0000)/",
+				"ExpiryDate": "/Date(1772668800000+0000)/",
+				"Status": "SENT",
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"SubTotal": 720,
+				"TotalTax": 36,
+				"Total": 756,
+				"Title": "Quote",
+				"UpdatedDateUTC": "/Date(1770292800000+0000)/",
+				"LineAmountTypes": "EXCLUSIVE"
+			}
+		]
+	}
+}

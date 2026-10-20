@@ -1,0 +1,60 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/CreditNotes",
+		"query": {
+			"where": "Type==\"ACCRECCREDIT\"",
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 1
+		},
+		"CreditNotes": [
+			{
+				"Type": "ACCRECCREDIT",
+				"CreditNoteID": "00000000-0000-4000-8000-000000000501",
+				"CreditNoteNumber": "CN-0001",
+				"Reference": "Chipped",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000101",
+					"Name": "Harbour Bakery"
+				},
+				"Date": "/Date(1771113600000+0000)/",
+				"Status": "AUTHORISED",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000005011",
+						"Description": "Chipped mug",
+						"Quantity": 1,
+						"UnitAmount": 18,
+						"AccountCode": "200",
+						"TaxType": "OUTPUT",
+						"TaxAmount": 0.9,
+						"LineAmount": 18,
+						"ItemCode": "MUG-01",
+						"Item": {
+							"Code": "MUG-01",
+							"Name": "Stoneware Mug",
+							"ItemID": "00000000-0000-4000-8000-000000000201"
+						}
+					}
+				],
+				"SubTotal": 18,
+				"TotalTax": 0.9,
+				"Total": 18.9,
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"RemainingCredit": 18.9,
+				"SentToContact": false,
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1771156800000+0000)/"
+			}
+		]
+	}
+}

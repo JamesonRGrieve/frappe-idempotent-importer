@@ -1,0 +1,75 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Payments",
+		"query": {
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 2
+		},
+		"Payments": [
+			{
+				"PaymentID": "00000000-0000-4000-8000-000000000601",
+				"Date": "/Date(1771545600000+0000)/",
+				"Amount": 315,
+				"BankAmount": 315,
+				"CurrencyRate": 1,
+				"Reference": "EFT 4471",
+				"IsReconciled": true,
+				"Status": "AUTHORISED",
+				"PaymentType": "ACCRECPAYMENT",
+				"Account": {
+					"AccountID": "00000000-0000-4000-8000-000000000001",
+					"Code": "090"
+				},
+				"Invoice": {
+					"InvoiceID": "00000000-0000-4000-8000-000000000401",
+					"InvoiceNumber": "INV-0001",
+					"Type": "ACCREC",
+					"Contact": {
+						"ContactID": "00000000-0000-4000-8000-000000000101",
+						"Name": "Harbour Bakery"
+					},
+					"CurrencyCode": "CAD"
+				},
+				"UpdatedDateUTC": "/Date(1771588800000+0000)/",
+				"HasAccount": false,
+				"HasValidationErrors": false
+			},
+			{
+				"PaymentID": "00000000-0000-4000-8000-000000000602",
+				"Date": "/Date(1771718400000+0000)/",
+				"Amount": 210,
+				"BankAmount": 210,
+				"CurrencyRate": 1,
+				"Reference": "CHQ 88",
+				"IsReconciled": false,
+				"Status": "AUTHORISED",
+				"PaymentType": "ACCPAYPAYMENT",
+				"Account": {
+					"AccountID": "00000000-0000-4000-8000-000000000001",
+					"Code": "090"
+				},
+				"Invoice": {
+					"InvoiceID": "00000000-0000-4000-8000-000000000451",
+					"InvoiceNumber": "PM-889",
+					"Type": "ACCPAY",
+					"Contact": {
+						"ContactID": "00000000-0000-4000-8000-000000000103",
+						"Name": "Paper Mill Supply"
+					},
+					"CurrencyCode": "CAD"
+				},
+				"UpdatedDateUTC": "/Date(1771761600000+0000)/",
+				"HasAccount": false,
+				"HasValidationErrors": false
+			}
+		]
+	}
+}

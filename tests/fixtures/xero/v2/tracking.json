@@ -1,0 +1,29 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/TrackingCategories",
+		"query": {
+			"includeArchived": "true"
+		}
+	},
+	"response": {
+		"TrackingCategories": [
+			{
+				"TrackingCategoryID": "00000000-0000-4000-8000-000000000301",
+				"Name": "Region",
+				"Status": "ACTIVE",
+				"Options": [
+					{
+						"TrackingOptionID": "00000000-0000-4000-8000-000000000302",
+						"Name": "North",
+						"Status": "ACTIVE"
+					},
+					{
+						"TrackingOptionID": "00000000-0000-4000-8000-000000000303",
+						"Name": "South",
+						"Status": "ACTIVE"
+					}
+				]
+			}
+		]
+	}
+}

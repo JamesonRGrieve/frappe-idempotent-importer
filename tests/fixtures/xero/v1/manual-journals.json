@@ -1,0 +1,49 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/ManualJournals",
+		"query": {
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 1
+		},
+		"ManualJournals": [
+			{
+				"ManualJournalID": "00000000-0000-4000-8000-000000000801",
+				"Narration": "Accrue February rent",
+				"Date": "/Date(1772236800000+0000)/",
+				"Status": "POSTED",
+				"LineAmountTypes": "NoTax",
+				"ShowOnCashBasisReports": true,
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1772280000000+0000)/",
+				"JournalLines": [
+					{
+						"LineAmount": 400,
+						"AccountCode": "429",
+						"AccountID": "00000000-0000-4000-8000-000000000003",
+						"Description": "Rent",
+						"TaxType": "NONE",
+						"TaxAmount": 0,
+						"IsBlank": false
+					},
+					{
+						"LineAmount": -400,
+						"AccountCode": "825",
+						"AccountID": "00000000-0000-4000-8000-000000000008",
+						"Description": "Rent",
+						"TaxType": "NONE",
+						"TaxAmount": 0,
+						"IsBlank": false
+					}
+				]
+			}
+		]
+	}
+}

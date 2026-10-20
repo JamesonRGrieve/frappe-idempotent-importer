@@ -1,0 +1,53 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/BankTransactions",
+		"query": {
+			"where": "PrepaymentID==Guid(\"00000000-0000-4000-8000-000000000701\")"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 100,
+			"pageCount": 1,
+			"itemCount": 1
+		},
+		"BankTransactions": [
+			{
+				"Type": "RECEIVE-PREPAYMENT",
+				"BankTransactionID": "00000000-0000-4000-8000-000000000902",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000102",
+					"Name": "Riley River"
+				},
+				"BankAccount": {
+					"AccountID": "00000000-0000-4000-8000-000000000001",
+					"Code": "090",
+					"Name": "Business Bank"
+				},
+				"IsReconciled": false,
+				"Date": "/Date(1771977600000+0000)/",
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "AUTHORISED",
+				"LineAmountTypes": "Inclusive",
+				"PrepaymentID": "00000000-0000-4000-8000-000000000701",
+				"LineItems": [
+					{
+						"Description": "Deposit on custom set",
+						"UnitAmount": 50,
+						"AccountCode": "200",
+						"TaxType": "NONE",
+						"TaxAmount": 0,
+						"LineAmount": 50
+					}
+				],
+				"SubTotal": 50,
+				"TotalTax": 0,
+				"Total": 50,
+				"UpdatedDateUTC": "/Date(1772020800000+0000)/",
+				"HasAttachments": false
+			}
+		]
+	}
+}

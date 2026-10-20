@@ -1,0 +1,142 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Contacts",
+		"query": {
+			"includeArchived": "true",
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 4
+		},
+		"Contacts": [
+			{
+				"ContactID": "00000000-0000-4000-8000-000000000101",
+				"ContactStatus": "ACTIVE",
+				"Name": "Harbour Bakery",
+				"EmailAddress": "accounts@harbourbakery.example",
+				"Addresses": [
+					{
+						"AddressType": "STREET",
+						"AddressLine1": "1 Harbour Rd",
+						"City": "Halifax",
+						"Region": "NS",
+						"PostalCode": "B3H 1A1",
+						"Country": "Canada"
+					}
+				],
+				"Phones": [
+					{
+						"PhoneType": "DEFAULT",
+						"PhoneNumber": "555-0142",
+						"PhoneAreaCode": "902",
+						"PhoneCountryCode": "1"
+					}
+				],
+				"IsSupplier": false,
+				"IsCustomer": true,
+				"DefaultCurrency": "CAD",
+				"UpdatedDateUTC": "/Date(1790856000000+0000)/",
+				"HasAttachments": false,
+				"HasValidationErrors": false
+			},
+			{
+				"ContactID": "00000000-0000-4000-8000-000000000102",
+				"ContactStatus": "ACTIVE",
+				"Name": "Riley River",
+				"EmailAddress": "riley@example.com",
+				"Addresses": [
+					{
+						"AddressType": "STREET",
+						"AddressLine1": "1 Harbour Rd",
+						"City": "Halifax",
+						"Region": "NS",
+						"PostalCode": "B3H 1A1",
+						"Country": "Canada"
+					}
+				],
+				"Phones": [
+					{
+						"PhoneType": "DEFAULT",
+						"PhoneNumber": "555-0142",
+						"PhoneAreaCode": "902",
+						"PhoneCountryCode": "1"
+					}
+				],
+				"IsSupplier": false,
+				"IsCustomer": true,
+				"DefaultCurrency": "CAD",
+				"UpdatedDateUTC": "/Date(1767434400000+0000)/",
+				"HasAttachments": false,
+				"HasValidationErrors": false,
+				"FirstName": "Riley",
+				"LastName": "River"
+			},
+			{
+				"ContactID": "00000000-0000-4000-8000-000000000103",
+				"ContactStatus": "ACTIVE",
+				"Name": "Paper Mill Supply",
+				"EmailAddress": "billing@papermill.example",
+				"Addresses": [
+					{
+						"AddressType": "STREET",
+						"AddressLine1": "1 Harbour Rd",
+						"City": "Halifax",
+						"Region": "NS",
+						"PostalCode": "B3H 1A1",
+						"Country": "Canada"
+					}
+				],
+				"Phones": [
+					{
+						"PhoneType": "DEFAULT",
+						"PhoneNumber": "555-0142",
+						"PhoneAreaCode": "902",
+						"PhoneCountryCode": "1"
+					}
+				],
+				"IsSupplier": true,
+				"IsCustomer": false,
+				"DefaultCurrency": "CAD",
+				"UpdatedDateUTC": "/Date(1767434400000+0000)/",
+				"HasAttachments": false,
+				"HasValidationErrors": false
+			},
+			{
+				"ContactID": "00000000-0000-4000-8000-000000000104",
+				"ContactStatus": "ACTIVE",
+				"Name": "Coastal Clay Co",
+				"EmailAddress": "hello@coastalclay.example",
+				"Addresses": [
+					{
+						"AddressType": "STREET",
+						"AddressLine1": "1 Harbour Rd",
+						"City": "Halifax",
+						"Region": "NS",
+						"PostalCode": "B3H 1A1",
+						"Country": "Canada"
+					}
+				],
+				"Phones": [
+					{
+						"PhoneType": "DEFAULT",
+						"PhoneNumber": "555-0142",
+						"PhoneAreaCode": "902",
+						"PhoneCountryCode": "1"
+					}
+				],
+				"IsSupplier": true,
+				"IsCustomer": true,
+				"DefaultCurrency": "CAD",
+				"UpdatedDateUTC": "/Date(1767434400000+0000)/",
+				"HasAttachments": false,
+				"HasValidationErrors": false
+			}
+		]
+	}
+}

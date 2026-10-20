@@ -1,0 +1,32 @@
+{
+	"request": {
+		"path": "/projects.xro/2.0/Projects",
+		"query": {
+			"page": "1",
+			"pageSize": "500"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 500,
+			"pageCount": 1,
+			"itemCount": 1
+		},
+		"items": [
+			{
+				"projectId": "00000000-0000-4000-8000-000000001201",
+				"contactId": "00000000-0000-4000-8000-000000000101",
+				"name": "Cafe tableware",
+				"currencyCode": "CAD",
+				"minutesLogged": 120,
+				"deadlineUtc": "2026-04-30T00:00:00Z",
+				"status": "INPROGRESS",
+				"estimate": {
+					"currency": "CAD",
+					"value": 900
+				}
+			}
+		]
+	}
+}

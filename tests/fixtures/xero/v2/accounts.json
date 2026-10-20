@@ -1,0 +1,131 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Accounts",
+		"query": {}
+	},
+	"response": {
+		"Accounts": [
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000001",
+				"Code": "090",
+				"Name": "Business Bank",
+				"Type": "BANK",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "ASSET",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "ASS",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/",
+				"BankAccountNumber": "1234567",
+				"BankAccountType": "BANK",
+				"CurrencyCode": "CAD"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000005",
+				"Code": "610",
+				"Name": "Accounts Receivable",
+				"Type": "CURRENT",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "ASSET",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "ASS",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/",
+				"SystemAccount": "DEBTORS"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000006",
+				"Code": "800",
+				"Name": "Accounts Payable",
+				"Type": "CURRLIAB",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "LIABILITY",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "LIA",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/",
+				"SystemAccount": "CREDITORS"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000004",
+				"Code": "820",
+				"Name": "GST",
+				"Type": "CURRLIAB",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "LIABILITY",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "LIA",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/",
+				"SystemAccount": "GST"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000007",
+				"Code": "091",
+				"Name": "Company Visa",
+				"Type": "BANK",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "ASSET",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "ASS",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/",
+				"BankAccountNumber": "1234567",
+				"BankAccountType": "CREDITCARD",
+				"CurrencyCode": "CAD"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000008",
+				"Code": "825",
+				"Name": "Accrued Liabilities",
+				"Type": "CURRLIAB",
+				"Status": "ACTIVE",
+				"TaxType": "NONE",
+				"Class": "LIABILITY",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "LIA",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000002",
+				"Code": "200",
+				"Name": "Sales",
+				"Type": "REVENUE",
+				"Status": "ACTIVE",
+				"TaxType": "OUTPUT",
+				"Class": "REVENUE",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "REV",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/"
+			},
+			{
+				"AccountID": "00000000-0000-4000-8000-000000000003",
+				"Code": "429",
+				"Name": "General Expenses",
+				"Type": "EXPENSE",
+				"Status": "ACTIVE",
+				"TaxType": "INPUT",
+				"Class": "EXPENSE",
+				"EnablePaymentsToAccount": false,
+				"ShowInExpenseClaims": false,
+				"ReportingCode": "EXP",
+				"HasAttachments": false,
+				"UpdatedDateUTC": "/Date(1767348000000+0000)/"
+			}
+		]
+	}
+}

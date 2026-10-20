@@ -1,0 +1,99 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/BankTransactions",
+		"query": {
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 2
+		},
+		"BankTransactions": [
+			{
+				"Type": "SPEND",
+				"BankTransactionID": "00000000-0000-4000-8000-000000000901",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000103",
+					"Name": "Paper Mill Supply"
+				},
+				"BankAccount": {
+					"AccountID": "00000000-0000-4000-8000-000000000007",
+					"Code": "091",
+					"Name": "Company Visa"
+				},
+				"IsReconciled": true,
+				"Date": "/Date(1772323200000+0000)/",
+				"Reference": "Shipping boxes",
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "AUTHORISED",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000009011",
+						"Description": "Shipping boxes",
+						"Quantity": 1,
+						"UnitAmount": 40,
+						"AccountCode": "429",
+						"TaxType": "INPUT",
+						"TaxAmount": 2.0,
+						"LineAmount": 40,
+						"Tracking": [
+							{
+								"TrackingCategoryID": "00000000-0000-4000-8000-000000000301",
+								"TrackingOptionID": "00000000-0000-4000-8000-000000000302",
+								"Name": "Region",
+								"Option": "North"
+							}
+						]
+					}
+				],
+				"SubTotal": 40,
+				"TotalTax": 2,
+				"Total": 42,
+				"UpdatedDateUTC": "/Date(1772366400000+0000)/",
+				"HasAttachments": false
+			},
+			{
+				"Type": "RECEIVE-PREPAYMENT",
+				"BankTransactionID": "00000000-0000-4000-8000-000000000902",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000102",
+					"Name": "Riley River"
+				},
+				"BankAccount": {
+					"AccountID": "00000000-0000-4000-8000-000000000001",
+					"Code": "090",
+					"Name": "Business Bank"
+				},
+				"IsReconciled": false,
+				"Date": "/Date(1771977600000+0000)/",
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "AUTHORISED",
+				"LineAmountTypes": "Inclusive",
+				"PrepaymentID": "00000000-0000-4000-8000-000000000701",
+				"LineItems": [
+					{
+						"Description": "Deposit on custom set",
+						"UnitAmount": 50,
+						"AccountCode": "200",
+						"TaxType": "NONE",
+						"TaxAmount": 0,
+						"LineAmount": 50
+					}
+				],
+				"SubTotal": 50,
+				"TotalTax": 0,
+				"Total": 50,
+				"UpdatedDateUTC": "/Date(1772020800000+0000)/",
+				"HasAttachments": false
+			}
+		]
+	}
+}

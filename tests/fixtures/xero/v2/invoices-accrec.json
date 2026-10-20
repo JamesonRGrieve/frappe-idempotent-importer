@@ -1,0 +1,141 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Invoices",
+		"query": {
+			"where": "Type==\"ACCREC\"",
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 2
+		},
+		"Invoices": [
+			{
+				"Type": "ACCREC",
+				"InvoiceID": "00000000-0000-4000-8000-000000000401",
+				"InvoiceNumber": "INV-0001",
+				"Reference": "REF-INV-0001",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000101",
+					"Name": "Harbour Bakery"
+				},
+				"Date": "/Date(1770681600000+0000)/",
+				"DueDate": "/Date(1773273600000+0000)/",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000004011",
+						"Description": "Stoneware Mug",
+						"Quantity": 10,
+						"UnitAmount": 18,
+						"AccountCode": "200",
+						"TaxType": "OUTPUT",
+						"TaxAmount": 9.0,
+						"LineAmount": 180,
+						"ItemCode": "MUG-01",
+						"Item": {
+							"Code": "MUG-01",
+							"Name": "Stoneware Mug",
+							"ItemID": "00000000-0000-4000-8000-000000000201"
+						},
+						"Tracking": [
+							{
+								"TrackingCategoryID": "00000000-0000-4000-8000-000000000301",
+								"TrackingOptionID": "00000000-0000-4000-8000-000000000302",
+								"Name": "Region",
+								"Option": "North"
+							}
+						]
+					},
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000004012",
+						"Description": "Design hour",
+						"Quantity": 2,
+						"UnitAmount": 60,
+						"AccountCode": "200",
+						"TaxType": "OUTPUT",
+						"TaxAmount": 6.0,
+						"LineAmount": 120,
+						"ItemCode": "DESIGN",
+						"Item": {
+							"Code": "DESIGN",
+							"Name": "Design hour",
+							"ItemID": "00000000-0000-4000-8000-000000000202"
+						}
+					}
+				],
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "PAID",
+				"SentToContact": true,
+				"SubTotal": 300,
+				"TotalTax": 15.0,
+				"Total": 315.0,
+				"AmountDue": 0.0,
+				"AmountPaid": 315,
+				"AmountCredited": 0,
+				"IsDiscounted": false,
+				"HasAttachments": false,
+				"HasErrors": false,
+				"UpdatedDateUTC": "/Date(1770724800000+0000)/",
+				"Payments": [
+					{
+						"PaymentID": "00000000-0000-4000-8000-000000000601",
+						"Date": "/Date(1771545600000+0000)/",
+						"Amount": 315
+					}
+				]
+			},
+			{
+				"Type": "ACCREC",
+				"InvoiceID": "00000000-0000-4000-8000-000000000402",
+				"InvoiceNumber": "INV-0002",
+				"Reference": "REF-INV-0002",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000102",
+					"Name": "Riley River"
+				},
+				"Date": "/Date(1770768000000+0000)/",
+				"DueDate": "/Date(1773360000000+0000)/",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000004021",
+						"Description": "Stoneware Mug",
+						"Quantity": 2,
+						"UnitAmount": 18,
+						"AccountCode": "200",
+						"TaxType": "OUTPUT",
+						"TaxAmount": 1.8,
+						"LineAmount": 36,
+						"ItemCode": "MUG-01",
+						"Item": {
+							"Code": "MUG-01",
+							"Name": "Stoneware Mug",
+							"ItemID": "00000000-0000-4000-8000-000000000201"
+						}
+					}
+				],
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "VOIDED",
+				"SentToContact": true,
+				"SubTotal": 36,
+				"TotalTax": 1.8,
+				"Total": 37.8,
+				"AmountDue": 37.8,
+				"AmountPaid": 0,
+				"AmountCredited": 0,
+				"IsDiscounted": false,
+				"HasAttachments": false,
+				"HasErrors": false,
+				"UpdatedDateUTC": "/Date(1790856000000+0000)/"
+			}
+		]
+	}
+}

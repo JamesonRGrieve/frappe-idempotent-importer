@@ -1,0 +1,105 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/Invoices",
+		"query": {
+			"where": "Type==\"ACCPAY\"",
+			"page": "1",
+			"pageSize": "1000"
+		}
+	},
+	"response": {
+		"pagination": {
+			"page": 1,
+			"pageSize": 1000,
+			"pageCount": 1,
+			"itemCount": 2
+		},
+		"Invoices": [
+			{
+				"Type": "ACCPAY",
+				"InvoiceID": "00000000-0000-4000-8000-000000000451",
+				"InvoiceNumber": "PM-889",
+				"Reference": "REF-PM-889",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000103",
+					"Name": "Paper Mill Supply"
+				},
+				"Date": "/Date(1770854400000+0000)/",
+				"DueDate": "/Date(1773446400000+0000)/",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000004511",
+						"Description": "Mug blanks",
+						"Quantity": 40,
+						"UnitAmount": 5,
+						"AccountCode": "429",
+						"TaxType": "INPUT",
+						"TaxAmount": 10.0,
+						"LineAmount": 200
+					}
+				],
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "PAID",
+				"SentToContact": true,
+				"SubTotal": 200,
+				"TotalTax": 10.0,
+				"Total": 210.0,
+				"AmountDue": 0.0,
+				"AmountPaid": 210,
+				"AmountCredited": 0,
+				"IsDiscounted": false,
+				"HasAttachments": false,
+				"HasErrors": false,
+				"UpdatedDateUTC": "/Date(1770897600000+0000)/",
+				"Payments": [
+					{
+						"PaymentID": "00000000-0000-4000-8000-000000000602",
+						"Date": "/Date(1771718400000+0000)/",
+						"Amount": 210
+					}
+				]
+			},
+			{
+				"Type": "ACCPAY",
+				"InvoiceID": "00000000-0000-4000-8000-000000000452",
+				"InvoiceNumber": "PM-901",
+				"Reference": "REF-PM-901",
+				"Contact": {
+					"ContactID": "00000000-0000-4000-8000-000000000103",
+					"Name": "Paper Mill Supply"
+				},
+				"Date": "/Date(1790899200000+0000)/",
+				"DueDate": "/Date(1793491200000+0000)/",
+				"LineAmountTypes": "Exclusive",
+				"LineItems": [
+					{
+						"LineItemID": "00000000-0000-4000-8000-000000004521",
+						"Description": "Glaze",
+						"Quantity": 3,
+						"UnitAmount": 30,
+						"AccountCode": "429",
+						"TaxType": "INPUT",
+						"TaxAmount": 4.5,
+						"LineAmount": 90
+					}
+				],
+				"CurrencyCode": "CAD",
+				"CurrencyRate": 1,
+				"Status": "AUTHORISED",
+				"SentToContact": true,
+				"SubTotal": 90,
+				"TotalTax": 4.5,
+				"Total": 94.5,
+				"AmountDue": 94.5,
+				"AmountPaid": 0,
+				"AmountCredited": 0,
+				"IsDiscounted": false,
+				"HasAttachments": false,
+				"HasErrors": false,
+				"UpdatedDateUTC": "/Date(1790942400000+0000)/"
+			}
+		]
+	}
+}

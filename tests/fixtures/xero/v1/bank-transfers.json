@@ -1,0 +1,33 @@
+{
+	"request": {
+		"path": "/api.xro/2.0/BankTransfers",
+		"query": {}
+	},
+	"response": {
+		"BankTransfers": [
+			{
+				"BankTransferID": "00000000-0000-4000-8000-000000000951",
+				"FromBankAccount": {
+					"AccountID": "00000000-0000-4000-8000-000000000001",
+					"Code": "090",
+					"Name": "Business Bank"
+				},
+				"ToBankAccount": {
+					"AccountID": "00000000-0000-4000-8000-000000000007",
+					"Code": "091",
+					"Name": "Company Visa"
+				},
+				"Amount": 250,
+				"Date": "/Date(1772409600000+0000)/",
+				"CurrencyRate": 1,
+				"FromBankTransactionID": "00000000-0000-4000-8000-000000000952",
+				"ToBankTransactionID": "00000000-0000-4000-8000-000000000953",
+				"FromIsReconciled": false,
+				"ToIsReconciled": false,
+				"Reference": "Pay down card",
+				"HasAttachments": false,
+				"CreatedDateUTC": "/Date(1772452800000+0000)/"
+			}
+		]
+	}
+}

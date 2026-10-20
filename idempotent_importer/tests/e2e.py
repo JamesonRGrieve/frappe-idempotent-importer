@@ -75,6 +75,14 @@ class Business:
 		return f"http://{self.fake}:{FAKE_PORT}{self.endpoint_path}"
 
 
+# An OAuth source's app, as if the operator had saved it and connected the account.
+OAUTH_CREDENTIALS = {
+	"api_user": "e2e-oauth-client",
+	"api_secret": "e2e-oauth-secret",
+	"refresh_token": "e2e-oauth-refresh-token",
+}
+# The refresh token the fake OAuth sources issue for a code (tests/e2e/fake_store.py).
+OAUTH_ROTATED_REFRESH_TOKEN = "e2e-oauth-rotated-refresh-token"
 WOO_CREDENTIALS = {
 	"auth_method": "Application Password",
 	"api_user": "e2e",
@@ -246,6 +254,46 @@ BUSINESSES = (
 		"ecwid-fake",
 		"https://cedarwick.example",
 		{"api_account": "7400100", "api_secret": "e2e-ecwid-token"},
+	),
+	Business(
+		"QB",
+		"Books Q",
+		"quickbooks-q",
+		"QuickBooks Online",
+		"quickbooks_online",
+		"quickbooks_online-fake",
+		"https://quickbooks.api.intuit.com",
+		{**OAUTH_CREDENTIALS, "api_account": "9341452345"},
+	),
+	Business(
+		"XR",
+		"Books X",
+		"xero-x",
+		"Xero",
+		"xero",
+		"xero-fake",
+		"https://go.xero.com",
+		{**OAUTH_CREDENTIALS, "api_account": "70784a63-d24b-46a9-a4db-0e70a274b056"},
+	),
+	Business(
+		"ZB",
+		"Books Z",
+		"zoho-books-b",
+		"Zoho Books",
+		"zoho_books",
+		"zoho_books-fake",
+		"https://books.zoho.com",
+		{**OAUTH_CREDENTIALS, "api_account": "10234695"},
+	),
+	Business(
+		"ZI",
+		"Books I",
+		"zoho-inventory-i",
+		"Zoho Inventory",
+		"zoho_inventory",
+		"zoho_inventory-fake",
+		"https://inventory.zoho.com",
+		{**OAUTH_CREDENTIALS, "api_account": "20000001"},
 	),
 )
 
@@ -539,6 +587,10 @@ def main() -> None:
 		"assert_business_central": assert_business_central,
 		"assert_dynamics_sales": assert_dynamics_sales,
 		"assert_finance_operations": assert_finance_operations,
+		"assert_quickbooks_online": assert_quickbooks_online,
+		"assert_xero": assert_xero,
+		"assert_zoho_books": assert_zoho_books,
+		"assert_zoho_inventory": assert_zoho_inventory,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2529,6 +2581,27 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		ETSY_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"quickbooks-q": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "scope": "com.intuit.quickbooks.accounting"},
+		"oauth_callback",
+		{"realmId": "9341452345"},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{"api_account": "9341452345"},
+	),
+	"xero-x": OAuthConnect(
+		{"client_id": "e2e-oauth-client"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{"api_account": "70784a63-d24b-46a9-a4db-0e70a274b056"},
+	),
+	"zoho-books-b": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "access_type": "offline"},
+		"oauth_callback",
+		{"location": "us", "accounts-server": "https://accounts.zoho.com"},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{"api_account": "10234695"},
+	),
 }
 
 
@@ -2676,6 +2749,175 @@ def sync_now_in_background(connection: str) -> None:
 			return
 		time.sleep(POLL_SECONDS)
 	raise AssertionError(f"the background run {run_name} didn't finish in {BACKGROUND_RUN_TIMEOUT_SECONDS}s")
+
+
+@dataclass(frozen=True)
+class Booked:
+	"""One mirrored record of an accounting source and what one of its fields must be (a document's
+	``grand_total``, a journal's ``total_debit``), in a fixture state; ``retired`` when the source deleted
+	or voided it, so its copy is cancelled."""
+
+	kind: str
+	type_: str
+	source_id: str
+	field: str = ""
+	value: Any = None
+	retired: bool = False
+
+
+def assert_booked(connection: str, records: list[Booked]) -> None:
+	for record in records:
+		gid = f"gid://{business_of(connection).source_id}/{connection}/{record.type_}/{record.source_id}"
+		link = frappe.db.get_value(
+			"Importer Link",
+			{"connection": connection, "kind": record.kind, "gid": gid},
+			["target_doctype", "target_name", "retired"],
+			as_dict=True,
+		)
+		if link is None:
+			raise AssertionError(f"{gid} ({record.kind}) is not mirrored")
+		expect(bool(link.retired), record.retired, f"{gid} retired")
+		if record.retired:
+			status = frappe.db.get_value(link.target_doctype, link.target_name, "docstatus")
+			if status is not None and frappe.get_meta(link.target_doctype).is_submittable:
+				expect(status, 2, f"{gid}'s {link.target_doctype}, cancelled")
+			continue
+		if record.field:
+			actual = frappe.db.get_value(link.target_doctype, link.target_name, record.field)
+			wanted = record.value
+			if isinstance(wanted, Decimal):
+				actual = amount(actual)
+			expect(actual, wanted, f"{gid}'s {record.field}")
+
+
+@check
+def assert_quickbooks_online(state: str) -> None:
+	"""The QuickBooks Online company of state ``state``: its chart, parties, items, documents, payments and
+	money movements."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "Account", "35", "account_type", "Bank"),
+		Booked("cost_center", "Class", "5000000000000012345"),
+		Booked("customer", "Customer", "1", "customer_type", "Company"),
+		Booked("supplier", "Vendor", "10"),
+		Booked("employee", "Employee", "20", "first_name", "Sam"),
+		Booked("project", "Customer", "3"),
+		Booked("product", "Item", "2", "is_stock_item", 1),
+		Booked("draft_order", "Estimate", "40", "grand_total", amount("542.4")),
+		Booked("purchase_order", "PurchaseOrder", "50", "grand_total", amount(678)),
+		Booked("sales_invoice", "Invoice", "130", "grand_total", amount("367.25")),
+		Booked("sales_invoice", "Invoice", "131", "grand_total", amount("50.85"), retired=changed),
+		Booked("sales_invoice", "SalesReceipt", "140", "grand_total", amount("135.6")),
+		Booked("sales_invoice", "CreditMemo", "145", "grand_total", amount("-96.05")),
+		Booked("sales_invoice", "RefundReceipt", "146", "grand_total", amount("-10.17")),
+		Booked("purchase_invoice", "Bill", "160", "grand_total", amount(728)),
+		Booked("purchase_invoice", "VendorCredit", "165", "grand_total", amount(-20)),
+		Booked("payment_entry", "Payment", "150", "paid_amount", amount("367.25")),
+		Booked("payment_entry", "BillPayment", "170", "paid_amount", amount(728)),
+		Booked("payment_entry", "SalesReceiptPayment", "140", "paid_amount", amount("135.6")),
+		Booked("journal_entry", "JournalEntry", "180", "total_debit", amount(35 if changed else 30)),
+		Booked("journal_entry", "Deposit", "190", "total_debit", amount(100)),
+		Booked("journal_entry", "Transfer", "195", "total_debit", amount(200), retired=changed),
+		Booked("journal_entry", "Purchase", "200", "total_debit", amount("45.2")),
+	]
+	if changed:
+		records += [
+			Booked("sales_invoice", "Invoice", "132", "grand_total", amount("192.1")),
+			Booked("payment_entry", "Payment", "151", "paid_amount", amount("192.1")),
+			Booked("account", "Account", "16", "account_name", "Postage and Courier"),
+		]
+	assert_booked("quickbooks-q", records)
+
+
+@check
+def assert_xero(state: str) -> None:
+	"""The Xero organisation of state ``state``."""
+	changed = state == "v2"
+
+	def g(n: int) -> str:
+		return f"00000000-0000-4000-8000-{n:012d}"
+
+	records = [
+		Booked("account", "Account", g(1), "account_type", "Bank"),
+		Booked("cost_center", "TrackingOption", g(302)),
+		Booked("product", "Item", g(201), "is_stock_item", 1),
+		Booked("customer", "Contact", g(101), "customer_type", "Company"),
+		Booked("supplier", "Contact", g(103)),
+		Booked("customer", "Contact", g(104)),
+		Booked("supplier", "Contact", g(104)),
+		Booked("project", "Project", g(1201)),
+		Booked("draft_order", "Quote", g(1001), "grand_total", amount(756)),
+		Booked("purchase_order", "PurchaseOrder", g(1101), "grand_total", amount(525)),
+		Booked("sales_invoice", "Invoice", g(401), "grand_total", amount(315)),
+		Booked("sales_invoice", "Invoice", g(402), "grand_total", amount("37.8"), retired=changed),
+		Booked("sales_invoice", "CreditNote", g(501), "grand_total", amount("-18.9")),
+		Booked("purchase_invoice", "Invoice", g(451), "grand_total", amount(210)),
+		Booked("payment_entry", "Payment", g(601), "paid_amount", amount(315)),
+		Booked("payment_entry", "Payment", g(602), "paid_amount", amount(210)),
+		Booked("payment_entry", "Prepayment", g(701), "paid_amount", amount(50)),
+		Booked("journal_entry", "ManualJournal", g(801), "total_debit", amount(400), retired=changed),
+		Booked("journal_entry", "BankTransaction", g(901), "total_debit", amount(42)),
+		Booked("journal_entry", "BankTransfer", g(951), "total_debit", amount(250)),
+	]
+	if changed:
+		records.append(Booked("purchase_invoice", "Invoice", g(452), "grand_total", amount("94.5")))
+	assert_booked("xero-x", records)
+
+
+@check
+def assert_zoho_books(state: str) -> None:
+	"""The Zoho Books organisation of state ``state``."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "Account", "460000000000362", "account_type", "Bank"),
+		Booked("warehouse", "Location", "460000000000901"),
+		Booked("product", "Item", "460000000000501"),
+		Booked("customer", "Contact", "460000000000101", "customer_type", "Company"),
+		Booked("supplier", "Contact", "460000000000103"),
+		Booked("project", "Project", "460000000000701"),
+		Booked("draft_order", "Estimate", "460000000006001", "grand_total", amount("472.5")),
+		Booked("sales_invoice", "Invoice", "460000000001001", "grand_total", amount("236.25")),
+		Booked(
+			"sales_invoice",
+			"SalesReceipt",
+			"460000000002001",
+			"grand_total",
+			amount("47.25"),
+			retired=changed,
+		),
+		Booked("purchase_invoice", "Bill", "460000000004001", "grand_total", amount(126)),
+		Booked("payment_entry", "CustomerPayment", "460000000003001", "paid_amount", amount("236.25")),
+		Booked("payment_entry", "VendorPayment", "460000000005001", "paid_amount", amount(126)),
+		Booked("journal_entry", "Journal", "460000000007001", "total_debit", amount(40 if changed else 25)),
+		Booked("journal_entry", "Expense", "460000000008001", "total_debit", amount(15)),
+	]
+	if changed:
+		records.append(Booked("purchase_invoice", "Bill", "460000000004002", "grand_total", amount(126)))
+	assert_booked("zoho-books-b", records)
+
+
+@check
+def assert_zoho_inventory(state: str) -> None:
+	"""The Zoho Inventory organisation of state ``state``."""
+	changed = state == "v2"
+	assert_booked(
+		"zoho-inventory-i",
+		[
+			Booked("warehouse", "Location", "2000000000000901"),
+			Booked("collection", "Category", "2000000000000301"),
+			Booked("product", "ItemGroup", "2000000000000401", "has_variants", 1),
+			Booked("product", "Item", "2000000000000421"),
+			Booked("customer", "Contact", "2000000000000101"),
+			Booked("supplier", "Contact", "2000000000000103"),
+			Booked(
+				"sales_order", "SalesOrder", "2000000000005001", "grand_total", amount(693), retired=changed
+			),
+			Booked("sales_invoice", "Invoice", "2000000000006001", "grand_total", amount(693)),
+			Booked("purchase_order", "PurchaseOrder", "2000000000008001", "grand_total", amount(315)),
+			Booked("purchase_invoice", "Bill", "2000000000009001", "grand_total", amount(315)),
+			Booked("payment_entry", "CustomerPayment", "2000000000007001", "paid_amount", amount(693)),
+		],
+	)
 
 
 @check

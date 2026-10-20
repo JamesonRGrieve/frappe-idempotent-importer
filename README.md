@@ -30,7 +30,11 @@ stores can import into two businesses at once and never touch each other's recor
 | Dynamics 365 Business Central | Built | Posting accounts, dimensions, locations, item categories and items with variants and inventory, customers, vendors, employees, projects, contacts and opportunities, sales quotes, sales and purchase orders, and sales and purchase invoices and credit memos — [coverage/dynamics_business_central.md](coverage/dynamics_business_central.md) |
 | Dynamics 365 Sales | Built | Products, accounts with their contacts, contacts, leads, opportunities, quotes, orders and invoices (other currencies too) — [coverage/dynamics_sales.md](coverage/dynamics_sales.md) |
 | Dynamics 365 Finance & Operations | Built | One legal entity's customers, released products and sales orders through the documented data entities, and vendors and purchase orders through the entities its field map names — [coverage/dynamics_finance_operations.md](coverage/dynamics_finance_operations.md) |
-| PeopleSoft, Agendrix, NetSuite, SAP Business One, QuickBooks Online, Xero, Sage, Zoho Books, Zoho Inventory, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| QuickBooks Online | Built | The chart of accounts, classes and locations, items and categories, customers, projects, vendors, employees, estimates, purchase orders, invoices, sales receipts, credit memos, refund receipts, bills, vendor credits, payments, bill payments, journal entries, deposits, transfers and expenses — [coverage/quickbooks_online.md](coverage/quickbooks_online.md) |
+| Xero | Built | Accounts, tracking categories, items, contacts as customers and suppliers, projects, quotes, purchase orders, sales and purchase invoices and credit notes, payments, prepayments and overpayments, manual journals, spend and receive money and bank transfers — [coverage/xero.md](coverage/xero.md) |
+| Zoho Books | Built | The chart of accounts, locations, items, customers and vendors, projects, estimates, sales orders, invoices, credit notes, sales receipts, purchase orders, bills, vendor credits, customer and vendor payments, journals and expenses — [coverage/zoho_books.md](coverage/zoho_books.md) |
+| Zoho Inventory | Built | Locations, categories, item groups with their variants and items, customers and vendors, sales orders, invoices, credit notes, purchase orders, bills, vendor credits and customer payments — [coverage/zoho_inventory.md](coverage/zoho_inventory.md) |
+| PeopleSoft, Agendrix, NetSuite, SAP Business One, Sage, Acumatica | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -145,6 +149,19 @@ This is the operator's decision to confirm (see below).
      document ([coverage/dynamics_finance_operations.md](coverage/dynamics_finance_operations.md)).
    - **Ecwid:** create a custom app with the read scopes in [coverage/ecwid.md](coverage/ecwid.md); enter the
      store's URL, its store ID as the account and the app's secret access token as the secret.
+   - **QuickBooks Online:** create an app at developer.intuit.com with this site's
+     `/api/method/idempotent_importer.api.oauth_callback` as a redirect URI; enter
+     `https://quickbooks.api.intuit.com` (or the sandbox host) as the Store URL and the app's client ID and
+     secret, save, then click **Connect to QuickBooks Online**: the approved company becomes the account.
+   - **Xero:** create a Web app at developer.xero.com with the same redirect URI; enter `https://go.xero.com`
+     as the Store URL and its client ID and secret, save, then click **Connect to Xero**: the approved
+     organisation becomes the account (enter its tenant id when an approval connects several).
+   - **Zoho Books / Zoho Inventory:** create a server-based client at api-console.zoho.com (Multi-DC on) with
+     the same redirect URI; enter the product's address in the organisation's data centre
+     (`https://books.zoho.eu`, `https://inventory.zoho.com`, …) as the Store URL and the client's ID and
+     secret, save, then click **Connect to Zoho Books** (or Inventory): the organisation becomes the account.
+     An organisation on both products shares its contacts, invoices, bills and payments: mirror those from
+     one of the two connections only.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Commands

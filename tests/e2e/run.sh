@@ -56,9 +56,13 @@ SOURCES=(
 	business-central-b:dynamics_business_central-fake:assert_business_central
 	dynamics-sales-d:dynamics_sales-fake:assert_dynamics_sales
 	finance-operations-f:dynamics_finance_operations-fake:assert_finance_operations
+	quickbooks-q:quickbooks_online-fake:assert_quickbooks_online
+	xero-x:xero-fake:assert_xero
+	zoho-books-b:zoho_books-fake:assert_zoho_books
+	zoho-inventory-i:zoho_inventory-fake:assert_zoho_inventory
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

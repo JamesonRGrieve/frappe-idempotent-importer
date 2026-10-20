@@ -84,6 +84,40 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		{"Authorization": f"Bearer {ENTRA_TOKEN}"},
 	),
 }
+# The sources approved through OAuth 2, by host: their token endpoint, whether it rotates the refresh token,
+# and the headers every API request must carry with the access token it grants.
+OAUTH_ACCESS_TOKEN = "e2e-oauth-access-token"
+OAUTH_ROTATED_REFRESH_TOKEN = "e2e-oauth-rotated-refresh-token"
+OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
+	"quickbooks_online-fake": (
+		"quickbooks_online",
+		"/oauth2/v1/tokens/bearer",
+		True,
+		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
+	),
+	"xero-fake": (
+		"xero",
+		"/connect/token",
+		True,
+		{
+			"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}",
+			"xero-tenant-id": "70784a63-d24b-46a9-a4db-0e70a274b056",
+		},
+	),
+	"zoho_books-fake": (
+		"zoho_books",
+		"/oauth/v2/token",
+		False,
+		{"Authorization": f"Zoho-oauthtoken {OAUTH_ACCESS_TOKEN}"},
+	),
+	"zoho_inventory-fake": (
+		"zoho_inventory",
+		"/oauth/v2/token",
+		False,
+		{"Authorization": f"Zoho-oauthtoken {OAUTH_ACCESS_TOKEN}"},
+	),
+}
+XERO_CONNECTIONS = "/Connections"
 THROTTLE_RETRY_AFTER_SECONDS = "120"
 HTTP_BAD_REQUEST = 400
 HTTP_UNAUTHORIZED = 401
@@ -138,7 +172,18 @@ class FakeStore(BaseHTTPRequestHandler):
 		if host == "etsy-fake" and method == "POST" and self.path == ETSY_TOKEN_PATH:
 			self.send(Answer(200, json.dumps(ETSY_GRANT).encode()))
 			return
-		source, headers = REST_SOURCES.get(host, ("woocommerce", {"Authorization": WOO_AUTHORIZATION}))
+		if host in OAUTH_SOURCES:
+			source, grant_path, rotates, headers = OAUTH_SOURCES[host]
+			if method == "POST" and self.path.split("?", 1)[0] == grant_path:
+				self.send(
+					oauth_grant(rotates, parse_qs(body.decode()).get("grant_type") == ["authorization_code"])
+				)
+				return
+			if self.path.startswith(XERO_CONNECTIONS):
+				# Xero's identity API lists the tenants before one is chosen.
+				headers = {name: value for name, value in headers.items() if name != "xero-tenant-id"}
+		else:
+			source, headers = REST_SOURCES.get(host, ("woocommerce", {"Authorization": WOO_AUTHORIZATION}))
 		if any(self.headers.get(name) != value for name, value in headers.items()):
 			self.send(Answer(HTTP_UNAUTHORIZED, b'{"code":"rest_not_logged_in"}'))
 			return
@@ -177,6 +222,19 @@ def shopify_grant(body: bytes) -> Answer:
 	if parse_qs(body.decode()) != SHOPIFY_CLIENT_GRANT:
 		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_client"}')
 	grant = {"access_token": SHOPIFY_TOKEN, "scope": "read_products", "expires_in": 86399}
+	return Answer(200, json.dumps(grant).encode())
+
+
+def oauth_grant(rotates: bool, exchange: bool) -> Answer:
+	"""An OAuth 2 token response: the access token the API answers to, and a new refresh token for an
+	authorization code's exchange (and every refresh of a source that rotates it)."""
+	grant: dict[str, object] = {
+		"access_token": OAUTH_ACCESS_TOKEN,
+		"token_type": "Bearer",
+		"expires_in": 3600,
+	}
+	if rotates or exchange:
+		grant["refresh_token"] = OAUTH_ROTATED_REFRESH_TOKEN
 	return Answer(200, json.dumps(grant).encode())
 
 

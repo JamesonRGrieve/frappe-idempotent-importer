@@ -102,7 +102,7 @@
    "fieldname": "source",
    "fieldtype": "Select",
    "label": "Source",
-   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nPeopleSoft\nAgendrix\nNetSuite\nSAP Business One\nQuickBooks Online\nXero\nSage\nZoho Books\nZoho Inventory\nAcumatica",
+   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nQuickBooks Online\nXero\nZoho Books\nZoho Inventory\nPeopleSoft\nAgendrix\nNetSuite\nSAP Business One\nSage\nAcumatica",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1

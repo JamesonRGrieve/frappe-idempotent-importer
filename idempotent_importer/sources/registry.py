@@ -20,11 +20,15 @@ from idempotent_importer.sources.etsy.adapter import EtsyAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
 from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.odoo.adapter import OdooAdapter
+from idempotent_importer.sources.quickbooks_online.adapter import QuickBooksAdapter
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.squarespace.adapter import SquarespaceAdapter
 from idempotent_importer.sources.wix.adapter import WixAdapter
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
+from idempotent_importer.sources.xero.adapter import XeroAdapter
+from idempotent_importer.sources.zoho_books.adapter import adapter as zoho_books
+from idempotent_importer.sources.zoho_inventory.adapter import adapter as zoho_inventory
 
 
 @dataclass(frozen=True)
@@ -55,11 +59,7 @@ LISTED: tuple[ListedAdapter, ...] = (
 	ListedAdapter("agendrix", "Agendrix"),
 	ListedAdapter("netsuite", "NetSuite"),
 	ListedAdapter("sap_business_one", "SAP Business One"),
-	ListedAdapter("quickbooks_online", "QuickBooks Online"),
-	ListedAdapter("xero", "Xero"),
 	ListedAdapter("sage", "Sage"),
-	ListedAdapter("zoho_books", "Zoho Books"),
-	ListedAdapter("zoho_inventory", "Zoho Inventory"),
 	ListedAdapter("acumatica", "Acumatica"),
 )
 
@@ -81,6 +81,10 @@ def all_adapters() -> dict[str, Adapter]:
 		BusinessCentralAdapter(),
 		DynamicsSalesAdapter(),
 		FinanceOperationsAdapter(),
+		QuickBooksAdapter(),
+		XeroAdapter(),
+		zoho_books(),
+		zoho_inventory(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

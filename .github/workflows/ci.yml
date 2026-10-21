@@ -24,6 +24,7 @@ jobs:
           git clone https://github.com/JamesonRGrieve/frappe-public-site-router ../frappe-public-site-router
         env:
           # The Webshop fork's store-scoped coupon codes (Coupon Code.webshop_store) and the discount limits it
-          # enforces (card 405: per-customer limits, eligibility, shipping discounts), which the importer writes.
-          WEBSHOP_REF: a8344c603c
+          # enforces (card 405: per-customer limits, eligibility, shipping discounts; card 407: rule eligibility
+          # and discount limits), which the importer writes.
+          WEBSHOP_REF: 53156e382c
       - run: tests/e2e/run.sh

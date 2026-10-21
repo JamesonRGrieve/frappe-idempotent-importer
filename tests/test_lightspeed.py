@@ -247,8 +247,21 @@ class TestMappers:
 		assert (towels.string("applies"), towels.strings("items")) == ("items", [f"{GID}/Product/502"])
 		assert mapped(Kind.DISCOUNT, "Discount/1004") is None, "an inactive code"
 		shipping = mapped(Kind.DISCOUNT, "Discount/1003")
-		assert (condition_kinds(shipping), held(shipping)) == (["free_shipping"], ["card 405"])
+		assert (condition_kinds(shipping), held(shipping)) == (["free_shipping"], []), "the fork enforces it"
+		off = mapped(Kind.DISCOUNT, "Discount/1005")
+		assert (terms(off, "shipping_discount"), held(off)) == (
+			{"discount": "percentage", "value": Decimal(10)},
+			[],
+		)
 		assert held(mapped(Kind.DISCOUNT, "Discount/1001")) == []
+
+	def test_an_amount_also_off_the_shipment_stays_held(self) -> None:
+		# Lightspeed doesn't document how a price discount applies to the shipment as well as the order.
+		node = nodes(Kind.DISCOUNT)["Discount/1005"].with_fields(type="price")
+		desired = mapper_of(Kind.DISCOUNT).map(node)
+		assert desired is not None
+		assert terms(desired, "shipping_discount")["source"] == {"shipment": "discount", "type": "price"}
+		assert held(desired) == ["card 405"]
 
 	def test_discount_rules(self) -> None:
 		source, _ = reader()

@@ -338,7 +338,7 @@ class DiscountMapper:
 	to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -380,7 +380,12 @@ class DiscountMapper:
 			case "free":
 				later.append(Condition("free_shipping"))
 			case "discount":
-				later.append(Condition("shipping_discount", {"discount": kind, "value": value}))
+				off: Fields = {"discount": kind, "value": value}
+				if kind != "percentage":
+					# Lightspeed doesn't document how an amount applies to the shipment as well as the order:
+					# kept as it sent it, so it stays held.
+					off["source"] = {"shipment": "discount", "type": discount_type}
+				later.append(Condition("shipping_discount", off))
 		if node.get("allowCombination") is False:
 			later.append(Condition("combination", {"exclusive": True}))
 		taken: Fields = {

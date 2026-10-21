@@ -282,8 +282,8 @@ class TestMappers:
 		)
 		assert mapped(Kind.DISCOUNT, COUPON.format(5)) is None, "a deactivated coupon"
 		for number, kinds, cards in (
-			(1, ["per_customer_limit"], ["card 405"]),
-			(2, ["free_shipping"], ["card 405"]),
+			(1, ["per_customer_limit"], []),  # the Webshop fork enforces these (card 405)
+			(2, ["free_shipping"], []),
 			(3, ["spread_amount"], ["card 407"]),
 		):
 			desired = mapped(Kind.DISCOUNT, COUPON.format(number))

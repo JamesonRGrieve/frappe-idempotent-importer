@@ -234,13 +234,19 @@ class TestMappers:
 		assert held(mapped(Kind.DISCOUNT, FIVE_OFF)) == []
 
 	@pytest.mark.parametrize(
-		("key", "kinds"),
-		[(WELCOME, ["once_per_customer"]), (SHIP_FREE, ["free_shipping"]), (AUTO, [])],
+		("key", "kinds", "cards"),
+		[
+			# a code's once-per-customer limit: the Webshop fork enforces it (card 405)
+			(WELCOME, ["once_per_customer"], []),
+			# free shipping on one of the source's fulfilment options: none is mirrored as a Shipping Rule, held
+			(SHIP_FREE, ["free_shipping"], ["card 405"]),
+			(AUTO, [], []),
+		],
 	)
-	def test_what_pricing_cant_enforce_is_held(self, key: str, kinds: list[str]) -> None:
+	def test_what_pricing_cant_enforce_is_held(self, key: str, kinds: list[str], cards: list[str]) -> None:
 		desired = mapped(Kind.DISCOUNT, key)
 		assert condition_kinds(desired) == kinds
-		assert held(desired) == (["card 405"] if kinds else [])
+		assert held(desired) == cards
 
 	def test_automatic_and_buy_x_get_y_discounts(self) -> None:
 		auto = values(Kind.DISCOUNT, AUTO)

@@ -87,6 +87,7 @@ from idempotent_importer.core.sync import Handler, ObjectSync, Outcome, Target
 from idempotent_importer.erpnext.context import ConnectionContext, system_datetime
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
+from idempotent_importer.erpnext.writers import discounts as discounts_writer
 from idempotent_importer.erpnext.writers import stored_value
 from idempotent_importer.erpnext.writers.base import Writer
 from idempotent_importer.erpnext.writers.books import (
@@ -712,8 +713,9 @@ class TestWriters(IntegrationTestCase):
 	def test_a_discount_with_unenforced_conditions_is_held(self) -> None:
 		key = gid("Coupon", "10")
 		limit = Condition("per_customer_limit", {"uses": 1})
-		fields = self.held_discount(["WTHELD"], limit)
-		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.CREATED)
+		with patch.object(contract, "ENFORCED", {}):  # before the fork enforced per-customer limits
+			fields = self.held_discount(["WTHELD"], limit)
+			self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.CREATED)
 		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
 		self.assertEqual(
 			(rule.disable, rule.importer_hold, json.loads(rule.importer_conditions)),
@@ -730,9 +732,9 @@ class TestWriters(IntegrationTestCase):
 		)
 		with self.assertRaisesRegex(frappe.ValidationError, "expired"):
 			validate_coupon_code(coupon.name)
-		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.SKIPPED)
-		with patch.object(contract, "ENFORCED", frozenset({"per_customer_limit"})):
-			released = self.held_discount(["WTHELD"], limit)
+		with patch.object(contract, "ENFORCED", {}):
+			self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, fields), Outcome.SKIPPED)
+		released = self.held_discount(["WTHELD"], limit)
 		self.assertNotIn("held", released)
 		self.assertEqual(
 			self.mirror(Kind.DISCOUNT, DiscountWriter, key, released),
@@ -743,8 +745,124 @@ class TestWriters(IntegrationTestCase):
 		coupon.reload()
 		self.assertEqual((rule.disable, rule.importer_hold), (0, None))
 		self.assertEqual((coupon.valid_upto, str(coupon.valid_from)), (None, "2026-01-01"))
-		self.assertIn("per_customer_limit", coupon.importer_conditions, "still recorded for the fork")
+		self.assertIn("per_customer_limit", coupon.importer_conditions, "still recorded")
+		self.assertEqual(
+			(rule.maximum_use_per_customer, coupon.maximum_use_per_customer),
+			(1, 0),
+			"the fork counts the discount's limit over all its codes, on the rule",
+		)
 		validate_coupon_code(coupon.name)
+
+	def test_the_forks_coupon_limits_are_written(self) -> None:
+		for number in ("1", "2"):
+			self.mirror(
+				Kind.CUSTOMER, CustomerWriter, gid("Customer", number), self.customer(f"Avery Writer{number}")
+			)
+		customers = [gid("Customer", "1"), gid("Customer", "2")]
+		limited = self.held_discount(
+			["WTLIMITS"],
+			Condition("once_per_customer"),
+			Condition("emails", {"emails": ["*@example.test"]}),
+			Condition("several_customers", {"customers": list[Field](customers)}),
+			code_limits={"WTLIMITS": Code(conditions=[Condition("per_customer_limit", {"uses": 3})])},
+		)
+		self.assertNotIn("held", limited, "the Webshop fork enforces all of it (card 405)")
+		key = gid("Coupon", "13")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, limited), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(rule.disable, rule.maximum_use_per_customer), (0, 1), "once per customer, over every code"
+		)
+		coupon = frappe.get_doc("Coupon Code", self.target(Kind.COUPON, f"{key}#WTLIMITS"))
+		self.assertEqual(
+			(
+				coupon.maximum_use_per_customer,
+				coupon.eligible_emails,
+				[row.customer for row in coupon.eligible_customers],
+			),
+			(3, "*@example.test", [self.target(Kind.CUSTOMER, c) for c in customers]),
+		)
+		validate_coupon_code(coupon.name)
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, key, self.held_discount(["WTLIMITS"])),
+			Outcome.UPDATED,
+		)
+		rule.reload()
+		coupon.reload()
+		self.assertEqual(
+			(
+				rule.maximum_use_per_customer,
+				coupon.maximum_use_per_customer,
+				coupon.eligible_emails,
+				coupon.eligible_customers,
+			),
+			(0, 0, None, []),
+			"limits the source drops are cleared",
+		)
+
+	def test_the_forks_shipping_discount_is_written(self) -> None:
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		key = gid("Discount", "14")
+		free = Condition(
+			"free_shipping",
+			{"max_shipping_price": Decimal("15"), "countries": ["CA"], "items": [gid("Product", "1")]},
+		)
+		shipping = self.held_discount([], free, automatic=True, max_uses=None, value=Decimal(0))
+		self.assertNotIn("held", shipping)
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, shipping), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(
+				rule.disable,
+				rule.shipping_discount,
+				rule.max_shipping_charge,
+				[zone.country for zone in rule.shipping_discount_zones],
+				[row.item_code for row in rule.shipping_discount_items],
+			),
+			(0, "Free Shipping", 15, ["Canada"], [self.target(Kind.PRODUCT, gid("Product", "1"))]),
+		)
+		off = Condition(
+			"shipping_discount", {"discount": "percentage", "value": Decimal(50), "cap": Decimal(8)}
+		)
+		changed = self.held_discount([], off, automatic=True, max_uses=None, value=Decimal(0))
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, changed), Outcome.UPDATED)
+		rule.reload()
+		self.assertEqual(
+			(
+				rule.shipping_discount,
+				rule.shipping_discount_value,
+				rule.shipping_discount_cap,
+				rule.max_shipping_charge,
+				rule.shipping_discount_zones,
+				rule.shipping_discount_items,
+			),
+			("Percentage", 50, 8, 0, [], []),
+		)
+		methods = Condition("free_shipping", {"methods": ["2"]})
+		on_methods = self.held_discount([], methods, automatic=True, max_uses=None, value=Decimal(0))
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, on_methods), Outcome.UPDATED)
+		rule.reload()
+		self.assertEqual(
+			(rule.disable, rule.importer_hold, rule.shipping_discount),
+			(1, "held: awaiting enforcement (card 405)", ""),
+			"the source's shipping methods aren't Shipping Rules: held, and nothing given",
+		)
+
+	def test_a_discount_the_fork_cant_enforce_here_waits(self) -> None:
+		limited = self.held_discount(["WTWAITS"], Condition("once_per_customer"))
+		with patch.dict(discounts_writer.FORK_FIELDS, {"Pricing Rule": "no_such_field"}):
+			self.assertEqual(
+				self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Coupon", "15"), limited),
+				Outcome.DEFERRED,
+				"a Webshop fork without the limits: written without them, the code would be usable more widely",
+			)
+			self.assertEqual(
+				self.mirror(
+					Kind.DISCOUNT, DiscountWriter, gid("Coupon", "16"), self.held_discount(["WTPLAIN"])
+				),
+				Outcome.CREATED,
+				"nothing for the fork to enforce: written as before",
+			)
 
 	def test_a_held_scheme_and_a_code_held_alone(self) -> None:
 		tiered = self.held_discount(
@@ -768,14 +886,14 @@ class TestWriters(IntegrationTestCase):
 		self.assertTrue(rules and all(rules), "every rule of a held scheme is disabled")
 		code_held = self.held_discount(
 			["WTOPEN", "WTOWN"],
-			code_limits={"WTOWN": Code(max_uses=2, conditions=[Condition("once_per_customer")])},
+			code_limits={"WTOWN": Code(max_uses=2, conditions=[Condition("cap", {"amount": Decimal(10)})])},
 		)
 		key = gid("Coupon", "12")
 		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, code_held), Outcome.CREATED)
 		self.assertEqual(frappe.db.get_value("Pricing Rule", self.target(Kind.DISCOUNT, key), "disable"), 0)
 		validate_coupon_code(self.target(Kind.COUPON, f"{key}#WTOPEN"))
 		own = frappe.get_doc("Coupon Code", self.target(Kind.COUPON, f"{key}#WTOWN"))
-		self.assertEqual((own.maximum_use, own.importer_hold), (2, "held: awaiting enforcement (card 405)"))
+		self.assertEqual((own.maximum_use, own.importer_hold), (2, "held: awaiting enforcement (card 407)"))
 		with self.assertRaisesRegex(frappe.ValidationError, "expired"):
 			validate_coupon_code(own.name)
 

@@ -272,11 +272,15 @@ class TestMappers:
 
 	def test_what_pricing_cant_enforce_is_recorded_and_held(self) -> None:
 		welcome = mapped(Kind.DISCOUNT, "Coupon/61")
-		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], ["card 405"])
+		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], []), (
+			"the fork enforces it"
+		)
 		assert terms(welcome, "per_customer_limit") == {"uses": 1}
-		assert condition_kinds(mapped(Kind.DISCOUNT, "Coupon/62")) == ["free_shipping"]
+		free = mapped(Kind.DISCOUNT, "Coupon/62")
+		assert (condition_kinds(free), held(free)) == (["free_shipping"], [])
 		half = mapped(Kind.DISCOUNT, "Coupon/64")
 		assert terms(half, "shipping_discount") == {"discount": "amount", "value": Decimal(50)}
+		assert held(half) == [], "an amount off shipping alone: the fork enforces it"
 		assert mapped(Kind.DISCOUNT, "Coupon/63") is None, "a disabled coupon"
 		automatic = values(Kind.DISCOUNT, "Promotion/72")
 		assert (
@@ -319,7 +323,6 @@ class TestMappers:
 		assert limits.required_record("BC-GIFT-B").all() == {
 			"valid_from": "2026-10-01",
 			"conditions": [{"kind": "per_customer_limit", "card": "card 405", "terms": {"uses": 1}}],
-			"held": ["card 405"],
 		}
 
 	def test_customer_group_discounts_and_bulk_pricing(self) -> None:

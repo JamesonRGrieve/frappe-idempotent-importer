@@ -449,7 +449,7 @@ class DiscountMapper:
 	each quantity, a scheme on the product for the group (every group for "ALL GROUPS")."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -593,7 +593,12 @@ class DiscountMapper:
 		if step > 0 and action != "buy_x_get_y":
 			later.append(Condition("item_choice", {"source": {"discount_step": step}}))
 		if rule.get("apply_to_shipping") is True:
-			later.append(Condition("shipping_discount", {"discount": kind, "value": value}))
+			off: Fields = {"discount": kind, "value": value}
+			if kind != "percentage":
+				# A fixed amount is spread over the items and shipping together, not taken off shipping again:
+				# kept as Magento's own action, so it stays held.
+				off["source"] = {"simple_action": action}
+			later.append(Condition("shipping_discount", off))
 		free_shipping = rule.optional_string("simple_free_shipping") or NO_FREE_SHIPPING
 		if free_shipping != NO_FREE_SHIPPING:
 			later.append(

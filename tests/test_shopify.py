@@ -813,7 +813,7 @@ class TestDiscounts:
 		assert desired is not None
 		assert desired.values().all()[field] == wanted
 		assert condition_kinds(desired) == ([condition] if condition else [])
-		assert held(desired) == (["card 405"] if condition else [])
+		assert held(desired) == [], "a code's once-per-customer limit: the Webshop fork enforces it"
 
 	def test_automatic_and_free_shipping_discounts(self) -> None:
 		automatic = self.MAPPER.map(basic_discount(__typename="DiscountAutomaticBasic", codes=None))
@@ -839,8 +839,8 @@ class TestDiscounts:
 			)
 		)
 		assert shipping is not None
-		assert terms(shipping, "free_shipping") == {}
-		assert held(shipping) == ["card 405"]
+		assert terms(shipping, "free_shipping") == {"unread": ["destinationSelection"]}
+		assert held(shipping) == ["card 405"], "the countries it ships free to aren't read: held"
 		with pytest.raises(Unsupported, match="operator decision"):
 			self.MAPPER.map(basic_discount(__typename="DiscountCodeBxgy"))
 

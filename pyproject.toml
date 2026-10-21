@@ -78,7 +78,7 @@ exclude = ["\\.cache/"]
 
 # Frappe, ERPNext and the apps beside them ship no type information and are only installed on a bench.
 [[tool.mypy.overrides]]
-module = ["frappe", "frappe.*", "erpnext", "erpnext.*"]
+module = ["frappe", "frappe.*", "erpnext", "erpnext.*", "webshop", "webshop.*"]
 ignore_missing_imports = true
 
 # The bench side subclasses Frappe's untyped Document and decorates with its untyped whitelist and CLI

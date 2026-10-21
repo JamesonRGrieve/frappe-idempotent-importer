@@ -33,6 +33,8 @@ from idempotent_importer.contract import (
 	Payment,
 	Prospect,
 	ShiftAssignment,
+	ShippingDiscount,
+	Tier,
 	ToDo,
 	TradeDocument,
 	TradeLine,
@@ -44,11 +46,14 @@ from idempotent_importer.contract import (
 	communication_fields,
 	conditions_json,
 	conditions_summary,
+	coupon_limits,
 	date_of,
 	discount_fields,
 	employee_fields,
+	enforced_conditions,
 	event_fields,
 	included_taxes,
+	is_enforced,
 	journal_fields,
 	lead_fields,
 	leave_application_fields,
@@ -66,6 +71,7 @@ from idempotent_importer.contract import (
 	refund_balance,
 	required_date,
 	shift_assignment_fields,
+	shipping_discount,
 	todo_fields,
 	trade_fields,
 	tree_fields,
@@ -223,12 +229,11 @@ def test_conditions_are_recorded_and_hold_their_discount(monkeypatch: pytest.Mon
 		{"kind": "cap", "card": "card 407", "terms": {"amount": Decimal("25.50")}},
 		{"kind": "once_per_customer", "card": "card 405", "terms": {}},
 	]
-	assert fields["held"] == ["card 405", "card 407"]
+	assert fields["held"] == ["card 407"], "the fork enforces once per customer: only the cap holds it"
 	assert fields["code_limits"] == {
 		"B": {
 			"max_uses": 1,
 			"conditions": [{"kind": "per_customer_limit", "card": "card 405", "terms": {"uses": 1}}],
-			"held": ["card 405"],
 		}
 	}
 	recorded = Values(fields).records("conditions")
@@ -237,14 +242,90 @@ def test_conditions_are_recorded_and_hold_their_discount(monkeypatch: pytest.Mon
 		'{"card": "card 405", "kind": "once_per_customer", "terms": {}}]'
 	)
 	assert conditions_json([]) is None
-	assert conditions_summary(recorded) == "cap (card 407), once_per_customer (card 405)"
-	monkeypatch.setattr(contract, "ENFORCED", frozenset({"once_per_customer"}))
-	assert discount_fields(discount)["held"] == ["card 407"], "an enforced condition no longer holds it"
-	assert conditions_summary(recorded) == "cap (card 407)"
-	monkeypatch.setattr(contract, "ENFORCED", frozenset(contract.CONDITIONS))
+	assert conditions_summary(recorded, coded=True, single_rule=True) == "cap (card 407)"
+	assert conditions_summary(recorded, coded=False, single_rule=True) == (
+		"cap (card 407), once_per_customer (card 405)"
+	), "without a code, nothing counts a customer's uses"
+	monkeypatch.setattr(contract, "ENFORCED", {})
+	assert discount_fields(discount)["held"] == ["card 405", "card 407"], "nothing enforced: both hold it"
+	monkeypatch.setattr(
+		contract,
+		"ENFORCED",
+		{kind: contract.Enforcement(frozenset({"amount"})) for kind in contract.CONDITIONS},
+	)
 	assert "held" not in discount_fields(discount), "every condition enforced: the discount is enabled"
 	with pytest.raises(ValueError, match="not a discount condition"):
 		Condition("anything")
+
+
+class TestEnforcement:
+	"""What the Webshop fork enforces (card 405), and what it is given."""
+
+	def test_the_fork_enforces_known_terms_only(self) -> None:
+		assert is_enforced("per_customer_limit", {"uses": 2}, coded=True, single_rule=True)
+		assert not is_enforced("per_customer_limit", {"uses": 2}, coded=False, single_rule=True), "automatic"
+		assert is_enforced("free_shipping", {"max_shipping_price": None}, coded=False, single_rule=True)
+		assert not is_enforced("free_shipping", {}, coded=False, single_rule=False), "a Promotional Scheme"
+		assert not is_enforced("free_shipping", {"unread": ["destinations"]}, coded=True, single_rule=True)
+		assert not is_enforced("free_shipping", {"methods": ["2"]}, coded=True, single_rule=True)
+		assert not is_enforced("shipping_discount", {"discount": "amount", "source": {}}, True, True)
+		assert not is_enforced("cap", {"amount": Decimal(5)}, coded=True, single_rule=True), "card 407"
+		assert contract.CONDITIONS["several_customers"] == contract.COUPON_LIMITS
+
+	def test_held_by_scheme_or_automatic(self) -> None:
+		shipping = Condition("free_shipping")
+		tiered = Discount(
+			[], None, "percentage", "transaction", Decimal(5), [], [], None, None, None, None,
+			automatic=True,
+			tiers=[Tier("percentage", Decimal(5), min_qty=Decimal(2))],
+			conditions=[shipping],
+		)  # fmt: skip
+		assert discount_fields(tiered)["held"] == ["card 405"], "the fork gives shipping discounts on a rule"
+		assert "held" not in discount_fields(replace(tiered, tiers=[])), "on one Pricing Rule it does"
+		once = replace(tiered, tiers=[], conditions=[Condition("once_per_customer")])
+		assert discount_fields(once)["held"] == ["card 405"], "an automatic discount has no uses to count"
+
+	def recorded(self, *conditions: Condition) -> list[Values]:
+		return [Values(c) for c in contract.condition_fields(list(conditions)) if isinstance(c, dict)]
+
+	def test_coupon_limits(self) -> None:
+		conditions = self.recorded(
+			Condition("per_customer_limit", {"uses": 3}),
+			Condition("once_per_customer"),
+			Condition("several_customers", {"customers": ["c1", "c2", "c3"]}),
+			Condition("several_customers", {"customers": ["c3", "c2"]}),
+			Condition("emails", {"emails": ["A@Example.com", "*@example.org"]}),
+			Condition("cap", {"amount": Decimal(5)}),
+		)
+		limits = coupon_limits(conditions)
+		assert (limits.per_customer, limits.customers, limits.emails) == (
+			1,
+			["c2", "c3"],
+			["a@example.com", "*@example.org"],
+		)
+		assert coupon_limits([]) == contract.CouponLimits()
+		enforced = enforced_conditions(conditions, coded=True, single_rule=True)
+		assert [c.string("kind") for c in enforced][-1] == "emails", "the cap isn't the fork's"
+
+	def test_shipping_discounts(self) -> None:
+		free = self.recorded(
+			Condition(
+				"free_shipping",
+				{"max_shipping_price": Decimal(20), "countries": ["ca"], "items": ["p1"], "groups": ["g1"]},
+			)
+		)
+		assert shipping_discount(free) == ShippingDiscount(
+			"free", max_charge=Decimal(20), countries=["CA"], items=["p1"], groups=["g1"]
+		)
+		off = self.recorded(
+			Condition(
+				"shipping_discount", {"discount": "percentage", "value": Decimal(50), "cap": Decimal(8)}
+			)
+		)
+		assert shipping_discount(off) == ShippingDiscount("percentage", Decimal(50), cap=Decimal(8))
+		assert shipping_discount(self.recorded(Condition("once_per_customer"))) is None
+		with pytest.raises(Unsupported, match="two shipping discounts"):
+			shipping_discount(free + off)
 
 
 class TestNaming:

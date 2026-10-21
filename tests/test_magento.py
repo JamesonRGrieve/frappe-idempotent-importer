@@ -280,10 +280,16 @@ class TestMappers:
 		assert mapped(Kind.DISCOUNT, "SalesRule/66") is None, "an inactive rule"
 		assert held(mapped(Kind.DISCOUNT, "SalesRule/62")) == []
 		welcome = mapped(Kind.DISCOUNT, "SalesRule/61")
-		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], ["card 405"])
-		assert values(Kind.DISCOUNT, "SalesRule/61").required_record("code_limits").required_record(
-			"MAG-WELCOME5"
-		).strings("held") == ["card 405"]
+		assert (condition_kinds(welcome), held(welcome)) == (["per_customer_limit"], []), (
+			"the fork enforces it"
+		)
+		assert (
+			values(Kind.DISCOUNT, "SalesRule/61")
+			.required_record("code_limits")
+			.required_record("MAG-WELCOME5")
+			.strings("held")
+			== []
+		)
 		assert terms(mapped(Kind.DISCOUNT, "SalesRule/63"), "free_shipping") == {
 			"source": "for the shipment with matching items"
 		}
@@ -384,7 +390,18 @@ class TestMappers:
 	def test_rule_conditions_are_recorded(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
 		desired = mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(**changes))
 		assert condition_kinds(desired) == kinds
-		assert held(desired)
+		# The Webshop fork enforces a percentage off shipping too, and a code's per-customer limit (card 405).
+		enforced = kinds in (["shipping_discount"], ["per_customer_limit"])
+		assert held(desired) == ([] if enforced else ["card 407"])
+
+	def test_a_fixed_amount_applied_to_shipping_stays_held(self) -> None:
+		# Magento spreads one fixed amount over the items and shipping together: not an amount off shipping too.
+		rule = nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(
+			simple_action="cart_fixed", apply_to_shipping=True
+		)
+		desired = mapper_of(Kind.DISCOUNT).map(rule)
+		assert terms(desired, "shipping_discount")["source"] == {"simple_action": "cart_fixed"}
+		assert held(desired) == ["card 405"]
 
 	def test_rule_edges(self) -> None:
 		fall = nodes(Kind.DISCOUNT)["SalesRule/62"]

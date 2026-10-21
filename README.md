@@ -293,14 +293,23 @@ Each of these is the operator's call.
    the frappe-webshop fork that enforces it, and the source's terms), and the discount is **held**: written
    disabled, marked "held: awaiting enforcement (card N)" (`importer_hold`), its codes not redeemable (a
    Coupon Code has no disabled flag, so a held code is valid until yesterday; the source's dates stay on
-   its rule), with one warning per run that writes it. Coupon limits and shipping discounts are card 405
-   (per-customer, once-per-customer, shared and email limits, exclusions, free shipping, shipping
-   discounts and limits, schedules, combination settings); discount caps and segments card 407 (caps, an
-   amount spread across some items, item limits and choices, other item criteria and conditions, customer
-   segments, groups and history, several customers on a code); what no card covers yet (other sales
-   channels, further rules, a source's own price lists, staff-applied discounts) awaits an operator
-   decision. A code with conditions of its own is held alone. When the fork enforces a condition, it joins
-   `contract.ENFORCED` and the next run enables the discounts it held.
+   its rule), with one warning per run that writes it. A code with conditions of its own is held alone.
+   **The fork enforces** (card 405, `contract.ENFORCED`), so these are written enabled, onto its fields:
+   per-customer and once-per-customer limits of a code's discount (`maximum_use_per_customer` on the
+   Pricing Rule, over all its codes) or of one code (on its Coupon Code); the customers and email addresses
+   a code is for (`eligible_customers`, `eligible_emails`); free shipping and an amount or percentage off
+   shipping on one Pricing Rule (`shipping_discount`, with its cap, maximum shipping charge, countries and
+   products). Held still: per-customer limits and eligibility of an automatic discount (nothing counts its
+   uses), shipping discounts of a Promotional Scheme or limited to a source's own shipping methods or zones
+   (not mirrored as Shipping Rules), a shipping amount the source shares with the items' discount (Magento,
+   Lightspeed), and terms not read from the source (`unread`: Shopify's free-shipping countries,
+   WooCommerce's free-shipping zones); and the rest of card 405 (shared and shipping-method limits,
+   exclusions, schedules, combination settings). Discount caps and segments are card 407 (caps, an amount
+   spread across some items, item limits and choices, other item criteria and conditions, customer
+   segments, groups and history); what no card covers yet (other sales channels, further rules, a source's
+   own price lists, staff-applied discounts) awaits an operator decision. A site whose Webshop fork lacks
+   the fields defers a discount with an enforced condition until it is updated. When the fork enforces
+   another condition, it joins `contract.ENFORCED` and the next run enables the discounts it held.
 7. **Shopify's compare-at price** becomes the Item Price, and Shopify's price an open-ended sale (a
    Pricing Rule), which is how the webshop shows a sale.
 8. **Retiring without deleting:** a Website Route Redirect row has no disabled flag, so a retired redirect's
@@ -386,7 +395,7 @@ Still to do:
    (Square's return orders). Until built, each source's coverage page lists them as planned.
 5. **Discount conditions held for enforcement:** every source's discounts are mirrored; what ERPNext's
    pricing can't enforce is recorded and holds the discount until the Webshop fork enforces it (cards 405 and
-   407, decision 6). Conditions no card covers yet (other sales channels, further rules, a source's price
+   407, decision 6; card 405's coupon limits, eligibility and shipping discounts are enforced). Conditions no card covers yet (other sales channels, further rules, a source's price
    lists, staff-applied discounts) and Magento's catalog price rules (no REST API) are operator decisions.
 6. **Operator decision:** Shopify's Buy X Get Y and app discounts, per-location stock and bundles need new
    Admin query fields whose cost must be recorded from a live store (wp-woo-idempotent-importer's

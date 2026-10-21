@@ -390,8 +390,10 @@ OPERATOR_DECISION = "an operator decision"
 #   excluded_groups        {groups}                   never these collections (identities)
 #   excluded_sale_items    {}                         never items on sale
 #   groups_beside_items    {groups}                   these collections qualify beside the rule's products
-#   free_shipping          {max_shipping_price?, methods?, zones?, countries?}  free shipping
-#   shipping_discount      {discount, value, cap?, methods?}  a percentage or amount off shipping
+#   free_shipping          {max_shipping_price?, methods?, zones?, countries?, items?, groups?, variants?}
+#                                                     free shipping (only these products' share of it)
+#   shipping_discount      {discount, value, cap?, methods?, source?, items?, groups?, variants?}  a percentage
+#                                                     or amount off shipping (only these products' share)
 #   shipping_limits        {methods?, countries?, source?}  only these shipping methods or destinations
 #   schedule               {source}                   only on the source's days and times
 #   combination            {exclusive?, stop?, source?}  how it combines with other discounts
@@ -412,6 +414,8 @@ OPERATOR_DECISION = "an operator decision"
 #   channels               {channels}                 only the source's other sales channels
 #   price_list             {source}                   the source's own price list
 #   applied_by_staff       {}                         applied by staff at the point of sale, never by itself
+# Any condition may carry ``unread`` ([what]): terms of it the importer doesn't read from the source (yet), so
+# whatever the fork enforces, it stays held.
 CONDITIONS: dict[str, str] = {
 	"once_per_customer": COUPON_LIMITS,
 	"per_customer_limit": COUPON_LIMITS,
@@ -426,9 +430,9 @@ CONDITIONS: dict[str, str] = {
 	"shipping_limits": COUPON_LIMITS,
 	"schedule": COUPON_LIMITS,
 	"combination": COUPON_LIMITS,
+	"several_customers": COUPON_LIMITS,
 	"customer_segments": DISCOUNT_CAPS,
 	"excluded_customer_groups": DISCOUNT_CAPS,
-	"several_customers": DISCOUNT_CAPS,
 	"several_customer_groups": DISCOUNT_CAPS,
 	"customer_history": DISCOUNT_CAPS,
 	"cap": DISCOUNT_CAPS,
@@ -443,10 +447,55 @@ CONDITIONS: dict[str, str] = {
 	"price_list": OPERATOR_DECISION,
 	"applied_by_staff": OPERATOR_DECISION,
 }
-# The conditions the Webshop fork enforces. A discount with any other condition is held: written disabled,
-# its codes not redeemable. When the fork enforces a condition, add it here; the next run enables the
-# discounts it held.
-ENFORCED: frozenset[str] = frozenset()
+
+
+@dataclass(frozen=True)
+class Enforcement:
+	"""How the Webshop fork enforces a kind of condition: the terms it reads (a condition with any other term,
+	such as the source's own description or ``unread``, stays held), and whether it does so only for a coupon
+	code's discount (``coded``) or only on a single Pricing Rule, not a Promotional Scheme (``single_rule``)."""
+
+	terms: frozenset[str] = frozenset()
+	coded: bool = False
+	single_rule: bool = False
+
+
+SHIPPING_ITEMS = frozenset({"items", "groups", "variants"})
+# The conditions the Webshop fork enforces (card 405: Coupon Code and Pricing Rule fields the writer fills, see
+# ``erpnext.writers.discounts``). A discount with any other condition is held: written disabled, its codes not
+# redeemable. When the fork enforces another, add it here; the next run enables the discounts it held. Not yet:
+# a shipping discount limited to the source's shipping methods or zones (the fork limits one to Shipping Rules
+# and countries, but the sources' methods and zones aren't mirrored as those).
+ENFORCED: dict[str, Enforcement] = {
+	"once_per_customer": Enforcement(coded=True),
+	"per_customer_limit": Enforcement(frozenset({"uses"}), coded=True),
+	"emails": Enforcement(frozenset({"emails"}), coded=True),
+	"several_customers": Enforcement(frozenset({"customers"}), coded=True),
+	"free_shipping": Enforcement(
+		frozenset({"max_shipping_price", "countries"}) | SHIPPING_ITEMS, single_rule=True
+	),
+	"shipping_discount": Enforcement(
+		frozenset({"discount", "value", "cap"}) | SHIPPING_ITEMS, single_rule=True
+	),
+}
+
+
+def is_enforced(kind: str, terms: Fields, coded: bool, single_rule: bool) -> bool:
+	"""Whether the fork enforces a condition of ``kind`` with ``terms`` (those set) on a discount with codes
+	(``coded``) written as one Pricing Rule (``single_rule``)."""
+	how = ENFORCED.get(kind)
+	return (
+		how is not None
+		and {key for key, value in terms.items() if value is not None} <= how.terms
+		and (coded or not how.coded)
+		and (single_rule or not how.single_rule)
+	)
+
+
+def is_scheme(tiers: int, customers: int, customer_groups: int) -> bool:
+	"""Whether ERPNext holds a discount as a Promotional Scheme (one Pricing Rule per tier and customer): it has
+	tiers, or is for several customers or customer groups."""
+	return bool(tiers) or customers > 1 or customer_groups > 1
 
 
 def source_terms(value: JsonValue) -> Field:
@@ -485,10 +534,21 @@ def condition_fields(conditions: list[Condition]) -> list[Field]:
 	]
 
 
-def held_for(conditions: list[Condition]) -> list[str]:
+def held_for(conditions: list[Condition], coded: bool, single_rule: bool) -> list[str]:
 	"""The cards a discount (or code) with these conditions is held for: those of the conditions the fork
-	doesn't enforce yet."""
-	return sorted({c.card for c in conditions if c.kind not in ENFORCED})
+	doesn't enforce (yet) on such a discount (``is_enforced``)."""
+	return sorted({c.card for c in conditions if not is_enforced(c.kind, c.terms, coded, single_rule)})
+
+
+def enforced_conditions(conditions: list[Values], coded: bool, single_rule: bool) -> list[Values]:
+	"""Of recorded conditions, those the fork enforces on such a discount: what the writer gives it."""
+	return [
+		c for c in conditions if is_enforced(c.string("kind"), recorded_terms(c).all(), coded, single_rule)
+	]
+
+
+def recorded_terms(condition: Values) -> Values:
+	return condition.record("terms") or Values({})
 
 
 def hold_label(cards: list[str]) -> str:
@@ -503,11 +563,10 @@ def conditions_json(conditions: list[Values]) -> str | None:
 	return json.dumps([c.all() for c in conditions], default=decimal_text, sort_keys=True)
 
 
-def conditions_summary(conditions: list[Values]) -> str:
+def conditions_summary(conditions: list[Values], coded: bool, single_rule: bool) -> str:
 	"""The conditions a held discount awaits, for its warning: "once_per_customer (card 405), cap (card 407)"."""
-	return ", ".join(
-		f"{c.string('kind')} ({c.string('card')})" for c in conditions if c.string("kind") not in ENFORCED
-	)
+	enforced = enforced_conditions(conditions, coded, single_rule)
+	return ", ".join(f"{c.string('kind')} ({c.string('card')})" for c in conditions if c not in enforced)
 
 
 @dataclass(frozen=True)
@@ -527,7 +586,7 @@ def code_fields(code: Code) -> Fields:
 		"valid_from": code.valid_from,
 		"valid_upto": code.valid_upto,
 		"conditions": condition_fields(code.conditions) or None,
-		"held": list[Field](held_for(code.conditions)) or None,
+		"held": list[Field](held_for(code.conditions, coded=True, single_rule=True)) or None,
 	}
 	return {key: value for key, value in fields.items() if value is not None}
 
@@ -601,7 +660,8 @@ def discount_fields(discount: Discount) -> Fields:
 		"other": {"applies": discount.other[0], "target": discount.other[1]} if discount.other else None,
 		"tiers": [tier_fields(tier) for tier in discount.tiers] or None,
 		"conditions": condition_fields(discount.conditions) or None,
-		"held": list[Field](held_for(discount.conditions)) or None,
+		"held": list[Field](held_for(discount.conditions, bool(discount.codes), single_rule(discount)))
+		or None,
 		"code_limits": {
 			code: own for code, limits in discount.code_limits.items() if (own := code_fields(limits))
 		}
@@ -609,6 +669,92 @@ def discount_fields(discount: Discount) -> Fields:
 		"currency": discount.currency,
 	}
 	return fields | {key: value for key, value in extra.items() if value is not None}
+
+
+def single_rule(discount: Discount) -> bool:
+	"""Whether ERPNext holds the discount as one Pricing Rule, not a Promotional Scheme."""
+	return not is_scheme(len(discount.tiers), len(discount.customers), len(discount.customer_groups))
+
+
+@dataclass(frozen=True)
+class CouponLimits:
+	"""What the fork enforces of a code's conditions (its discount's and its own): uses per customer, and the
+	customers (identities) and email addresses (or ``*`` patterns) it is only for."""
+
+	per_customer: int | None = None
+	customers: list[str] = field(default_factory=list)
+	emails: list[str] = field(default_factory=list)
+
+
+def coupon_limits(conditions: list[Values]) -> CouponLimits:
+	"""The limits of enforced conditions: the fewest uses per customer (once per customer: 1); the customers and
+	the emails of each list limiting them (with two lists of a kind, only what both hold)."""
+	uses: list[int] = []
+	customers: list[list[str]] = []
+	emails: list[list[str]] = []
+	for condition in conditions:
+		terms = recorded_terms(condition)
+		match condition.string("kind"):
+			case "once_per_customer":
+				uses.append(1)
+			case "per_customer_limit":
+				uses.append(terms.integer("uses"))
+			case "several_customers":
+				customers.append(terms.strings("customers"))
+			case "emails":
+				emails.append([email.lower() for email in terms.strings("emails")])
+	return CouponLimits(min(uses, default=None), common(customers), common(emails))
+
+
+def common(lists: list[list[str]]) -> list[str]:
+	"""The entries every list holds, in the first list's order; none without lists."""
+	if not lists:
+		return []
+	return [entry for entry in dict.fromkeys(lists[0]) if all(entry in other for other in lists[1:])]
+
+
+FREE, PERCENTAGE, AMOUNT = "free", "percentage", "amount"
+
+
+@dataclass(frozen=True)
+class ShippingDiscount:
+	"""A discount off a document's shipping charge, as the fork gives it: free (``FREE``), a percentage or an
+	amount off; at most ``cap``; only on a charge of at most ``max_charge``; to ``countries`` (ISO codes); only
+	the share of these products, variants and collections (identities)."""
+
+	discount: str
+	value: Decimal = Decimal(0)
+	cap: Decimal | None = None
+	max_charge: Decimal | None = None
+	countries: list[str] = field(default_factory=list)
+	items: list[str] = field(default_factory=list)
+	variants: list[str] = field(default_factory=list)
+	groups: list[str] = field(default_factory=list)
+
+
+def shipping_discount(conditions: list[Values]) -> ShippingDiscount | None:
+	"""The shipping discount of enforced conditions (free shipping, or a shipping discount), if any. The fork gives
+	one per discount: a discount with two is Unsupported."""
+	found = [c for c in conditions if c.string("kind") in ("free_shipping", "shipping_discount")]
+	if not found:
+		return None
+	if len(found) > 1:
+		raise Unsupported("a discount giving two shipping discounts: the Webshop fork gives one per rule")
+	condition = found[0]
+	terms = recorded_terms(condition)
+	free = condition.string("kind") == "free_shipping"
+	return ShippingDiscount(
+		discount=FREE
+		if free
+		else one_of(terms.string("discount"), frozenset({PERCENTAGE, AMOUNT}), "discount"),
+		value=Decimal(0) if free else terms.decimal("value"),
+		cap=terms.optional_decimal("cap"),
+		max_charge=terms.optional_decimal("max_shipping_price"),
+		countries=[code.upper() for code in terms.strings("countries")],
+		items=terms.strings("items"),
+		variants=terms.strings("variants"),
+		groups=terms.strings("groups"),
+	)
 
 
 def free_fields(free: FreeItem) -> Fields:

@@ -18,6 +18,7 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
+from idempotent_importer.sources.woocommerce.mapping import UNREAD_FREE_SHIPPING_ZONES
 from idempotent_importer.sources.woocommerce.reader import WooCommerceReader
 from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, woocommerce
@@ -298,12 +299,18 @@ class TestCoupons:
 		assert (hoodie.string("discount"), hoodie.string("applies")) == ("amount", "items")
 		assert hoodie.strings("items") == ["gid://woocommerce/woo-a/Product/102"]
 
-	def test_limits_the_webshop_enforces_are_recorded_and_held(self, woo_config: ConnectionConfig) -> None:
+	def test_limits_the_webshop_enforces_are_recorded_not_held(self, woo_config: ConnectionConfig) -> None:
 		desired = mapped(woo_config, Kind.DISCOUNT, "304")
 		assert desired is not None
 		assert condition_kinds(desired) == ["emails"]
-		assert held(desired) == ["card 405"]
+		assert held(desired) == [], "the Webshop fork enforces email limits (card 405)"
 		assert desired.values().strings("codes")
+
+	def test_free_shipping_stays_held(self, woo_config: ConnectionConfig) -> None:
+		mapper = {m.kind: m for m in ADAPTER.mappers(woo_config)}[Kind.DISCOUNT]
+		free = mapper.map(nodes(woo_config, Kind.DISCOUNT)["301"].with_fields(free_shipping=True))
+		assert terms(free, "free_shipping") == {"unread": [UNREAD_FREE_SHIPPING_ZONES]}
+		assert held(free) == ["card 405"], "where the coupon ships free (the store's zones) isn't read"
 
 	def test_an_unlimited_coupon_is_not_held(self, woo_config: ConnectionConfig) -> None:
 		welcome = mapped(woo_config, Kind.DISCOUNT, "301")

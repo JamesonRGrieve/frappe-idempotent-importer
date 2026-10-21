@@ -27,6 +27,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
+from webshop.webshop.discounts.coupon_limits import CouponLimitReachedError
 
 from idempotent_importer import api
 from idempotent_importer.core.oauth import CALLBACK_PATH
@@ -965,6 +966,64 @@ def assert_discount(
 		)
 
 
+def assert_fork_limits(
+	connection: str,
+	type_: str,
+	source_id: str,
+	rule: dict[str, Any],
+	codes: dict[str, dict[str, Any]],
+	what: str,
+) -> None:
+	"""The Webshop fork's fields (card 405) on a mirrored discount's Pricing Rule (``rule``) and on its Coupon
+	Codes (``codes``, by code)."""
+	name = target(connection, "discount", type_, source_id)
+	expect(frappe.db.get_value("Pricing Rule", name, list(rule), as_dict=True), rule, f"{what}: its rule")
+	for code, wanted in codes.items():
+		coupon = frappe.get_doc("Coupon Code", target(connection, "coupon", type_, f"{source_id}#{code}"))
+		got = {
+			field: [row.customer for row in coupon.eligible_customers]
+			if field == "eligible_customers"
+			else coupon.get(field)
+			for field in wanted
+		}
+		expect(got, wanted, f"{what}: code {code}")
+
+
+def assert_one_use_per_customer(connection: str, coupon: str, customer: str, item: str, what: str) -> None:
+	"""The Webshop fork lets ``customer`` use ``coupon`` (a Coupon Code) once: a second order with it is refused.
+	Rolled back, so the store's records stay as the importer wrote them."""
+	company = business_of(connection).company
+	warehouse = frappe.get_all(
+		"Warehouse", filters={"company": company, "is_group": 0}, pluck="name", limit=1
+	)
+
+	def order() -> Any:
+		return frappe.get_doc(
+			{
+				"doctype": "Sales Order",
+				"company": company,
+				"customer": customer,
+				"currency": CURRENCY,
+				"delivery_date": frappe.utils.add_days(frappe.utils.nowdate(), 7),
+				"coupon_code": coupon,
+				"items": [{"item_code": item, "qty": 1, "rate": 100, "warehouse": warehouse[0]}],
+			}
+		)
+
+	frappe.db.savepoint("fork_limit")
+	try:
+		order().insert(ignore_permissions=True).submit()
+		try:
+			order().insert(ignore_permissions=True)
+			refused = False
+		except CouponLimitReachedError:
+			refused = True
+		expect(refused, True, f"{what}: a second order with the code")
+	finally:
+		frappe.db.rollback(save_point="fork_limit")
+	print(f"{what}: one use per customer, enforced")
+
+
 @check
 def assert_woocommerce(connection: str, state: str) -> None:
 	"""The WooCommerce fixtures' state ``state`` as it should land in ERPNext."""
@@ -1154,7 +1213,20 @@ def assert_woocommerce(connection: str, state: str) -> None:
 		"the deleted coupon's rule",
 	)
 	assert_discount(
-		connection, "Coupon", "304", "card 405", ["emails"], "the email-restricted coupon, held for card 405"
+		connection,
+		"Coupon",
+		"304",
+		None,
+		["emails"],
+		"the email-restricted coupon, enabled: the fork enforces it",
+	)
+	assert_fork_limits(
+		connection,
+		"Coupon",
+		"304",
+		{"maximum_use_per_customer": 0, "shipping_discount": ""},
+		{"staffonly": {"eligible_emails": "*@atelier-north.test", "maximum_use_per_customer": 0}},
+		"the email-restricted coupon",
 	)
 	assert_discount(connection, "Coupon", "301", None, [], "the unlimited coupon, enabled")
 	expect(
@@ -1987,9 +2059,21 @@ def assert_lightspeed_discounts(connection: str, state: str) -> None:
 	)
 	assert_discount(connection, "Discount", "1001", None, [], "the amount-off code, enabled")
 	assert_discount(connection, "Discount", "1002", None, [], "the towels code, enabled")
-	assert_discount(connection, "Discount", "1003", "card 405", ["free_shipping"], "the shipping code, held")
+	# The Webshop fork enforces free shipping and a percentage off shipping (card 405).
+	assert_discount(connection, "Discount", "1003", None, ["free_shipping"], "the shipping code, enabled")
+	assert_fork_limits(
+		connection, "Discount", "1003", {"shipping_discount": "Free Shipping"}, {}, "the shipping code"
+	)
 	assert_discount(
-		connection, "Discount", "1005", "card 405", ["shipping_discount"], "the shipping-discount code, held"
+		connection, "Discount", "1005", None, ["shipping_discount"], "the shipping-discount code, enabled"
+	)
+	assert_fork_limits(
+		connection,
+		"Discount",
+		"1005",
+		{"shipping_discount": "Percentage", "shipping_discount_value": 10},
+		{},
+		"the shipping-discount code",
 	)
 	assert_discount(connection, "DiscountRule", "2001", None, [], "the kitchen rule, automatic and enabled")
 	kitchen = target(connection, "discount", "DiscountRule", "2001")
@@ -2014,16 +2098,33 @@ def assert_ecwid_discounts(connection: str, state: str) -> None:
 		"four active coupons and two products' wholesale prices (not the paused coupon)",
 	)
 	assert_discount(connection, "DiscountCoupon", "9501", None, [], "the amount-off coupon, enabled")
+	# The Webshop fork enforces a code's once-per-customer limit and free shipping (card 405).
 	assert_discount(
 		connection,
 		"DiscountCoupon",
 		"9502",
-		"card 405",
+		None,
 		["once_per_customer"],
-		"the once-per-customer coupon, held",
+		"the once-per-customer coupon, enabled",
+	)
+	assert_fork_limits(
+		connection,
+		"DiscountCoupon",
+		"9502",
+		{"maximum_use_per_customer": 1},
+		{},
+		"the once-per-customer coupon",
 	)
 	assert_discount(
-		connection, "DiscountCoupon", "9503", "card 405", ["free_shipping"], "the shipping coupon, held"
+		connection, "DiscountCoupon", "9503", None, ["free_shipping"], "the shipping coupon, enabled"
+	)
+	assert_fork_limits(
+		connection,
+		"DiscountCoupon",
+		"9503",
+		{"shipping_discount": "Free Shipping"},
+		{},
+		"the shipping coupon",
 	)
 	assert_discount(
 		connection,
@@ -2062,16 +2163,28 @@ def assert_wix_discounts(connection: str, state: str) -> None:
 	)
 	coupon = "c0000000-0000-4000-8000-00000000000{}"
 	assert_discount(connection, "Coupon", coupon.format(4), None, [], "the one-product coupon, enabled")
+	# The Webshop fork enforces a per-customer limit and free shipping (card 405).
 	assert_discount(
 		connection,
 		"Coupon",
 		coupon.format(1),
-		"card 405",
+		None,
 		["per_customer_limit"],
-		"the per-customer coupon, held",
+		"the per-customer coupon, enabled",
+	)
+	assert_fork_limits(
+		connection, "Coupon", coupon.format(1), {"maximum_use_per_customer": 1}, {}, "the per-customer coupon"
 	)
 	assert_discount(
-		connection, "Coupon", coupon.format(2), "card 405", ["free_shipping"], "the shipping coupon, held"
+		connection, "Coupon", coupon.format(2), None, ["free_shipping"], "the shipping coupon, enabled"
+	)
+	assert_fork_limits(
+		connection,
+		"Coupon",
+		coupon.format(2),
+		{"shipping_discount": "Free Shipping"},
+		{},
+		"the shipping coupon",
 	)
 	assert_discount(
 		connection, "Coupon", coupon.format(3), "card 407", ["spread_amount"], "the amount off mugs, held"
@@ -2118,12 +2231,25 @@ def assert_squarespace_discounts(connection: str, state: str) -> None:
 		connection,
 		"Discount",
 		discount.format(1),
-		"card 405",
+		None,
 		["once_per_customer"],
-		"the once-per-customer code, held",
+		"the once-per-customer code, enabled: the fork enforces it",
+	)
+	assert_fork_limits(
+		connection,
+		"Discount",
+		discount.format(1),
+		{"maximum_use_per_customer": 1},
+		{},
+		"the once-per-customer code",
 	)
 	assert_discount(
-		connection, "Discount", discount.format(3), "card 405", ["free_shipping"], "the shipping code, held"
+		connection,
+		"Discount",
+		discount.format(3),
+		"card 405",
+		["free_shipping"],
+		"the shipping code, held: free on one of Squarespace's fulfilment options",
 	)
 	assert_discount(
 		connection,
@@ -2198,10 +2324,17 @@ def assert_magento_discounts(connection: str, state: str) -> None:
 		connection,
 		"SalesRule",
 		"61",
-		"card 405",
+		None,
 		["per_customer_limit"],
-		"the per-customer rule, held",
-		{"MAG-WELCOME5": "card 405"},
+		"the per-customer rule, enabled: the fork enforces it",
+	)
+	assert_fork_limits(
+		connection,
+		"SalesRule",
+		"61",
+		{"maximum_use_per_customer": 1},
+		{"MAG-WELCOME5": {"maximum_use_per_customer": 1}},
+		"the per-customer rule",
 	)
 	assert_discount(
 		connection, "SalesRule", "63", "card 405", ["free_shipping"], "the free-shipping rule, held"
@@ -2240,19 +2373,46 @@ def assert_magento_discounts(connection: str, state: str) -> None:
 
 def assert_bigcommerce_discounts(connection: str, state: str) -> None:
 	"""Every BigCommerce discount: what ERPNext enforces written enabled, the rest recorded and held."""
-	assert_discount(connection, "Coupon", "61", "card 405", ["per_customer_limit"], "coupon 61, held")
-	assert_discount(
-		connection, "Coupon", "62", "card 405", ["free_shipping"], "free-shipping coupon 62, held"
+	# Held until the Webshop fork enforced per-customer limits and shipping discounts (card 405): now enabled,
+	# with the source's limits on the fork's fields, and the fork refuses a customer's second use.
+	assert_discount(connection, "Coupon", "61", None, ["per_customer_limit"], "coupon 61, enabled")
+	assert_fork_limits(
+		connection,
+		"Coupon",
+		"61",
+		{"disable": 0, "maximum_use_per_customer": 1},
+		{"BC-WELCOME": {"maximum_use_per_customer": 0}},
+		"coupon 61 (once per customer, over its code)",
 	)
-	assert_discount(connection, "Coupon", "64", "card 405", ["shipping_discount"], "shipping coupon 64, held")
-	assert_discount(
+	if state == "v1":
+		assert_one_use_per_customer(
+			connection,
+			target(connection, "coupon", "Coupon", "61#BC-WELCOME"),
+			target(connection, "customer", "Customer", "41"),
+			target(connection, "product", "Product", "111"),
+			"coupon 61",
+		)
+	assert_discount(connection, "Coupon", "62", None, ["free_shipping"], "free-shipping coupon 62, enabled")
+	assert_fork_limits(
+		connection, "Coupon", "62", {"shipping_discount": "Free Shipping"}, {}, "free-shipping coupon 62"
+	)
+	assert_discount(connection, "Coupon", "64", None, ["shipping_discount"], "shipping coupon 64, enabled")
+	assert_fork_limits(
+		connection,
+		"Coupon",
+		"64",
+		{"shipping_discount": "Amount", "shipping_discount_value": 50},
+		{},
+		"shipping coupon 64 ($50 off shipping)",
+	)
+	assert_discount(connection, "Promotion", "71", None, [], "promotion 71, enabled, and its code")
+	assert_fork_limits(
 		connection,
 		"Promotion",
 		"71",
-		None,
-		[],
-		"promotion 71, enabled; its code held by its per-customer limit",
-		{"BC-FALL15": "card 405"},
+		{"maximum_use_per_customer": 0},
+		{"BC-FALL15": {"maximum_use_per_customer": 1}},
+		"promotion 71 (its code once per customer)",
 	)
 	assert_discount(connection, "Promotion", "72", None, [], "automatic promotion 72, enabled")
 	assert_discount(connection, "Promotion", "73", "card 407", ["cap", "item_limit"], "promotion 73, held")

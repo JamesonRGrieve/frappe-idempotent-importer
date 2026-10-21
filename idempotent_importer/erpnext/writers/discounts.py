@@ -10,12 +10,18 @@ automatic discount has no codes.
 
 What a source's discount holds that ERPNext's pricing doesn't enforce (``contract.CONDITIONS``) is recorded on
 the record, as JSON in ``importer_conditions`` (each condition's kind, the card that enforces it, and the
-source's terms), for the Webshop fork to read. A discount with any condition the fork doesn't enforce yet is
-held, failing closed: written disabled, marked in ``importer_hold`` ("held: awaiting enforcement (card N)"),
-logged once as a warning, and its codes not redeemable. A Coupon Code has no disabled flag, so a held code
-expires as a dropped code does (valid until yesterday, no start); the source's dates stay on its rule. A
-code with conditions of its own is held alone. Once the fork enforces every condition (``ENFORCED``), the
-discount's change signal changes and the next run enables it.
+source's terms). What the Webshop fork enforces (``contract.ENFORCED``, card 405) is written into the fork's
+fields: on the Pricing Rule, the discount's per-customer limit (counted over all its codes) and its shipping
+discount (free, or a percentage or amount off, its cap and maximum charge, countries and products); on each
+Coupon Code, the code's own per-customer limit and the customers and emails it is only for (its discount's
+and its own). On a site whose Webshop fork doesn't have those fields yet, a discount with an enforced
+condition waits for it (an unresolved dependency).
+
+A discount with any condition the fork doesn't enforce is held, failing closed: written disabled, marked in
+``importer_hold`` ("held: awaiting enforcement (card N)"), logged once as a warning, and its codes not
+redeemable. A Coupon Code has no disabled flag, so a held code expires as a dropped code does (valid until
+yesterday, no start); the source's dates stay on its rule. A code with conditions of its own is held alone.
+Once the fork enforces every condition, the discount's change signal changes and the next run enables it.
 
 Coupon Codes are scoped to the connection's Webshop Store (the Webshop fork makes a code unique per store, and
 a store-less code applies on every store). Two connections on different stores can hold the same code at
@@ -31,7 +37,19 @@ from typing import Any
 import frappe
 from frappe.utils import add_days, nowdate
 
-from idempotent_importer.contract import conditions_json, conditions_summary, hold_label
+from idempotent_importer.contract import (
+	AMOUNT,
+	FREE,
+	PERCENTAGE,
+	ShippingDiscount,
+	conditions_json,
+	conditions_summary,
+	coupon_limits,
+	enforced_conditions,
+	hold_label,
+	is_scheme,
+	shipping_discount,
+)
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import UnresolvedDependency, Unsupported
 from idempotent_importer.core.fields import Values
@@ -39,6 +57,7 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity
 from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+from idempotent_importer.erpnext.writers.parties import country_of
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +73,18 @@ RATE_OR_DISCOUNT = {"percentage": "Discount Percentage", "amount": "Discount Amo
 TITLE_LENGTH = 140
 # A rule's benefit fields a scheme's slab doesn't have (a scheme's slab table says which it is).
 RULE_ONLY = frozenset({"price_or_product_discount", "apply_discount_on"})
+# The Webshop fork's shipping discounts, and a field of its on each record that shows it has them (card 405).
+SHIPPING_DISCOUNTS = {FREE: "Free Shipping", PERCENTAGE: "Percentage", AMOUNT: "Amount"}
+FORK_FIELDS = {PRICING_RULE: "shipping_discount", "Coupon Code": "maximum_use_per_customer"}
+NO_SHIPPING_DISCOUNT: dict[str, Any] = {
+	"shipping_discount": "",
+	"shipping_discount_value": 0,
+	"shipping_discount_cap": 0,
+	"max_shipping_charge": 0,
+	"shipping_discount_rules": [],
+	"shipping_discount_zones": [],
+	"shipping_discount_items": [],
+}
 
 
 class DiscountWriter(Writer):
@@ -97,11 +128,14 @@ class DiscountWriter(Writer):
 			}
 		)
 		if held:
-			conditions = [
-				*values.records("conditions"),
-				*(c for code in codes for c in code_limits(values, code).records("conditions")),
+			awaited = [
+				conditions_summary(values.records("conditions"), bool(codes), not scheme),
+				*(
+					conditions_summary(code_limits(values, code).records("conditions"), True, True)
+					for code in codes
+				),
 			]
-			logger.warning("%s is %s: %s", desired.gid, hold_label(held), conditions_summary(conditions))
+			logger.warning("%s is %s: %s", desired.gid, hold_label(held), ", ".join(a for a in awaited if a))
 		for code in codes:
 			self._coupon(desired.gid, code, doc.name, values)
 		for coupon in self.links.children(Kind.COUPON, f"{desired.gid}#"):
@@ -123,9 +157,74 @@ class DiscountWriter(Writer):
 	@staticmethod
 	def is_scheme(values: Values) -> bool:
 		"""A discount ERPNext holds as a Promotional Scheme (one Pricing Rule per tier and customer)."""
-		return bool(values.records("tiers")) or any(
-			len(values.strings(f)) > 1 for f in ("customers", "customer_groups")
+		return is_scheme(
+			len(values.records("tiers")),
+			len(values.strings("customers")),
+			len(values.strings("customer_groups")),
 		)
+
+	# -- the Webshop fork's limits (card 405) -------------------------------------------------------------
+
+	@staticmethod
+	def fork_enforces(doctype: str, enforced: list[Values]) -> bool:
+		"""Whether the site's Webshop fork has its fields on ``doctype``. Without them, a discount with conditions
+		the fork enforces waits for it: written without them, it would be usable more widely than at the source."""
+		if frappe.get_meta(doctype).has_field(FORK_FIELDS[doctype]):
+			return True
+		if enforced:
+			raise UnresolvedDependency(
+				f"the Webshop fork on this site has no discount limits on {doctype} yet (card 405): update "
+				"frappe-webshop"
+			)
+		return False
+
+	def _rule_limits(self, values: Values, coded: bool) -> dict[str, Any]:
+		"""The fork's fields of a Pricing Rule: the discount's per-customer limit, over all its codes, and its
+		shipping discount."""
+		enforced = enforced_conditions(values.records("conditions"), coded, single_rule=True)
+		if not self.fork_enforces(PRICING_RULE, enforced):
+			return {}
+		per_customer = coupon_limits(enforced).per_customer
+		shipping = shipping_discount(enforced)
+		return {
+			"maximum_use_per_customer": per_customer or 0,
+			**(self._shipping(shipping) if shipping else NO_SHIPPING_DISCOUNT),
+		}
+
+	def _shipping(self, shipping: ShippingDiscount) -> dict[str, Any]:
+		items = [self.dependency(Kind.PRODUCT, gid) for gid in shipping.items]
+		items += [self._variant(None, gid) for gid in shipping.variants]
+		groups = [self.dependency(Kind.COLLECTION, gid) for gid in shipping.groups]
+		return {
+			"shipping_discount": SHIPPING_DISCOUNTS[shipping.discount],
+			"shipping_discount_value": money(shipping.value),
+			"shipping_discount_cap": money(shipping.cap) if shipping.cap else 0,
+			"max_shipping_charge": money(shipping.max_charge) if shipping.max_charge else 0,
+			"shipping_discount_rules": [],
+			"shipping_discount_zones": [{"country": country_of(code)} for code in shipping.countries],
+			"shipping_discount_items": [
+				*({"item_code": item} for item in dict.fromkeys(items)),
+				*({"item_group": group} for group in dict.fromkeys(groups)),
+			],
+		}
+
+	def _coupon_limits(self, values: Values, own: Values) -> dict[str, Any]:
+		"""The fork's fields of a Coupon Code: its own per-customer limit (its discount's is on the rule), and
+		the customers and emails it is only for (its discount's and its own)."""
+		enforced_own = enforced_conditions(own.records("conditions"), coded=True, single_rule=True)
+		enforced = (
+			enforced_conditions(values.records("conditions"), coded=True, single_rule=True) + enforced_own
+		)
+		if not self.fork_enforces("Coupon Code", enforced):
+			return {}
+		limits = coupon_limits(enforced)
+		return {
+			"maximum_use_per_customer": coupon_limits(enforced_own).per_customer or 0,
+			"eligible_customers": [
+				{"customer": self.dependency(Kind.CUSTOMER, gid)} for gid in limits.customers
+			],
+			"eligible_emails": "\n".join(limits.emails) or None,
+		}
 
 	# -- what a rule and a scheme share -----------------------------------------------------------------
 
@@ -212,6 +311,7 @@ class DiscountWriter(Writer):
 			"min_amt": money(values.decimal("min_amount")) if values.has("min_amount") else 0,
 			"max_amt": money(values.decimal("max_amount")) if values.has("max_amount") else 0,
 			**self._benefit(values),
+			**self._rule_limits(values, coupon),
 		}
 
 	def _benefit(self, values: Values) -> dict[str, Any]:
@@ -310,6 +410,7 @@ class DiscountWriter(Writer):
 			"valid_upto": limits.optional_string("valid_upto") or values.optional_string("valid_upto"),
 			"importer_conditions": conditions_json(conditions),
 			"importer_hold": hold_label(held) if held else None,
+			**self._coupon_limits(values, limits),
 		}
 		if held:
 			fields |= {"valid_from": None, "valid_upto": yesterday()}

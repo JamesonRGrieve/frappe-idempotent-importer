@@ -58,6 +58,8 @@ COMMENT_EVENT = "CommentEvent"
 AUTOMATIC = frozenset({"DiscountAutomaticBasic", "DiscountAutomaticFreeShipping"})
 BASIC = frozenset({"DiscountCodeBasic", "DiscountAutomaticBasic"})
 FREE_SHIPPING = frozenset({"DiscountCodeFreeShipping", "DiscountAutomaticFreeShipping"})
+# A free-shipping discount's countries (destinationSelection), not read yet: it stays held.
+UNREAD_DESTINATIONS = "destinationSelection"
 MEDIA_IMAGE = "MediaImage"
 
 
@@ -391,7 +393,7 @@ class DiscountMapper:
 	live store, see coverage/shopify.md)."""
 
 	kind = Kind.DISCOUNT
-	version = 3
+	version = 4
 
 	def map(self, node: Node) -> Desired | None:
 		discount = node.required_child("discount")
@@ -441,9 +443,15 @@ class DiscountMapper:
 		)
 		if typename in FREE_SHIPPING:
 			ceiling = discount.child("maximumShippingPrice")
+			# The countries it ships free to aren't read: the query's cost is recorded from a live store, and
+			# the field would change it. Until they are, the free shipping stays held.
 			later.append(
 				Condition(
-					"free_shipping", {"max_shipping_price": ceiling.decimal("amount") if ceiling else None}
+					"free_shipping",
+					{
+						"max_shipping_price": ceiling.decimal("amount") if ceiling else None,
+						"unread": [UNREAD_DESTINATIONS],
+					},
 				)
 			)
 			return discount_desired(node.id(), base)

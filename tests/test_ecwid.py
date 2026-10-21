@@ -196,8 +196,8 @@ class TestMappers:
 		assert mapped(Kind.DISCOUNT, "DiscountCoupon/9504") is None, "a paused coupon"
 		assert held(mapped(Kind.DISCOUNT, "DiscountCoupon/9501")) == []
 		for key, kinds, cards in (
-			("9502", ["once_per_customer"], ["card 405"]),
-			("9503", ["free_shipping"], ["card 405"]),
+			("9502", ["once_per_customer"], []),  # the Webshop fork enforces these (card 405)
+			("9503", ["free_shipping"], []),
 			("9505", ["customer_history"], ["card 407"]),
 		):
 			desired = mapped(Kind.DISCOUNT, f"DiscountCoupon/{key}")

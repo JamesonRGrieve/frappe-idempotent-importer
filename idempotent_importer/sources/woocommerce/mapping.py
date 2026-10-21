@@ -57,6 +57,8 @@ PAID_STATUSES = frozenset({"processing", "completed", "refunded"})
 # Orders awaiting payment: a draft invoice, submitted once paid.
 UNPAID_STATUSES = frozenset({"pending", "on-hold"})
 WOO_MAX_RATING = 5
+# Where a free-shipping coupon applies: the shipping zones with a Free shipping method requiring a coupon.
+UNREAD_FREE_SHIPPING_ZONES = "shipping zones with a Free shipping method requiring a coupon"
 
 
 @dataclass(frozen=True)
@@ -261,7 +263,7 @@ def woo_address(address_type: str, node: Node | None) -> Address | None:
 
 class CouponMapper:
 	kind = Kind.DISCOUNT
-	version = 3
+	version = 4
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -333,7 +335,9 @@ class CouponMapper:
 		if uses := node.optional_integer("usage_limit_per_user"):
 			found.append(Condition("per_customer_limit", {"uses": uses}))
 		if node.get("free_shipping") is True:
-			found.append(Condition("free_shipping"))
+			# The coupon only unlocks a Free shipping method set up to require one, in the zones that have
+			# it; the store's shipping zones aren't read, so the free shipping stays held.
+			found.append(Condition("free_shipping", {"unread": [UNREAD_FREE_SHIPPING_ZONES]}))
 		if most := node.optional_integer("limit_usage_to_x_items"):
 			found.append(Condition("item_limit", {"qty": Decimal(most)}))
 		return found

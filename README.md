@@ -39,7 +39,8 @@ stores can import into two businesses at once and never touch each other's recor
 | Acumatica | Built | GL accounts, subaccounts, warehouses, item classes, stock and non-stock items, customers and vendors with their contacts, departments and job titles, employees, projects, leads, opportunities, quotations, sales and purchase orders, A/R invoices, memos and cash sales, A/P bills and adjustments, payments and checks, and general ledger batches — [coverage/acumatica.md](coverage/acumatica.md) |
 | Sage Intacct | Built | GL accounts, departments, warehouses, items, customers and vendors with their contact lists, employees and titles, projects, order entry quotes and sales orders, purchase orders, AR invoices, AP bills, AR and AP payments, and general journal transactions; the other Sage products are planned — [coverage/sage_intacct.md](coverage/sage_intacct.md) |
 | Agendrix | Built | Sites, positions and members into HRMS, time off types and requests, shifts on the Shift Types of their hours, time clock punches and each day's attendance from its time entries — [coverage/agendrix.md](coverage/agendrix.md) |
-| PeopleSoft | Listed | Connections can be created but refuse to run until a later phase builds the adapter; it has a coverage page in [coverage/](coverage/). |
+| HighLevel | Built | One sub-account's users, products with variant prices, contacts as leads with their notes (billed ones as customers), businesses as prospects, pipelines and opportunities, conversation messages, appointments, tasks, invoices and payments with their refunds — [coverage/highlevel.md](coverage/highlevel.md) |
+| PeopleSoft | Built | Through the Integration Broker's Query Access Service and the queries the connection's field map names: departments, job codes and employees into HRMS; customers, suppliers, ChartField accounts, AR invoices, AP vouchers, payments and journals into the books — [coverage/peoplesoft.md](coverage/peoplesoft.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -190,6 +191,14 @@ This is the operator's decision to confirm (see below).
      portal (developers.agendrix.com) with the same redirect URI; enter `https://app.agendrix.com` as the
      Store URL and the application's client ID and secret, save, then click **Connect to Agendrix** signed in
      as an administrator of the organisation ([coverage/agendrix.md](coverage/agendrix.md)).
+   - **HighLevel:** one connection per sub-account. Create a sub-account app in HighLevel's Marketplace with
+     the same redirect URI and the read scopes in [coverage/highlevel.md](coverage/highlevel.md); enter
+     `https://app.gohighlevel.com` as the Store URL and the app's client ID and secret, save, then click
+     **Connect to HighLevel** and choose the sub-account.
+   - **PeopleSoft:** give a PeopleSoft user the Query Access Service's REST service operations and access
+     to a query per kind; enter the web server's address as the Store URL, the user ID and password, and
+     in the **Field Map** the Integration Broker node and each kind's query and columns
+     ([coverage/peoplesoft.md](coverage/peoplesoft.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty
@@ -368,7 +377,9 @@ Still to do:
 2. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-3. **ERP and HR sources** (PeopleSoft): a later phase.
+3. **HR and CRM sources' planned homes** (card 386): Agendrix's part-day leave, open shifts and time banks,
+   HighLevel's pipeline stages and orders (undocumented shapes), PeopleSoft's absences and reported time;
+   each coverage page lists them.
 4. **Native mirroring still to build (card 386):** multi-location stock as one Warehouse per source
    location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist; units of measure
    (Square's measurement units, Ecwid's carats); itemised refunds where the source gives the refunded items

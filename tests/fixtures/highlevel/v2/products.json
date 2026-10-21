@@ -1,0 +1,63 @@
+{
+	"request": {
+		"path": "/products/",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"products": [
+			{
+				"_id": "product001",
+				"locationId": "loc0harbour0studio01",
+				"name": "Consultation",
+				"description": "One hour with a designer",
+				"productType": "SERVICE",
+				"availableInStore": true,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z"
+			},
+			{
+				"_id": "product002",
+				"locationId": "loc0harbour0studio01",
+				"name": "Studio T-shirt",
+				"productType": "PHYSICAL",
+				"image": "http://highlevel-fake:8080/media/studio-tee.png",
+				"variants": [
+					{
+						"id": "variant01",
+						"name": "Size",
+						"options": [
+							{
+								"id": "opt0s",
+								"name": "S"
+							},
+							{
+								"id": "opt0m",
+								"name": "M"
+							}
+						]
+					}
+				],
+				"availableInStore": true,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z"
+			},
+			{
+				"_id": "product003",
+				"locationId": "loc0harbour0studio01",
+				"name": "Coaching plan",
+				"productType": "SERVICE",
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z"
+			}
+		],
+		"total": [
+			{
+				"total": 3
+			}
+		]
+	}
+}

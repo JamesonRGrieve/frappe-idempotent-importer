@@ -14,7 +14,7 @@ import pytest
 from tests.support.fixtures import FIXTURES, rest_fixtures, states
 from tools.openapi import SWAGGER_REF_PREFIX, ApiSpec, OpenApiValidator
 from tools.proofs import invalid_source_fixtures
-from tools.specs import SpecDocument, XsdDocument, catalog, for_source, sources
+from tools.specs import SpecDocument, XsdDocument, catalog, corrected, for_source, sources
 
 SCHEMAS: dict[str, dict[str, Any]] = {
 	"Product": {
@@ -102,6 +102,14 @@ def test_operations_are_found_by_path_after_the_server_prefix() -> None:
 	assert spec.response_schema("GET", "/V1/things/7") is None
 
 
+def test_a_correction_replaces_what_it_names_and_only_that() -> None:
+	document = {"components": {"schemas": {"Txn": {"properties": {"status": {"type": "object"}}}}}}
+	corrected(document, "/components/schemas/Txn/properties/status", {"type": "string"})
+	assert document["components"]["schemas"]["Txn"]["properties"]["status"] == {"type": "string"}
+	with pytest.raises(KeyError, match="no longer applies"):
+		corrected(document, "/components/schemas/Txn/properties/state", {"type": "string"})
+
+
 def test_a_shared_response_is_followed() -> None:
 	document = {
 		"openapi": "3.0.0",
@@ -142,6 +150,8 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"sap_business_one",
 		"acumatica",
 		"agendrix",
+		"highlevel",
+		"peoplesoft",
 	}
 	commit = re.compile(r"/[0-9a-f]{40}/")
 	for document in catalog():

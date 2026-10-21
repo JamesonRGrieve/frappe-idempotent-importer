@@ -1,0 +1,9 @@
+{
+	"request": {
+		"path": "/contacts/contact001/appointments",
+		"query": {}
+	},
+	"response": {
+		"events": []
+	}
+}

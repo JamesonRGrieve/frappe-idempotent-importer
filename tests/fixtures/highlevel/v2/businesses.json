@@ -1,0 +1,30 @@
+{
+	"request": {
+		"path": "/businesses/",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"skip": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"businesses": [
+			{
+				"id": "business001",
+				"name": "River Co",
+				"phone": "+19025550142",
+				"email": "hello@river.example",
+				"website": "https://river.example",
+				"address": "1 Harbour Rd",
+				"city": "Halifax",
+				"state": "NS",
+				"postalCode": "B3H 1A1",
+				"country": "CA",
+				"description": "Boutique river tours",
+				"locationId": "loc0harbour0studio01",
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z"
+			}
+		]
+	}
+}

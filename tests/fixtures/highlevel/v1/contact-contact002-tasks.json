@@ -1,0 +1,9 @@
+{
+	"request": {
+		"path": "/contacts/contact002/tasks",
+		"query": {}
+	},
+	"response": {
+		"tasks": []
+	}
+}

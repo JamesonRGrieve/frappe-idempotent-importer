@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/products/product001/price",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"prices": [
+			{
+				"_id": "price001",
+				"locationId": "loc0harbour0studio01",
+				"product": "product001",
+				"name": "Standard",
+				"type": "one_time",
+				"currency": "CAD",
+				"amount": 150,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z"
+			}
+		],
+		"total": 1
+	}
+}

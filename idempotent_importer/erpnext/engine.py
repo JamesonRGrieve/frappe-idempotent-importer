@@ -58,7 +58,15 @@ from idempotent_importer.erpnext.writers.content import (
 	ReviewWriter,
 	flush_redirect_cache,
 )
-from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
+from idempotent_importer.erpnext.writers.crm import (
+	CommunicationWriter,
+	EventWriter,
+	LeadWriter,
+	OpportunityTypeWriter,
+	OpportunityWriter,
+	ProspectWriter,
+	ToDoWriter,
+)
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 from idempotent_importer.erpnext.writers.hr import (
 	AttendanceWriter,
@@ -115,6 +123,11 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.PROJECT: ProjectWriter,
 	Kind.LEAD: LeadWriter,
 	Kind.OPPORTUNITY: OpportunityWriter,
+	Kind.PROSPECT: ProspectWriter,
+	Kind.OPPORTUNITY_TYPE: OpportunityTypeWriter,
+	Kind.COMMUNICATION: CommunicationWriter,
+	Kind.EVENT: EventWriter,
+	Kind.TODO: ToDoWriter,
 	Kind.DEPARTMENT: DepartmentWriter,
 	Kind.DESIGNATION: DesignationWriter,
 	Kind.BRANCH: BranchWriter,
@@ -158,6 +171,11 @@ SWITCHES: dict[Kind, str] = {
 	Kind.PROJECT: "import_projects",
 	Kind.LEAD: "import_crm",
 	Kind.OPPORTUNITY: "import_crm",
+	Kind.PROSPECT: "import_crm",
+	Kind.OPPORTUNITY_TYPE: "import_crm",
+	Kind.COMMUNICATION: "import_crm",
+	Kind.EVENT: "import_crm",
+	Kind.TODO: "import_crm",
 	Kind.DEPARTMENT: "import_hr",
 	Kind.DESIGNATION: "import_hr",
 	Kind.BRANCH: "import_hr",

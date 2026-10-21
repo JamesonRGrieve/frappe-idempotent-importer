@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_AR_PAYMENTS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 1,
+				"queryname=": "ERP_AR_PAYMENTS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"DEPOSIT_BU": "US001",
+						"DEPOSIT_ID": "DEP0001",
+						"PAYMENT_SEQ_NUM": 1,
+						"PAYMENT_ID": "CHK-5521",
+						"CUST_ID": "CUST01",
+						"ACCOUNTING_DT": "2026-09-20",
+						"PAYMENT_AMT": "640.00",
+						"PAYMENT_CURRENCY": "CAD",
+						"BUSINESS_UNIT": "US001",
+						"INVOICE": "INV0000101",
+						"PAY_AMT": "640.00"
+					}
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/conversations/conversation002/messages",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"lastMessageId": "message003",
+		"nextPage": false,
+		"messages": [
+			{
+				"id": "message003",
+				"type": 1,
+				"messageType": "TYPE_CALL",
+				"locationId": "loc0harbour0studio01",
+				"contactId": "contact002",
+				"conversationId": "conversation002",
+				"dateAdded": "2026-09-03T16:00:00.000Z",
+				"direction": "inbound",
+				"status": "delivered",
+				"contentType": "text/plain",
+				"attachments": [],
+				"meta": {
+					"callDuration": "185",
+					"callStatus": "completed"
+				}
+			}
+		]
+	}
+}

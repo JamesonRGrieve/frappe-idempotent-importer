@@ -1,0 +1,20 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_AP_PAYMENTS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 0,
+				"queryname=": "ERP_AP_PAYMENTS",
+				"rows": []
+			}
+		}
+	}
+}

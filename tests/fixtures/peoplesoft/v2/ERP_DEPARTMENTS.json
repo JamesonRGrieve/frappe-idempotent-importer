@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_DEPARTMENTS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 2,
+				"queryname=": "ERP_DEPARTMENTS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"DEPTID": "10000",
+						"DESCR": "Operations",
+						"PARENT_DEPTID": null,
+						"EFF_STATUS": "A"
+					},
+					{
+						"attr:rownumber": 2,
+						"DEPTID": "10100",
+						"DESCR": "Field Services",
+						"PARENT_DEPTID": "10000",
+						"EFF_STATUS": "I"
+					}
+				]
+			}
+		}
+	}
+}

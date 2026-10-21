@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/contacts/business/business001",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"skip": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"contacts": [
+			{
+				"id": "contact001",
+				"locationId": "loc0harbour0studio01",
+				"email": "riley@example.com",
+				"source": "website form",
+				"dateAdded": "2026-08-03T15:00:00.000Z",
+				"tags": [],
+				"businessId": "business001",
+				"country": "CA"
+			}
+		],
+		"count": 1
+	}
+}

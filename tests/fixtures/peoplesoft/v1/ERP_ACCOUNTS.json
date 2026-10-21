@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_ACCOUNTS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 4,
+				"queryname=": "ERP_ACCOUNTS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"ACCOUNT": "101000",
+						"DESCR": "Cash",
+						"ACCOUNT_TYPE": "A"
+					},
+					{
+						"attr:rownumber": 2,
+						"ACCOUNT": "200000",
+						"DESCR": "Accounts Payable",
+						"ACCOUNT_TYPE": "L"
+					},
+					{
+						"attr:rownumber": 3,
+						"ACCOUNT": "400000",
+						"DESCR": "Service Revenue",
+						"ACCOUNT_TYPE": "R"
+					},
+					{
+						"attr:rownumber": 4,
+						"ACCOUNT": "640000",
+						"DESCR": "Tools and Supplies",
+						"ACCOUNT_TYPE": "E"
+					}
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PeopleSoft Query Access Service over REST: the response read by frappe-idempotent-importer",
+    "version": "2026-10-20",
+    "description": "PeopleSoft publishes no OpenAPI document for its Integration Broker services. This schema is transcribed from PeopleTools PeopleBooks, Reporting Web Services, 'Executing the Query' (https://docs.oracle.com/cd/E92519_02/pt856pbr3/eng/pt/trws/task_ExecutingtheQuery-5e7fb0.html, fetched 2026-10-20): the delivered service operation QAS_EXECUTEQRY_REST_GET at <node>/ExecuteQuery.v1/<OwnerType>/<QueryName>/<OutResultType>/<OutResultFormat>, here JSON/NONFILE with json_resp=true, answered with 'status' ('success' or 'fail') and 'data': for NONFILE results 'data.query' holds 'numrows', the query's name and 'rows', each row 'attr:rownumber' and one key per returned field (a column the query names; its value a string, a number or null). PeopleBooks' example spells the name's key 'queryname=' (sic), so both spellings are allowed. A refusal answers 'fail' with 'data' a message."
+  },
+  "servers": [
+    {
+      "url": "https://{webserver}"
+    }
+  ],
+  "paths": {
+    "/PSIGW/RESTListeningConnector/{node}/ExecuteQuery.v1/{owner}/{query}/JSON/NONFILE": {
+      "get": {
+        "externalDocs": {
+          "url": "https://docs.oracle.com/cd/E92519_02/pt856pbr3/eng/pt/trws/task_ExecutingtheQuery-5e7fb0.html"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "QueryResult": {
+        "type": "object",
+        "required": ["status", "data"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["success", "fail"]
+          },
+          "data": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QueryData"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      },
+      "QueryData": {
+        "type": "object",
+        "required": ["query"],
+        "properties": {
+          "query": {
+            "$ref": "#/components/schemas/Query"
+          }
+        }
+      },
+      "Query": {
+        "type": "object",
+        "required": ["numrows", "rows"],
+        "properties": {
+          "numrows": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "queryname": {
+            "type": "string"
+          },
+          "queryname=": {
+            "type": "string"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Row"
+            }
+          }
+        }
+      },
+      "Row": {
+        "type": "object",
+        "required": ["attr:rownumber"],
+        "properties": {
+          "attr:rownumber": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "additionalProperties": {
+          "type": ["string", "number", "null"]
+        }
+      }
+    }
+  }
+}

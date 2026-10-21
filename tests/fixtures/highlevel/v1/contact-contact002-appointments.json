@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/contacts/contact002/appointments",
+		"query": {}
+	},
+	"response": {
+		"events": [
+			{
+				"id": "appointment001",
+				"calendarId": "calendar001",
+				"status": "booked",
+				"title": "Discovery call",
+				"assignedUserId": "user001",
+				"notes": "Bring the portfolio",
+				"startTime": "2026-10-22 10:00:00",
+				"endTime": "2026-10-22 10:30:00",
+				"locationId": "loc0harbour0studio01",
+				"contactId": "contact002",
+				"appointmentStatus": "confirmed",
+				"users": [],
+				"dateAdded": "2026-10-01 09:00:00",
+				"dateUpdated": "2026-10-01 09:00:00"
+			}
+		]
+	}
+}

@@ -65,9 +65,11 @@ SOURCES=(
 	acumatica-a:acumatica-fake:assert_acumatica
 	intacct-s:sage_intacct-fake:assert_sage_intacct
 	agendrix-a:agendrix-fake:assert_agendrix
+	highlevel-h:highlevel-fake:assert_highlevel
+	peoplesoft-p:peoplesoft-fake:assert_peoplesoft
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

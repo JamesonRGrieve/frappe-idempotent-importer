@@ -1,0 +1,42 @@
+{
+	"request": {
+		"path": "/conversations/conversation001/messages",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"lastMessageId": "message002",
+		"nextPage": false,
+		"messages": [
+			{
+				"id": "message001",
+				"type": 3,
+				"messageType": "TYPE_EMAIL",
+				"locationId": "loc0harbour0studio01",
+				"contactId": "contact001",
+				"conversationId": "conversation001",
+				"dateAdded": "2026-09-01T12:00:00.000Z",
+				"direction": "inbound",
+				"status": "delivered",
+				"contentType": "text/plain",
+				"attachments": [],
+				"body": "Do you ship to Halifax?"
+			},
+			{
+				"id": "message002",
+				"type": 1,
+				"messageType": "TYPE_SMS",
+				"locationId": "loc0harbour0studio01",
+				"contactId": "contact001",
+				"conversationId": "conversation001",
+				"dateAdded": "2026-09-01T12:05:00.000Z",
+				"direction": "outbound",
+				"status": "delivered",
+				"contentType": "text/plain",
+				"attachments": [],
+				"body": "We do: next day."
+			}
+		]
+	}
+}

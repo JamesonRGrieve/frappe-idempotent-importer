@@ -1,0 +1,32 @@
+{
+	"request": {
+		"path": "/contacts/contact001",
+		"query": {}
+	},
+	"response": {
+		"contact": {
+			"id": "contact001",
+			"name": "Riley River",
+			"locationId": "loc0harbour0studio01",
+			"firstName": "Riley",
+			"lastName": "River",
+			"email": "riley@example.com",
+			"emailLowerCase": "riley@example.com",
+			"phone": "+19025550001",
+			"dnd": false,
+			"type": "customer",
+			"source": "website form",
+			"tags": [],
+			"dateAdded": "2026-08-03T15:00:00.000Z",
+			"dateUpdated": "2026-09-15T15:00:00.000Z",
+			"companyName": "River Co",
+			"address1": "1 Harbour Rd",
+			"city": "Halifax",
+			"state": "NS",
+			"postalCode": "B3H 1A1",
+			"country": "CA",
+			"website": "https://river.example",
+			"businessId": "business001"
+		}
+	}
+}

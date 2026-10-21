@@ -59,9 +59,15 @@ cost_center  name, parent (identity | None), is_group, optionally disabled (``tr
 warehouse    name, parent, is_group, address (address | None)
 project      name, status, customer, cost_center (identities | None), start, end, notes
 lead         status, first_name, last_name, company, email, phone, mobile, job_title, website, notes,
-             optionally disabled
+             optionally disabled, crm_notes ([{gid, date, text}])
 opportunity  party_kind ("lead" | "customer"), party, title, status, date, currency, amount, probability,
-             expected_closing, notes
+             expected_closing, notes; optionally opportunity_type (identity)
+prospect     name, website, email, phone, addresses ([address]), notes, leads (identities)
+opportunity_type  name, description
+communication  with ({kind, party}), medium, sent, date, subject, content, phone, email
+event        subject, starts_on, ends_on (YYYY-MM-DD HH:MM:SS on the source's clock), status, description,
+             participants ([{kind, party}])
+todo         description, status, date, about ({kind, party})
 department   name, parent (identity | None), is_group
 designation  name
 employee     first_name, middle_name, last_name, gender, date_of_birth, date_of_joining, relieving_date,
@@ -1078,11 +1084,28 @@ class Lead:
 	website: str | None = None
 	notes: str | None = None
 	disabled: bool = False
+	crm_notes: list[Note] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class Note:
+	"""One of the notes a source keeps on a lead: its identity, when it was written (UTC) and its text."""
+
+	gid: str
+	date: str | None
+	text: str
+
+
+def note_fields(notes: list[Note]) -> list[Field]:
+	return [
+		{"gid": note.gid, "date": checked_time(note.date, "a note's time"), "text": note.text}
+		for note in notes
+	]
 
 
 def lead_fields(lead: Lead) -> Fields:
 	"""A ``lead``'s fields; ``disabled`` (a lead the source has closed, kept for the opportunities that
-	name it) only when it is."""
+	name it) and its notes of their own (``crm_notes``) only when it has them."""
 	if not (lead.first_name or lead.last_name or lead.company or lead.email):
 		raise Unsupported("a lead with no name, organisation or email")
 	fields: Fields = {
@@ -1097,6 +1120,8 @@ def lead_fields(lead: Lead) -> Fields:
 		"website": lead.website,
 		"notes": lead.notes,
 	}
+	if lead.crm_notes:
+		fields["crm_notes"] = note_fields(lead.crm_notes)
 	return fields | {"disabled": True} if lead.disabled else fields
 
 
@@ -1115,12 +1140,17 @@ class Opportunity:
 	probability: Decimal | None = None
 	expected_closing: str | None = None
 	notes: str | None = None
+	# The source's pipeline (an ``opportunity_type`` identity), where it keeps several.
+	opportunity_type: str | None = None
 
 
 def opportunity_fields(opportunity: Opportunity) -> Fields:
+	"""An ``opportunity``'s fields; its type only when the source names one, so an opportunity mapped before
+	types existed keeps its change signal."""
 	if opportunity.party_kind not in (Kind.LEAD, Kind.CUSTOMER):
 		raise ValueError(f"an opportunity is with a lead or a customer, not a {opportunity.party_kind}")
-	return {
+	typed: Fields = {"opportunity_type": opportunity.opportunity_type} if opportunity.opportunity_type else {}
+	return typed | {
 		"party_kind": opportunity.party_kind.value,
 		"party": opportunity.party,
 		"title": opportunity.title,
@@ -1326,7 +1356,135 @@ def leave_application_fields(leave: LeaveApplication) -> Fields:
 	}
 
 
-# ── gift cards, store credit and loyalty (Square) ────────────────────────────────────────────────────
+# -- The sales pipeline's organisations, conversations, appointments and tasks (CRM sources) ---------------
+
+COMMUNICATION_MEDIUMS = frozenset({"Email", "Chat", "Phone", "SMS", "Other"})
+EVENT_STATUSES = frozenset({"Open", "Completed", "Closed", "Cancelled"})
+TODO_STATUSES = frozenset({"Open", "Closed", "Cancelled"})
+# Who a conversation, an appointment or a task is with: a lead or a customer.
+CRM_PARTIES = frozenset({Kind.LEAD, Kind.CUSTOMER})
+LOCAL_TIME = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
+
+
+def crm_party(kind: Kind, gid: str) -> Fields:
+	if kind not in CRM_PARTIES:
+		raise ValueError(f"a lead or a customer, not a {kind}")
+	return {"kind": kind.value, "party": gid}
+
+
+def local_time(value: str | None, what: str) -> str | None:
+	"""A date and time as the source's clock shows it (``YYYY-MM-DD HH:MM:SS``, no zone), or None."""
+	if value is not None and not LOCAL_TIME.match(value):
+		raise ValueError(f"{what} is not a YYYY-MM-DD HH:MM:SS time: {value!r}")
+	return value
+
+
+@dataclass(frozen=True)
+class Prospect:
+	"""An organisation the sales pipeline works with: its name, website, how to reach it, its address
+	(``address_fields``), a description, and its people (lead identities)."""
+
+	name: str
+	website: str | None = None
+	email: str | None = None
+	phone: str | None = None
+	address: Fields | None = None
+	notes: str | None = None
+	leads: list[str] = field(default_factory=list)
+
+
+def prospect_fields(prospect: Prospect) -> Fields:
+	return {
+		"name": prospect.name,
+		"website": prospect.website,
+		"email": prospect.email,
+		"phone": prospect.phone,
+		"addresses": [prospect.address] if prospect.address else [],
+		"notes": prospect.notes,
+		"leads": list[Field](prospect.leads),
+	}
+
+
+def opportunity_type_fields(name: str, description: str | None = None) -> Fields:
+	"""A kind of opportunity (a source's sales pipeline): its name and description."""
+	return {"name": name, "description": description}
+
+
+@dataclass(frozen=True)
+class Communication:
+	"""One message of a conversation with a lead or a customer: its medium (COMMUNICATION_MEDIUMS), whether
+	it was sent or received, when (UTC), its subject and content, and the phone number or email address it
+	went to or came from."""
+
+	party_kind: Kind
+	party: str
+	medium: str
+	sent: bool
+	date: str
+	subject: str
+	content: str
+	phone: str | None = None
+	email: str | None = None
+
+
+def communication_fields(message: Communication) -> Fields:
+	return {
+		"with": crm_party(message.party_kind, message.party),
+		"medium": one_of(message.medium, COMMUNICATION_MEDIUMS, "communication medium"),
+		"sent": message.sent,
+		"date": checked_time(message.date, "a message's time"),
+		"subject": message.subject,
+		"content": message.content,
+		"phone": message.phone,
+		"email": message.email,
+	}
+
+
+@dataclass(frozen=True)
+class Event:
+	"""An appointment: its subject, start and end as the source's clock shows them, status
+	(EVENT_STATUSES), description, and who it is with (lead or customer identities)."""
+
+	subject: str
+	starts_on: str
+	status: str
+	ends_on: str | None = None
+	description: str | None = None
+	participants: list[tuple[Kind, str]] = field(default_factory=list)
+
+
+def event_fields(event: Event) -> Fields:
+	return {
+		"subject": event.subject,
+		"starts_on": local_time(event.starts_on, f"{event.subject}'s start"),
+		"ends_on": local_time(event.ends_on, f"{event.subject}'s end"),
+		"status": one_of(event.status, EVENT_STATUSES, "event status"),
+		"description": event.description,
+		"participants": [crm_party(kind, gid) for kind, gid in event.participants],
+	}
+
+
+@dataclass(frozen=True)
+class ToDo:
+	"""A task about a lead or a customer: what to do, its status (TODO_STATUSES) and due date."""
+
+	description: str
+	status: str
+	party_kind: Kind
+	party: str
+	date: str | None = None
+
+
+def todo_fields(todo: ToDo) -> Fields:
+	return {
+		"description": todo.description,
+		"status": one_of(todo.status, TODO_STATUSES, "task status"),
+		"date": checked_date(todo.date, "a task's due date"),
+		"about": crm_party(todo.party_kind, todo.party),
+	}
+
+
+# ── gift cards, store credit and loyalty (Square)────────────────────────────────────────────────────
 
 GIFT_CARD, STORE_CREDIT = "gift_card", "store_credit"
 ACTIVE, DISABLED, EXPIRED = "active", "disabled", "expired"

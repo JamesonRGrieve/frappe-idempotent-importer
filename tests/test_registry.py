@@ -45,8 +45,10 @@ def test_every_source_has_a_coverage_page(adapter_id: str) -> None:
 	assert adapter_for(adapter_id).label in page.read_text()
 
 
-@pytest.mark.parametrize("listed", LISTED, ids=lambda adapter: adapter.id)
-def test_listed_sources_refuse_to_run(listed: ListedAdapter) -> None:
+def test_listed_sources_refuse_to_run() -> None:
+	"""Every source is built today; a source listed before its adapter is built refuses to run."""
+	assert all(adapter.built for adapter in all_adapters().values() if adapter not in LISTED)
+	listed = ListedAdapter("example", "Example")
 	assert not listed.built
 	assert listed.kinds() == () and listed.filter_hint() is None
 	config = ConnectionConfig(listed.id, "erp", "https://erp.example")

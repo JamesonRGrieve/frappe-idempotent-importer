@@ -1,0 +1,18 @@
+{
+	"request": {
+		"path": "/opportunities/pipelines",
+		"query": {
+			"locationId": "loc0harbour0studio01"
+		}
+	},
+	"response": {
+		"pipelines": [
+			{
+				"id": "pipeline001",
+				"name": "Sales",
+				"locationId": "loc0harbour0studio01",
+				"stages": []
+			}
+		]
+	}
+}

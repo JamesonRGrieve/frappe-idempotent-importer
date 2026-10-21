@@ -17,18 +17,23 @@ from idempotent_importer.contract import (
 	Charge,
 	Checkin,
 	Code,
+	Communication,
 	Condition,
 	Discount,
 	Employee,
+	Event,
 	JournalLine,
 	Lead,
 	LeaveApplication,
 	LedgerAccount,
+	Note,
 	Opportunity,
 	OrderLine,
 	Party,
 	Payment,
+	Prospect,
 	ShiftAssignment,
+	ToDo,
 	TradeDocument,
 	TradeLine,
 	TradeTax,
@@ -36,11 +41,13 @@ from idempotent_importer.contract import (
 	attendance_fields,
 	booked,
 	checkin_fields,
+	communication_fields,
 	conditions_json,
 	conditions_summary,
 	date_of,
 	discount_fields,
 	employee_fields,
+	event_fields,
 	included_taxes,
 	journal_fields,
 	lead_fields,
@@ -48,15 +55,18 @@ from idempotent_importer.contract import (
 	leave_type_fields,
 	line_fields,
 	opportunity_fields,
+	opportunity_type_fields,
 	order_line,
 	order_remarks,
 	party_fields,
 	payment_fields,
 	project_fields,
+	prospect_fields,
 	rating_fraction,
 	refund_balance,
 	required_date,
 	shift_assignment_fields,
+	todo_fields,
 	trade_fields,
 	tree_fields,
 	variant_attributes,
@@ -391,6 +401,39 @@ class TestBooks:
 			account_fields(LedgerAccount(None, "Odd", "Revenue"))
 		assert tree_fields("Main", None) == {"name": "Main", "parent": None, "is_group": False}
 		assert warehouse_fields("WH", "gid://x/c/Warehouse/1", True, None)["address"] is None
+
+	def test_the_pipelines_organisations_conversations_appointments_and_tasks(self) -> None:
+		lead = Lead(
+			"Lead", "Riley", crm_notes=[Note("gid://x/c/Note/1", "2026-09-02T14:30:00Z", "Call back")]
+		)
+		assert lead_fields(lead)["crm_notes"] == [
+			{"gid": "gid://x/c/Note/1", "date": "2026-09-02T14:30:00Z", "text": "Call back"}
+		]
+		assert "crm_notes" not in lead_fields(Lead("Lead", "Riley")), "a lead without notes keeps its signal"
+		deal = Opportunity(Kind.LEAD, "gid://x/c/Lead/1", "Rebrand", "Open", "2026-09-05")
+		assert "opportunity_type" not in opportunity_fields(deal)
+		typed = opportunity_fields(replace(deal, opportunity_type="gid://x/c/Pipeline/1"))
+		assert typed["opportunity_type"] == "gid://x/c/Pipeline/1"
+		assert prospect_fields(Prospect("River Co", leads=["gid://x/c/Lead/1"]))["addresses"] == []
+		assert opportunity_type_fields("Sales") == {"name": "Sales", "description": None}
+		message = Communication(
+			Kind.LEAD, "gid://x/c/Lead/1", "SMS", True, "2026-09-01T12:05:00Z", "Hi", "Hi there"
+		)
+		assert communication_fields(message)["with"] == {"kind": "lead", "party": "gid://x/c/Lead/1"}
+		with pytest.raises(ValueError, match="communication medium"):
+			communication_fields(replace(message, medium="Fax"))
+		with pytest.raises(ValueError, match="a lead or a customer"):
+			communication_fields(replace(message, party_kind=Kind.SUPPLIER))
+		call = Event(
+			"Discovery", "2026-10-22 10:00:00", "Open", participants=[(Kind.LEAD, "gid://x/c/Lead/1")]
+		)
+		assert event_fields(call)["participants"] == [{"kind": "lead", "party": "gid://x/c/Lead/1"}]
+		with pytest.raises(ValueError, match="HH:MM:SS"):
+			event_fields(replace(call, starts_on="2026-10-22T10:00:00Z"))
+		task = ToDo("Send samples", "Open", Kind.CUSTOMER, "gid://x/c/Customer/1", "2026-10-30")
+		assert todo_fields(task)["about"] == {"kind": "customer", "party": "gid://x/c/Customer/1"}
+		with pytest.raises(ValueError, match="task status"):
+			todo_fields(replace(task, status="Done"))
 
 	def test_crm_and_projects(self) -> None:
 		assert project_fields("Fit-out", "Open", start="2026-01-01")["start"] == "2026-01-01"

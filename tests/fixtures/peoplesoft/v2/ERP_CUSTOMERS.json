@@ -1,0 +1,33 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_CUSTOMERS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 1,
+				"queryname=": "ERP_CUSTOMERS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"CUST_ID": "CUST01",
+						"NAME1": "Harbour Freight Ltd",
+						"ADDRESS1": "1 Harbour Rd",
+						"CITY": "Halifax",
+						"STATE": "NS",
+						"POSTAL": "B3H 1A1",
+						"COUNTRY": "CAN",
+						"EMAIL_ADDR": "ap@harbour.example",
+						"EFF_STATUS": "A"
+					}
+				]
+			}
+		}
+	}
+}

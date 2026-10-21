@@ -1,0 +1,47 @@
+{
+	"request": {
+		"path": "/products/product002/price",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"prices": [
+			{
+				"_id": "price002",
+				"locationId": "loc0harbour0studio01",
+				"product": "product002",
+				"name": "S",
+				"type": "one_time",
+				"currency": "CAD",
+				"amount": 25,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"variantOptionIds": [
+					"opt0s"
+				],
+				"trackInventory": true,
+				"availableQuantity": 10
+			},
+			{
+				"_id": "price003",
+				"locationId": "loc0harbour0studio01",
+				"product": "product002",
+				"name": "M",
+				"type": "one_time",
+				"currency": "CAD",
+				"amount": 25,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"variantOptionIds": [
+					"opt0m"
+				],
+				"trackInventory": true,
+				"availableQuantity": 4
+			}
+		],
+		"total": 2
+	}
+}

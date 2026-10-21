@@ -1,0 +1,30 @@
+{
+	"request": {
+		"path": "/products/product003/price",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"prices": [
+			{
+				"_id": "price004",
+				"locationId": "loc0harbour0studio01",
+				"product": "product003",
+				"name": "Monthly",
+				"type": "recurring",
+				"currency": "CAD",
+				"amount": 90,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"recurring": {
+					"interval": "month",
+					"intervalCount": 1
+				}
+			}
+		],
+		"total": 1
+	}
+}

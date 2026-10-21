@@ -19,10 +19,12 @@ from idempotent_importer.sources.dynamics_finance_operations.adapter import Fina
 from idempotent_importer.sources.dynamics_sales.adapter import DynamicsSalesAdapter
 from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
+from idempotent_importer.sources.highlevel.adapter import HighLevelAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
 from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.netsuite.adapter import NetSuiteAdapter
 from idempotent_importer.sources.odoo.adapter import OdooAdapter
+from idempotent_importer.sources.peoplesoft.adapter import PeopleSoftAdapter
 from idempotent_importer.sources.quickbooks_online.adapter import QuickBooksAdapter
 from idempotent_importer.sources.sage_intacct.adapter import SageIntacctAdapter
 from idempotent_importer.sources.sap_business_one.adapter import SapBusinessOneAdapter
@@ -59,7 +61,8 @@ class ListedAdapter:
 		return None
 
 
-LISTED: tuple[ListedAdapter, ...] = (ListedAdapter("peoplesoft", "PeopleSoft"),)
+# Every source is built; a source added to the list before its adapter is built goes here.
+LISTED: tuple[ListedAdapter, ...] = ()
 
 
 def all_adapters() -> dict[str, Adapter]:
@@ -88,6 +91,8 @@ def all_adapters() -> dict[str, Adapter]:
 		AcumaticaAdapter(),
 		SageIntacctAdapter(),
 		AgendrixAdapter(),
+		HighLevelAdapter(),
+		PeopleSoftAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

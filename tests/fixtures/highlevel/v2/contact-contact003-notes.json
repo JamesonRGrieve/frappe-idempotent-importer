@@ -1,0 +1,9 @@
+{
+	"request": {
+		"path": "/contacts/contact003/notes",
+		"query": {}
+	},
+	"response": {
+		"notes": []
+	}
+}

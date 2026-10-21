@@ -60,6 +60,11 @@ class Kind(StrEnum):
 	EMPLOYEE_CHECKIN = "employee_checkin"
 	LEAVE_APPLICATION = "leave_application"
 	ATTENDANCE = "attendance"
+	PROSPECT = "prospect"
+	OPPORTUNITY_TYPE = "opportunity_type"
+	COMMUNICATION = "communication"
+	EVENT = "event"
+	TODO = "todo"
 	SALES_ORDER = "sales_order"
 	PURCHASE_ORDER = "purchase_order"
 	SALES_INVOICE = "sales_invoice"
@@ -100,7 +105,13 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.ATTENDANCE,
 	Kind.PROJECT,
 	Kind.LEAD,
+	# An organisation lists its people, who are leads first.
+	Kind.PROSPECT,
+	Kind.OPPORTUNITY_TYPE,
 	Kind.OPPORTUNITY,
+	Kind.COMMUNICATION,
+	Kind.EVENT,
+	Kind.TODO,
 	Kind.DISCOUNT,
 	Kind.ORDER,
 	Kind.GIFT_CARD,

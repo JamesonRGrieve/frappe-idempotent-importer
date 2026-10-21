@@ -33,37 +33,47 @@ from idempotent_importer.contract import (
 	Attendance,
 	Checkin,
 	Code,
+	Communication,
 	Condition,
 	ContactPerson,
 	Discount,
 	Employee,
+	Event,
 	JournalLine,
 	Lead,
 	LeaveApplication,
 	LedgerAccount,
+	Note,
 	Opportunity,
 	Party,
 	Payment,
+	Prospect,
 	ShiftAssignment,
 	Tier,
+	ToDo,
 	TradeDocument,
 	TradeLine,
 	TradeTax,
 	account_fields,
 	attendance_fields,
 	checkin_fields,
+	communication_fields,
 	discount_fields,
 	employee_fields,
+	event_fields,
 	journal_fields,
 	lead_fields,
 	leave_application_fields,
 	leave_type_fields,
 	opportunity_fields,
+	opportunity_type_fields,
 	order_line,
 	party_fields,
 	payment_fields,
 	project_fields,
+	prospect_fields,
 	shift_assignment_fields,
+	todo_fields,
 	trade_fields,
 	tree_fields,
 	warehouse_fields,
@@ -98,7 +108,15 @@ from idempotent_importer.erpnext.writers.content import (
 	RedirectWriter,
 	ReviewWriter,
 )
-from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
+from idempotent_importer.erpnext.writers.crm import (
+	CommunicationWriter,
+	EventWriter,
+	LeadWriter,
+	OpportunityTypeWriter,
+	OpportunityWriter,
+	ProspectWriter,
+	ToDoWriter,
+)
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
 from idempotent_importer.erpnext.writers.hr import (
 	AttendanceWriter,
@@ -1675,6 +1693,148 @@ class TestWriters(IntegrationTestCase):
 		self.mirror(Kind.EMPLOYEE, EmployeeWriter, key, fields)
 		return self.target(Kind.EMPLOYEE, key)
 
+	def test_prospects_pipelines_and_the_conversation_around_a_lead(self) -> None:
+		lead_key = gid("Contact", "7")
+		riley = Lead("Lead", "Riley", "River", "River Co", "riley@example.test")
+
+		def noted(text: str) -> Fields:
+			return lead_fields(
+				replace(riley, crm_notes=[Note(gid("Note", "1"), "2026-09-02T14:30:00Z", text)])
+			)
+
+		_, name = self.assert_lifecycle(
+			Kind.LEAD, LeadWriter, lead_key, noted("Wants the catalogue"), noted("Wants the spring catalogue")
+		)
+		self.assertEqual(
+			[row.note for row in frappe.get_doc("Lead", name).notes], ["Wants the spring catalogue"]
+		)
+		business = gid("Business", "1")
+		prospect = prospect_fields(
+			Prospect("River Co", "https://river.example", "hello@river.example", leads=[lead_key])
+		)
+		_, organisation = self.assert_lifecycle(
+			Kind.PROSPECT, ProspectWriter, business, prospect, {**prospect, "notes": "River tours"}
+		)
+		doc = frappe.get_doc("Prospect", organisation)
+		self.assertEqual((doc.name, [row.lead for row in doc.leads]), ("River Co - WT", [name]))
+		self.assertTrue(
+			frappe.db.exists("Dynamic Link", {"link_doctype": "Prospect", "link_name": organisation}),
+			"its contact is linked to it",
+		)
+		pipeline = gid("Pipeline", "1")
+		_, sales = self.assert_lifecycle(
+			Kind.OPPORTUNITY_TYPE,
+			OpportunityTypeWriter,
+			pipeline,
+			opportunity_type_fields("Sales"),
+			opportunity_type_fields("Sales", "The main pipeline"),
+		)
+		self.assertEqual(sales, "Sales - WT")
+		deal = opportunity_fields(
+			Opportunity(Kind.LEAD, lead_key, "Rebrand", "Open", "2026-09-05", opportunity_type=pipeline)
+		)
+		self.mirror(Kind.OPPORTUNITY, OpportunityWriter, gid("Opportunity", "1"), deal)
+		opportunity = self.target(Kind.OPPORTUNITY, gid("Opportunity", "1"))
+		self.assertEqual(frappe.db.get_value("Opportunity", opportunity, "opportunity_type"), "Sales - WT")
+
+		message = gid("Message", "1")
+		said = communication_fields(
+			Communication(
+				Kind.LEAD,
+				lead_key,
+				"SMS",
+				True,
+				"2026-09-01T12:05:00Z",
+				"We ship",
+				"We ship next day.",
+				"+1902555",
+			)
+		)
+		_, communication = self.assert_lifecycle(
+			Kind.COMMUNICATION, CommunicationWriter, message, said, {**said, "content": "We ship tomorrow."}
+		)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Communication",
+				communication,
+				["reference_doctype", "reference_name", "sent_or_received", "communication_medium"],
+			),
+			("Lead", name, "Sent", "SMS"),
+		)
+		self.retire(Kind.COMMUNICATION, CommunicationWriter, message)
+		self.assertTrue(
+			frappe.db.exists(
+				"Comment", {"reference_doctype": "Communication", "reference_name": communication}
+			),
+			"a removed message is marked",
+		)
+		appointment = gid("Appointment", "1")
+		call = event_fields(
+			Event(
+				"Discovery call",
+				"2026-10-22 10:00:00",
+				"Open",
+				"2026-10-22 10:30:00",
+				participants=[(Kind.LEAD, lead_key)],
+			)
+		)
+		_, event = self.assert_lifecycle(
+			Kind.EVENT, EventWriter, appointment, call, {**call, "status": "Completed"}
+		)
+		doc = frappe.get_doc("Event", event)
+		self.assertEqual(
+			(
+				str(doc.starts_on),
+				doc.status,
+				[(p.reference_doctype, p.reference_docname) for p in doc.event_participants],
+			),
+			("2026-10-22 10:00:00", "Completed", [("Lead", name)]),
+		)
+		self.retire(Kind.EVENT, EventWriter, appointment)
+		self.assertEqual(frappe.db.get_value("Event", event, "status"), "Cancelled")
+		task = gid("Task", "1")
+		todo = todo_fields(ToDo("Send samples", "Open", Kind.LEAD, lead_key, "2026-10-30"))
+		_, todo_name = self.assert_lifecycle(Kind.TODO, ToDoWriter, task, todo, {**todo, "status": "Closed"})
+		self.assertEqual(
+			frappe.db.get_value("ToDo", todo_name, ["reference_type", "reference_name", "status"]),
+			("Lead", name, "Closed"),
+		)
+		self.retire(Kind.TODO, ToDoWriter, task)
+		self.assertEqual(frappe.db.get_value("ToDo", todo_name, "status"), "Cancelled")
+
+	def test_a_shift_with_punches_in_it_moves_and_goes(self) -> None:
+		member = gid("Member", "3")
+		employee = self.employee_at(member)
+		key = gid("Shift", "3")
+		self.mirror(
+			Kind.SHIFT_ASSIGNMENT,
+			ShiftAssignmentWriter,
+			key,
+			shift_assignment_fields(ShiftAssignment(member, "2026-03-04", "08:00:00", "16:00:00")),
+		)
+		punch = gid("ClockLog", "3")
+		# 10:00 on the site's clock (America/Edmonton, UTC-7 in March): inside the shift as it was and moved.
+		self.mirror(
+			Kind.EMPLOYEE_CHECKIN,
+			CheckinWriter,
+			punch,
+			checkin_fields(Checkin(member, "2026-03-04T17:00:00Z", "IN")),
+		)
+		checkin = self.target(Kind.EMPLOYEE_CHECKIN, punch)
+		self.assertEqual(frappe.db.get_value("Employee Checkin", checkin, "shift"), "08:00-16:00 - WT")
+		moved = shift_assignment_fields(ShiftAssignment(member, "2026-03-04", "08:30:00", "16:30:00"))
+		self.assertEqual(
+			self.mirror(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, key, moved), Outcome.UPDATED
+		)
+		self.assertEqual(
+			frappe.db.get_value("Employee Checkin", checkin, ["employee", "shift"]),
+			(employee, "08:30-16:30 - WT"),
+			"the punch finds the moved shift",
+		)
+		assignment = self.target(Kind.SHIFT_ASSIGNMENT, key)
+		self.assertEqual(self.retire(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, key), Outcome.RETIRED)
+		self.assertEqual(frappe.db.get_value("Shift Assignment", assignment, "docstatus"), 2)
+
 	def test_branches_shifts_and_punches(self) -> None:
 		site = gid("Site", "1")
 		_, branch = self.assert_lifecycle(
@@ -1699,8 +1859,8 @@ class TestWriters(IntegrationTestCase):
 			ShiftAssignment(member, "2026-03-03", "08:00:00", "16:00:00", submitted=False)
 		)
 		self.mirror(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, draft_key, draft)
-		self.retire(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, draft_key)
 		name = self.target(Kind.SHIFT_ASSIGNMENT, draft_key)
+		self.retire(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, draft_key)
 		self.assertEqual(
 			frappe.db.get_value("Shift Assignment", name, ["docstatus", "status"]), (0, "Inactive")
 		)
@@ -1783,8 +1943,8 @@ class TestWriters(IntegrationTestCase):
 			pending,
 			{**asked, "from_date": "2026-04-06", "to_date": "2026-04-06"},
 		)
-		self.retire(Kind.LEAVE_APPLICATION, LeaveApplicationWriter, pending)
 		name = self.target(Kind.LEAVE_APPLICATION, pending)
+		self.retire(Kind.LEAVE_APPLICATION, LeaveApplicationWriter, pending)
 		self.assertEqual(
 			frappe.db.get_value("Leave Application", name, ["docstatus", "status"]), (0, "Cancelled")
 		)

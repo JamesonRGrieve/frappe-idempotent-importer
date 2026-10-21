@@ -1,0 +1,38 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_VOUCHERS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 1,
+				"queryname=": "ERP_VOUCHERS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"BUSINESS_UNIT": "US001",
+						"VOUCHER_ID": "00000201",
+						"INVOICE_ID": "NT-7781",
+						"INVOICE_DT": "2026-09-18",
+						"DUE_DT": "2026-10-18",
+						"VENDOR_ID": "VEND01",
+						"TXN_CURRENCY_CD": "CAD",
+						"GROSS_AMT": "450.00",
+						"POST_STATUS_AP": "P",
+						"VOUCHER_LINE_NUM": 1,
+						"DESCR": "Torque wrench",
+						"QTY_VCHR": 3,
+						"MERCHANDISE_AMT": "450.00",
+						"ACCOUNT": "640000"
+					}
+				]
+			}
+		}
+	}
+}

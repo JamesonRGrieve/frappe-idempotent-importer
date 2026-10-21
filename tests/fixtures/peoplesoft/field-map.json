@@ -1,0 +1,257 @@
+{
+	"node": "PSFT_HR",
+	"owner": "PUBLIC",
+	"max_rows": 500,
+	"kinds": {
+		"department": {
+			"query": "ERP_DEPARTMENTS",
+			"key": "DEPTID",
+			"fields": {
+				"name": "DESCR",
+				"parent": "PARENT_DEPTID",
+				"disabled": "EFF_STATUS"
+			},
+			"values": {
+				"disabled": {
+					"A": "N",
+					"I": "Y"
+				}
+			}
+		},
+		"designation": {
+			"query": "ERP_JOBCODES",
+			"key": "JOBCODE",
+			"fields": {
+				"name": "DESCR"
+			}
+		},
+		"employee": {
+			"query": "ERP_EMPLOYEES",
+			"key": "A.EMPLID",
+			"fields": {
+				"first_name": "FIRST_NAME",
+				"last_name": "LAST_NAME",
+				"gender": "SEX",
+				"date_of_birth": "BIRTHDATE",
+				"date_of_joining": "HIRE_DT",
+				"relieving_date": "TERMINATION_DT",
+				"status": "EMPL_STATUS",
+				"department": "DEPTID",
+				"designation": "JOBCODE",
+				"reports_to": "SUPERVISOR_ID",
+				"company_email": "EMAIL_ADDR"
+			},
+			"values": {
+				"gender": {
+					"M": "Male",
+					"F": "Female"
+				},
+				"status": {
+					"A": "Active",
+					"L": "Active",
+					"P": "Active",
+					"S": "Suspended",
+					"T": "Left"
+				}
+			},
+			"after_prompt": "AFTER_EMPLID",
+			"since_prompt": "CHANGED_SINCE"
+		},
+		"customer": {
+			"query": "ERP_CUSTOMERS",
+			"key": "CUST_ID",
+			"fields": {
+				"name": "NAME1",
+				"line1": "ADDRESS1",
+				"city": "CITY",
+				"state": "STATE",
+				"postcode": "POSTAL",
+				"country": "COUNTRY",
+				"email": "EMAIL_ADDR",
+				"disabled": "EFF_STATUS"
+			},
+			"values": {
+				"disabled": {
+					"A": "N",
+					"I": "Y"
+				},
+				"country": {
+					"CAN": "CA",
+					"USA": "US"
+				}
+			}
+		},
+		"supplier": {
+			"query": "ERP_VENDORS",
+			"key": "VENDOR_ID",
+			"fields": {
+				"name": "NAME1",
+				"line1": "ADDRESS1",
+				"city": "CITY",
+				"state": "STATE",
+				"postcode": "POSTAL",
+				"country": "COUNTRY",
+				"email": "EMAIL_ADDR",
+				"disabled": "EFF_STATUS"
+			},
+			"values": {
+				"disabled": {
+					"A": "N",
+					"I": "Y"
+				},
+				"country": {
+					"CAN": "CA",
+					"USA": "US"
+				}
+			}
+		},
+		"account": {
+			"query": "ERP_ACCOUNTS",
+			"key": "ACCOUNT",
+			"fields": {
+				"name": "DESCR",
+				"root_type": "ACCOUNT_TYPE"
+			},
+			"values": {
+				"root_type": {
+					"A": "Asset",
+					"L": "Liability",
+					"Q": "Equity",
+					"R": "Income",
+					"E": "Expense"
+				}
+			}
+		},
+		"sales_invoice": {
+			"query": "ERP_AR_INVOICES",
+			"type": "ArInvoice",
+			"key": [
+				"BUSINESS_UNIT",
+				"INVOICE"
+			],
+			"fields": {
+				"number": "INVOICE",
+				"date": "INVOICE_DT",
+				"due_date": "DUE_DT",
+				"party": "BILL_TO_CUST_ID",
+				"currency": "BI_CURRENCY_CD",
+				"total": "INVOICE_AMOUNT",
+				"tax": "TAX_AMOUNT",
+				"posted": "INVOICE_STATUS",
+				"line_name": "DESCR",
+				"line_qty": "QTY",
+				"line_amount": "NET_EXTENDED_AMT",
+				"line_account": "ACCOUNT"
+			},
+			"values": {
+				"posted": {
+					"P": "Y",
+					"U": "N",
+					"N": "N"
+				}
+			}
+		},
+		"purchase_invoice": {
+			"query": "ERP_VOUCHERS",
+			"type": "Voucher",
+			"key": [
+				"BUSINESS_UNIT",
+				"VOUCHER_ID"
+			],
+			"fields": {
+				"number": "VOUCHER_ID",
+				"reference": "INVOICE_ID",
+				"date": "INVOICE_DT",
+				"due_date": "DUE_DT",
+				"party": "VENDOR_ID",
+				"currency": "TXN_CURRENCY_CD",
+				"total": "GROSS_AMT",
+				"posted": "POST_STATUS_AP",
+				"line_name": "DESCR",
+				"line_qty": "QTY_VCHR",
+				"line_amount": "MERCHANDISE_AMT",
+				"line_account": "ACCOUNT"
+			},
+			"values": {
+				"posted": {
+					"P": "Y",
+					"U": "N",
+					"N": "N"
+				}
+			}
+		},
+		"payment_entry": [
+			{
+				"query": "ERP_AP_PAYMENTS",
+				"type": "ApPayment",
+				"key": [
+					"BANK_CD",
+					"PYMNT_ID"
+				],
+				"fields": {
+					"party": "REMIT_VENDOR",
+					"date": "PYMNT_DT",
+					"amount": "PYMNT_AMT",
+					"currency": "CURRENCY_PYMNT",
+					"allocation_document": [
+						"BUSINESS_UNIT",
+						"VOUCHER_ID"
+					],
+					"allocation_amount": "PAID_AMT"
+				},
+				"fixed": {
+					"payment_type": "Pay",
+					"party_type": "Supplier"
+				}
+			},
+			{
+				"query": "ERP_AR_PAYMENTS",
+				"type": "ArPayment",
+				"key": [
+					"DEPOSIT_BU",
+					"DEPOSIT_ID",
+					"PAYMENT_SEQ_NUM"
+				],
+				"fields": {
+					"party": "CUST_ID",
+					"date": "ACCOUNTING_DT",
+					"amount": "PAYMENT_AMT",
+					"currency": "PAYMENT_CURRENCY",
+					"reference": "PAYMENT_ID",
+					"allocation_document": [
+						"BUSINESS_UNIT",
+						"INVOICE"
+					],
+					"allocation_amount": "PAY_AMT"
+				},
+				"fixed": {
+					"payment_type": "Receive",
+					"party_type": "Customer"
+				}
+			}
+		],
+		"journal_entry": {
+			"query": "ERP_JOURNALS",
+			"key": [
+				"BUSINESS_UNIT",
+				"JOURNAL_ID",
+				"JOURNAL_DATE"
+			],
+			"fields": {
+				"number": "JOURNAL_ID",
+				"date": "JOURNAL_DATE",
+				"remarks": "DESCR254",
+				"posted": "JRNL_HDR_STATUS",
+				"line_account": "ACCOUNT",
+				"line_amount": "MONETARY_AMOUNT"
+			},
+			"values": {
+				"posted": {
+					"P": "Y",
+					"U": "N",
+					"N": "N"
+				}
+			}
+		}
+	}
+}

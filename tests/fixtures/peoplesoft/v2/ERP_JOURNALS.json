@@ -1,0 +1,65 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_JOURNALS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 4,
+				"queryname=": "ERP_JOURNALS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"BUSINESS_UNIT": "US001",
+						"JOURNAL_ID": "JRN0000301",
+						"JOURNAL_DATE": "2026-09-30",
+						"DESCR254": "Month-end tool accrual",
+						"JRNL_HDR_STATUS": "P",
+						"JOURNAL_LINE": 1,
+						"ACCOUNT": "640000",
+						"MONETARY_AMOUNT": "125.00"
+					},
+					{
+						"attr:rownumber": 2,
+						"BUSINESS_UNIT": "US001",
+						"JOURNAL_ID": "JRN0000301",
+						"JOURNAL_DATE": "2026-09-30",
+						"DESCR254": "Month-end tool accrual",
+						"JRNL_HDR_STATUS": "P",
+						"JOURNAL_LINE": 2,
+						"ACCOUNT": "101000",
+						"MONETARY_AMOUNT": "-125.00"
+					},
+					{
+						"attr:rownumber": 3,
+						"BUSINESS_UNIT": "US001",
+						"JOURNAL_ID": "JRN0000302",
+						"JOURNAL_DATE": "2026-10-15",
+						"DESCR254": "Month-end tool accrual",
+						"JRNL_HDR_STATUS": "P",
+						"JOURNAL_LINE": 1,
+						"ACCOUNT": "640000",
+						"MONETARY_AMOUNT": "80.00"
+					},
+					{
+						"attr:rownumber": 4,
+						"BUSINESS_UNIT": "US001",
+						"JOURNAL_ID": "JRN0000302",
+						"JOURNAL_DATE": "2026-10-15",
+						"DESCR254": "Month-end tool accrual",
+						"JRNL_HDR_STATUS": "P",
+						"JOURNAL_LINE": 2,
+						"ACCOUNT": "200000",
+						"MONETARY_AMOUNT": "-80.00"
+					}
+				]
+			}
+		}
+	}
+}

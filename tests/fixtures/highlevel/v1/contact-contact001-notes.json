@@ -1,0 +1,19 @@
+{
+	"request": {
+		"path": "/contacts/contact001/notes",
+		"query": {}
+	},
+	"response": {
+		"notes": [
+			{
+				"id": "note001",
+				"body": "Wants the spring catalogue",
+				"title": "Follow-up",
+				"userId": "user001",
+				"dateAdded": "2026-09-02T14:30:00.000Z",
+				"contactId": "contact001",
+				"pinned": false
+			}
+		]
+	}
+}

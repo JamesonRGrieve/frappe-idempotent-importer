@@ -1,0 +1,30 @@
+{
+	"request": {
+		"path": "/opportunities/search",
+		"query": {
+			"location_id": "loc0harbour0studio01",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"opportunities": [
+			{
+				"id": "opportunity001",
+				"name": "Spring rebrand",
+				"monetaryValue": 1200,
+				"pipelineId": "pipeline001",
+				"pipelineStageId": "stage-proposal",
+				"status": "open",
+				"source": "website",
+				"createdAt": "2026-09-05T13:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"contactId": "contact002",
+				"locationId": "loc0harbour0studio01"
+			}
+		],
+		"meta": {
+			"total": 1,
+			"currentPage": 1
+		}
+	}
+}

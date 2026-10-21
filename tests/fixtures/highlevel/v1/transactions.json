@@ -1,0 +1,80 @@
+{
+	"request": {
+		"path": "/payments/transactions",
+		"query": {
+			"altId": "loc0harbour0studio01",
+			"altType": "location",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"_id": "transaction001",
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"contactId": "contact001",
+				"contactName": "Riley River",
+				"contactEmail": "riley@example.com",
+				"currency": "CAD",
+				"amount": 113,
+				"status": "succeeded",
+				"liveMode": true,
+				"entityType": "invoice",
+				"entityId": "invoice001",
+				"entitySourceType": "invoice",
+				"entitySourceName": "Invoice 1001",
+				"chargeId": "ch_transaction001",
+				"paymentProviderType": "stripe",
+				"createdAt": "2026-09-12T15:00:00.000Z",
+				"updatedAt": "2026-09-12T15:00:00.000Z",
+				"fulfilledAt": "2026-09-12T15:00:00.000Z"
+			},
+			{
+				"_id": "transaction002",
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"contactId": "contact001",
+				"contactName": "Riley River",
+				"contactEmail": "riley@example.com",
+				"currency": "CAD",
+				"amount": 50,
+				"status": "succeeded",
+				"liveMode": true,
+				"entityType": "order",
+				"entityId": "order001",
+				"entitySourceType": "funnel",
+				"entitySourceName": "Spring funnel",
+				"chargeId": "ch_transaction002",
+				"paymentProviderType": "stripe",
+				"createdAt": "2026-09-12T15:00:00.000Z",
+				"updatedAt": "2026-09-12T15:00:00.000Z",
+				"fulfilledAt": "2026-09-12T15:00:00.000Z",
+				"amountRefunded": 10
+			},
+			{
+				"_id": "transaction003",
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"contactId": "contact001",
+				"contactName": "Riley River",
+				"contactEmail": "riley@example.com",
+				"currency": "CAD",
+				"amount": 75,
+				"status": "failed",
+				"liveMode": true,
+				"entityType": "order",
+				"entityId": "order002",
+				"entitySourceType": "funnel",
+				"entitySourceName": "Spring funnel",
+				"chargeId": "ch_transaction003",
+				"paymentProviderType": "stripe",
+				"createdAt": "2026-09-12T15:00:00.000Z",
+				"updatedAt": "2026-09-12T15:00:00.000Z",
+				"fulfilledAt": "2026-09-12T15:00:00.000Z"
+			}
+		],
+		"totalCount": 3
+	}
+}

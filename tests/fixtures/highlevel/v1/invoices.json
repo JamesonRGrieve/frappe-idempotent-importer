@@ -1,0 +1,151 @@
+{
+	"request": {
+		"path": "/invoices/",
+		"query": {
+			"altId": "loc0harbour0studio01",
+			"altType": "location",
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"invoices": [
+			{
+				"_id": "invoice001",
+				"status": "sent",
+				"liveMode": true,
+				"amountPaid": 0,
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"name": "Invoice 1001",
+				"businessDetails": {
+					"name": "Harbour Studio"
+				},
+				"invoiceNumber": 1001,
+				"currency": "CAD",
+				"contactDetails": {
+					"id": "contact001",
+					"name": "Riley River",
+					"phoneNo": "+19025550001",
+					"email": "riley@example.com",
+					"customFields": []
+				},
+				"issueDate": "2026-09-10",
+				"dueDate": "2026-10-10",
+				"invoiceItems": [
+					{
+						"_id": "invoice001-item1",
+						"name": "Design session",
+						"productId": "product001",
+						"priceId": "price001",
+						"currency": "CAD",
+						"amount": 50,
+						"qty": 2,
+						"taxes": []
+					}
+				],
+				"total": 113,
+				"title": "INVOICE",
+				"amountDue": 113,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"totalSummary": {
+					"subTotal": 100,
+					"discount": 0,
+					"tax": 13
+				}
+			},
+			{
+				"_id": "invoice002",
+				"status": "draft",
+				"liveMode": true,
+				"amountPaid": 0,
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"name": "Invoice 1002",
+				"businessDetails": {
+					"name": "Harbour Studio"
+				},
+				"invoiceNumber": 1002,
+				"currency": "CAD",
+				"contactDetails": {
+					"id": "contact001",
+					"name": "Riley River",
+					"phoneNo": "+19025550001",
+					"email": "riley@example.com",
+					"customFields": []
+				},
+				"issueDate": "2026-09-10",
+				"dueDate": "2026-10-10",
+				"invoiceItems": [
+					{
+						"_id": "invoice002-item1",
+						"name": "Design session",
+						"productId": "product001",
+						"priceId": "price001",
+						"currency": "CAD",
+						"amount": 150,
+						"qty": 1,
+						"taxes": []
+					}
+				],
+				"total": 150,
+				"title": "INVOICE",
+				"amountDue": 150,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"totalSummary": {
+					"subTotal": 150,
+					"discount": 0,
+					"tax": 0
+				}
+			},
+			{
+				"_id": "invoice003",
+				"status": "void",
+				"liveMode": true,
+				"amountPaid": 0,
+				"altId": "loc0harbour0studio01",
+				"altType": "location",
+				"name": "Invoice 1003",
+				"businessDetails": {
+					"name": "Harbour Studio"
+				},
+				"invoiceNumber": 1003,
+				"currency": "CAD",
+				"contactDetails": {
+					"id": "contact001",
+					"name": "Riley River",
+					"phoneNo": "+19025550001",
+					"email": "riley@example.com",
+					"customFields": []
+				},
+				"issueDate": "2026-09-10",
+				"dueDate": "2026-10-10",
+				"invoiceItems": [
+					{
+						"_id": "invoice003-item1",
+						"name": "Studio T-shirt",
+						"productId": "product002",
+						"priceId": "price002",
+						"currency": "CAD",
+						"amount": 25,
+						"qty": 1,
+						"taxes": []
+					}
+				],
+				"total": 25,
+				"title": "INVOICE",
+				"amountDue": 25,
+				"createdAt": "2026-08-03T15:00:00.000Z",
+				"updatedAt": "2026-09-15T15:00:00.000Z",
+				"totalSummary": {
+					"subTotal": 25,
+					"discount": 0,
+					"tax": 0
+				}
+			}
+		],
+		"total": 3
+	}
+}

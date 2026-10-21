@@ -86,6 +86,12 @@ OAUTH_CREDENTIALS = {
 	"api_secret": "e2e-oauth-secret",
 	"refresh_token": "e2e-oauth-refresh-token",
 }
+# The test PeopleSoft installation's field map, shared with the unit tests (tests/support/peoplesoft.py).
+PEOPLESOFT_FIELD_MAP = (
+	Path(__file__).resolve().parents[2] / "tests" / "fixtures" / "peoplesoft" / "field-map.json"
+).read_text()
+# The HighLevel sub-account the fixtures (and the fake's token) name.
+HIGHLEVEL_LOCATION = "loc0harbour0studio01"
 # The refresh token the fake OAuth sources issue for a code (tests/e2e/fake_store.py).
 OAUTH_ROTATED_REFRESH_TOKEN = "e2e-oauth-rotated-refresh-token"
 WOO_CREDENTIALS = {
@@ -365,6 +371,27 @@ BUSINESSES = (
 		"https://app.agendrix.com",
 		OAUTH_CREDENTIALS,
 	),
+	Business(
+		"HL",
+		"Studio H",
+		"highlevel-h",
+		"HighLevel",
+		"highlevel",
+		"highlevel-fake",
+		"https://app.gohighlevel.com",
+		{**OAUTH_CREDENTIALS, "api_account": HIGHLEVEL_LOCATION},
+	),
+	Business(
+		"PS",
+		"People P",
+		"peoplesoft-p",
+		"PeopleSoft",
+		"peoplesoft",
+		"peoplesoft-fake",
+		"https://hcm.example.test:8443",
+		# The test installation's user (tests/support/peoplesoft.py) and the field map naming its queries.
+		{"api_user": "e2e-ps-reader", "api_secret": "e2e-ps-password", "field_map": PEOPLESOFT_FIELD_MAP},
+	),
 )
 
 
@@ -467,6 +494,14 @@ CONTENT_DOCTYPES = (
 	"Lead",
 	"Opportunity",
 	"CRM Note",
+	"Prospect",
+	"Prospect Lead",
+	"Opportunity Type",
+	"Communication",
+	"Communication Link",
+	"Event",
+	"Event Participants",
+	"ToDo",
 	"Department",
 	"Designation",
 	"Branch",
@@ -746,6 +781,8 @@ def main() -> None:
 		"assert_acumatica": assert_acumatica,
 		"assert_sage_intacct": assert_sage_intacct,
 		"assert_agendrix": assert_agendrix,
+		"assert_highlevel": assert_highlevel,
+		"assert_peoplesoft": assert_peoplesoft,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2831,6 +2868,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"highlevel-h": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{"api_account": HIGHLEVEL_LOCATION},
+	),
 	"zoho-books-b": OAuthConnect(
 		{"client_id": "e2e-oauth-client", "access_type": "offline"},
 		"oauth_callback",
@@ -3435,6 +3479,105 @@ def assert_agendrix(state: str) -> None:
 		),
 		4 if changed else 3,
 		"successful punches",
+	)
+
+
+@check
+def assert_highlevel(state: str) -> None:
+	"""The HighLevel studio of state ``state`` (tools/highlevel_fixtures.py): its users, products, contacts
+	as leads (the billed one a customer too), its business as a prospect, its pipeline and opportunity,
+	messages, appointment and task, its invoices and payments (v2: a user removed, a new price, a won
+	opportunity, a sent invoice, a new message). A void invoice and a failed transaction aren't kept."""
+	changed = state == "v2"
+	connection = "highlevel-h"
+	assert_booked(
+		connection,
+		[
+			Booked("employee", "User", "user001", "status", "Active"),
+			Booked("employee", "User", "user002", "status", "Inactive" if changed else "Active"),
+			Booked("lead", "Contact", "contact003", "status", "Do Not Contact"),
+			Booked("customer", "Contact", "contact001", "customer_name", "Riley River"),
+			Booked("prospect", "Business", "business001", "company_name", "River Co - HL"),
+			Booked("opportunity_type", "Pipeline", "pipeline001"),
+			Booked(
+				"opportunity",
+				"Opportunity",
+				"opportunity001",
+				"status",
+				"Converted" if changed else "Open",
+			),
+			Booked("opportunity", "Opportunity", "opportunity001", "opportunity_type", "Sales - HL"),
+			Booked("communication", "Message", "message001", "communication_medium", "Email"),
+			Booked("communication", "Message", "message003", "communication_medium", "Phone"),
+			Booked("event", "Appointment", "appointment001", "status", "Open"),
+			Booked("todo", "Task", "task001", "status", "Open"),
+			Booked("sales_invoice", "Invoice", "invoice001", "grand_total", amount(113)),
+			Booked("sales_invoice", "Invoice", "invoice002", "docstatus", 1 if changed else 0),
+			Booked("payment_entry", "Transaction", "transaction001", "paid_amount", amount(113)),
+			Booked("payment_entry", "TransactionRefund", "transaction002", "payment_type", "Pay"),
+		],
+	)
+	if changed:
+		assert_booked(connection, [Booked("communication", "Message", "message004")])
+	consultation = target(connection, "product", "Product", "product001")
+	expect(item_price(connection, consultation), amount(175 if changed else 150), "the consultation's price")
+	tee = target(connection, "product", "Product", "product002")
+	expect(frappe.db.count("Item", {"variant_of": tee}), 2, "the T-shirt's variants")
+	riley = target(connection, "lead", "Contact", "contact001")
+	expect(
+		[row.note for row in frappe.get_doc("Lead", riley).notes],
+		["Follow-up\n\nWants the spring catalogue"],
+		"the contact's note",
+	)
+	for absent in ("Invoice/invoice003", "Transaction/transaction003"):
+		expect(
+			frappe.db.count(
+				"Importer Link",
+				{"connection": connection, "gid": f"gid://highlevel/{connection}/{absent}", "retired": 0},
+			),
+			0,
+			f"{absent}, void or failed",
+		)
+
+
+@check
+def assert_peoplesoft(state: str) -> None:
+	"""The PeopleSoft installation of state ``state`` (tools/peoplesoft_fixtures.py), read through the queries
+	its field map names: departments, jobs and employees in HRMS; customers, suppliers, accounts, an AR
+	invoice, a voucher, payments and journals in the books (v2: a department inactive, an employee
+	terminated, a supplier renamed, the voucher posted and paid, a new journal)."""
+	changed = state == "v2"
+	connection = "peoplesoft-p"
+	records = [
+		Booked("department", "Department", "10100", "disabled", 1 if changed else 0),
+		Booked("designation", "Job", "KC001", "designation_name", "Field Technician - PS"),
+		Booked("employee", "Employee", "KU0002", "status", "Left" if changed else "Active"),
+		Booked("employee", "Employee", "KU0002", "gender", "Male"),
+		Booked(
+			"supplier",
+			"Supplier",
+			"VEND01",
+			"supplier_name",
+			"Northern Tools & Supply Inc" if changed else "Northern Tools Inc",
+		),
+		Booked("customer", "Customer", "CUST01", "customer_type", "Company"),
+		Booked("account", "Account", "400000", "root_type", "Income"),
+		Booked("sales_invoice", "ArInvoice", "US001:INV0000101", "grand_total", amount(640)),
+		Booked("purchase_invoice", "Voucher", "US001:00000201", "docstatus", 1 if changed else 0),
+		Booked("payment_entry", "ArPayment", "US001:DEP0001:1", "paid_amount", amount(640)),
+		Booked("journal_entry", "Journal", "US001:JRN0000301:2026-09-30", "total_debit", amount(125)),
+	]
+	if changed:
+		records += [
+			Booked("payment_entry", "ApPayment", "RBC01:0000000451", "paid_amount", amount(450)),
+			Booked("journal_entry", "Journal", "US001:JRN0000302:2026-10-15", "total_debit", amount(80)),
+		]
+	assert_booked(connection, records)
+	avery = target(connection, "employee", "Employee", "KU0002")
+	expect(
+		frappe.db.get_value("Employee", avery, "reports_to"),
+		target(connection, "employee", "Employee", "KU0001"),
+		"the supervisor",
 	)
 
 

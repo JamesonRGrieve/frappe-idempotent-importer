@@ -1,0 +1,33 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_AP_PAYMENTS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 1,
+				"queryname=": "ERP_AP_PAYMENTS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"BANK_CD": "RBC01",
+						"PYMNT_ID": "0000000451",
+						"REMIT_VENDOR": "VEND01",
+						"PYMNT_DT": "2026-10-10",
+						"PYMNT_AMT": "450.00",
+						"CURRENCY_PYMNT": "CAD",
+						"BUSINESS_UNIT": "US001",
+						"VOUCHER_ID": "00000201",
+						"PAID_AMT": "450.00"
+					}
+				]
+			}
+		}
+	}
+}

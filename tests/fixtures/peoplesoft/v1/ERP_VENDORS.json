@@ -1,0 +1,33 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_VENDORS/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 1,
+				"queryname=": "ERP_VENDORS",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"VENDOR_ID": "VEND01",
+						"NAME1": "Northern Tools Inc",
+						"ADDRESS1": "500 King St W",
+						"CITY": "Toronto",
+						"STATE": "ON",
+						"POSTAL": "M5V 1L9",
+						"COUNTRY": "CAN",
+						"EMAIL_ADDR": "sales@ntools.example",
+						"EFF_STATUS": "A"
+					}
+				]
+			}
+		}
+	}
+}

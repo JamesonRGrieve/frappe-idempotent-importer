@@ -1,0 +1,29 @@
+{
+	"request": {
+		"path": "/users/",
+		"query": {
+			"locationId": "loc0harbour0studio01"
+		}
+	},
+	"response": {
+		"users": [
+			{
+				"id": "user001",
+				"name": "Morgan Sales",
+				"firstName": "Morgan",
+				"lastName": "Sales",
+				"email": "morgan@studio.example",
+				"phone": "+19025550100",
+				"deleted": false
+			},
+			{
+				"id": "user002",
+				"name": "Jamie Front",
+				"firstName": "Jamie",
+				"lastName": "Front",
+				"email": "jamie@studio.example",
+				"deleted": false
+			}
+		]
+	}
+}

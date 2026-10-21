@@ -69,6 +69,37 @@ BIGCOMMERCE_DOCUMENTS = {
 }
 
 
+HIGHLEVEL_BASE = "https://raw.githubusercontent.com/GoHighLevel/highlevel-api-docs/0af86a4cbd48c66a4071c7e509d1079f9f10ed17/apps/"
+HIGHLEVEL_DOCUMENTS = {
+	"users": "a83b463c0bd7e9cc3d0602d5a8edc44ce27a207eec965b7bbfa77855c672c408",
+	"products": "ef17a2dfad950838791cfdd5416d5b71cb512919e3350903207fb3a962cbfb18",
+	"contacts": "d251defab9b0d3ae2feb393b27c071bed7e964c63826af0131bb8e888ecfd6cb",
+	"businesses": "5f1061a259128cabecd50884094a649442fa5b3d579c2ac4c2c061f6b9e54888",
+	"opportunities": "bd2c63ca4ef9929fb996a04c873e7300b7d3fe5737200270e7f2270dce26e1ba",
+	"conversations": "d8e08fcf4249f4f0ba190da0b46a440ffcdf18b95f11a0e2331f82a0df7d14bb",
+	"invoices": "3b90fc6561ae9ca4b9ff00213dbde6f6e947d34a27a8067caa113169cacbd770",
+	"payments": "93b1dc8d05fa8fa87b1b3cf72d82cc3cd71b4b9846818bcb7835cc65d14a4bfa",
+}
+# Where a HighLevel document types a field against its own example, the example's shape: an invoice's items
+# are the InvoiceItemDto it takes on create (with the ``_id`` its response example shows) and its contact
+# the ContactDetailsDto, not strings and a bare object; a transaction's status is the string its example
+# shows ("succeeded"), not an object.
+INVOICE_RESPONSE = "/components/schemas/GetInvoiceResponseDto/properties/"
+HIGHLEVEL_CORRECTIONS: dict[str, tuple[tuple[str, Any], ...]] = {
+	"invoices": (
+		(
+			INVOICE_RESPONSE + "invoiceItems/items",
+			{
+				"allOf": [
+					{"$ref": "#/components/schemas/InvoiceItemDto"},
+					{"properties": {"_id": {"type": "string"}}},
+				]
+			},
+		),
+		(INVOICE_RESPONSE + "contactDetails", {"$ref": "#/components/schemas/ContactDetailsDto"}),
+	),
+	"payments": (("/components/schemas/TxnResponseSchema/properties/status", {"type": "string"}),),
+}
 QUICKBOOKS_XSD_FILES = (
 	"IntuitRestServiceDef.xsd",
 	"Finance.xsd",
@@ -171,6 +202,10 @@ class SpecDocument:
 	# order, the pin covering the whole.
 	parts: tuple[str, ...] = ()
 	user_agent: str = USER_AGENT
+	# Where the published document contradicts its own response examples (HighLevel's types an invoice's
+	# items as strings, its example and its InvoiceItemDto make them objects): each correction replaces
+	# the schema at a JSON pointer, its reason recorded beside it in the catalog.
+	corrections: tuple[tuple[str, Any], ...] = ()
 
 	def path(self) -> Path:
 		if self.member is not None:
@@ -209,7 +244,21 @@ class SpecDocument:
 			path = self.fetch()
 		body = path.read_bytes()
 		self.verify(body)
-		return ApiSpec.of(decode(self.format, self.document(body)), self.prefix_pattern)
+		document = decode(self.format, self.document(body))
+		for pointer, schema in self.corrections:
+			corrected(document, pointer, schema)
+		return ApiSpec.of(document, self.prefix_pattern)
+
+
+def corrected(document: dict[str, Any], pointer: str, schema: Any) -> None:
+	"""Replaces the value at a JSON pointer (RFC 6901) that must already exist."""
+	*parents, last = [part.replace("~1", "/").replace("~0", "~") for part in pointer.lstrip("/").split("/")]
+	node: Any = document
+	for part in parents:
+		node = node[part]
+	if last not in node:
+		raise KeyError(f"{pointer} is not in the document: the correction no longer applies")
+	node[last] = schema
 
 
 @dataclass(frozen=True)
@@ -481,6 +530,24 @@ def catalog() -> list[Document]:
 			JSON,
 			"d118ecab8c953a90d96128f08b065bf1e42642ebcaab8fd5d9a7aa522f3277ff",
 		),
+		# HighLevel's API v2 OpenAPI documents (GoHighLevel/highlevel-api-docs, CC0, the commit of 2026-06-19),
+		# one per app, each pinned to its SHA-256. Their paths are full on services.leadconnectorhq.com.
+		*(
+			SpecDocument(
+				"highlevel",
+				name,
+				f"{HIGHLEVEL_BASE}{name}.json",
+				"",
+				False,
+				JSON,
+				sha256,
+				corrections=HIGHLEVEL_CORRECTIONS.get(name, ()),
+			)
+			for name, sha256 in HIGHLEVEL_DOCUMENTS.items()
+		),
+		# PeopleSoft publishes no OpenAPI document for the Integration Broker: the Query Access Service's REST
+		# answer, transcribed from PeopleBooks ("Executing the Query").
+		committed("peoplesoft", "qas-rest-reference", "tests/schemas/peoplesoft-qas.json", ""),
 		# SuiteQL's endpoint is outside the Record API: its response, transcribed from the official page.
 		committed("netsuite", "suiteql", "tests/schemas/netsuite-suiteql.json", ""),
 	]

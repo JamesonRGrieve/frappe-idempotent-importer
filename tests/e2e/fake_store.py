@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from tests.support.dynamics import ENTRA_CLIENT_SECRET, ENTRA_TOKEN
 from tests.support.fixtures import Answer, RestResponder, ShopifyResponder, intacct_request
+from tests.support.peoplesoft import PS_PASSWORD, PS_USER
 from tests.support.sage_intacct import (
 	INTACCT_COMPANY,
 	INTACCT_PASSWORD,
@@ -99,6 +100,10 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 	),
 	"netsuite-fake": ("netsuite", {"Authorization": "Bearer e2e-netsuite-token"}),
 	"sap_business_one-fake": ("sap_business_one", {"Cookie": B1_COOKIE}),
+	"peoplesoft-fake": (
+		"peoplesoft",
+		{"Authorization": "Basic " + base64.b64encode(f"{PS_USER}:{PS_PASSWORD}".encode()).decode()},
+	),
 }
 # Sage Intacct's gateway: the e2e Web Services sender and company user, checked in every request's body.
 INTACCT_HOST = "sage_intacct-fake"
@@ -163,6 +168,11 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		True,
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}", "Content-Type": "application/json"},
 	),
+	"highlevel-fake": ("highlevel", "/oauth/token", True, {"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"}),
+}
+# What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
+GRANT_EXTRAS: dict[str, dict[str, str]] = {
+	"highlevel-fake": {"locationId": "loc0harbour0studio01", "userType": "Location"},
 }
 # The OAuth sources whose token endpoint takes JSON and wants the redirect URI on a refresh too.
 JSON_GRANT_HOSTS = frozenset({"agendrix-fake"})
@@ -248,7 +258,11 @@ class FakeStore(BaseHTTPRequestHandler):
 					self.send(json_grant(body))
 					return
 				self.send(
-					oauth_grant(rotates, parse_qs(body.decode()).get("grant_type") == ["authorization_code"])
+					oauth_grant(
+						rotates,
+						parse_qs(body.decode()).get("grant_type") == ["authorization_code"],
+						GRANT_EXTRAS.get(host, {}),
+					)
 				)
 				return
 			if self.path.startswith(XERO_CONNECTIONS):
@@ -338,13 +352,15 @@ def shopify_grant(body: bytes) -> Answer:
 	return Answer(200, json.dumps(grant).encode())
 
 
-def oauth_grant(rotates: bool, exchange: bool) -> Answer:
+def oauth_grant(rotates: bool, exchange: bool, extras: dict[str, str] | None = None) -> Answer:
 	"""An OAuth 2 token response: the access token the API answers to, and a new refresh token for an
-	authorization code's exchange (and every refresh of a source that rotates it)."""
+	authorization code's exchange (and every refresh of a source that rotates it), with what the source
+	names beside them."""
 	grant: dict[str, object] = {
 		"access_token": OAUTH_ACCESS_TOKEN,
 		"token_type": "Bearer",
 		"expires_in": 3600,
+		**(extras or {}),
 	}
 	if rotates or exchange:
 		grant["refresh_token"] = OAUTH_ROTATED_REFRESH_TOKEN

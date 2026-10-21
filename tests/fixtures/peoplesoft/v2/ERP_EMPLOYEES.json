@@ -1,0 +1,51 @@
+{
+	"request": {
+		"path": "/PSIGW/RESTListeningConnector/PSFT_HR/ExecuteQuery.v1/PUBLIC/ERP_EMPLOYEES/JSON/NONFILE",
+		"query": {
+			"isconnectedquery": "N",
+			"maxrows": "500",
+			"json_resp": "true"
+		}
+	},
+	"response": {
+		"status": "success",
+		"data": {
+			"query": {
+				"numrows": 2,
+				"queryname=": "ERP_EMPLOYEES",
+				"rows": [
+					{
+						"attr:rownumber": 1,
+						"A.EMPLID": "KU0001",
+						"FIRST_NAME": "Morgan",
+						"LAST_NAME": "Reyes",
+						"SEX": "F",
+						"BIRTHDATE": "1982-03-14",
+						"HIRE_DT": "2019-04-01",
+						"TERMINATION_DT": null,
+						"EMPL_STATUS": "A",
+						"DEPTID": "10000",
+						"JOBCODE": "KC002",
+						"SUPERVISOR_ID": null,
+						"EMAIL_ADDR": "morgan.reyes@kiln.example"
+					},
+					{
+						"attr:rownumber": 2,
+						"A.EMPLID": "KU0002",
+						"FIRST_NAME": "Avery",
+						"LAST_NAME": "Chen",
+						"SEX": "M",
+						"BIRTHDATE": "1990-07-22",
+						"HIRE_DT": "2021-09-13",
+						"TERMINATION_DT": "2026-10-09",
+						"EMPL_STATUS": "T",
+						"DEPTID": "10100",
+						"JOBCODE": "KC001",
+						"SUPERVISOR_ID": "KU0001",
+						"EMAIL_ADDR": "avery.chen@kiln.example"
+					}
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"request": {
+		"path": "/contacts/contact002",
+		"query": {}
+	},
+	"response": {
+		"contact": {
+			"id": "contact002",
+			"name": "Sam Lead",
+			"locationId": "loc0harbour0studio01",
+			"firstName": "Sam",
+			"lastName": "Lead",
+			"email": "sam@example.com",
+			"emailLowerCase": "sam@example.com",
+			"phone": "+19025550002",
+			"dnd": false,
+			"type": "lead",
+			"source": "website form",
+			"tags": [],
+			"dateAdded": "2026-08-03T15:00:00.000Z",
+			"dateUpdated": "2026-09-15T15:00:00.000Z"
+		}
+	}
+}

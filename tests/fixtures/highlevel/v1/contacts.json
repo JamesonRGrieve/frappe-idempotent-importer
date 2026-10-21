@@ -1,0 +1,40 @@
+{
+	"request": {
+		"path": "/contacts/",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"contacts": [
+			{
+				"id": "contact001",
+				"locationId": "loc0harbour0studio01",
+				"email": "riley@example.com",
+				"source": "website form",
+				"dateAdded": "2026-08-03T15:00:00.000Z",
+				"tags": [],
+				"businessId": "business001",
+				"country": "CA"
+			},
+			{
+				"id": "contact002",
+				"locationId": "loc0harbour0studio01",
+				"email": "sam@example.com",
+				"source": "website form",
+				"dateAdded": "2026-08-03T15:00:00.000Z",
+				"tags": []
+			},
+			{
+				"id": "contact003",
+				"locationId": "loc0harbour0studio01",
+				"email": "quinn@example.com",
+				"source": "website form",
+				"dateAdded": "2026-08-03T15:00:00.000Z",
+				"tags": []
+			}
+		],
+		"count": 3
+	}
+}

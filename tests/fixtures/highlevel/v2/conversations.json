@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/conversations/search",
+		"query": {
+			"locationId": "loc0harbour0studio01",
+			"limit": "100",
+			"sort": "asc"
+		},
+		"query_patterns": {
+			"startDate": ".+",
+			"endDate": ".+"
+		}
+	},
+	"response": {
+		"conversations": [
+			{
+				"id": "conversation001",
+				"contactId": "contact001",
+				"locationId": "loc0harbour0studio01",
+				"lastMessageBody": "",
+				"lastMessageType": "TYPE_EMAIL",
+				"type": "TYPE_EMAIL",
+				"unreadCount": 0,
+				"fullName": "Riley River",
+				"contactName": "Riley River",
+				"email": "riley@example.com",
+				"phone": "+19025550001"
+			},
+			{
+				"id": "conversation002",
+				"contactId": "contact002",
+				"locationId": "loc0harbour0studio01",
+				"lastMessageBody": "",
+				"lastMessageType": "TYPE_CALL",
+				"type": "TYPE_PHONE",
+				"unreadCount": 0,
+				"fullName": "Sam Lead",
+				"contactName": "Sam Lead",
+				"email": "sam@example.com",
+				"phone": "+19025550002"
+			}
+		],
+		"total": 2
+	}
+}

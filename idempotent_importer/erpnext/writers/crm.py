@@ -1,21 +1,52 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
-"""A source's sales pipeline in ERPNext's CRM: Leads (the person, their organisation and how to reach
-them) and Opportunities with a lead or a customer. Retiring disables a lead and closes an opportunity."""
+"""A source's sales pipeline in ERPNext's CRM: Leads (the person, their organisation, how to reach them and
+their notes), Prospects (the organisations, with their Contact, Address and leads), Opportunity Types (a
+source's pipelines, named with the connection's abbreviation), Opportunities with a lead or a customer;
+and the conversations around them as Communications, appointments as Events and tasks as ToDos, each
+linked to its lead or customer.
+
+Nothing here sends anything: a Communication is recorded, never sent, and mail is muted for every write.
+Retiring disables a lead, closes an opportunity, cancels an event or a task and marks a communication; a
+prospect and an opportunity type have no disabled state and stay."""
 
 from __future__ import annotations
+
+from typing import Any
 
 import frappe
 
 from idempotent_importer.core.desired import Desired
+from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
-from idempotent_importer.erpnext.context import money
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.context import money, system_datetime
+from idempotent_importer.erpnext.writers.base import Writer, mark_retired
+from idempotent_importer.erpnext.writers.parties import ReachableWriter
 
-LEAD, OPPORTUNITY, CUSTOMER = "Lead", "Opportunity", "Customer"
-CLOSED = "Closed"
+LEAD, OPPORTUNITY, CUSTOMER, PROSPECT = "Lead", "Opportunity", "Customer", "Prospect"
+OPPORTUNITY_TYPE, COMMUNICATION, EVENT, TODO = "Opportunity Type", "Communication", "Event", "ToDo"
+CLOSED, CANCELLED = "Closed", "Cancelled"
 TITLE_LENGTH = 140
+SUBJECT_LENGTH = 140
 PARTY_DOCTYPES = {Kind.LEAD.value: (Kind.LEAD, LEAD), Kind.CUSTOMER.value: (Kind.CUSTOMER, CUSTOMER)}
+
+
+def crm_notes(values: Values) -> list[dict[str, Any]]:
+	"""A record's CRM Note rows: its own note, then each note the source keeps on it, when written."""
+	notes = values.optional_string("notes")
+	rows: list[dict[str, Any]] = [{"note": notes}] if notes else []
+	for note in values.records("crm_notes"):
+		date = note.optional_string("date")
+		rows.append({"note": note.string("text"), "added_on": system_datetime(date) if date else None})
+	return rows
+
+
+class PartyLinked(Writer):
+	"""A writer whose record is about a lead or a customer (``{kind, party}``)."""
+
+	def party(self, party: Values) -> tuple[str, str]:
+		kind, doctype = PARTY_DOCTYPES[party.string("kind")]
+		return doctype, self.dependency(kind, party.string("party"))
 
 
 class LeadWriter(Writer):
@@ -37,13 +68,59 @@ class LeadWriter(Writer):
 				"disabled": int(bool(values.all().get("disabled"))),
 			}
 		)
-		notes = values.optional_string("notes")
-		doc.set("notes", [{"note": notes}] if notes else [])
+		doc.set("notes", crm_notes(values))
 		doc.save(ignore_permissions=True)
 		return Target(LEAD, doc.name)
 
 	def retire(self, link: Link) -> None:
 		frappe.db.set_value(LEAD, link.target.name, "disabled", 1)
+
+
+class ProspectWriter(ReachableWriter):
+	"""An organisation, named with the connection's abbreviation, with its Contact and Address and its
+	people as its leads."""
+
+	doctype = PROSPECT
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		name = self.context.suffixed(values.string("name"))
+		doc = self.existing(link)
+		if doc is not None and doc.name != name:
+			frappe.rename_doc(PROSPECT, doc.name, name, force=True)
+			doc = frappe.get_doc(PROSPECT, name)
+		if doc is None:
+			doc = frappe.new_doc(PROSPECT)
+			doc.company_name = name
+		doc.update({"company": self.context.company, "website": values.optional_string("website")})
+		doc.set("notes", crm_notes(values))
+		doc.set("leads", [{"lead": self.dependency(Kind.LEAD, lead)} for lead in values.strings("leads")])
+		doc.save(ignore_permissions=True)
+		self._contact(desired.gid, doc.name, values)
+		self._addresses(desired.gid, doc.name, values)
+		return Target(PROSPECT, doc.name)
+
+	def retire(self, link: Link) -> None:
+		"""Nothing to switch off: a Prospect has no disabled state."""
+
+
+class OpportunityTypeWriter(Writer):
+	"""A source's pipeline, named with the connection's abbreviation."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		name = self.context.suffixed(values.string("name"))
+		doc = self.existing(link)
+		if doc is not None and doc.name != name:
+			frappe.rename_doc(OPPORTUNITY_TYPE, doc.name, name, force=True)
+			doc = frappe.get_doc(OPPORTUNITY_TYPE, name)
+		doc = doc or frappe.new_doc(OPPORTUNITY_TYPE)
+		doc.description = values.optional_string("description")
+		self.save(doc, name)
+		return Target(OPPORTUNITY_TYPE, name)
+
+	def retire(self, link: Link) -> None:
+		"""Nothing to switch off: an Opportunity Type has no disabled state."""
 
 
 class OpportunityWriter(Writer):
@@ -53,6 +130,7 @@ class OpportunityWriter(Writer):
 		doc = self.existing(link) or frappe.new_doc(OPPORTUNITY)
 		amount = values.optional_decimal("amount")
 		probability = values.optional_decimal("probability")
+		opportunity_type = values.optional_string("opportunity_type")
 		doc.update(
 			{
 				"company": self.context.company,
@@ -67,10 +145,94 @@ class OpportunityWriter(Writer):
 				"probability": float(probability) if probability is not None else 0,
 			}
 		)
-		notes = values.optional_string("notes")
-		doc.set("notes", [{"note": notes}] if notes else [])
+		if opportunity_type:
+			doc.opportunity_type = self.dependency(Kind.OPPORTUNITY_TYPE, opportunity_type)
+		doc.set("notes", crm_notes(values))
 		doc.save(ignore_permissions=True)
 		return Target(OPPORTUNITY, doc.name)
 
 	def retire(self, link: Link) -> None:
 		frappe.db.set_value(OPPORTUNITY, link.target.name, "status", CLOSED)
+
+
+class CommunicationWriter(PartyLinked):
+	"""A message, recorded on its lead's or customer's timeline (never sent)."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		doctype, party = self.party(values.required_record("with"))
+		doc = self.existing(link) or frappe.new_doc(COMMUNICATION)
+		doc.update(
+			{
+				"communication_type": "Communication",
+				"communication_medium": values.string("medium"),
+				"sent_or_received": "Sent" if values.flag("sent") else "Received",
+				"communication_date": system_datetime(values.string("date")),
+				"subject": values.string("subject")[:SUBJECT_LENGTH],
+				"content": values.string("content"),
+				"phone_no": values.optional_string("phone"),
+				"sender": values.optional_string("email") if not values.flag("sent") else None,
+				"recipients": values.optional_string("email") if values.flag("sent") else None,
+				"reference_doctype": doctype,
+				"reference_name": party,
+				"status": "Linked",
+			}
+		)
+		doc.save(ignore_permissions=True)
+		return Target(COMMUNICATION, doc.name)
+
+	def retire(self, link: Link) -> None:
+		mark_retired(COMMUNICATION, link.target.name)
+
+
+class EventWriter(PartyLinked):
+	"""An appointment as a private Event, at its times as the source's clock shows them, with its leads and
+	customers as participants."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		doc = self.existing(link) or frappe.new_doc(EVENT)
+		doc.update(
+			{
+				"subject": values.string("subject")[:SUBJECT_LENGTH],
+				"starts_on": values.string("starts_on"),
+				"ends_on": values.optional_string("ends_on"),
+				"status": values.string("status"),
+				"description": values.optional_string("description"),
+				"event_type": "Private",
+				"send_reminder": 0,
+			}
+		)
+		participants = [self.party(party) for party in values.records("participants")]
+		doc.set(
+			"event_participants",
+			[{"reference_doctype": doctype, "reference_docname": name} for doctype, name in participants],
+		)
+		doc.save(ignore_permissions=True)
+		return Target(EVENT, doc.name)
+
+	def retire(self, link: Link) -> None:
+		frappe.db.set_value(EVENT, link.target.name, "status", CANCELLED)
+
+
+class ToDoWriter(PartyLinked):
+	"""A task about a lead or a customer (assigned to no one: the source's users aren't this site's)."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		doctype, party = self.party(values.required_record("about"))
+		doc = self.existing(link) or frappe.new_doc(TODO)
+		doc.update(
+			{
+				"description": values.string("description"),
+				"status": values.string("status"),
+				"date": values.optional_string("date"),
+				"reference_type": doctype,
+				"reference_name": party,
+			}
+		)
+		doc.save(ignore_permissions=True)
+		return Target(TODO, doc.name)
+
+	def retire(self, link: Link) -> None:
+		frappe.db.set_value(TODO, link.target.name, "status", CANCELLED)

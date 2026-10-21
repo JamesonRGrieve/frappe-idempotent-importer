@@ -132,6 +132,21 @@ HUBSPOT_DOCUMENTS = {
 	"Tasks/Rollouts/424/v3/tasks.json": "41eba2b831ed3706f845212e3b2c287fcc0fc38b4d4078024406e7e721a79c9c",
 	"Taxes/Rollouts/424/v3/taxes.json": "334e4742f2cad9896c28127b55deb51d69bd89e13656b0b76cd0d5e086bf67b9",
 }
+# Zoho CRM's API v8 OpenAPI documents (zoho/crm-oas, v8.0, the commit of 2026-09-02), one per API the adapter
+# reads, each pinned to its SHA-256. The settings, users, organisation, notes and related lists come before the
+# records document, whose /{module}/{recordId} would otherwise take /settings/fields.
+ZOHO_CRM_BASE = (
+	"https://raw.githubusercontent.com/zoho/crm-oas/a6687fc961acdaa52592d39c5c7e4385e5b4c289/v8.0/"
+)
+ZOHO_CRM_DOCUMENTS = {
+	"fields": "9fad35e499f2832e165a29da020d6f8a6b2593a9609eea480e7dfbcce25fa734",
+	"modules": "2f4a73b7c5ee7e3fbd3657a6f735f7839d3e14f7b785430e66b8672c05bb8541",
+	"org": "18f957789c995b04cd944b78999d2fcceb75372eb2cc90c9380329c3f52117d5",
+	"users": "e3534e5e118c8016145a81d3f8719c0dde8f8b67668c74e0d334040c2ee09e05",
+	"notes": "ec970a913a89a0983987970e4e644a588abe94e38a3af7d3bebfe02416d6cd43",
+	"related_records": "6eca5e00b4624302757c7938a99cde42191d6d5025f22f7daa7ba1f28f17625d",
+	"record": "5397f63e5beba143086bd2aec8789291b2a59474200b096bc7c5faecff12423a",
+}
 QUICKBOOKS_XSD_FILES = (
 	"IntuitRestServiceDef.xsd",
 	"Finance.xsd",
@@ -601,6 +616,13 @@ def catalog() -> list[Document]:
 			False,
 			YAML,
 			"b14dad2526cf6dc8696270a2e42a9b141fecc0f47198f45a837ada7330d457d5",
+		),
+		# Zoho CRM's v8 documents; requests go to /crm/v8/… on the data centre's API host.
+		*(
+			SpecDocument(
+				"zoho_crm", name, f"{ZOHO_CRM_BASE}{name}/{name}.yaml", "/crm/v8", False, YAML, sha256
+			)
+			for name, sha256 in ZOHO_CRM_DOCUMENTS.items()
 		),
 		# HubSpot's CRM v3 documents; their paths are full on api.hubapi.com.
 		*(

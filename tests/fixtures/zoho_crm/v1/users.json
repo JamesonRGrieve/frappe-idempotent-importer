@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/crm/v8/users",
+		"query": {
+			"type": "AllUsers",
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"users": [
+			{
+				"id": "5725767000000401001",
+				"first_name": "Morgan",
+				"last_name": "Sales",
+				"full_name": "Morgan Sales",
+				"email": "morgan@studio.example",
+				"status": "active",
+				"Reporting_To": null
+			},
+			{
+				"id": "5725767000000401002",
+				"first_name": "Jamie",
+				"last_name": "Front",
+				"full_name": "Jamie Front",
+				"email": "jamie@studio.example",
+				"status": "active",
+				"Reporting_To": {
+					"name": "Morgan Sales",
+					"id": "5725767000000401001"
+				}
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 2,
+			"page": 1,
+			"more_records": false
+		}
+	}
+}

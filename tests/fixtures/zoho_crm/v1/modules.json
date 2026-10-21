@@ -1,0 +1,80 @@
+{
+	"request": {
+		"path": "/crm/v8/settings/modules",
+		"query": {}
+	},
+	"response": {
+		"modules": [
+			{
+				"id": "5725767709148253291",
+				"api_name": "Products",
+				"api_supported": true
+			},
+			{
+				"id": "5725767393182388969",
+				"api_name": "Vendors",
+				"api_supported": true
+			},
+			{
+				"id": "5725767748490668379",
+				"api_name": "Leads",
+				"api_supported": true
+			},
+			{
+				"id": "5725767267519426187",
+				"api_name": "Accounts",
+				"api_supported": true
+			},
+			{
+				"id": "5725767257374260194",
+				"api_name": "Contacts",
+				"api_supported": true
+			},
+			{
+				"id": "5725767359665510923",
+				"api_name": "Deals",
+				"api_supported": true
+			},
+			{
+				"id": "5725767461315970629",
+				"api_name": "Calls",
+				"api_supported": true
+			},
+			{
+				"id": "5725767235748182319",
+				"api_name": "Notes",
+				"api_supported": true
+			},
+			{
+				"id": "5725767121181208040",
+				"api_name": "Events",
+				"api_supported": true
+			},
+			{
+				"id": "5725767525787223331",
+				"api_name": "Tasks",
+				"api_supported": true
+			},
+			{
+				"id": "5725767870678341179",
+				"api_name": "Quotes",
+				"api_supported": true
+			},
+			{
+				"id": "5725767369233190955",
+				"api_name": "Sales_Orders",
+				"api_supported": true
+			},
+			{
+				"id": "5725767324458146136",
+				"api_name": "Invoices",
+				"api_supported": true
+			},
+			{
+				"id": "5725767955271893737",
+				"api_name": "Purchase_Orders",
+				"api_supported": true
+			}
+		]
+	}
+}

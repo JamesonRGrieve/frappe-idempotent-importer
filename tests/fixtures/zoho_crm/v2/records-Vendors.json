@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/crm/v8/Vendors",
+		"query": {
+			"per_page": "100",
+			"page": "1"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000421001",
+				"Vendor_Name": "Paper Mill",
+				"Email": "orders@mill.example",
+				"Street": "9 Mill Rd",
+				"City": "Truro",
+				"State": "NS",
+				"Zip_Code": "B2N 1A1",
+				"Country": "Canada"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

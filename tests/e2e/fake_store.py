@@ -177,6 +177,12 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
 	),
 	"pipedrive-fake": ("pipedrive", "/oauth/token", False, {"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"}),
+	"zoho_crm-fake": (
+		"zoho_crm",
+		"/oauth/v2/token",
+		False,
+		{"Authorization": f"Zoho-oauthtoken {OAUTH_ACCESS_TOKEN}"},
+	),
 }
 # What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
 GRANT_EXTRAS: dict[str, dict[str, str]] = {

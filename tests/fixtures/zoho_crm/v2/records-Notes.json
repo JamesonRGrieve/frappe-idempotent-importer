@@ -1,0 +1,52 @@
+{
+	"request": {
+		"path": "/crm/v8/Notes",
+		"query": {
+			"per_page": "100",
+			"page": "1"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000424001",
+				"Note_Title": "Budget",
+				"Note_Content": "<div>Budget approved</div>",
+				"Parent_Id": {
+					"module": {
+						"api_name": "Deals",
+						"id": "5725767000000002175"
+					},
+					"name": "River rebrand",
+					"id": "5725767000000419001"
+				},
+				"Created_Time": "2026-09-04T08:30:00-06:00"
+			},
+			{
+				"id": "5725767000000424002",
+				"Note_Title": "Signed",
+				"Note_Content": "Signed and returned",
+				"Parent_Id": {
+					"module": {
+						"api_name": "Accounts",
+						"id": "5725767000000002177"
+					},
+					"name": "Delta Works",
+					"id": "5725767000000417002"
+				},
+				"Created_Time": "2026-10-02T08:30:00-06:00"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 2,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

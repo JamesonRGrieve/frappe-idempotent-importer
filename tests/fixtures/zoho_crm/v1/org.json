@@ -1,0 +1,56 @@
+{
+	"request": {
+		"path": "/crm/v8/org",
+		"query": {}
+	},
+	"response": {
+		"org": [
+			{
+				"country": null,
+				"photo_id": null,
+				"city": null,
+				"description": null,
+				"type": "bigin",
+				"created_time": "",
+				"mc_status": null,
+				"gapps_enabled": false,
+				"translation_enabled": false,
+				"street": null,
+				"domain_name": "",
+				"alias": null,
+				"currency": "Canadian Dollar - CAD",
+				"id": "5725767000000000001",
+				"employee_count": null,
+				"state": null,
+				"fax": null,
+				"zip": null,
+				"website": null,
+				"currency_symbol": "",
+				"mobile": null,
+				"currency_locale": "",
+				"primary_zuid": null,
+				"zia_portal_id": null,
+				"time_zone": "",
+				"zgid": "",
+				"country_code": null,
+				"deletable_org_account": false,
+				"license_details": {
+					"users_license_purchased": 0,
+					"paid": false,
+					"paid_type": "free",
+					"portal_users_license_purchased": 0
+				},
+				"hierarchy_preferences": {
+					"type": "Role_Hierarchy"
+				},
+				"phone": null,
+				"company_name": "Harbour Design",
+				"privacy_settings": false,
+				"primary_email": null,
+				"iso_code": "CAD",
+				"hipaa_compliance_enabled": false,
+				"lite_users_enabled": false
+			}
+		]
+	}
+}

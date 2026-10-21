@@ -1,0 +1,30 @@
+{
+	"request": {
+		"path": "/crm/v8/Products",
+		"query": {
+			"ids": "5725767000000420001"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000420001",
+				"Product_Name": "Design session",
+				"Product_Code": "SESSION",
+				"Unit_Price": 175,
+				"Product_Active": true
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

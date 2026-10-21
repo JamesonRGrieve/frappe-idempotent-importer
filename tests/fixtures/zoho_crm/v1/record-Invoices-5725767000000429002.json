@@ -1,0 +1,55 @@
+{
+	"request": {
+		"path": "/crm/v8/Invoices",
+		"query": {
+			"ids": "5725767000000429002"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000429002",
+				"Subject": "Prints",
+				"Invoice_Number": "INV-1002",
+				"Status": "Created",
+				"Account_Name": {
+					"name": "River Co",
+					"id": "5725767000000417001"
+				},
+				"Invoice_Date": "2026-09-20",
+				"Created_Time": "2026-08-03T09:00:00-06:00",
+				"Invoiced_Items": [
+					{
+						"id": "5725767000000429102",
+						"Product_Name": {
+							"name": "Studio print",
+							"id": "5725767000000420002"
+						},
+						"Quantity": 1,
+						"List_Price": 45.0,
+						"Discount": 0.0,
+						"Tax": 0.0,
+						"Total": 45.0,
+						"Net_Total": 45.0
+					}
+				],
+				"Sub_Total": 45,
+				"Discount": 5,
+				"Tax": 0,
+				"Adjustment": 0,
+				"Grand_Total": 40
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

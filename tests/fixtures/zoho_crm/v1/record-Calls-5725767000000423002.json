@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/crm/v8/Calls",
+		"query": {
+			"ids": "5725767000000423002"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000423002",
+				"Subject": "Samples",
+				"Call_Type": "Inbound",
+				"Call_Start_Time": "2026-09-06T09:00:00-06:00",
+				"Who_Id": {
+					"name": "Sam Shore",
+					"id": "5725767000000418002"
+				},
+				"Created_Time": "2026-08-03T09:00:00-06:00"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

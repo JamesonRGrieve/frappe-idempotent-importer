@@ -1,0 +1,33 @@
+{
+	"request": {
+		"path": "/crm/v8/Contacts",
+		"query": {
+			"ids": "5725767000000418002"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000418002",
+				"First_Name": "Sam",
+				"Last_Name": "Shore",
+				"Email": "sam@river.example",
+				"Account_Name": {
+					"name": "River Co",
+					"id": "5725767000000417001"
+				}
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

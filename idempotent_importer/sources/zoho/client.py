@@ -137,6 +137,16 @@ def oauth(product: Product, config: ConnectionConfig, transport: HttpTransport) 
 	)
 
 
+def same_data_centre(config: ConnectionConfig, params: Mapping[str, str]) -> None:
+	"""An approval from another data centre than the Store URL names can't be used there (the callback's
+	``accounts-server`` says where the account lives)."""
+	server = params.get(ACCOUNTS_SERVER_PARAMETER)
+	if server and not config.endpoint_override and server.rstrip("/") != accounts_url(config):
+		raise SourceError(
+			f"The Zoho account is in the data centre of {server}: set the Store URL to that data centre."
+		)
+
+
 def connected(
 	product: Product,
 	config: ConnectionConfig,
@@ -147,11 +157,7 @@ def connected(
 	"""The organisation the approval opened (GET /organizations): the account, unless there are several and
 	the connection doesn't already name one of them. An approval from another data centre than the Store
 	URL names can't be used there."""
-	server = params.get(ACCOUNTS_SERVER_PARAMETER)
-	if server and not config.endpoint_override and server.rstrip("/") != accounts_url(config):
-		raise SourceError(
-			f"The Zoho account is in the data centre of {server}: set the Store URL to that data centre."
-		)
+	same_data_centre(config, params)
 	response = transport.get(
 		api_url(config) + product.api_path + ORGANIZATIONS,
 		{"Authorization": f"{SCHEME} {grant.access_token}", "Accept": "application/json"},

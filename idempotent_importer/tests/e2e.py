@@ -427,6 +427,16 @@ BUSINESSES = (
 		"https://harbour.pipedrive.com",
 		{**OAUTH_CREDENTIALS, "api_account": "https://harbour.pipedrive.com"},
 	),
+	Business(
+		"ZC",
+		"Pipeline Z",
+		"zoho-crm-z",
+		"Zoho CRM",
+		"zoho_crm",
+		"zoho_crm-fake",
+		"https://crm.zoho.com",
+		OAUTH_CREDENTIALS,
+	),
 )
 
 
@@ -821,6 +831,7 @@ def main() -> None:
 		"assert_hubspot": assert_hubspot,
 		"assert_salesforce": assert_salesforce,
 		"assert_pipedrive": assert_pipedrive,
+		"assert_zoho_crm": assert_zoho_crm,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3143,6 +3154,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{"api_account": "https://harbour.pipedrive.com"},
 	),
+	"zoho-crm-z": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "access_type": "offline"},
+		"oauth_callback",
+		{"location": "us", "accounts-server": "https://accounts.zoho.com"},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 }
 
 
@@ -4026,6 +4044,62 @@ def assert_pipedrive(state: str) -> None:
 		json.loads(frappe.db.get_value("Prospect", river, "importer_custom_fields")),
 		{"Account tier": "Gold"},
 		"the organization's custom field",
+	)
+
+
+@check
+def assert_zoho_crm(state: str) -> None:
+	"""The Zoho CRM studio of state ``state`` (tools/zoho_crm_fixtures.py): users, products, a vendor, leads,
+	accounts with their contacts (the customer one a customer too), the pipeline and deals at their stage,
+	calls, notes, an event and a task, a quote, a sales order, invoices and a purchase order, and the studio's
+	custom fields (v2: a user deactivated, a new price, a won deal, a completed task, an approved invoice, a new
+	note)."""
+	changed = state == "v2"
+	connection = "zoho-crm-z"
+	river, delta, rebrand = "5725767000000417001", "5725767000000417002", "5725767000000419001"
+	assert_booked(
+		connection,
+		[
+			Booked("employee", "User", "5725767000000401002", "status", "Inactive" if changed else "Active"),
+			Booked("supplier", "Vendors", "5725767000000421001", "supplier_name", "Paper Mill"),
+			Booked("lead", "Leads", "5725767000000422002", "disabled", 1),
+			Booked("prospect", "Accounts", delta, "company_name", "Delta Works - ZC"),
+			Booked("customer", "Accounts", river, "customer_type", "Company"),
+			Booked("opportunity_type", "Pipeline", "Standard"),
+			Booked("opportunity", "Deals", rebrand, "status", "Converted" if changed else "Open"),
+			Booked(
+				"opportunity",
+				"Deals",
+				rebrand,
+				"sales_stage",
+				"Closed Won - ZC" if changed else "Proposal/Price Quote - ZC",
+			),
+			Booked("communication", "Calls", "5725767000000423002", "reference_doctype", "Prospect"),
+			Booked("communication", "Notes", "5725767000000424001", "communication_medium", "Other"),
+			Booked("event", "Events", "5725767000000425001", "subject", "Concept review"),
+			Booked("todo", "Tasks", "5725767000000426001", "status", "Closed" if changed else "Open"),
+			Booked("draft_order", "Quotes", "5725767000000427001", "grand_total", amount("310.5")),
+			Booked("sales_order", "SalesOrders", "5725767000000428001", "grand_total", amount(145)),
+			Booked("sales_invoice", "Invoices", "5725767000000429001", "grand_total", amount(345)),
+			Booked("sales_invoice", "Invoices", "5725767000000429002", "docstatus", 1 if changed else 0),
+			Booked("purchase_order", "PurchaseOrders", "5725767000000430001", "grand_total", amount(230)),
+		],
+	)
+	if changed:
+		assert_booked(
+			connection,
+			[Booked("communication", "Notes", "5725767000000424002", "reference_doctype", "Prospect")],
+		)
+	session = target(connection, "product", "Products", "5725767000000420001")
+	expect(item_price(connection, session), amount(175 if changed else 150), "the design session's price")
+	expect(
+		json.loads(
+			frappe.db.get_value(
+				"Prospect", target(connection, "prospect", "Accounts", river), "importer_custom_fields"
+			)
+		),
+		{"Account Tier": "Gold"},
+		"the account's custom field",
 	)
 
 

@@ -155,6 +155,7 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"hubspot",
 		"salesforce",
 		"pipedrive",
+		"zoho_crm",
 	}
 	commit = re.compile(r"/[0-9a-f]{40}/")
 	for document in catalog():

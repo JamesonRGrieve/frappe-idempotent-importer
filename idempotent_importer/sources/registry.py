@@ -38,6 +38,7 @@ from idempotent_importer.sources.wix.adapter import WixAdapter
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
 from idempotent_importer.sources.xero.adapter import XeroAdapter
 from idempotent_importer.sources.zoho_books.adapter import adapter as zoho_books
+from idempotent_importer.sources.zoho_crm.adapter import ZohoCrmAdapter
 from idempotent_importer.sources.zoho_inventory.adapter import adapter as zoho_inventory
 
 
@@ -99,6 +100,7 @@ def all_adapters() -> dict[str, Adapter]:
 		HubSpotAdapter(),
 		SalesforceAdapter(),
 		PipedriveAdapter(),
+		ZohoCrmAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

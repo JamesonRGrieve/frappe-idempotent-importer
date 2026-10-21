@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/crm/v8/Tasks",
+		"query": {
+			"per_page": "100",
+			"page": "1"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000426001",
+				"Subject": "Send samples",
+				"Due_Date": "2026-09-30",
+				"Status": "Completed",
+				"Priority": "High",
+				"What_Id": {
+					"name": "Delta Works",
+					"id": "5725767000000417002"
+				},
+				"$se_module": "Accounts",
+				"Created_Time": "2026-08-03T09:00:00-06:00"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

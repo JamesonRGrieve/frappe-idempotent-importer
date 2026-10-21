@@ -44,6 +44,7 @@ stores can import into two businesses at once and never touch each other's recor
 | HubSpot | Built | Owners, products, contacts as leads with their notes, companies as prospects with their people, customers, deal pipelines and deals at their stage, calls, emails, meetings and tasks, quotes, orders, invoices and commerce payments with their refunds, and every property the account defined — [coverage/hubspot.md](coverage/hubspot.md) |
 | Salesforce | Built | Users, products at their standard price, accounts as prospects with their contacts and notes (customer accounts as customers), leads with their notes, opportunity types and opportunities at their stage, logged calls and emails, email messages, tasks, events, quotes and orders, and every custom field — [coverage/salesforce.md](coverage/salesforce.md) |
 | Pipedrive | Built | Users, products with their variations, persons as leads, organizations as prospects with their persons, the customers of won deals, pipelines, deals and leads at their stage, activities, notes and call logs, and every custom field — [coverage/pipedrive.md](coverage/pipedrive.md) |
+| Zoho CRM | Built | Users, products, vendors, leads, accounts as prospects with their contacts (customer accounts as customers), pipelines and deals at their stage, calls, notes, events and tasks, quotes, sales orders, invoices and purchase orders, and every custom field — [coverage/zoho_crm.md](coverage/zoho_crm.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -212,6 +213,9 @@ This is the operator's decision to confirm (see below).
    - **Pipedrive:** create an app in Pipedrive's Developer Hub with the same callback URL and the scopes in
      [coverage/pipedrive.md](coverage/pipedrive.md); enter the company's `https://<company>.pipedrive.com` as
      the Store URL and the app's client ID and secret, save, then click **Connect to Pipedrive**.
+   - **Zoho CRM:** register a server-based client in Zoho's API console as for Zoho Books; enter the
+     organisation's CRM address in its data centre (`https://crm.zoho.eu`) as the Store URL and the client's
+     ID and secret, save, then click **Connect to Zoho CRM** ([coverage/zoho_crm.md](coverage/zoho_crm.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty

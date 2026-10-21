@@ -70,9 +70,10 @@ SOURCES=(
 	hubspot-s:hubspot-fake:assert_hubspot
 	salesforce-f:salesforce-fake:assert_salesforce
 	pipedrive-p:pipedrive-fake:assert_pipedrive
+	zoho-crm-z:zoho_crm-fake:assert_zoho_crm
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f pipedrive-p)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f pipedrive-p zoho-crm-z)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/crm/v8/Accounts",
+		"query": {
+			"ids": "5725767000000417001"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000417001",
+				"Account_Name": "River Co",
+				"Account_Type": "Customer",
+				"Phone": "+1 902 555 0100",
+				"Website": "https://river.example",
+				"Billing_Street": "1 Harbour Rd",
+				"Billing_City": "Halifax",
+				"Billing_State": "NS",
+				"Billing_Code": "B3H 1A1",
+				"Billing_Country": "Canada",
+				"Account_Tier": "Gold"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 1,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

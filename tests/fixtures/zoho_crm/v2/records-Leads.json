@@ -1,0 +1,40 @@
+{
+	"request": {
+		"path": "/crm/v8/Leads",
+		"query": {
+			"per_page": "100",
+			"page": "1"
+		}
+	},
+	"response": {
+		"data": [
+			{
+				"id": "5725767000000422001",
+				"First_Name": "Quinn",
+				"Last_Name": "Quay",
+				"Company": "Quay Ltd",
+				"Email": "quinn@quay-zc.example",
+				"Lead_Status": "Contacted",
+				"Preferred_Contact_Time": "Mornings"
+			},
+			{
+				"id": "5725767000000422002",
+				"First_Name": "Casey",
+				"Last_Name": "Cove",
+				"Company": "Cove Cafe",
+				"Lead_Status": "Junk Lead"
+			}
+		],
+		"info": {
+			"per_page": 100,
+			"count": 2,
+			"page": 1,
+			"more_records": false,
+			"next_page_token": null,
+			"previous_page_token": null,
+			"page_token_expiry": null,
+			"sort_by": "id",
+			"sort_order": "desc"
+		}
+	}
+}

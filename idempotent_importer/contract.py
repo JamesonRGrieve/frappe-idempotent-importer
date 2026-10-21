@@ -397,25 +397,34 @@ OPERATOR_DECISION = "an operator decision"
 #   shipping_limits        {methods?, countries?, source?}  only these shipping methods or destinations
 #   schedule               {source}                   only on the source's days and times
 #   combination            {exclusive?, stop?, source?}  how it combines with other discounts
-#   customer_segments      {segments?}                only customers in these segments
+#   customer_segments      {customers?, groups?, source?}  only customers in these segments: their members (these
+#                                                     customers, and customers of these groups), or the source's
+#                                                     own description of them
 #   excluded_customer_groups {groups}                 never customers of these groups (identities)
 #   several_customers      {customers}                only these customers (a code applies one rule)
 #   several_customer_groups {groups}                  only customers of these groups (a code applies one rule)
-#   customer_history       {min_orders?, new?, returning?}  only new or returning customers
-#   cap                    {amount}                   at most this much off
-#   spread_amount          {items?, groups?, variants?}  an amount once, spread across only these items
-#   item_limit             {qty}                      on at most this many items
+#   customer_history       {min_orders?, new?, returning?}  only new customers (no order yet), returning ones (an
+#                                                     order already) or those with at least so many orders
+#   cap                    {amount}                   at most this much off an order, all its items together
+#   spread_amount          {items?, groups?, variants?}  an amount once, spread across only these items in
+#                                                     proportion to their prices
+#   item_limit             {qty, order?}              on at most this many units: the cheapest or dearest first
+#                                                     (``order``: "cheapest" | "dearest"), or of each line
+#                                                     ("each_line")
 #   item_choice            {strategy?, source?}       which of the qualifying items are discounted
 #   item_matcher           {source}                   items chosen by the source's other criteria (brands,
 #                                                     options, attributes, combinations of criteria)
 #   rule_condition         {source}                   a condition beyond spend, quantity and items
-#   fixed_price_set        {qty, price, items?, groups?}  so many qualifying items for one price
+#   fixed_price_set        {qty, price, items?, groups?, variants?, order?, repeat?}  so many qualifying units
+#                                                     (the cheapest or dearest first) for one price, once or
+#                                                     (``repeat``) as many sets as there are
 #   further_rules          {source}                   the source's further rules, after the one written
 #   channels               {channels}                 only the source's other sales channels
 #   price_list             {source}                   the source's own price list
 #   applied_by_staff       {}                         applied by staff at the point of sale, never by itself
-# Any condition may carry ``unread`` ([what]): terms of it the importer doesn't read from the source (yet), so
-# whatever the fork enforces, it stays held.
+# Any condition may carry ``unread`` ([what]): terms of it the importer doesn't read from the source (yet), or
+# ``undocumented`` ([what]): what the source doesn't document about it; so whatever the fork enforces, it stays
+# held.
 CONDITIONS: dict[str, str] = {
 	"once_per_customer": COUPON_LIMITS,
 	"per_customer_limit": COUPON_LIMITS,
@@ -452,30 +461,62 @@ CONDITIONS: dict[str, str] = {
 @dataclass(frozen=True)
 class Enforcement:
 	"""How the Webshop fork enforces a kind of condition: the terms it reads (a condition with any other term,
-	such as the source's own description or ``unread``, stays held), and whether it does so only for a coupon
-	code's discount (``coded``) or only on a single Pricing Rule, not a Promotional Scheme (``single_rule``)."""
+	such as the source's own description, ``unread`` or ``undocumented``, stays held), those it needs (all of
+	``required``, and one of ``one_of`` when given), and whether it does so only for a coupon code's discount
+	(``coded``) or only on a single Pricing Rule, not a Promotional Scheme (``single_rule``)."""
 
 	terms: frozenset[str] = frozenset()
 	coded: bool = False
 	single_rule: bool = False
+	required: frozenset[str] = frozenset()
+	one_of: frozenset[str] = frozenset()
 
 
-SHIPPING_ITEMS = frozenset({"items", "groups", "variants"})
-# The conditions the Webshop fork enforces (card 405: Coupon Code and Pricing Rule fields the writer fills, see
-# ``erpnext.writers.discounts``). A discount with any other condition is held: written disabled, its codes not
-# redeemable. When the fork enforces another, add it here; the next run enables the discounts it held. Not yet:
-# a shipping discount limited to the source's shipping methods or zones (the fork limits one to Shipping Rules
-# and countries, but the sources' methods and zones aren't mirrored as those).
+ITEM_TERMS = frozenset({"items", "groups", "variants"})
+# What several sources leave out, as ``undocumented`` or ``unread`` terms that keep a condition held.
+PER_ITEM_OR_TOTAL = "whether the amount is off each item or once across them"
+CUSTOMER_GROUP_MEMBERS = "which customers are in each group (the source's groups aren't mirrored)"
+CHEAPEST, DEAREST, EACH_LINE = "cheapest", "dearest", "each_line"
+UNIT_ORDERS = frozenset({CHEAPEST, DEAREST})
+# The conditions the Webshop fork enforces (card 405: Coupon Code and Pricing Rule fields the writer fills; card
+# 407: Pricing Rule eligibility and discount limits; see ``erpnext.writers.discounts``). A discount with any
+# other condition is held: written disabled, its codes not redeemable. When the fork enforces another, add it
+# here; the next run enables the discounts it held. Not yet: a shipping discount limited to the source's shipping
+# methods or zones (the fork limits one to Shipping Rules and countries, but the sources' methods and zones aren't
+# mirrored as those); an item limit or fixed-price set without the order its units are taken in, segments without
+# their members, and anything the source describes only in its own terms.
 ENFORCED: dict[str, Enforcement] = {
 	"once_per_customer": Enforcement(coded=True),
 	"per_customer_limit": Enforcement(frozenset({"uses"}), coded=True),
 	"emails": Enforcement(frozenset({"emails"}), coded=True),
 	"several_customers": Enforcement(frozenset({"customers"}), coded=True),
 	"free_shipping": Enforcement(
-		frozenset({"max_shipping_price", "countries"}) | SHIPPING_ITEMS, single_rule=True
+		frozenset({"max_shipping_price", "countries"}) | ITEM_TERMS, single_rule=True
 	),
-	"shipping_discount": Enforcement(
-		frozenset({"discount", "value", "cap"}) | SHIPPING_ITEMS, single_rule=True
+	"shipping_discount": Enforcement(frozenset({"discount", "value", "cap"}) | ITEM_TERMS, single_rule=True),
+	"customer_segments": Enforcement(
+		frozenset({"customers", "groups"}), single_rule=True, one_of=frozenset({"customers", "groups"})
+	),
+	"excluded_customer_groups": Enforcement(
+		frozenset({"groups"}), single_rule=True, required=frozenset({"groups"})
+	),
+	"several_customer_groups": Enforcement(
+		frozenset({"groups"}), single_rule=True, required=frozenset({"groups"})
+	),
+	"customer_history": Enforcement(
+		frozenset({"min_orders", "new", "returning"}),
+		single_rule=True,
+		one_of=frozenset({"min_orders", "new", "returning"}),
+	),
+	"cap": Enforcement(frozenset({"amount"}), single_rule=True, required=frozenset({"amount"})),
+	"spread_amount": Enforcement(ITEM_TERMS, single_rule=True, one_of=ITEM_TERMS),
+	"item_limit": Enforcement(
+		frozenset({"qty", "order"}), single_rule=True, required=frozenset({"qty", "order"})
+	),
+	"fixed_price_set": Enforcement(
+		frozenset({"qty", "price", "order", "repeat"}) | ITEM_TERMS,
+		single_rule=True,
+		required=frozenset({"qty", "price", "order"}),
 	),
 }
 
@@ -484,9 +525,12 @@ def is_enforced(kind: str, terms: Fields, coded: bool, single_rule: bool) -> boo
 	"""Whether the fork enforces a condition of ``kind`` with ``terms`` (those set) on a discount with codes
 	(``coded``) written as one Pricing Rule (``single_rule``)."""
 	how = ENFORCED.get(kind)
+	given = {key for key, value in terms.items() if value is not None}
 	return (
 		how is not None
-		and {key for key, value in terms.items() if value is not None} <= how.terms
+		and given <= how.terms
+		and how.required <= given
+		and (not how.one_of or bool(how.one_of & given))
 		and (coded or not how.coded)
 		and (single_rule or not how.single_rule)
 	)
@@ -580,13 +624,18 @@ class Code:
 	valid_from: str | None = None
 
 
+CODE_ALONE = False
+
+
 def code_fields(code: Code) -> Fields:
+	"""A code's own fields. Its own conditions are enforced on its Coupon Code, not a Pricing Rule (the rule is
+	every code's): only what the fork enforces on a code, not on a single rule (``CODE_ALONE``), releases it."""
 	fields: Fields = {
 		"max_uses": code.max_uses,
 		"valid_from": code.valid_from,
 		"valid_upto": code.valid_upto,
 		"conditions": condition_fields(code.conditions) or None,
-		"held": list[Field](held_for(code.conditions, coded=True, single_rule=True)) or None,
+		"held": list[Field](held_for(code.conditions, coded=True, single_rule=CODE_ALONE)) or None,
 	}
 	return {key: value for key, value in fields.items() if value is not None}
 
@@ -755,6 +804,109 @@ def shipping_discount(conditions: list[Values]) -> ShippingDiscount | None:
 		variants=terms.strings("variants"),
 		groups=terms.strings("groups"),
 	)
+
+
+@dataclass(frozen=True)
+class Targets:
+	"""The products, variants and collections (identities) a limit is about."""
+
+	items: list[str] = field(default_factory=list)
+	variants: list[str] = field(default_factory=list)
+	groups: list[str] = field(default_factory=list)
+
+
+def targets_of(terms: Values) -> Targets:
+	return Targets(terms.strings("items"), terms.strings("variants"), terms.strings("groups"))
+
+
+@dataclass(frozen=True)
+class FixedPriceSet:
+	"""``qty`` units (the cheapest or dearest first) for ``price`` together; once, or as many sets as there are."""
+
+	qty: Decimal
+	price: Decimal
+	order: str
+	repeat: bool
+	targets: Targets
+
+
+@dataclass(frozen=True)
+class RuleLimits:
+	"""What the fork enforces of a discount's conditions on its Pricing Rule (card 407): who it is for (a segment
+	of ``customers`` and customers of ``groups``; never ``excluded_groups``; ``new_customers`` only, or those with
+	``min_orders``), and how much it gives (at most ``cap``; an amount ``spread`` once across these targets; on at
+	most ``max_qty`` units in ``qty_order``; or ``fixed_set``)."""
+
+	customers: list[str] = field(default_factory=list)
+	groups: list[str] = field(default_factory=list)
+	excluded_groups: list[str] = field(default_factory=list)
+	new_customers: bool = False
+	min_orders: int = 0
+	cap: Decimal | None = None
+	spread: Targets | None = None
+	max_qty: Decimal | None = None
+	qty_order: str | None = None
+	fixed_set: FixedPriceSet | None = None
+
+
+def rule_limits(conditions: list[Values]) -> RuleLimits:
+	"""The rule limits of enforced conditions. Two of a kind hold together: the smaller cap and quantity, the
+	groups both lists hold; what the fork can't combine on one rule is Unsupported."""
+	found: dict[str, list[Values]] = {}
+	for condition in conditions:
+		found.setdefault(condition.string("kind"), []).append(recorded_terms(condition))
+	segments, several = found.get("customer_segments", []), found.get("several_customer_groups", [])
+	if len(segments) + bool(several) > 1:
+		raise Unsupported("a discount for two segments, or a segment and customer groups: the fork reads one")
+	for kind in ("spread_amount", "item_limit", "fixed_price_set"):
+		if len(found.get(kind, [])) > 1:
+			raise Unsupported(f"a discount with two of {kind}: the fork reads one")
+	spread = found.get("spread_amount", [])
+	item_limit = next(iter(found.get("item_limit", [])), None)
+	fixed = next(iter(found.get("fixed_price_set", [])), None)
+	if fixed is not None and (item_limit is not None or spread):
+		raise Unsupported(
+			"a fixed-price set with an item limit or a spread amount: the fork gives a set alone"
+		)
+	history = found.get("customer_history", [])
+	caps = [terms.decimal("amount") for terms in found.get("cap", [])]
+	return RuleLimits(
+		customers=segments[0].strings("customers") if segments else [],
+		groups=segments[0].strings("groups") if segments else common([t.strings("groups") for t in several]),
+		excluded_groups=list(
+			dict.fromkeys(
+				g for terms in found.get("excluded_customer_groups", []) for g in terms.strings("groups")
+			)
+		),
+		new_customers=new_customers(history),
+		min_orders=max(
+			(h.integer("min_orders") if h.has("min_orders") else 1 for h in history if not h.has("new")),
+			default=0,
+		),
+		cap=min(caps) if caps else None,
+		spread=targets_of(spread[0]) if spread else None,
+		max_qty=item_limit.decimal("qty") if item_limit else None,
+		qty_order=one_of(item_limit.string("order"), UNIT_ORDERS | {EACH_LINE}, "order")
+		if item_limit
+		else None,
+		fixed_set=FixedPriceSet(
+			qty=fixed.decimal("qty"),
+			price=fixed.decimal("price"),
+			order=one_of(fixed.string("order"), UNIT_ORDERS, "order"),
+			repeat=fixed.has("repeat") and fixed.flag("repeat"),
+			targets=targets_of(fixed),
+		)
+		if fixed
+		else None,
+	)
+
+
+def new_customers(history: list[Values]) -> bool:
+	"""Whether customer histories ask for new customers only; with one asking for earlier orders, Unsupported."""
+	new = any(h.has("new") and h.flag("new") for h in history)
+	if new and any(not (h.has("new") and h.flag("new")) for h in history):
+		raise Unsupported("a discount for new customers that asks for earlier orders")
+	return new
 
 
 def free_fields(free: FreeItem) -> Fields:

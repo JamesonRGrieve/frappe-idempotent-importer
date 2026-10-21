@@ -9,6 +9,7 @@ from decimal import Decimal
 
 import pytest
 
+from idempotent_importer.contract import PER_ITEM_OR_TOTAL
 from idempotent_importer.core.desired import Desired, Mapper
 from idempotent_importer.core.errors import SourceError, Unsupported
 from idempotent_importer.core.fields import Values
@@ -195,13 +196,13 @@ class TestMappers:
 		)
 		assert mapped(Kind.DISCOUNT, "DiscountCoupon/9504") is None, "a paused coupon"
 		assert held(mapped(Kind.DISCOUNT, "DiscountCoupon/9501")) == []
-		for key, kinds, cards in (
-			("9502", ["once_per_customer"], []),  # the Webshop fork enforces these (card 405)
-			("9503", ["free_shipping"], []),
-			("9505", ["customer_history"], ["card 407"]),
+		for key, kinds in (
+			("9502", ["once_per_customer"]),  # the Webshop fork enforces these (card 405)
+			("9503", ["free_shipping"]),
+			("9505", ["customer_history"]),  # new customers only (card 407)
 		):
 			desired = mapped(Kind.DISCOUNT, f"DiscountCoupon/{key}")
-			assert (condition_kinds(desired), held(desired)) == (kinds, cards)
+			assert (condition_kinds(desired), held(desired)) == (kinds, [])
 		assert terms(mapped(Kind.DISCOUNT, "DiscountCoupon/9505"), "customer_history") == {"new": True}
 
 	def test_wholesale_prices(self) -> None:
@@ -255,6 +256,10 @@ class TestMappers:
 			({"applicationLimit": "SOMETHING_NEW"}, ["customer_segments"]),
 		):
 			assert condition_kinds(mapper.map(coupon.with_fields(**changes))) == kinds
+		on_products = mapper.map(coupon.with_fields(catalogLimit={"products": [9201]}))
+		assert terms(on_products, "spread_amount")["undocumented"] == [PER_ITEM_OR_TOTAL]
+		assert held(on_products) == ["card 407"], "Ecwid doesn't say per item or in total"
+		assert held(mapper.map(coupon.with_fields(applicationLimit="REPEAT_CUSTOMER_ONLY"))) == []
 		with pytest.raises(SourceError, match="type"):
 			mapper.map(coupon.with_fields(discountType="BOGUS"))
 

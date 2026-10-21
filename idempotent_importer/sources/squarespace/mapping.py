@@ -11,6 +11,7 @@ from decimal import Decimal
 
 from idempotent_importer.contract import (
 	INCLUDED_TAX,
+	PER_ITEM_OR_TOTAL,
 	SHIPPING,
 	SHIPPING_TAX,
 	TAX,
@@ -295,7 +296,7 @@ class DiscountMapper:
 	payment-plan payments (card 407). An expired discount maps to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -360,7 +361,12 @@ class DiscountMapper:
 			case "PRODUCT":
 				product = [self._context.gid("Product", criteria.string("productId"))]
 				if discount.discount == "amount":
-					later.append(Condition("spread_amount", {"items": list[Field](product)}))
+					later.append(
+						Condition(
+							"spread_amount",
+							{"items": list[Field](product), "undocumented": [PER_ITEM_OR_TOTAL]},
+						)
+					)
 				else:
 					discount = replace(discount, applies="items", items=product)
 			case other:

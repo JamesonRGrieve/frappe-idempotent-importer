@@ -870,9 +870,10 @@ class TestDiscounts:
 			"items": ["gid://shopify/shop-s/Product/1"],
 			"variants": ["gid://shopify/shop-s/ProductVariant/2"],
 		}
-		assert held(spread) == ["card 407"]
+		assert held(spread) == [], "the Webshop fork spreads the amount (card 407)"
 		segments = self.MAPPER.map(basic_discount(context={"__typename": "DiscountCustomerSegments"}))
 		assert condition_kinds(segments) == ["customer_segments"]
+		assert held(segments) == ["card 407"], "the segments' members aren't read"
 		several = self.MAPPER.map(
 			basic_discount(
 				context={

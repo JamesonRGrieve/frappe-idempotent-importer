@@ -219,17 +219,19 @@ def test_conditions_are_recorded_and_hold_their_discount(monkeypatch: pytest.Mon
 		None,
 		None,
 		conditions=[
-			Condition("cap", {"amount": Decimal("25.50"), "unused": None}),
+			Condition("item_limit", {"qty": Decimal("2.5"), "unused": None}),
 			Condition("once_per_customer"),
 		],
 		code_limits={"B": Code(max_uses=1, conditions=[Condition("per_customer_limit", {"uses": 1})])},
 	)
 	fields = discount_fields(discount)
 	assert fields["conditions"] == [
-		{"kind": "cap", "card": "card 407", "terms": {"amount": Decimal("25.50")}},
+		{"kind": "item_limit", "card": "card 407", "terms": {"qty": Decimal("2.5")}},
 		{"kind": "once_per_customer", "card": "card 405", "terms": {}},
 	]
-	assert fields["held"] == ["card 407"], "the fork enforces once per customer: only the cap holds it"
+	assert fields["held"] == ["card 407"], (
+		"the fork enforces once per customer: only the item limit, in no order, holds it"
+	)
 	assert fields["code_limits"] == {
 		"B": {
 			"max_uses": 1,
@@ -238,20 +240,20 @@ def test_conditions_are_recorded_and_hold_their_discount(monkeypatch: pytest.Mon
 	}
 	recorded = Values(fields).records("conditions")
 	assert conditions_json(recorded) == (
-		'[{"card": "card 407", "kind": "cap", "terms": {"amount": "25.5"}}, '
+		'[{"card": "card 407", "kind": "item_limit", "terms": {"qty": "2.5"}}, '
 		'{"card": "card 405", "kind": "once_per_customer", "terms": {}}]'
 	)
 	assert conditions_json([]) is None
-	assert conditions_summary(recorded, coded=True, single_rule=True) == "cap (card 407)"
+	assert conditions_summary(recorded, coded=True, single_rule=True) == "item_limit (card 407)"
 	assert conditions_summary(recorded, coded=False, single_rule=True) == (
-		"cap (card 407), once_per_customer (card 405)"
+		"item_limit (card 407), once_per_customer (card 405)"
 	), "without a code, nothing counts a customer's uses"
 	monkeypatch.setattr(contract, "ENFORCED", {})
 	assert discount_fields(discount)["held"] == ["card 405", "card 407"], "nothing enforced: both hold it"
 	monkeypatch.setattr(
 		contract,
 		"ENFORCED",
-		{kind: contract.Enforcement(frozenset({"amount"})) for kind in contract.CONDITIONS},
+		{kind: contract.Enforcement(frozenset({"qty"})) for kind in contract.CONDITIONS},
 	)
 	assert "held" not in discount_fields(discount), "every condition enforced: the discount is enabled"
 	with pytest.raises(ValueError, match="not a discount condition"):
@@ -269,8 +271,100 @@ class TestEnforcement:
 		assert not is_enforced("free_shipping", {"unread": ["destinations"]}, coded=True, single_rule=True)
 		assert not is_enforced("free_shipping", {"methods": ["2"]}, coded=True, single_rule=True)
 		assert not is_enforced("shipping_discount", {"discount": "amount", "source": {}}, True, True)
-		assert not is_enforced("cap", {"amount": Decimal(5)}, coded=True, single_rule=True), "card 407"
 		assert contract.CONDITIONS["several_customers"] == contract.COUPON_LIMITS
+
+	def test_the_fork_enforces_rule_limits(self) -> None:
+		"""Card 407: on one Pricing Rule, coded or automatic, with every term it needs and none it doesn't read."""
+		assert is_enforced("cap", {"amount": Decimal(5)}, coded=False, single_rule=True)
+		assert not is_enforced("cap", {"amount": Decimal(5)}, coded=True, single_rule=False), "a scheme"
+		assert not is_enforced("cap", {"amount": Decimal(5), "undocumented": ["scope"]}, True, True)
+		assert is_enforced("item_limit", {"qty": Decimal(2), "order": "cheapest"}, False, True)
+		assert not is_enforced("item_limit", {"qty": Decimal(2)}, False, True), "in no known order"
+		assert is_enforced(
+			"fixed_price_set", {"qty": 3, "price": 10, "order": "dearest", "items": ["p"]}, True, True
+		)
+		assert not is_enforced("fixed_price_set", {"qty": 3, "price": 10, "items": ["p"]}, True, True)
+		assert is_enforced("customer_segments", {"groups": ["g"]}, coded=False, single_rule=True)
+		assert not is_enforced("customer_segments", {}, coded=False, single_rule=True), "no members"
+		assert not is_enforced("customer_segments", {"source": {"id": ["s"]}}, False, True)
+		assert is_enforced("customer_history", {"new": True}, coded=True, single_rule=True)
+		assert not is_enforced("customer_history", {}, coded=True, single_rule=True)
+		assert is_enforced("spread_amount", {"items": ["p"]}, coded=True, single_rule=True)
+		assert not is_enforced("spread_amount", {"items": ["p"], "undocumented": ["x"]}, True, True)
+		for kind in ("item_choice", "item_matcher", "rule_condition"):
+			assert not is_enforced(kind, {"source": {}}, coded=True, single_rule=True), kind
+
+	def test_rule_limits(self) -> None:
+		limits = contract.rule_limits(
+			self.recorded(
+				Condition("several_customer_groups", {"groups": ["g1", "g2"]}),
+				Condition("several_customer_groups", {"groups": ["g2", "g3"]}),
+				Condition("excluded_customer_groups", {"groups": ["g9"]}),
+				Condition("customer_history", {"min_orders": 3}),
+				Condition("customer_history", {"returning": True}),
+				Condition("cap", {"amount": Decimal(30)}),
+				Condition("cap", {"amount": Decimal(20)}),
+				Condition("spread_amount", {"items": ["p1"], "variants": ["v1"]}),
+				Condition("item_limit", {"qty": Decimal(4), "order": "dearest"}),
+			)
+		)
+		assert limits == contract.RuleLimits(
+			groups=["g2"],
+			excluded_groups=["g9"],
+			min_orders=3,
+			cap=Decimal(20),
+			spread=contract.Targets(items=["p1"], variants=["v1"]),
+			max_qty=Decimal(4),
+			qty_order="dearest",
+		)
+		assert contract.rule_limits([]) == contract.RuleLimits()
+		segment = contract.rule_limits(
+			self.recorded(
+				Condition("customer_segments", {"customers": ["c1"], "groups": ["g1"]}),
+				Condition("customer_history", {"new": True}),
+			)
+		)
+		assert (segment.customers, segment.groups, segment.new_customers) == (["c1"], ["g1"], True)
+		fixed = contract.rule_limits(
+			self.recorded(
+				Condition(
+					"fixed_price_set",
+					{"qty": Decimal(3), "price": Decimal(10), "order": "cheapest", "repeat": True},
+				)
+			)
+		).fixed_set
+		assert fixed == contract.FixedPriceSet(Decimal(3), Decimal(10), "cheapest", True, contract.Targets())
+
+	@pytest.mark.parametrize(
+		("conditions", "message"),
+		[
+			(
+				[
+					Condition("customer_segments", {"groups": ["g1"]}),
+					Condition("several_customer_groups", {"groups": ["g1"]}),
+				],
+				"segment and customer groups",
+			),
+			([Condition("item_limit", {"qty": 1, "order": "x"})] * 2, "two of item_limit"),
+			(
+				[
+					Condition("fixed_price_set", {"qty": 3, "price": 10, "order": "cheapest"}),
+					Condition("spread_amount", {"items": ["p"]}),
+				],
+				"a set alone",
+			),
+			(
+				[
+					Condition("customer_history", {"new": True}),
+					Condition("customer_history", {"min_orders": 2}),
+				],
+				"earlier orders",
+			),
+		],
+	)
+	def test_rule_limits_the_fork_cant_combine(self, conditions: list[Condition], message: str) -> None:
+		with pytest.raises(Unsupported, match=message):
+			contract.rule_limits(self.recorded(*conditions))
 
 	def test_held_by_scheme_or_automatic(self) -> None:
 		shipping = Condition("free_shipping")
@@ -295,7 +389,7 @@ class TestEnforcement:
 			Condition("several_customers", {"customers": ["c1", "c2", "c3"]}),
 			Condition("several_customers", {"customers": ["c3", "c2"]}),
 			Condition("emails", {"emails": ["A@Example.com", "*@example.org"]}),
-			Condition("cap", {"amount": Decimal(5)}),
+			Condition("item_matcher", {"source": {"brands": [1]}}),
 		)
 		limits = coupon_limits(conditions)
 		assert (limits.per_customer, limits.customers, limits.emails) == (
@@ -305,7 +399,9 @@ class TestEnforcement:
 		)
 		assert coupon_limits([]) == contract.CouponLimits()
 		enforced = enforced_conditions(conditions, coded=True, single_rule=True)
-		assert [c.string("kind") for c in enforced][-1] == "emails", "the cap isn't the fork's"
+		assert [c.string("kind") for c in enforced][-1] == "emails", (
+			"a source's own item criteria aren't the fork's"
+		)
 
 	def test_shipping_discounts(self) -> None:
 		free = self.recorded(

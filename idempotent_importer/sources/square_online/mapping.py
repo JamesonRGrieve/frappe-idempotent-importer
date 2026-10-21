@@ -11,6 +11,7 @@ from dataclasses import dataclass, replace
 from decimal import Decimal
 
 from idempotent_importer.contract import (
+	CUSTOMER_GROUP_MEMBERS,
 	FEE,
 	SHIPPING,
 	TAX,
@@ -45,6 +46,8 @@ from idempotent_importer.sources.square_online.reader import STOCK_STATE
 UNKNOWN_COUNTRY = "ZZ"
 # A discount that leaves the price taxes are calculated on alone.
 KEEPS_TAX_BASIS = "DO_NOT_MODIFY_TAX_BASIS"
+# Square's maximum_amount_money is documented by one purchase's example, not whether it caps each item or the order.
+CAP_SCOPE = "whether the cap is per item or per order"
 # Product types sold as ordinary items; gift cards, appointments, events, donations and legacy Square Online
 # services and memberships have no ERPNext equivalent.
 PRODUCT_TYPES = frozenset({"REGULAR", "FOOD_AND_BEV", "DIGITAL"})
@@ -667,7 +670,7 @@ class DiscountMapper:
 	held (an operator decision). A deleted discount or rule maps to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 1
+	version = 2
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -722,7 +725,11 @@ class DiscountMapper:
 			later.append(Condition("schedule", {"source": times}))
 		if groups_any := rule.strings("customer_group_ids_any"):
 			customer_groups: list[Field] = [self._context.gid("CustomerGroup", g) for g in groups_any]
-			later.append(Condition("several_customer_groups", {"groups": customer_groups}))
+			later.append(
+				Condition(
+					"several_customer_groups", {"groups": customer_groups, "unread": [CUSTOMER_GROUP_MEMBERS]}
+				)
+			)
 		mapped = replace(
 			discount,
 			description=rule.optional_string("name"),
@@ -755,7 +762,7 @@ class DiscountMapper:
 			case other:
 				raise SourceError(f"A Square discount of type {other}.")
 		if (cap := money(data, "maximum_amount_money")) is not None:
-			later.append(Condition("cap", {"amount": cap}))
+			later.append(Condition("cap", {"amount": cap, "undocumented": [CAP_SCOPE]}))
 		if data.optional_string("modify_tax_basis") == KEEPS_TAX_BASIS:
 			later.append(Condition("rule_condition", {"source": {"modify_tax_basis": KEEPS_TAX_BASIS}}))
 		return Discount(

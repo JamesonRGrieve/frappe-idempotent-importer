@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
 	FEE,
+	PER_ITEM_OR_TOTAL,
 	SHIPPING,
 	TAX,
 	Address,
@@ -465,7 +466,7 @@ class CouponMapper:
 	inactive or expired rule maps to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -503,6 +504,7 @@ class CouponMapper:
 				spread: Fields = {
 					"items": list[Field](products) or None,
 					"groups": list[Field](groups) or None,
+					"undocumented": [PER_ITEM_OR_TOTAL],
 				}
 				later.append(Condition("spread_amount", spread))
 				products, groups = [], []

@@ -27,7 +27,11 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
-from webshop.webshop.discounts.coupon_limits import CouponLimitReachedError
+from webshop.webshop.discounts.coupon_limits import (
+	CouponLimitReachedError,
+	CouponNotEligibleError,
+	customer_uses,
+)
 
 from idempotent_importer import api
 from idempotent_importer.core.oauth import CALLBACK_PATH
@@ -989,39 +993,63 @@ def assert_fork_limits(
 		expect(got, wanted, f"{what}: code {code}")
 
 
-def assert_one_use_per_customer(connection: str, coupon: str, customer: str, item: str, what: str) -> None:
-	"""The Webshop fork lets ``customer`` use ``coupon`` (a Coupon Code) once: a second order with it is refused.
-	Rolled back, so the store's records stay as the importer wrote them."""
+def coupon_order(connection: str, coupon: str, customer: str, item: str) -> Any:
+	"""An unsaved Sales Order of ``customer``'s for one ``item`` at 100, with ``coupon`` (a Coupon Code)."""
 	company = business_of(connection).company
 	warehouse = frappe.get_all(
 		"Warehouse", filters={"company": company, "is_group": 0}, pluck="name", limit=1
 	)
+	return frappe.get_doc(
+		{
+			"doctype": "Sales Order",
+			"company": company,
+			"customer": customer,
+			"currency": CURRENCY,
+			"delivery_date": frappe.utils.add_days(frappe.utils.nowdate(), 7),
+			"coupon_code": coupon,
+			"items": [{"item_code": item, "qty": 1, "rate": 100, "warehouse": warehouse[0]}],
+		}
+	)
 
-	def order() -> Any:
-		return frappe.get_doc(
-			{
-				"doctype": "Sales Order",
-				"company": company,
-				"customer": customer,
-				"currency": CURRENCY,
-				"delivery_date": frappe.utils.add_days(frappe.utils.nowdate(), 7),
-				"coupon_code": coupon,
-				"items": [{"item_code": item, "qty": 1, "rate": 100, "warehouse": warehouse[0]}],
-			}
-		)
 
+def refuses(order: Any, error: type[Exception]) -> bool:
+	"""Whether saving ``order`` raises ``error``."""
+	try:
+		order.insert(ignore_permissions=True)
+	except error:
+		return True
+	return False
+
+
+def assert_one_use_per_customer(connection: str, coupon: str, customer: str, item: str, what: str) -> None:
+	"""The Webshop fork lets ``customer`` use ``coupon`` (a Coupon Code) once: a second order with it is refused.
+	Rolled back, so the store's records stay as the importer wrote them."""
 	frappe.db.savepoint("fork_limit")
 	try:
-		order().insert(ignore_permissions=True).submit()
-		try:
-			order().insert(ignore_permissions=True)
-			refused = False
-		except CouponLimitReachedError:
-			refused = True
+		coupon_order(connection, coupon, customer, item).insert(ignore_permissions=True).submit()
+		refused = refuses(coupon_order(connection, coupon, customer, item), CouponLimitReachedError)
 		expect(refused, True, f"{what}: a second order with the code")
 	finally:
 		frappe.db.rollback(save_point="fork_limit")
 	print(f"{what}: one use per customer, enforced")
+
+
+def assert_new_customers_only(
+	connection: str, coupon: str, returning: str, new: str, item: str, what: str
+) -> None:
+	"""The Webshop fork (card 407) lets only a customer with no order yet use ``coupon``: ``new`` gets its
+	discount, ``returning`` (with mirrored orders) is refused. Rolled back."""
+	expect(customer_uses(returning, None) > 0, True, f"{what}: the returning customer has mirrored orders")
+	expect(customer_uses(new, None), 0, f"{what}: the new customer has none")
+	frappe.db.savepoint("fork_rule_limit")
+	try:
+		allowed = coupon_order(connection, coupon, new, item).insert(ignore_permissions=True)
+		expect(amount(allowed.discount_amount) > 0, True, f"{what}: the new customer's discount")
+		refused = refuses(coupon_order(connection, coupon, returning, item), CouponNotEligibleError)
+		expect(refused, True, f"{what}: a returning customer's order with the code")
+	finally:
+		frappe.db.rollback(save_point="fork_rule_limit")
+	print(f"{what}: new customers only, enforced")
 
 
 @check
@@ -2126,14 +2154,33 @@ def assert_ecwid_discounts(connection: str, state: str) -> None:
 		{},
 		"the shipping coupon",
 	)
+	# Held until the Webshop fork enforced customer histories (card 407): now enabled, new customers only on its
+	# rule, and the fork refuses it to a customer with an order.
 	assert_discount(
 		connection,
 		"DiscountCoupon",
 		"9505",
-		"card 407",
+		None,
 		["customer_history"],
-		"the new-customer coupon, held",
+		"the new-customer coupon, enabled",
 	)
+	assert_fork_limits(
+		connection,
+		"DiscountCoupon",
+		"9505",
+		{"disable": 0, "new_customers_only": 1, "minimum_customer_orders": 0},
+		{},
+		"the new-customer coupon",
+	)
+	if state == "v1":
+		assert_new_customers_only(
+			connection,
+			target(connection, "coupon", "DiscountCoupon", "9505#ECW-NEWONLY"),
+			target(connection, "customer", "Customer", "9401"),
+			target(connection, "customer", "Customer", "9402"),
+			target(connection, "product", "Product", "9201"),
+			"the new-customer coupon",
+		)
 	assert_discount(connection, "WholesalePrice", "9201", None, [], "the candle's wholesale prices, enabled")
 	scheme = target(connection, "discount", "WholesalePrice", "9201")
 	live = frappe.get_all(

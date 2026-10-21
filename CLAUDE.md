@@ -25,8 +25,8 @@ truth for what each source mirrors and what is a gap. Python rules:
 - `erpnext/` — the Frappe side: `stores` (Importer Link/Seen/Run, cursors, lock, credential hold),
   `context` (a connection's targets), `media`, `custom_fields` (what the app adds to ERPNext's discount
   records: held discounts' recorded conditions), `writers/` (one writer per kind: catalog, parties
-  (customers and suppliers), discounts (and the frappe-webshop fork's limit and shipping-discount fields
-  for what it enforces, `contract.ENFORCED`), sales (a storefront's orders as invoices, and quotations),
+  (customers and suppliers), discounts (and the frappe-webshop fork's coupon-limit, shipping-discount,
+  rule-eligibility and discount-limit fields for what it enforces, `contract.ENFORCED`), sales (a storefront's orders as invoices, and quotations),
   shipping, content; and for ERP and HR sources books (accounts, cost centers, warehouses, projects,
   journal and payment entries), trade (sales and purchase orders and invoices), crm (leads,
   prospects, opportunity types, opportunities, communications, events, todos), hr (departments, designations, branches, employees, leave types, shift assignments, checkins,

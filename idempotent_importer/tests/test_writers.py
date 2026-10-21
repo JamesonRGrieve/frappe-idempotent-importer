@@ -850,7 +850,9 @@ class TestWriters(IntegrationTestCase):
 
 	def test_a_discount_the_fork_cant_enforce_here_waits(self) -> None:
 		limited = self.held_discount(["WTWAITS"], Condition("once_per_customer"))
-		with patch.dict(discounts_writer.FORK_FIELDS, {"Pricing Rule": "no_such_field"}):
+		with patch.dict(
+			discounts_writer.FORK_FIELDS, {("Pricing Rule", contract.COUPON_LIMITS): "no_such_field"}
+		):
 			self.assertEqual(
 				self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Coupon", "15"), limited),
 				Outcome.DEFERRED,
@@ -863,6 +865,122 @@ class TestWriters(IntegrationTestCase):
 				Outcome.CREATED,
 				"nothing for the fork to enforce: written as before",
 			)
+		capped = self.held_discount(["WTCAPWAITS"], Condition("cap", {"amount": Decimal(5)}))
+		with patch.dict(
+			discounts_writer.FORK_FIELDS, {("Pricing Rule", contract.DISCOUNT_CAPS): "no_such_field"}
+		):
+			self.assertEqual(
+				self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Coupon", "17"), capped),
+				Outcome.DEFERRED,
+				"a Webshop fork without card 407's fields: the cap waits for it",
+			)
+
+	def test_the_forks_rule_limits_are_written(self) -> None:
+		"""Card 407: who a discount is for and how much it gives, on its Pricing Rule; cleared when dropped."""
+		groups = [gid("CustomerGroup", number) for number in ("7", "8")]
+		for group, name in zip(groups, ("Trade", "Staff"), strict=True):
+			self.mirror(Kind.CUSTOMER_GROUP, CustomerGroupWriter, group, {"name": name})
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		item = self.target(Kind.PRODUCT, gid("Product", "1"))
+		limited = self.held_discount(
+			["WTRULE"],
+			Condition("several_customer_groups", {"groups": [groups[0]]}),
+			Condition("excluded_customer_groups", {"groups": [groups[1]]}),
+			Condition("customer_history", {"min_orders": 2}),
+			Condition("cap", {"amount": Decimal("12.50")}),
+			Condition("item_limit", {"qty": Decimal(3), "order": "cheapest"}),
+			applies="items",
+			items=[gid("Product", "1")],
+		)
+		self.assertNotIn("held", limited, "the Webshop fork enforces all of it (card 407)")
+		key = gid("Coupon", "18")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, limited), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(
+				rule.disable,
+				[row.customer_group for row in rule.eligible_customer_groups],
+				[row.customer_group for row in rule.excluded_customer_groups],
+				rule.minimum_customer_orders,
+				rule.maximum_discount_amount,
+				rule.maximum_discounted_qty,
+				rule.discounted_qty_order,
+			),
+			(0, ["Trade - WT"], ["Staff - WT"], 2, 12.5, 3, "Cheapest First"),
+		)
+		spread = self.held_discount(
+			["WTRULE"],
+			Condition("spread_amount", {"items": [gid("Product", "1")]}),
+			Condition("customer_history", {"new": True}),
+			discount="amount",
+			value=Decimal(8),
+		)
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, spread), Outcome.UPDATED)
+		rule.reload()
+		self.assertEqual(
+			(
+				rule.apply_on,
+				[row.item_code for row in rule.items],
+				rule.spread_discount_amount,
+				rule.discount_amount,
+				rule.new_customers_only,
+				rule.minimum_customer_orders,
+				rule.eligible_customer_groups,
+				rule.maximum_discount_amount,
+				rule.maximum_discounted_qty,
+			),
+			("Item Code", [item], 8, 0, 1, 0, [], 0, 0),
+			"an amount spread over some items is a rule on them; dropped limits are cleared",
+		)
+		sets = self.held_discount(
+			[],
+			Condition(
+				"fixed_price_set",
+				{
+					"qty": Decimal(3),
+					"price": Decimal(20),
+					"order": "dearest",
+					"repeat": True,
+					"items": [gid("Product", "1")],
+				},
+			),
+			automatic=True,
+			max_uses=None,
+			value=Decimal(0),
+		)
+		key = gid("Discount", "19")
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, sets), Outcome.CREATED)
+		rule = frappe.get_doc("Pricing Rule", self.target(Kind.DISCOUNT, key))
+		self.assertEqual(
+			(
+				rule.disable,
+				rule.apply_on,
+				[row.item_code for row in rule.items],
+				rule.fixed_price_set_qty,
+				rule.fixed_price_set_price,
+				rule.fixed_price_set_order,
+				rule.fixed_price_set_repeat,
+			),
+			(0, "Item Code", [item], 3, 20, "Dearest First", 1),
+		)
+		segment = self.held_discount(
+			[], Condition("customer_segments", {"groups": [groups[0]]}), automatic=True, max_uses=None
+		)
+		self.assertEqual(self.mirror(Kind.DISCOUNT, DiscountWriter, key, segment), Outcome.UPDATED)
+		rule.reload()
+		self.assertEqual(
+			([row.customer_group for row in rule.eligible_customer_groups], rule.fixed_price_set_qty),
+			(["Trade - WT"], 0),
+			"a segment's members",
+		)
+		on_the_order = self.held_discount(
+			["WTONORDER"], Condition("item_limit", {"qty": Decimal(1), "order": "each_line"})
+		)
+		self.assertEqual(
+			self.mirror(Kind.DISCOUNT, DiscountWriter, gid("Coupon", "20"), on_the_order),
+			Outcome.UNSUPPORTED,
+			"an item limit on a discount off the order",
+		)
 
 	def test_a_held_scheme_and_a_code_held_alone(self) -> None:
 		tiered = self.held_discount(

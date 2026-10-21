@@ -18,7 +18,7 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import JsonValue, Node
 from idempotent_importer.core.source import ConnectionConfig
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
-from idempotent_importer.sources.square_online.mapping import whole
+from idempotent_importer.sources.square_online.mapping import CAP_SCOPE, whole
 from idempotent_importer.sources.square_online.reader import SquareAuthorizer, SquareOnlineReader
 from tests.support.discounts import condition_kinds, held, terms
 from tests.support.transport import FakeTransport, RecordingSleeper, rest_source
@@ -277,7 +277,7 @@ class TestDiscounts:
 				}
 			)
 		)
-		assert terms(capped, "cap") == {"amount": Decimal(10)}
+		assert terms(capped, "cap") == {"amount": Decimal(10), "undocumented": [CAP_SCOPE]}
 		assert condition_kinds(capped) == ["cap", "rule_condition"]
 		assert self.MAPPER.map(rule.with_fields(is_deleted=True)) is None
 		assert condition_kinds(self.MAPPER.map(rule.with_fields(product_sets={}))) == ["item_matcher"]

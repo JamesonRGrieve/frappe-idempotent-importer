@@ -304,12 +304,22 @@ Each of these is the operator's call.
    (not mirrored as Shipping Rules), a shipping amount the source shares with the items' discount (Magento,
    Lightspeed), and terms not read from the source (`unread`: Shopify's free-shipping countries,
    WooCommerce's free-shipping zones); and the rest of card 405 (shared and shipping-method limits,
-   exclusions, schedules, combination settings). Discount caps and segments are card 407 (caps, an amount
-   spread across some items, item limits and choices, other item criteria and conditions, customer
-   segments, groups and history); what no card covers yet (other sales channels, further rules, a source's
-   own price lists, staff-applied discounts) awaits an operator decision. A site whose Webshop fork lacks
-   the fields defers a discount with an enforced condition until it is updated. When the fork enforces
-   another condition, it joins `contract.ENFORCED` and the next run enables the discounts it held.
+   exclusions, schedules, combination settings). **Card 407** (discount caps and segments), also enforced
+   on one Pricing Rule, coupon based or automatic: who a discount is for (a segment's members as
+   `eligible_customers` and `eligible_customer_groups`, several customer groups, `excluded_customer_groups`,
+   new customers only or a number of earlier orders) and how much it gives (`maximum_discount_amount` off
+   the order; an amount once, spread across some items, `spread_discount_amount`, which makes the rule one on
+   those items; at most so many units, the cheapest or dearest first or of each line; so many units for one
+   price, `fixed_price_set_*`). Held still: those limits on a Promotional Scheme; an item limit or a
+   fixed-price set whose order the source doesn't document (WooCommerce, Square, Squarespace, Wix, and
+   BigCommerce without a strategy); segments whose members aren't read (Shopify, BigCommerce, Ecwid); terms
+   the source leaves undocumented (`undocumented`: whether an amount off some products is per item or in
+   total in Wix, Ecwid, Lightspeed and Squarespace; Square's cap; Lightspeed's repeat customers) or groups
+   not mirrored (Square, Lightspeed); and a source's own item criteria, rule conditions and item choices
+   (`source`). What no card covers yet (other sales channels, further rules, a source's own price lists,
+   staff-applied discounts) awaits an operator decision. A site whose Webshop fork lacks a card's fields
+   defers a discount with a condition of that card the fork enforces until it is updated. When the fork
+   enforces another condition, it joins `contract.ENFORCED` and the next run enables the discounts it held.
 7. **Shopify's compare-at price** becomes the Item Price, and Shopify's price an open-ended sale (a
    Pricing Rule), which is how the webshop shows a sale.
 8. **Retiring without deleting:** a Website Route Redirect row has no disabled flag, so a retired redirect's
@@ -395,7 +405,9 @@ Still to do:
    (Square's return orders). Until built, each source's coverage page lists them as planned.
 5. **Discount conditions held for enforcement:** every source's discounts are mirrored; what ERPNext's
    pricing can't enforce is recorded and holds the discount until the Webshop fork enforces it (cards 405 and
-   407, decision 6; card 405's coupon limits, eligibility and shipping discounts are enforced). Conditions no card covers yet (other sales channels, further rules, a source's price
+   407, decision 6; card 405's coupon limits, eligibility and shipping discounts, and card 407's eligibility
+   and discount limits, are enforced where the source's terms are known). Conditions no card covers yet
+   (other sales channels, further rules, a source's price
    lists, staff-applied discounts) and Magento's catalog price rules (no REST API) are operator decisions.
 6. **Operator decision:** Shopify's Buy X Get Y and app discounts, per-location stock and bundles need new
    Admin query fields whose cost must be recorded from a live store (wp-woo-idempotent-importer's

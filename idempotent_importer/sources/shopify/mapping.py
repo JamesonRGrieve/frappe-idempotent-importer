@@ -60,6 +60,7 @@ BASIC = frozenset({"DiscountCodeBasic", "DiscountAutomaticBasic"})
 FREE_SHIPPING = frozenset({"DiscountCodeFreeShipping", "DiscountAutomaticFreeShipping"})
 # A free-shipping discount's countries (destinationSelection), not read yet: it stays held.
 UNREAD_DESTINATIONS = "destinationSelection"
+UNREAD_SEGMENTS = "the segments' members"
 MEDIA_IMAGE = "MediaImage"
 
 
@@ -387,13 +388,13 @@ class DiscountMapper:
 	"""Code and automatic discounts: a basic one's percentage or amount off everything, some products,
 	single variants or some collections, after a minimum spend or quantity, for every customer or some;
 	a free-shipping one's code. What ERPNext's pricing doesn't enforce is recorded as conditions, which hold
-	the discount (a once-per-customer limit, a use limit shared by several codes and free shipping: card 405;
-	customer segments, several customers on a code and an amount spread across some items: card 407). Buy X
-	Get Y and app discounts are Unsupported: their fields aren't read (the query's cost is recorded from a
-	live store, see coverage/shopify.md)."""
+	the discount until the Webshop fork enforces them (a once-per-customer limit, a use limit shared by several
+	codes, free shipping and several customers on a code: card 405; customer segments, whose members aren't
+	read, and an amount spread across some items: card 407). Buy X Get Y and app discounts are Unsupported:
+	their fields aren't read (the query's cost is recorded from a live store, see coverage/shopify.md)."""
 
 	kind = Kind.DISCOUNT
-	version = 4
+	version = 5
 
 	def map(self, node: Node) -> Desired | None:
 		discount = node.required_child("discount")
@@ -513,7 +514,7 @@ class DiscountMapper:
 		if context is None or context.typename() == "DiscountBuyerSelectionAll":
 			return []
 		if context.typename() != "DiscountCustomers":
-			later.append(Condition("customer_segments"))
+			later.append(Condition("customer_segments", {"unread": [UNREAD_SEGMENTS]}))
 			return []
 		customers = [c.id() for c in context.children("customers")]
 		if len(customers) > 1 and not automatic:

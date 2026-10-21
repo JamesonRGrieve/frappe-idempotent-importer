@@ -14,8 +14,12 @@ source's terms). What the Webshop fork enforces (``contract.ENFORCED``, card 405
 fields: on the Pricing Rule, the discount's per-customer limit (counted over all its codes) and its shipping
 discount (free, or a percentage or amount off, its cap and maximum charge, countries and products); on each
 Coupon Code, the code's own per-customer limit and the customers and emails it is only for (its discount's
-and its own). On a site whose Webshop fork doesn't have those fields yet, a discount with an enforced
-condition waits for it (an unresolved dependency).
+and its own). Card 407's are on the Pricing Rule too: who the discount is for (a segment's customers and
+customer groups, several customer groups, excluded groups, new or returning customers or a number of earlier
+orders) and how much it gives (a cap off the order, an amount spread once across some items, at most so many units
+in a given order, or fixed-price sets); a spread amount or fixed-price sets make the rule one on those items. On a
+site whose Webshop fork doesn't have a card's fields yet, a discount with a condition of that card the fork
+enforces waits for it (an unresolved dependency).
 
 A discount with any condition the fork doesn't enforce is held, failing closed: written disabled, marked in
 ``importer_hold`` ("held: awaiting enforcement (card N)"), logged once as a warning, and its codes not
@@ -39,8 +43,15 @@ from frappe.utils import add_days, nowdate
 
 from idempotent_importer.contract import (
 	AMOUNT,
+	CHEAPEST,
+	CODE_ALONE,
+	COUPON_LIMITS,
+	DEAREST,
+	DISCOUNT_CAPS,
+	EACH_LINE,
 	FREE,
 	PERCENTAGE,
+	RuleLimits,
 	ShippingDiscount,
 	conditions_json,
 	conditions_summary,
@@ -48,6 +59,7 @@ from idempotent_importer.contract import (
 	enforced_conditions,
 	hold_label,
 	is_scheme,
+	rule_limits,
 	shipping_discount,
 )
 from idempotent_importer.core.desired import Desired
@@ -73,9 +85,15 @@ RATE_OR_DISCOUNT = {"percentage": "Discount Percentage", "amount": "Discount Amo
 TITLE_LENGTH = 140
 # A rule's benefit fields a scheme's slab doesn't have (a scheme's slab table says which it is).
 RULE_ONLY = frozenset({"price_or_product_discount", "apply_discount_on"})
-# The Webshop fork's shipping discounts, and a field of its on each record that shows it has them (card 405).
+# The Webshop fork's shipping discounts and unit orders, and a field of its on each record that shows it has a
+# card's fields (card 405: limits and shipping; card 407: rule eligibility and discount limits).
 SHIPPING_DISCOUNTS = {FREE: "Free Shipping", PERCENTAGE: "Percentage", AMOUNT: "Amount"}
-FORK_FIELDS = {PRICING_RULE: "shipping_discount", "Coupon Code": "maximum_use_per_customer"}
+UNIT_ORDERS = {CHEAPEST: "Cheapest First", DEAREST: "Dearest First", EACH_LINE: "Each Line"}
+FORK_FIELDS = {
+	(PRICING_RULE, COUPON_LIMITS): "shipping_discount",
+	("Coupon Code", COUPON_LIMITS): "maximum_use_per_customer",
+	(PRICING_RULE, DISCOUNT_CAPS): "maximum_discount_amount",
+}
 NO_SHIPPING_DISCOUNT: dict[str, Any] = {
 	"shipping_discount": "",
 	"shipping_discount_value": 0,
@@ -114,12 +132,14 @@ class DiscountWriter(Writer):
 			self.retire(link)
 			existing = None
 		doc = existing or frappe.new_doc(doctype)
-		doc.update(self._common(values))
 		if scheme:
+			doc.update(self._common(values))
 			self._slabs(doc, values)
 			self.save(doc, self.context.item_code(None, desired.gid))
 		else:
-			doc.update(self._rule(values, bool(codes)))
+			targeted = self._targeted(values, bool(codes))
+			doc.update(self._common(targeted))
+			doc.update(self._rule(targeted, bool(codes)))
 			self.save(doc)
 		held = sorted(
 			{
@@ -131,7 +151,7 @@ class DiscountWriter(Writer):
 			awaited = [
 				conditions_summary(values.records("conditions"), bool(codes), not scheme),
 				*(
-					conditions_summary(code_limits(values, code).records("conditions"), True, True)
+					conditions_summary(code_limits(values, code).records("conditions"), True, CODE_ALONE)
 					for code in codes
 				),
 			]
@@ -166,29 +186,98 @@ class DiscountWriter(Writer):
 	# -- the Webshop fork's limits (card 405) -------------------------------------------------------------
 
 	@staticmethod
-	def fork_enforces(doctype: str, enforced: list[Values]) -> bool:
-		"""Whether the site's Webshop fork has its fields on ``doctype``. Without them, a discount with conditions
-		the fork enforces waits for it: written without them, it would be usable more widely than at the source."""
-		if frappe.get_meta(doctype).has_field(FORK_FIELDS[doctype]):
+	def fork_enforces(doctype: str, card: str, enforced: list[Values]) -> bool:
+		"""Whether the site's Webshop fork has ``card``'s fields on ``doctype``. Without them, a discount with
+		conditions of that card the fork enforces waits for it: written without them, it would be usable more
+		widely than at the source."""
+		if frappe.get_meta(doctype).has_field(FORK_FIELDS[(doctype, card)]):
 			return True
-		if enforced:
+		if any(c.string("card") == card for c in enforced):
 			raise UnresolvedDependency(
-				f"the Webshop fork on this site has no discount limits on {doctype} yet (card 405): update "
+				f"the Webshop fork on this site has no discount limits on {doctype} yet ({card}): update "
 				"frappe-webshop"
 			)
 		return False
 
 	def _rule_limits(self, values: Values, coded: bool) -> dict[str, Any]:
 		"""The fork's fields of a Pricing Rule: the discount's per-customer limit, over all its codes, and its
-		shipping discount."""
+		shipping discount (card 405); who it is for and how much it gives (card 407)."""
 		enforced = enforced_conditions(values.records("conditions"), coded, single_rule=True)
-		if not self.fork_enforces(PRICING_RULE, enforced):
-			return {}
-		per_customer = coupon_limits(enforced).per_customer
-		shipping = shipping_discount(enforced)
+		fields: dict[str, Any] = {}
+		if self.fork_enforces(PRICING_RULE, COUPON_LIMITS, enforced):
+			shipping = shipping_discount(enforced)
+			fields |= {
+				"maximum_use_per_customer": coupon_limits(enforced).per_customer or 0,
+				**(self._shipping(shipping) if shipping else NO_SHIPPING_DISCOUNT),
+			}
+		if self.fork_enforces(PRICING_RULE, DISCOUNT_CAPS, enforced):
+			limits = rule_limits(enforced)
+			fields |= self._eligibility_and_allotment(limits)
+			if limits.spread is not None:
+				# The fork takes the amount off once, instead of the rule's own amount off each unit.
+				fields |= {
+					"spread_discount_amount": money(values.decimal("value")),
+					"discount_amount": 0,
+					"discount_percentage": 0,
+				}
+		return fields
+
+	def _targeted(self, values: Values, coded: bool) -> Values:
+		"""A discount's items as its Pricing Rule targets them: an amount spread across some items, or fixed-price
+		sets of some, is a rule on those items (the fork spreads it, or prices the sets)."""
+		enforced = enforced_conditions(values.records("conditions"), coded, single_rule=True)
+		if not enforced:
+			return values
+		limits = rule_limits(enforced)
+		if limits.max_qty and values.string("applies") == "transaction":
+			raise Unsupported("an item limit on a discount off the order: the fork limits a rule on items")
+		if limits.spread is not None and values.string("discount") != "amount":
+			raise Unsupported("a spread discount that isn't an amount")
+		targets = limits.spread or (limits.fixed_set.targets if limits.fixed_set else None)
+		if targets is None:
+			return values
+		if targets.groups and (targets.items or targets.variants):
+			raise Unsupported(
+				"a limit on products and collections at once: a Pricing Rule applies to one kind"
+			)
+		applies = (
+			"items" if targets.items or targets.variants else "groups" if targets.groups else "all_items"
+		)
+		retargeted: dict[str, Any] = {
+			key: value for key, value in values.all().items() if key not in ("items", "groups", "variants")
+		}
+		retargeted |= {
+			"applies": applies,
+			"items": list(targets.items),
+			"groups": list(targets.groups),
+			**({"variants": [{"variant": v} for v in targets.variants]} if targets.variants else {}),
+		}
+		return Values(retargeted)
+
+	def _eligibility_and_allotment(self, limits: RuleLimits) -> dict[str, Any]:
+		"""The fork's card 407 fields of a Pricing Rule (all of them, so a limit the source drops is cleared)."""
+		fixed = limits.fixed_set
 		return {
-			"maximum_use_per_customer": per_customer or 0,
-			**(self._shipping(shipping) if shipping else NO_SHIPPING_DISCOUNT),
+			"eligible_customers": [
+				{"customer": self.dependency(Kind.CUSTOMER, gid)} for gid in limits.customers
+			],
+			"eligible_customer_groups": [
+				{"customer_group": self.dependency(Kind.CUSTOMER_GROUP, gid)} for gid in limits.groups
+			],
+			"excluded_customer_groups": [
+				{"customer_group": self.dependency(Kind.CUSTOMER_GROUP, gid)}
+				for gid in limits.excluded_groups
+			],
+			"new_customers_only": int(limits.new_customers),
+			"minimum_customer_orders": limits.min_orders,
+			"maximum_discount_amount": money(limits.cap) if limits.cap else 0,
+			"spread_discount_amount": 0,
+			"maximum_discounted_qty": quantity(limits.max_qty) if limits.max_qty else 0,
+			"discounted_qty_order": UNIT_ORDERS[limits.qty_order] if limits.qty_order else "",
+			"fixed_price_set_qty": quantity(fixed.qty) if fixed else 0,
+			"fixed_price_set_price": money(fixed.price) if fixed else 0,
+			"fixed_price_set_order": UNIT_ORDERS[fixed.order] if fixed else "",
+			"fixed_price_set_repeat": int(fixed.repeat) if fixed else 0,
 		}
 
 	def _shipping(self, shipping: ShippingDiscount) -> dict[str, Any]:
@@ -211,11 +300,11 @@ class DiscountWriter(Writer):
 	def _coupon_limits(self, values: Values, own: Values) -> dict[str, Any]:
 		"""The fork's fields of a Coupon Code: its own per-customer limit (its discount's is on the rule), and
 		the customers and emails it is only for (its discount's and its own)."""
-		enforced_own = enforced_conditions(own.records("conditions"), coded=True, single_rule=True)
+		enforced_own = enforced_conditions(own.records("conditions"), coded=True, single_rule=CODE_ALONE)
 		enforced = (
 			enforced_conditions(values.records("conditions"), coded=True, single_rule=True) + enforced_own
 		)
-		if not self.fork_enforces("Coupon Code", enforced):
+		if not self.fork_enforces("Coupon Code", COUPON_LIMITS, enforced):
 			return {}
 		limits = coupon_limits(enforced)
 		return {

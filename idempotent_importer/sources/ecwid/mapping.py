@@ -12,6 +12,7 @@ from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
 	FEE,
+	PER_ITEM_OR_TOTAL,
 	SHIPPING,
 	TAX,
 	Address,
@@ -336,13 +337,14 @@ class DiscountMapper:
 	minimum subtotal, a single use, and its launch and expiry dates. Recorded and held: free shipping, a
 	once-per-customer limit, some shipping methods (card 405); an amount off some products (Ecwid doesn't say
 	per item or in total), categories beside products, the store front page's products, new or repeat
-	customers (card 407). A paused, expired or used-up coupon maps to nothing.
+	customers (enforced by the Webshop fork), other customer limits (card 407). A paused, expired or used-up
+	coupon maps to nothing.
 
 	A product's wholesale prices (``WholesalePrice``): a fixed unit price from each quantity, a scheme on the
 	product; variations' own tiers are recorded on it (card 407)."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -374,7 +376,11 @@ class DiscountMapper:
 			later.append(Condition("groups_beside_items", {"groups": list[Field](groups)}))
 			groups = []
 		if kind == "amount" and (products or groups):
-			spread: Fields = {"items": list[Field](products) or None, "groups": list[Field](groups) or None}
+			spread: Fields = {
+				"items": list[Field](products) or None,
+				"groups": list[Field](groups) or None,
+				"undocumented": [PER_ITEM_OR_TOTAL],
+			}
 			later.append(Condition("spread_amount", spread))
 			products, groups = [], []
 		match node.optional_string("applicationLimit") or ANY_CUSTOMER:

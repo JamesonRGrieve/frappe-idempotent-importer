@@ -12,7 +12,9 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from idempotent_importer.contract import (
+	CUSTOMER_GROUP_MEMBERS,
 	FEE,
+	PER_ITEM_OR_TOTAL,
 	SHIPPING,
 	TAX,
 	Address,
@@ -57,6 +59,7 @@ CODE_DISCOUNTS = {"percentage": "percentage", "price": "amount"}
 RULE_DISCOUNTS = {"percentage": "percentage", "currency": "amount"}
 # A discount rule's thresholds, whose meaning Lightspeed doesn't document.
 RULE_THRESHOLDS = ("minCategoryAmount", "minCategoryProducts", "freeProductsCount")
+REPEAT_CUSTOMER = "what makes a customer a repeat customer"
 APPLIES_TO_PRODUCTS = frozenset({"products", "productscategories"})
 APPLIES_TO_CATEGORIES = frozenset({"categories", "productscategories"})
 SHIPPING_UNCHANGED = "default"
@@ -338,7 +341,7 @@ class DiscountMapper:
 	to nothing."""
 
 	kind = Kind.DISCOUNT
-	version = 3
+	version = 4
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -372,7 +375,11 @@ class DiscountMapper:
 			later.append(
 				Condition(
 					"spread_amount",
-					{"items": list[Field](products) or None, "groups": list[Field](groups) or None},
+					{
+						"items": list[Field](products) or None,
+						"groups": list[Field](groups) or None,
+						"undocumented": [PER_ITEM_OR_TOTAL],
+					},
 				)
 			)
 			products, groups = [], []
@@ -431,9 +438,16 @@ class DiscountMapper:
 				customer_groups: list[Field] = [
 					self._context.gid("CustomerGroup", i) for i in link_ids(node, "customer_groups")
 				]
-				later.append(Condition("several_customer_groups", {"groups": customer_groups}))
+				later.append(
+					Condition(
+						"several_customer_groups",
+						{"groups": customer_groups, "unread": [CUSTOMER_GROUP_MEMBERS]},
+					)
+				)
 			case "get_x_discount_for_repeat_customers":
-				later.append(Condition("customer_history", {"returning": True}))
+				later.append(
+					Condition("customer_history", {"returning": True, "undocumented": [REPEAT_CUSTOMER]})
+				)
 			case "get_x_discount_on_orders_over_y":
 				later.append(Condition("rule_condition", {"source": {"type": rule_type, **thresholds}}))
 				thresholds = {}

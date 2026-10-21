@@ -14,6 +14,8 @@ from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
 	ACTIVE,
+	CHEAPEST,
+	DEAREST,
 	DISABLED,
 	EXPIRED,
 	FEE,
@@ -91,6 +93,9 @@ ANY_CURRENCY = "*"
 # A customer group discount rule's method, and a bulk pricing rule's type, as a discount: a percentage off,
 # an amount off each unit, or a fixed price.
 GROUP_METHODS = {"percent": "percentage", "fixed": "amount", "price": "rate"}
+# A promotion action's strategy as the units it discounts first; the ``_ONLY`` strategies aren't documented beyond
+# their names.
+UNIT_ORDERS = {"LEAST_EXPENSIVE": CHEAPEST, "MOST_EXPENSIVE": DEAREST}
 BULK_TYPES = {"percent": "percentage", "price": "amount", "fixed": "rate"}
 
 
@@ -388,7 +393,7 @@ class DiscountMapper:
 	A disabled coupon or promotion maps to nothing, so its rule is disabled."""
 
 	kind = Kind.DISCOUNT
-	version = 2
+	version = 3
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -604,16 +609,9 @@ class DiscountMapper:
 		if (gift := action.child("gift_item")) is not None:
 			return self._gift(base, gift, bought, rule)
 		if (fixed := action.child("fixed_price_set")) is not None:
-			matcher = fixed.child("items")
-			target = self._matcher(matcher) if matcher is not None else Matched([], [], [])
-			price: Fields = {
-				"qty": Decimal(fixed.integer("quantity")),
-				"price": fixed.decimal("fixed_price"),
-				**(
-					target.terms() if target else {"source": source_terms(matcher.raw() if matcher else None)}
-				),
-			}
-			later.append(Condition("fixed_price_set", price))
+			later.append(Condition("fixed_price_set", self._fixed_set(fixed, rule)))
+			if fixed.get("exclude_items_on_sale") is True:
+				later.append(Condition("excluded_sale_items"))
 			return base
 		if (shipping := action.child("shipping")) is not None:
 			zones = shipping.get("zone_ids")
@@ -644,12 +642,17 @@ class DiscountMapper:
 			)
 			target = Matched([], [], [])
 		self._cap(action, later)
+		strategy = action.optional_string("strategy")
 		if most := action.optional_integer("quantity"):
-			later.append(Condition("item_limit", {"qty": Decimal(most)}))
+			# The units the strategy picks first; BigCommerce documents no default, so without one it stays held.
+			order = UNIT_ORDERS.get(strategy or "")
+			later.append(Condition("item_limit", {"qty": Decimal(most), "order": order}))
+			if order is not None:
+				strategy = None
 		if action.get("exclude_items_on_sale") is True:
 			later.append(Condition("excluded_sale_items"))
 		choice: Fields = {
-			"strategy": action.optional_string("strategy"),
+			"strategy": strategy,
 			"source": source_terms(
 				{
 					key: action.get(key)
@@ -675,6 +678,30 @@ class DiscountMapper:
 			variants=[(None, v) for v in target.variants],
 		)
 		return self._buying(discounted, bought, target, rule, later)
+
+	def _fixed_set(self, fixed: Node, rule: Node) -> Fields:
+		"""So many matching units for one price: the cheapest or dearest first (the strategy; without one, or with
+		an ``_ONLY`` one, BigCommerce's choice is undocumented and kept as it sent it), as many sets as there are
+		when the rule repeats (``apply_once`` off). Items that met the rule's condition count unless excluded."""
+		matcher = fixed.child("items")
+		target = self._matcher(matcher) if matcher is not None else Matched([], [], [])
+		strategy = fixed.optional_string("strategy")
+		order = UNIT_ORDERS.get(strategy or "")
+		source: Fields = {
+			"items": source_terms(matcher.raw() if matcher else None) if target is None else None,
+			"strategy": strategy if order is None else None,
+			"include_items_considered_by_condition": False
+			if fixed.get("include_items_considered_by_condition") is False
+			else None,
+		}
+		return {
+			"qty": Decimal(fixed.integer("quantity")),
+			"price": fixed.decimal("fixed_price"),
+			"order": order,
+			"repeat": True if rule.get("apply_once") is False else None,
+			**(target.terms() if target else {}),
+			"source": {k: v for k, v in source.items() if v is not None} or None,
+		}
 
 	def _buying(
 		self, discount: Discount, bought: Matched | None, target: Matched, rule: Node, later: list[Condition]

@@ -336,6 +336,25 @@ class TestMappers:
 		assert values(Kind.CUSTOMER_GROUP, "CustomerGroup/2").all() == {"name": "Wholesale"}
 		assert values(Kind.CUSTOMER, "Customer/41").optional_string("group") == f"{GID}/CustomerGroup/1"
 
+	def test_quantity_cap_on_items_is_per_cart_item(self) -> None:
+		"""Magento caps a percentage or amount off each item at so many units of each cart item: enforced by the
+		Webshop fork on a rule on items (card 407)."""
+		on_categories: JsonValue = {
+			"aggregator_type": "all",
+			"value": "1",
+			"conditions": [{"attribute_name": "category_ids", "operator": "()", "value": "4"}],
+		}
+		capped = mapper_of(Kind.DISCOUNT).map(
+			nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(discount_qty=2, action_condition=on_categories)
+		)
+		assert (terms(capped, "item_limit"), held(capped)) == ({"qty": Decimal(2), "order": "each_line"}, [])
+		cart = mapper_of(Kind.DISCOUNT).map(
+			nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(
+				discount_qty=2, action_condition=on_categories, simple_action="cart_fixed"
+			)
+		)
+		assert terms(cart, "item_limit") == {"qty": Decimal(2)}, "a cart amount's cap stays held"
+
 	@pytest.mark.parametrize(
 		("changes", "kinds"),
 		[
@@ -390,8 +409,15 @@ class TestMappers:
 	def test_rule_conditions_are_recorded(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
 		desired = mapper_of(Kind.DISCOUNT).map(nodes(Kind.DISCOUNT)["SalesRule/62"].with_fields(**changes))
 		assert condition_kinds(desired) == kinds
-		# The Webshop fork enforces a percentage off shipping too, and a code's per-customer limit (card 405).
-		enforced = kinds in (["shipping_discount"], ["per_customer_limit"])
+		# The Webshop fork enforces a percentage off shipping too, and a code's per-customer limit (card 405);
+		# several customer groups on a code, and an amount off the cart spread over some categories (card 407).
+		# Rule 62 is a percentage off the cart: its quantity cap (per cart item, on items) stays held.
+		enforced = kinds in (
+			["shipping_discount"],
+			["per_customer_limit"],
+			["several_customer_groups"],
+			["spread_amount"],
+		)
 		assert held(desired) == ([] if enforced else ["card 407"])
 
 	def test_a_fixed_amount_applied_to_shipping_stays_held(self) -> None:

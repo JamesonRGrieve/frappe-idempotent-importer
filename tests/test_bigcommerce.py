@@ -592,7 +592,56 @@ class TestMoreMappers:
 	def test_promotion_conditions_are_recorded(self, changes: dict[str, JsonValue], kinds: list[str]) -> None:
 		desired = mapper_of(Kind.DISCOUNT).map(promotion(**changes))
 		assert condition_kinds(desired) == kinds
-		assert held(desired)
+		# The Webshop fork caps a discount (card 407); the rest stays held.
+		assert bool(held(desired)) == (kinds != ["cap"])
+
+	def test_unit_orders_the_fork_enforces(self) -> None:
+		"""A quantity of items or a fixed-price set with a cheapest- or dearest-first strategy is enforced by the
+		fork (card 407); without a strategy, or with an ``_ONLY`` one, which units BigCommerce takes is unknown."""
+		items: dict[str, JsonValue] = {
+			"discount": {"percentage_amount": "10"},
+			"items": {"categories": [21]},
+			"quantity": 2,
+		}
+		limited = mapper_of(Kind.DISCOUNT).map(
+			promotion(rules=rule({"cart_items": {**items, "strategy": "MOST_EXPENSIVE"}}))
+		)
+		assert (condition_kinds(limited), terms(limited, "item_limit"), held(limited)) == (
+			["item_limit"],
+			{"qty": Decimal(2), "order": "dearest"},
+			[],
+		)
+		only = mapper_of(Kind.DISCOUNT).map(
+			promotion(rules=rule({"cart_items": {**items, "strategy": "LEAST_EXPENSIVE_ONLY"}}))
+		)
+		assert (condition_kinds(only), held(only)) == (["item_limit", "item_choice"], ["card 407"])
+		fixed: dict[str, JsonValue] = {"quantity": 3, "fixed_price": "20", "items": {"products": [111]}}
+		sets = mapper_of(Kind.DISCOUNT).map(
+			promotion(
+				rules=[
+					{
+						"action": {"fixed_price_set": {**fixed, "strategy": "LEAST_EXPENSIVE"}},
+						"condition": None,
+						"apply_once": False,
+					}
+				]
+			)
+		)
+		assert (terms(sets, "fixed_price_set"), held(sets)) == (
+			{
+				"qty": Decimal(3),
+				"price": Decimal(20),
+				"order": "cheapest",
+				"repeat": True,
+				"items": [f"{GID}/Product/111"],
+			},
+			[],
+		)
+		unordered = mapper_of(Kind.DISCOUNT).map(
+			promotion(rules=rule({"fixed_price_set": {**fixed, "exclude_items_on_sale": True}}))
+		)
+		assert condition_kinds(unordered) == ["fixed_price_set", "excluded_sale_items"]
+		assert held(unordered) == ["card 405", "card 407"]
 
 	def test_promotion_rules_erpnext_applies(self) -> None:
 		buy_get = mapper_of(Kind.DISCOUNT).map(

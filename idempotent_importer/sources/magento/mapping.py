@@ -13,6 +13,7 @@ from decimal import ROUND_HALF_EVEN, Decimal
 from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
+	EACH_LINE,
 	SHIPPING,
 	TAX,
 	Address,
@@ -64,6 +65,8 @@ NO_COUPON = "NO_COUPON"
 NO_FREE_SHIPPING = "0"
 FREE_SHIPPING = {"1": "for the matching items only", "2": "for the shipment with matching items"}
 COMBINE_ALL, COMBINE_TRUE = "all", "1"
+# The actions that discount each item (Magento's discount_qty caps each cart item's discounted units).
+PER_ITEM_ACTIONS = frozenset({"by_percent", "by_fixed"})
 AT_LEAST = ">="
 # A rule's cart conditions ERPNext's pricing checks: the subtotal and the quantity, at least so much.
 CART_MINIMUMS = {"base_subtotal": "min_amount", "total_qty": "min_qty"}
@@ -441,15 +444,17 @@ class DiscountMapper:
 	same item, for every X); on every item or some categories; after a minimum subtotal or quantity; its
 	dates; for its customer groups (one, or every group, with codes; several, without); each coupon's use
 	limit and expiry. Recorded and held: per-customer limits (of a coupon: that coupon alone), discounts on
-	shipping and free shipping (card 405); a limit on the discounted quantity, discount steps, other item and
-	cart conditions, several customer groups on codes (card 407). An inactive rule, or one not on the store's
-	website, maps to nothing. Catalog price rules have no REST API (an operator decision, coverage/magento.md).
+	shipping and free shipping (card 405); a limit on the discounted quantity (of each cart item: enforced by the
+	Webshop fork on a percentage or amount off some items), an amount off the cart spread over some categories,
+	several customer groups on codes (enforced by the fork), discount steps, other item and cart conditions
+	(card 407). An inactive rule, or one not on the store's website, maps to nothing. Catalog price rules have
+	no REST API (an operator decision, coverage/magento.md).
 
 	A product's tier prices (``TierPrice``, per customer group): a fixed unit price or a percentage off from
 	each quantity, a scheme on the product for the group (every group for "ALL GROUPS")."""
 
 	kind = Kind.DISCOUNT
-	version = 3
+	version = 4
 
 	def __init__(self, context: Context) -> None:
 		self._context = context
@@ -492,7 +497,7 @@ class DiscountMapper:
 				value = Decimal(0)
 			case other:
 				raise SourceError(f"A Magento rule's action {other}.")
-		self._limits(node, action, kind, value, later)
+		self._limits(node, action, kind, value, applies, later)
 		coupons = node.children("coupons")
 		created = sorted(t for c in coupons if (t := c.optional_time("created_at")))
 		per_coupon = node.integer("uses_per_coupon") or None
@@ -584,11 +589,15 @@ class DiscountMapper:
 		return []
 
 	@staticmethod
-	def _limits(rule: Node, action: str, kind: str, value: Decimal, later: list[Condition]) -> None:
+	def _limits(
+		rule: Node, action: str, kind: str, value: Decimal, applies: str, later: list[Condition]
+	) -> None:
 		"""A cap on the discounted quantity, a step (but buy X get Y's), shipping discounts and free
-		shipping."""
+		shipping. Magento caps a percentage or amount off each item at so many units of each cart item; on a
+		discount off the cart, or of another action, the cap stays held."""
 		if most := amount_of(rule, "discount_qty"):
-			later.append(Condition("item_limit", {"qty": most}))
+			each_line = action in PER_ITEM_ACTIONS and applies != "transaction"
+			later.append(Condition("item_limit", {"qty": most, "order": EACH_LINE if each_line else None}))
 		step = rule.optional_integer("discount_step") or 0
 		if step > 0 and action != "buy_x_get_y":
 			later.append(Condition("item_choice", {"source": {"discount_step": step}}))

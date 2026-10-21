@@ -1,0 +1,25 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/contacts/102",
+		"query": {
+			"associations": "notes"
+		}
+	},
+	"response": {
+		"id": "102",
+		"properties": {
+			"hs_object_id": "102",
+			"firstname": "Sam",
+			"lastname": "Shore",
+			"email": "sam@river.example",
+			"mobilephone": "+1 902 555 0102",
+			"company": "River Co",
+			"lifecyclestage": "lead",
+			"hs_lead_status": "OPEN"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false
+	}
+}

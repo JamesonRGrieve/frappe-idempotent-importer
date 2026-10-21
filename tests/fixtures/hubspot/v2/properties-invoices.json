@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/invoices",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": []
+	}
+}

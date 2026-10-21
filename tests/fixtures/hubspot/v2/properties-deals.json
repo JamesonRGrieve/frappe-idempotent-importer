@@ -1,0 +1,23 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/deals",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"name": "lead_source_detail",
+				"label": "Lead source detail",
+				"type": "string",
+				"fieldType": "text",
+				"groupName": "studio",
+				"description": "",
+				"hubspotDefined": false,
+				"options": []
+			}
+		]
+	}
+}

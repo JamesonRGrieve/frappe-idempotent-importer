@@ -1,0 +1,21 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/companies/202",
+		"query": {
+			"associations": "contacts,notes"
+		}
+	},
+	"response": {
+		"id": "202",
+		"properties": {
+			"hs_object_id": "202",
+			"name": "Delta Works",
+			"domain": "delta.example",
+			"lifecyclestage": "lead"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false
+	}
+}

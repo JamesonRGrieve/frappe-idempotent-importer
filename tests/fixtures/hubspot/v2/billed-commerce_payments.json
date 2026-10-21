@@ -1,0 +1,88 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/commerce_payments",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "contacts,companies"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "871",
+				"properties": {
+					"hs_object_id": "871",
+					"hs_initial_amount": "345",
+					"hs_currency_code": "CAD",
+					"hs_latest_status": "succeeded",
+					"hs_initiated_date": "2026-09-16T15:00:00Z",
+					"hs_payment_method_type": "card",
+					"hs_reference_number": "ch_871"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"companies": {
+						"results": [
+							{
+								"id": "201",
+								"type": "companies_association"
+							}
+						]
+					}
+				}
+			},
+			{
+				"id": "872",
+				"properties": {
+					"hs_object_id": "872",
+					"hs_initial_amount": "100",
+					"hs_currency_code": "CAD",
+					"hs_latest_status": "partially_refunded",
+					"hs_initiated_date": "2026-09-17T15:00:00Z",
+					"hs_refunds_amount": "20",
+					"hs_payment_method_type": "ach"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "102",
+								"type": "contacts_association"
+							}
+						]
+					}
+				}
+			},
+			{
+				"id": "873",
+				"properties": {
+					"hs_object_id": "873",
+					"hs_initial_amount": "50",
+					"hs_currency_code": "CAD",
+					"hs_latest_status": "failed",
+					"hs_initiated_date": "2026-09-18T15:00:00Z"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "102",
+								"type": "contacts_association"
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

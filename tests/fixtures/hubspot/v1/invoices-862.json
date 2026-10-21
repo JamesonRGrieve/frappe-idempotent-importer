@@ -1,0 +1,40 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/invoices/862",
+		"query": {
+			"associations": "line_items,discounts,fees,taxes,contacts,companies"
+		}
+	},
+	"response": {
+		"id": "862",
+		"properties": {
+			"hs_object_id": "862",
+			"hs_number": "INV-1002",
+			"hs_invoice_date": "2026-09-20T00:00:00Z",
+			"hs_currency": "CAD",
+			"hs_invoice_status": "draft"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"line_items": {
+				"results": [
+					{
+						"id": "814",
+						"type": "line_items_association"
+					}
+				]
+			},
+			"contacts": {
+				"results": [
+					{
+						"id": "102",
+						"type": "contacts_association"
+					}
+				]
+			}
+		}
+	}
+}

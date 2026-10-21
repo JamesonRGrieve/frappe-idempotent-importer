@@ -1,0 +1,49 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/calls",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "contacts,deals,companies"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "501",
+				"properties": {
+					"hs_object_id": "501",
+					"hs_timestamp": "2026-09-05T15:00:00Z",
+					"hs_call_title": "Kick-off call",
+					"hs_call_body": "Walked through the brief.",
+					"hs_call_direction": "OUTBOUND",
+					"hs_call_duration": "754000",
+					"hs_call_status": "COMPLETED",
+					"hs_call_to_number": "+1 902 555 0101"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "101",
+								"type": "contacts_association"
+							}
+						]
+					},
+					"deals": {
+						"results": [
+							{
+								"id": "301",
+								"type": "deals_association"
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

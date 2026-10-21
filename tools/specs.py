@@ -102,6 +102,36 @@ HIGHLEVEL_CORRECTIONS: dict[str, tuple[tuple[str, Any], ...]] = {
 	),
 	"payments": (("/components/schemas/TxnResponseSchema/properties/status", {"type": "string"}),),
 }
+# HubSpot's CRM API v3 OpenAPI documents (HubSpot/HubSpot-public-api-spec-collection, PublicApiSpecs/CRM, the
+# commit of 2026-10-21), one per object type the adapter reads, each pinned to its SHA-256.
+HUBSPOT_BASE = (
+	"https://raw.githubusercontent.com/HubSpot/HubSpot-public-api-spec-collection/"
+	"dd4246cd4b82fefd93b374547fec352f443fc4ae/PublicApiSpecs/CRM/"
+)
+HUBSPOT_DOCUMENTS = {
+	"Calls/Rollouts/424/v3/calls.json": "a642f888dce2dc2dbb05dd5156147dd08a87765c98986408655ca5a8b6468af8",
+	"Commerce Payments/Rollouts/424/v3/commercePayments.json": (
+		"06a3f94e332035fcf7950a20e938e8c5b3dc0bfd0b3e5c257cc941b6fa8118b9"
+	),
+	"Companies/Rollouts/424/v3/companies.json": "42ba01ce31a1a47ce16325804057659e15548a8a44f979c3d68b116eb480720c",
+	"Contacts/Rollouts/424/v3/contacts.json": "05f32b926eb2d90cb00b11b93498983f5489553cb74e424f954f03612683e9e1",
+	"Crm Owners/Rollouts/146888/v3/crmOwners.json": "354d43093879400a9cae4a5bcec72bf4bbca0d5e6129901e19e92d2f308ea85b",
+	"Deals/Rollouts/424/v3/deals.json": "e4710a20196e71511826c82b24c8c2ef34a498a46913d9738f751ada85844b6e",
+	"Discounts/Rollouts/424/v3/discounts.json": "431507d901cf8e5cc73bfeeeac43443f4945877aea63fb0357d1c65ef5d6c9d3",
+	"Emails/Rollouts/424/v3/emails.json": "923068decd72579b41c5215dd9b9ad9234bbda92f74b3d6ea66606c6b0982b72",
+	"Fees/Rollouts/424/v3/fees.json": "f4794b7dcdc084801627024924ed66f7ff5daa324f1b7b8cebcb72c318ed3ec3",
+	"Invoices/Rollouts/424/v3/invoices.json": "2bfeed713636c603bcc2276ad12abc2213e21087c9c704a2a78d89acc3875c7f",
+	"Line Items/Rollouts/424/v3/lineItems.json": "fce93b4b7ae8783f93312556d1b205079a1140e0fffd1f3e6741e63f4b596de9",
+	"Meetings/Rollouts/424/v3/meetings.json": "60ad248add2e65c1c20e226e29992c14ea9281146a2d897330bb6d6f30362e03",
+	"Notes/Rollouts/424/v3/notes.json": "d6da9731122655efa05c52e5f21e736392806aa7ee63b9c9ff28ca45b3d4de3b",
+	"Orders/Rollouts/424/v3/orders.json": "9eac30562c21d4f00a91ae8811486afad10c697c115a5015e8534ffae30863f5",
+	"Pipelines/Rollouts/145896/v3/pipelines.json": "dd0fc775d2dcd73df03471e354876e8416acf48b1a35fe41c85651874b209ce7",
+	"Products/Rollouts/424/v3/products.json": "f08e032c5015bec92bd3b05f5a86ed27e830037736a7be10426e53626457cd5a",
+	"Properties/Rollouts/145899/v3/properties.json": "62693afb6b06fe189a2ac0db2da6d863624919839aa07d5cd68090eb6526f788",
+	"Quotes/Rollouts/424/v3/quotes.json": "ab0f0fb28f5c37871ca96ed25f398e5a89acce7349420c8ea0b6a42fb5f90d98",
+	"Tasks/Rollouts/424/v3/tasks.json": "41eba2b831ed3706f845212e3b2c287fcc0fc38b4d4078024406e7e721a79c9c",
+	"Taxes/Rollouts/424/v3/taxes.json": "334e4742f2cad9896c28127b55deb51d69bd89e13656b0b76cd0d5e086bf67b9",
+}
 QUICKBOOKS_XSD_FILES = (
 	"IntuitRestServiceDef.xsd",
 	"Finance.xsd",
@@ -546,6 +576,19 @@ def catalog() -> list[Document]:
 				corrections=HIGHLEVEL_CORRECTIONS.get(name, ()),
 			)
 			for name, sha256 in HIGHLEVEL_DOCUMENTS.items()
+		),
+		# HubSpot's CRM v3 documents; their paths are full on api.hubapi.com.
+		*(
+			SpecDocument(
+				"hubspot",
+				Path(member).stem,
+				HUBSPOT_BASE + member.replace(" ", "%20"),
+				"",
+				False,
+				JSON,
+				sha256,
+			)
+			for member, sha256 in HUBSPOT_DOCUMENTS.items()
 		),
 		# PeopleSoft publishes no OpenAPI document for the Integration Broker: the Query Access Service's REST
 		# answer, transcribed from PeopleBooks ("Executing the Query").

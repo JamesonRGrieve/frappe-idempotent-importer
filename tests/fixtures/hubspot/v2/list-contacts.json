@@ -1,0 +1,78 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/contacts",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "notes"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "101",
+				"properties": {
+					"hs_object_id": "101",
+					"firstname": "Riley",
+					"lastname": "River",
+					"email": "riley@river.example",
+					"phone": "+1 902 555 0101",
+					"company": "River Co",
+					"jobtitle": "Director",
+					"address": "1 Harbour Rd",
+					"city": "Halifax",
+					"state": "NS",
+					"zip": "B3H 1A1",
+					"country": "Canada",
+					"lifecyclestage": "customer",
+					"hs_lead_status": "CONNECTED",
+					"preferred_contact_time": "mornings"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"notes": {
+						"results": [
+							{
+								"id": "901",
+								"type": "notes_association"
+							}
+						]
+					}
+				}
+			},
+			{
+				"id": "102",
+				"properties": {
+					"hs_object_id": "102",
+					"firstname": "Sam",
+					"lastname": "Shore",
+					"email": "sam@river.example",
+					"mobilephone": "+1 902 555 0102",
+					"company": "River Co",
+					"lifecyclestage": "lead",
+					"hs_lead_status": "OPEN"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			},
+			{
+				"id": "103",
+				"properties": {
+					"hs_object_id": "103",
+					"firstname": "Quinn",
+					"lastname": "Quay",
+					"email": "quinn@quay.example",
+					"lifecyclestage": "lead",
+					"hs_lead_status": "UNQUALIFIED"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			}
+		]
+	}
+}

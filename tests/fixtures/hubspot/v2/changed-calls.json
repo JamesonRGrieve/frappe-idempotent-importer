@@ -1,0 +1,23 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/crm/v3/objects/calls/search",
+		"query": {},
+		"body": {
+			"filterGroups": [
+				{
+					"filters": [
+						{
+							"propertyName": "hs_lastmodifieddate",
+							"operator": "GTE"
+						}
+					]
+				}
+			]
+		}
+	},
+	"response": {
+		"total": 0,
+		"results": []
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/emails",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": []
+	}
+}

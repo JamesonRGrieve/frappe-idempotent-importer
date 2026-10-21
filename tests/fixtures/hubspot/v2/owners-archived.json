@@ -1,0 +1,25 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/owners",
+		"query": {
+			"limit": "100",
+			"archived": "true"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "2",
+				"email": "jamie@studio.example",
+				"firstName": "Jamie",
+				"lastName": "Front",
+				"type": "PERSON",
+				"userId": 9002,
+				"archived": true,
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-10-16T15:00:00Z"
+			}
+		]
+	}
+}

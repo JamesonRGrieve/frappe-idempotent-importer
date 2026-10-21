@@ -1,0 +1,51 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/companies/201",
+		"query": {
+			"associations": "contacts,notes"
+		}
+	},
+	"response": {
+		"id": "201",
+		"properties": {
+			"hs_object_id": "201",
+			"name": "River Co",
+			"domain": "river.example",
+			"phone": "+1 902 555 0100",
+			"address": "1 Harbour Rd",
+			"city": "Halifax",
+			"state": "NS",
+			"zip": "B3H 1A1",
+			"country": "Canada",
+			"description": "Harbour tours",
+			"lifecyclestage": "customer",
+			"account_tier": "gold"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"contacts": {
+				"results": [
+					{
+						"id": "101",
+						"type": "contacts_association"
+					},
+					{
+						"id": "102",
+						"type": "contacts_association"
+					}
+				]
+			},
+			"notes": {
+				"results": [
+					{
+						"id": "902",
+						"type": "notes_association"
+					}
+				]
+			}
+		}
+	}
+}

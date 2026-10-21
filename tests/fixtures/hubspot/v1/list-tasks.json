@@ -1,0 +1,40 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/tasks",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "contacts,deals,companies"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "701",
+				"properties": {
+					"hs_object_id": "701",
+					"hs_timestamp": "2026-09-30T15:00:00Z",
+					"hs_task_subject": "Send samples",
+					"hs_task_body": "Paper and foil",
+					"hs_task_status": "NOT_STARTED",
+					"hs_task_priority": "HIGH",
+					"hs_task_type": "TODO"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "102",
+								"type": "contacts_association"
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

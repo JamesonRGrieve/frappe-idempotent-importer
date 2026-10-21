@@ -1,0 +1,13 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/owners",
+		"query": {
+			"limit": "100",
+			"archived": "true"
+		}
+	},
+	"response": {
+		"results": []
+	}
+}

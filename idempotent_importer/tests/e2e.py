@@ -397,6 +397,16 @@ BUSINESSES = (
 		# The test installation's user (tests/support/peoplesoft.py) and the field map naming its queries.
 		{"api_user": "e2e-ps-reader", "api_secret": "e2e-ps-password", "field_map": PEOPLESOFT_FIELD_MAP},
 	),
+	Business(
+		"HS",
+		"Pipeline H",
+		"hubspot-s",
+		"HubSpot",
+		"hubspot",
+		"hubspot-fake",
+		"https://app.hubspot.com",
+		OAUTH_CREDENTIALS,
+	),
 )
 
 
@@ -788,6 +798,7 @@ def main() -> None:
 		"assert_agendrix": assert_agendrix,
 		"assert_highlevel": assert_highlevel,
 		"assert_peoplesoft": assert_peoplesoft,
+		"assert_hubspot": assert_hubspot,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3089,6 +3100,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{"api_account": "10234695"},
 	),
+	"hubspot-s": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 }
 
 
@@ -3786,6 +3804,77 @@ def assert_peoplesoft(state: str) -> None:
 		target(connection, "employee", "Employee", "KU0001"),
 		"the supervisor",
 	)
+
+
+@check
+def assert_hubspot(state: str) -> None:
+	"""The HubSpot studio of state ``state`` (tools/hubspot_fixtures.py): owners, products, contacts as leads
+	(an unqualified one closed), companies as prospects, the customers, the pipeline and deals at their stage,
+	the calls, emails, meeting and task, a quote to an organisation, an order, invoices and payments, and the
+	studio's own properties (v2: an owner archived, a new price, a won deal, a completed task, an opened
+	invoice, a new email). A voided invoice and a failed payment aren't kept."""
+	changed = state == "v2"
+	connection = "hubspot-s"
+	assert_booked(
+		connection,
+		[
+			Booked("employee", "Owner", "1", "status", "Active"),
+			Booked("employee", "Owner", "2", "status", "Inactive" if changed else "Active"),
+			Booked("lead", "Contact", "101", "status", "Converted"),
+			Booked("lead", "Contact", "103", "disabled", 1),
+			Booked("customer", "Company", "201", "customer_type", "Company"),
+			Booked("customer", "Contact", "102", "customer_name", "Sam Shore"),
+			Booked("prospect", "Company", "202", "company_name", "Delta Works - HS"),
+			Booked("opportunity_type", "Pipeline", "default"),
+			Booked("opportunity", "Deal", "301", "status", "Converted" if changed else "Open"),
+			Booked(
+				"opportunity",
+				"Deal",
+				"301",
+				"sales_stage",
+				"Closed won - HS" if changed else "Qualified to buy - HS",
+			),
+			Booked("opportunity", "Deal", "301", "opportunity_from", "Prospect"),
+			Booked("opportunity", "Deal", "302", "status", "Lost"),
+			Booked("communication", "Call", "501", "communication_medium", "Phone"),
+			Booked("communication", "Email", "502", "sent_or_received", "Received"),
+			Booked("event", "Meeting", "601", "status", "Completed"),
+			Booked("todo", "Task", "701", "status", "Closed" if changed else "Open"),
+			Booked("draft_order", "Quote", "801", "quotation_to", "Prospect"),
+			Booked("draft_order", "Quote", "801", "grand_total", amount("310.5")),
+			Booked("sales_order", "Order", "851", "grand_total", amount(55)),
+			Booked("sales_invoice", "Invoice", "861", "grand_total", amount(345)),
+			Booked("sales_invoice", "Invoice", "862", "docstatus", 1 if changed else 0),
+			Booked("payment_entry", "Payment", "871", "paid_amount", amount(345)),
+			Booked("payment_entry", "PaymentRefund", "872", "payment_type", "Pay"),
+		],
+	)
+	if changed:
+		assert_booked(
+			connection, [Booked("communication", "Email", "503", "reference_doctype", "Opportunity")]
+		)
+	session = target(connection, "product", "Product", "401")
+	expect(item_price(connection, session), amount(175 if changed else 150), "the design session's price")
+	riley = target(connection, "lead", "Contact", "101")
+	expect(
+		json.loads(frappe.db.get_value("Lead", riley, "importer_custom_fields")),
+		{"Preferred contact time": "Mornings"},
+		"the contact's own property",
+	)
+	expect(
+		[row.note for row in frappe.get_doc("Lead", riley).notes],
+		["Wants the spring catalogue"],
+		"the contact's note",
+	)
+	for absent in ("Invoice/863", "Payment/873"):
+		expect(
+			frappe.db.count(
+				"Importer Link",
+				{"connection": connection, "gid": f"gid://hubspot/{connection}/{absent}", "retired": 0},
+			),
+			0,
+			f"{absent}, voided or failed",
+		)
 
 
 @check

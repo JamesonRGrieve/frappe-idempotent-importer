@@ -1,0 +1,63 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/emails",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "contacts,deals,companies"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "502",
+				"properties": {
+					"hs_object_id": "502",
+					"hs_timestamp": "2026-09-06T15:00:00Z",
+					"hs_email_subject": "Samples",
+					"hs_email_text": "Could you send the paper samples?",
+					"hs_email_direction": "INCOMING_EMAIL",
+					"hs_email_from_email": "sam@river.example"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "102",
+								"type": "contacts_association"
+							}
+						]
+					}
+				}
+			},
+			{
+				"id": "503",
+				"properties": {
+					"hs_object_id": "503",
+					"hs_timestamp": "2026-10-02T09:00:00Z",
+					"hs_email_subject": "Signed",
+					"hs_email_text": "Signed and returned.",
+					"hs_email_direction": "EMAIL",
+					"hs_email_to_email": "riley@river.example"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"deals": {
+						"results": [
+							{
+								"id": "301",
+								"type": "deals_association"
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

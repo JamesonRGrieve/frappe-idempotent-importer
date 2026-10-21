@@ -1,0 +1,59 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/quotes/801",
+		"query": {
+			"associations": "line_items,discounts,fees,taxes,contacts,companies"
+		}
+	},
+	"response": {
+		"id": "801",
+		"properties": {
+			"hs_object_id": "801",
+			"hs_title": "Delta identity",
+			"hs_quote_number": "Q-2026-801",
+			"hs_expiration_date": "2026-12-31T00:00:00Z",
+			"hs_status": "APPROVED",
+			"hs_quote_amount": "310.50",
+			"hs_currency": "CAD",
+			"hs_createdate": "2026-09-12T15:00:00Z"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"line_items": {
+				"results": [
+					{
+						"id": "811",
+						"type": "line_items_association"
+					}
+				]
+			},
+			"discounts": {
+				"results": [
+					{
+						"id": "821",
+						"type": "discounts_association"
+					}
+				]
+			},
+			"taxes": {
+				"results": [
+					{
+						"id": "831",
+						"type": "taxes_association"
+					}
+				]
+			},
+			"companies": {
+				"results": [
+					{
+						"id": "202",
+						"type": "companies_association"
+					}
+				]
+			}
+		}
+	}
+}

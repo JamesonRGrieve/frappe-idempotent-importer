@@ -1,0 +1,48 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/orders/851",
+		"query": {
+			"associations": "line_items,discounts,fees,taxes,contacts,companies"
+		}
+	},
+	"response": {
+		"id": "851",
+		"properties": {
+			"hs_object_id": "851",
+			"hs_order_name": "Print run",
+			"hs_currency_code": "CAD",
+			"hs_pipeline_stage": "shipped",
+			"hs_createdate": "2026-09-14T15:00:00Z"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"line_items": {
+				"results": [
+					{
+						"id": "812",
+						"type": "line_items_association"
+					}
+				]
+			},
+			"fees": {
+				"results": [
+					{
+						"id": "841",
+						"type": "fees_association"
+					}
+				]
+			},
+			"companies": {
+				"results": [
+					{
+						"id": "201",
+						"type": "companies_association"
+					}
+				]
+			}
+		}
+	}
+}

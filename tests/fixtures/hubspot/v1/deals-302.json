@@ -1,0 +1,35 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/0-3/302",
+		"query": {
+			"associations": "contacts,companies,notes"
+		}
+	},
+	"response": {
+		"id": "302",
+		"properties": {
+			"hs_object_id": "302",
+			"dealname": "Quay audit",
+			"amount": "900",
+			"deal_currency_code": "CAD",
+			"createdate": "2026-08-22T15:00:00Z",
+			"pipeline": "default",
+			"dealstage": "closedlost",
+			"hs_deal_stage_probability": "0"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"contacts": {
+				"results": [
+					{
+						"id": "103",
+						"type": "contacts_association"
+					}
+				]
+			}
+		}
+	}
+}

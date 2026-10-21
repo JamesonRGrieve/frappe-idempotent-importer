@@ -1,0 +1,36 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/owners",
+		"query": {
+			"limit": "100",
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "1",
+				"email": "morgan@studio.example",
+				"firstName": "Morgan",
+				"lastName": "Sales",
+				"type": "PERSON",
+				"userId": 9001,
+				"archived": false,
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z"
+			},
+			{
+				"id": "2",
+				"email": "jamie@studio.example",
+				"firstName": "Jamie",
+				"lastName": "Front",
+				"type": "PERSON",
+				"userId": 9002,
+				"archived": false,
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z"
+			}
+		]
+	}
+}

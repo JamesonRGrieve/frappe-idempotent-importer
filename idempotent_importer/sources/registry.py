@@ -20,6 +20,7 @@ from idempotent_importer.sources.dynamics_sales.adapter import DynamicsSalesAdap
 from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
 from idempotent_importer.sources.highlevel.adapter import HighLevelAdapter
+from idempotent_importer.sources.hubspot.adapter import HubSpotAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
 from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.netsuite.adapter import NetSuiteAdapter
@@ -93,6 +94,7 @@ def all_adapters() -> dict[str, Adapter]:
 		AgendrixAdapter(),
 		HighLevelAdapter(),
 		PeopleSoftAdapter(),
+		HubSpotAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

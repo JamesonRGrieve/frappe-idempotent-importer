@@ -1,0 +1,36 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/companies",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"name": "account_tier",
+				"label": "Account tier",
+				"type": "enumeration",
+				"fieldType": "select",
+				"groupName": "studio",
+				"description": "",
+				"hubspotDefined": false,
+				"options": [
+					{
+						"label": "Gold",
+						"value": "gold",
+						"hidden": false,
+						"displayOrder": 0
+					},
+					{
+						"label": "Silver",
+						"value": "silver",
+						"hidden": false,
+						"displayOrder": 1
+					}
+				]
+			}
+		]
+	}
+}

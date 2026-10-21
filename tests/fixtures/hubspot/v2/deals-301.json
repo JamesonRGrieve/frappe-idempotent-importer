@@ -1,0 +1,54 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/0-3/301",
+		"query": {
+			"associations": "contacts,companies,notes"
+		}
+	},
+	"response": {
+		"id": "301",
+		"properties": {
+			"hs_object_id": "301",
+			"dealname": "River rebrand",
+			"amount": "4800",
+			"deal_currency_code": "CAD",
+			"closedate": "2026-11-30T00:00:00Z",
+			"createdate": "2026-08-20T15:00:00Z",
+			"pipeline": "default",
+			"dealstage": "closedwon",
+			"hs_deal_stage_probability": "1",
+			"description": "A new identity for the tours",
+			"lead_source_detail": "Expo 2026"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"contacts": {
+				"results": [
+					{
+						"id": "101",
+						"type": "contacts_association"
+					}
+				]
+			},
+			"companies": {
+				"results": [
+					{
+						"id": "201",
+						"type": "companies_association"
+					}
+				]
+			},
+			"notes": {
+				"results": [
+					{
+						"id": "903",
+						"type": "notes_association"
+					}
+				]
+			}
+		}
+	}
+}

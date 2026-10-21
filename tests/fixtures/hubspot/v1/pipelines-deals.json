@@ -1,0 +1,69 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/pipelines/deals",
+		"query": {}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "default",
+				"label": "Sales Pipeline",
+				"displayOrder": 0,
+				"archived": false,
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-08-03T15:00:00Z",
+				"stages": [
+					{
+						"id": "appointmentscheduled",
+						"label": "Appointment scheduled",
+						"displayOrder": 0,
+						"metadata": {
+							"probability": "0.2",
+							"isClosed": "false"
+						},
+						"archived": false,
+						"createdAt": "2026-08-03T15:00:00Z",
+						"updatedAt": "2026-08-03T15:00:00Z"
+					},
+					{
+						"id": "qualifiedtobuy",
+						"label": "Qualified to buy",
+						"displayOrder": 1,
+						"metadata": {
+							"probability": "0.4",
+							"isClosed": "false"
+						},
+						"archived": false,
+						"createdAt": "2026-08-03T15:00:00Z",
+						"updatedAt": "2026-08-03T15:00:00Z"
+					},
+					{
+						"id": "closedwon",
+						"label": "Closed won",
+						"displayOrder": 2,
+						"metadata": {
+							"probability": "1.0",
+							"isClosed": "true"
+						},
+						"archived": false,
+						"createdAt": "2026-08-03T15:00:00Z",
+						"updatedAt": "2026-08-03T15:00:00Z"
+					},
+					{
+						"id": "closedlost",
+						"label": "Closed lost",
+						"displayOrder": 3,
+						"metadata": {
+							"probability": "0.0",
+							"isClosed": "true"
+						},
+						"archived": false,
+						"createdAt": "2026-08-03T15:00:00Z",
+						"updatedAt": "2026-08-03T15:00:00Z"
+					}
+				]
+			}
+		]
+	}
+}

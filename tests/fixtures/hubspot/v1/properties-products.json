@@ -1,0 +1,36 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/products",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"name": "finish",
+				"label": "Finish",
+				"type": "enumeration",
+				"fieldType": "select",
+				"groupName": "studio",
+				"description": "",
+				"hubspotDefined": false,
+				"options": [
+					{
+						"label": "Matte",
+						"value": "matte",
+						"hidden": false,
+						"displayOrder": 0
+					},
+					{
+						"label": "Gloss",
+						"value": "gloss",
+						"hidden": false,
+						"displayOrder": 1
+					}
+				]
+			}
+		]
+	}
+}

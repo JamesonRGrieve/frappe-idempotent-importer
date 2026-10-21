@@ -1,0 +1,34 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/crm/v3/objects/taxes/batch/read",
+		"query": {},
+		"body": {
+			"inputs": [
+				{
+					"id": "831"
+				}
+			]
+		}
+	},
+	"response": {
+		"status": "COMPLETE",
+		"results": [
+			{
+				"id": "831",
+				"properties": {
+					"hs_object_id": "831",
+					"hs_label": "HST",
+					"hs_type": "PERCENT",
+					"hs_value": "15",
+					"hs_sort_order": "0"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			}
+		],
+		"startedAt": "2026-10-21T15:00:00Z",
+		"completedAt": "2026-10-21T15:00:00Z"
+	}
+}

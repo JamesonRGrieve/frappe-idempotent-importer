@@ -1,0 +1,32 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/crm/v3/objects/notes/batch/read",
+		"query": {},
+		"body": {
+			"inputs": [
+				{
+					"id": "902"
+				}
+			]
+		}
+	},
+	"response": {
+		"status": "COMPLETE",
+		"results": [
+			{
+				"id": "902",
+				"properties": {
+					"hs_object_id": "902",
+					"hs_timestamp": "2026-09-03T14:30:00Z",
+					"hs_note_body": "Expanding in spring"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			}
+		],
+		"startedAt": "2026-10-21T15:00:00Z",
+		"completedAt": "2026-10-21T15:00:00Z"
+	}
+}

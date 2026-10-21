@@ -1,0 +1,35 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/crm/v3/objects/line_items/batch/read",
+		"query": {},
+		"body": {
+			"inputs": [
+				{
+					"id": "814"
+				}
+			]
+		}
+	},
+	"response": {
+		"status": "COMPLETE",
+		"results": [
+			{
+				"id": "814",
+				"properties": {
+					"hs_object_id": "814",
+					"name": "Studio print",
+					"quantity": "3",
+					"price": "45",
+					"amount": "135",
+					"hs_product_id": "402"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			}
+		],
+		"startedAt": "2026-10-21T15:00:00Z",
+		"completedAt": "2026-10-21T15:00:00Z"
+	}
+}

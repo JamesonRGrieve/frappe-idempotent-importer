@@ -1,0 +1,34 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/crm/v3/objects/discounts/batch/read",
+		"query": {},
+		"body": {
+			"inputs": [
+				{
+					"id": "821"
+				}
+			]
+		}
+	},
+	"response": {
+		"status": "COMPLETE",
+		"results": [
+			{
+				"id": "821",
+				"properties": {
+					"hs_object_id": "821",
+					"hs_label": "Returning client",
+					"hs_type": "PERCENT",
+					"hs_value": "10",
+					"hs_sort_order": "0"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false
+			}
+		],
+		"startedAt": "2026-10-21T15:00:00Z",
+		"completedAt": "2026-10-21T15:00:00Z"
+	}
+}

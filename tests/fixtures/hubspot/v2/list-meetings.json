@@ -1,0 +1,49 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/meetings",
+		"query": {
+			"limit": "100",
+			"archived": "false",
+			"associations": "contacts,deals,companies"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"id": "601",
+				"properties": {
+					"hs_object_id": "601",
+					"hs_timestamp": "2026-09-10T16:00:00Z",
+					"hs_meeting_title": "Concept review",
+					"hs_meeting_body": "Three directions",
+					"hs_meeting_location": "Studio",
+					"hs_meeting_start_time": "2026-09-10T16:00:00Z",
+					"hs_meeting_end_time": "2026-09-10T17:00:00Z",
+					"hs_meeting_outcome": "COMPLETED"
+				},
+				"createdAt": "2026-08-03T15:00:00Z",
+				"updatedAt": "2026-09-15T15:00:00Z",
+				"archived": false,
+				"associations": {
+					"contacts": {
+						"results": [
+							{
+								"id": "101",
+								"type": "contacts_association"
+							}
+						]
+					},
+					"deals": {
+						"results": [
+							{
+								"id": "301",
+								"type": "deals_association"
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}

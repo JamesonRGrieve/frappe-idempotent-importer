@@ -1,0 +1,20 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/products/401",
+		"query": {}
+	},
+	"response": {
+		"id": "401",
+		"properties": {
+			"hs_object_id": "401",
+			"name": "Design session",
+			"description": "One hour",
+			"price": "150",
+			"hs_product_type": "service"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false
+	}
+}

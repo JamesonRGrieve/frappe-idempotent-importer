@@ -1,0 +1,36 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/properties/contacts",
+		"query": {
+			"archived": "false"
+		}
+	},
+	"response": {
+		"results": [
+			{
+				"name": "preferred_contact_time",
+				"label": "Preferred contact time",
+				"type": "enumeration",
+				"fieldType": "select",
+				"groupName": "studio",
+				"description": "",
+				"hubspotDefined": false,
+				"options": [
+					{
+						"label": "Mornings",
+						"value": "mornings",
+						"hidden": false,
+						"displayOrder": 0
+					},
+					{
+						"label": "Evenings",
+						"value": "evenings",
+						"hidden": false,
+						"displayOrder": 1
+					}
+				]
+			}
+		]
+	}
+}

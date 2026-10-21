@@ -1,0 +1,32 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/commerce_payments/873",
+		"query": {
+			"associations": "invoices,contacts,companies"
+		}
+	},
+	"response": {
+		"id": "873",
+		"properties": {
+			"hs_object_id": "873",
+			"hs_initial_amount": "50",
+			"hs_currency_code": "CAD",
+			"hs_latest_status": "failed",
+			"hs_initiated_date": "2026-09-18T15:00:00Z"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false,
+		"associations": {
+			"contacts": {
+				"results": [
+					{
+						"id": "102",
+						"type": "contacts_association"
+					}
+				]
+			}
+		}
+	}
+}

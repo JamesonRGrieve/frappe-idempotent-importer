@@ -1,0 +1,23 @@
+{
+	"request": {
+		"method": "GET",
+		"path": "/crm/v3/objects/contacts/103",
+		"query": {
+			"associations": "notes"
+		}
+	},
+	"response": {
+		"id": "103",
+		"properties": {
+			"hs_object_id": "103",
+			"firstname": "Quinn",
+			"lastname": "Quay",
+			"email": "quinn@quay.example",
+			"lifecyclestage": "lead",
+			"hs_lead_status": "UNQUALIFIED"
+		},
+		"createdAt": "2026-08-03T15:00:00Z",
+		"updatedAt": "2026-09-15T15:00:00Z",
+		"archived": false
+	}
+}

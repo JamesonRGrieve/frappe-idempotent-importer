@@ -29,7 +29,7 @@ from tests.support.fixtures import graphql_fixtures, rest_fixtures, states
 from tools.openapi import OpenApiValidator
 from tools.query_cost import QueryCost, recorded_costs
 from tools.schemas import openapi
-from tools.specs import for_source
+from tools.specs import DtdDocument, for_source
 
 OPENAPI_ID = "urn:openapi"
 PLACEHOLDER = re.compile(r"\{[^/]+\}")
@@ -175,3 +175,16 @@ def invalid_rest_fixtures(source: str) -> Iterator[str]:
 			for error in validator.iter_errors(fixture.response):
 				location = "".join(f"[{part!r}]" for part in error.absolute_path)
 				yield f"{name}: response{location}: {error.message}"
+
+
+def invalid_xml_fixtures(document: DtdDocument) -> Iterator[str]:
+	"""Every recorded XML response of a source against its pinned DTD (tools/dtd.py)."""
+	dtd = document.dtd()
+	for state in states(document.source):
+		for fixture in rest_fixtures(document.source, state):
+			if fixture.text is None:
+				yield f"{document.source}/{state}/{fixture.file.name}: no XML response"
+				continue
+			yield from (
+				f"{document.source}/{state}/{fixture.file.name}: {e}" for e in dtd.errors(fixture.text)
+			)

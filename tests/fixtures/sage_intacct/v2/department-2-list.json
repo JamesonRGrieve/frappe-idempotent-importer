@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "department",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">department</listtype><data><department><departmentid>ADV</departmentid><title>Advisory</title><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></department><department><departmentid>ADV-TAX</departmentid><title>Tax Advisory</title><parentid>ADV</parentid><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></department></data></result></operation></response>"
+}

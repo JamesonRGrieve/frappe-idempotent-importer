@@ -16,6 +16,8 @@ from __future__ import annotations
 
 import json
 import re
+import xml.etree.ElementTree as ET
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -38,6 +40,8 @@ class RestFixture:
 	response: Any
 	body: dict[str, Any] = field(default_factory=dict)
 	query_patterns: dict[str, re.Pattern[str]] = field(default_factory=dict)
+	# A response that isn't JSON (Sage Intacct's XML), as the source sends it.
+	text: str | None = None
 
 	def matches_query(self, sent: dict[str, list[str]]) -> bool:
 		return all(sent.get(k) == [v] for k, v in self.query.items()) and all(
@@ -86,9 +90,10 @@ def rest_fixtures(source: str, state: str) -> list[RestFixture]:
 				query,
 				int(raw.get("status", HTTP_OK)),
 				{str(k): str(v) for k, v in raw.get("headers", {}).items()},
-				raw["response"],
+				raw.get("response"),
 				dict(request.get("body") or {}),
 				{str(k): re.compile(str(v)) for k, v in request.get("query_patterns", {}).items()},
+				raw.get("response_text"),
 			)
 		)
 	if not fixtures:
@@ -133,6 +138,31 @@ def without_incremental_terms(body: Any) -> Any:
 	return body
 
 
+def intacct_request(body: bytes) -> dict[str, Any]:
+	"""A Sage Intacct gateway request as its fixtures record it: its credentials, the function, its object
+	and start, and its filter's expressions ([field, operator, value]) when it has one."""
+	root = ET.fromstring(body)  # noqa: S314 - the importer's own request
+	function = next(iter(root.findall("./operation/content/function")[0]))
+	decoded: dict[str, Any] = {
+		"sender": root.findtext("./control/senderid"),
+		"sender_password": root.findtext("./control/password"),
+		"company": root.findtext("./operation/authentication/login/companyid"),
+		"user": root.findtext("./operation/authentication/login/userid"),
+		"password": root.findtext("./operation/authentication/login/password"),
+		"function": function.tag,
+		"object": function.get("object"),
+		"start": function.get("start"),
+	}
+	expressions = function.findall("./filter//expression")
+	if expressions:
+		decoded["filter"] = [
+			[e.findtext(part) for part in ("field", "operator", "value")] for e in expressions
+		]
+	return decoded
+
+
+# How a source's request bodies are read (JSON unless named).
+BODY_DECODERS: dict[str, Callable[[bytes], Any]] = {"sage_intacct": intacct_request}
 # How a source's requests are compared with its fixtures, where the request carries more than they record.
 BODY_NORMALISERS = {"odoo": without_incremental_terms}
 ODOO_CHANGE_FIELD = "write_date"
@@ -144,11 +174,12 @@ class RestResponder:
 	def __init__(self, source: str, state: str) -> None:
 		self.fixtures = rest_fixtures(source, state)
 		self._normalise = BODY_NORMALISERS.get(source, lambda body: body)
+		self._decode = BODY_DECODERS.get(source, json.loads)
 
 	def answer(self, method: str, url: str, body: bytes = b"") -> Answer:
 		parts = urlsplit(url)
 		sent = parse_qs(parts.query, keep_blank_values=True)
-		decoded = self._normalise(json.loads(body) if body.strip() else {})
+		decoded = self._normalise(self._decode(body) if body.strip() else {})
 		for fixture in self.fixtures:
 			if (
 				fixture.method == method
@@ -156,7 +187,8 @@ class RestResponder:
 				and fixture.matches_query(sent)
 				and value_matches(fixture.body, decoded)
 			):
-				return Answer(fixture.status, json.dumps(fixture.response).encode(), fixture.headers)
+				text = fixture.text if fixture.text is not None else json.dumps(fixture.response)
+				return Answer(fixture.status, text.encode(), fixture.headers)
 		return Answer(HTTP_NOT_FOUND, b'{"code":"rest_no_route","message":"No route was found."}')
 
 

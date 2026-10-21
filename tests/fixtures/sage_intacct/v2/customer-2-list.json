@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "customer",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">customer</listtype><data><customer><customerid>C-NORTH</customerid><name>Northgate Dental</name><taxid>445566778RT0001</taxid><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status><currency>CAD</currency><billto><contact><contactname>Northgate Dental AP</contactname><printas>Northgate Dental AP</printas><email1>ap@northgatedental.example</email1><mailaddress><address1>10 Front St</address1><city>Kingston</city><state>ON</state><zip>K7L 1A1</zip><country>CA</country><isocountrycode>CA</isocountrycode></mailaddress></contact></billto><contactinfo><contact><contactname>Northgate Dental</contactname><printas>Northgate Dental</printas><firstname>Ana</firstname><lastname>Silva</lastname><phone1>+1 613 555 0199</phone1><email1>office@northgatedental.example</email1></contact></contactinfo><contactlist><contactitem><category>Accounting</category><contactname>Paul Okafor</contactname></contactitem></contactlist></customer><customer><customerid>C-WEST</customerid><name>Westbrook Cycles</name><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status><currency>CAD</currency><contactinfo><contact><contactname>Westbrook Cycles</contactname><printas>Westbrook Cycles</printas><email1>hello@westbrookcycles.example</email1></contact></contactinfo></customer></data></result></operation></response>"
+}

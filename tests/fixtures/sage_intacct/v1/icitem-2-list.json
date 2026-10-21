@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "icitem",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">icitem</listtype><data><icitem><itemid>AUDIT</itemid><itemname>Audit Engagement</itemname><extdescription>Annual audit, per engagement</extdescription><itemtype>Non-Inventory</itemtype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></icitem><icitem><itemid>GUIDE</itemid><itemname>Tax Guide (print)</itemname><itemtype>Inventory</itemtype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status><upc>0627843009991</upc></icitem></data></result></operation></response>"
+}

@@ -16,6 +16,7 @@ import hashlib
 import json
 import struct
 import sys
+import xml.etree.ElementTree as ET
 import zlib
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -24,7 +25,14 @@ from urllib.parse import parse_qs
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from tests.support.dynamics import ENTRA_CLIENT_SECRET, ENTRA_TOKEN
-from tests.support.fixtures import Answer, RestResponder, ShopifyResponder
+from tests.support.fixtures import Answer, RestResponder, ShopifyResponder, intacct_request
+from tests.support.sage_intacct import (
+	INTACCT_COMPANY,
+	INTACCT_PASSWORD,
+	INTACCT_SENDER,
+	INTACCT_SENDER_PASSWORD,
+	INTACCT_USER,
+)
 from tests.support.sap_business_one import B1_COOKIE
 
 PORT = 8080
@@ -87,6 +95,21 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 	"netsuite-fake": ("netsuite", {"Authorization": "Bearer e2e-netsuite-token"}),
 	"sap_business_one-fake": ("sap_business_one", {"Cookie": B1_COOKIE}),
 }
+# Sage Intacct's gateway: the e2e Web Services sender and company user, checked in every request's body.
+INTACCT_HOST = "sage_intacct-fake"
+INTACCT_PATH = "/ia/xml/xmlgw.phtml"
+INTACCT_CREDENTIALS = {
+	"sender": INTACCT_SENDER,
+	"sender_password": INTACCT_SENDER_PASSWORD,
+	"company": INTACCT_COMPANY,
+	"user": INTACCT_USER,
+	"password": INTACCT_PASSWORD,
+}
+INTACCT_REFUSED = (
+	b"<response><control><status>failure</status><senderid></senderid><controlid></controlid></control>"
+	b"<errormessage><error><errorno>XL03000006</errorno><description2>Incorrect Intacct XML Partner ID or "
+	b"password.</description2></error></errormessage></response>"
+)
 # The Service Layer's login, answered from the fixtures (which hold the test company's credentials) before
 # any session exists.
 B1_LOGIN_PATH = "/b1s/v1/Login"
@@ -192,6 +215,9 @@ class FakeStore(BaseHTTPRequestHandler):
 		if method == "POST" and self.path.endswith(ENTRA_GRANT_PATH):
 			self.send(entra_grant(body))
 			return
+		if host == INTACCT_HOST:
+			self.send(intacct_answer(state, body))
+			return
 		if method == "POST" and self.path == B1_LOGIN_PATH:
 			self.send(RestResponder("sap_business_one", state).answer(method, self.path, body))
 			return
@@ -243,6 +269,18 @@ def entra_grant(body: bytes) -> Answer:
 		return Answer(HTTP_UNAUTHORIZED, b'{"error":"invalid_client"}')
 	grant = {"token_type": "Bearer", "expires_in": 3599, "access_token": ENTRA_TOKEN}
 	return Answer(200, json.dumps(grant).encode())
+
+
+def intacct_answer(state: str, body: bytes) -> Answer:
+	"""Sage Intacct's gateway: the e2e sender and user get the fixtures' answer; anything else is refused as
+	the gateway refuses a sender (a failed control block)."""
+	try:
+		sent = intacct_request(body)
+	except ET.ParseError, IndexError, StopIteration:
+		return Answer(HTTP_BAD_REQUEST, b"<response/>")
+	if any(sent.get(name) != value for name, value in INTACCT_CREDENTIALS.items()):
+		return Answer(200, INTACCT_REFUSED, {"Content-Type": "application/xml"})
+	return RestResponder("sage_intacct", state).answer("POST", INTACCT_PATH, body)
 
 
 def jwt_part(token: str, index: int) -> dict[str, object]:

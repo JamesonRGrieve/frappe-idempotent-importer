@@ -336,6 +336,24 @@ BUSINESSES = (
 		"https://summitgear.acumatica.com",
 		OAUTH_CREDENTIALS,
 	),
+	Business(
+		"SI",
+		"Books S",
+		"intacct-s",
+		"Sage Intacct",
+		"sage_intacct",
+		"sage_intacct-fake",
+		"https://www.intacct.com",
+		# The test company's sender and user (tests/support/sage_intacct.py), and its equity account.
+		{
+			"api_user": "e2e-reader",
+			"api_secret": "e2e-reader-password",
+			"api_account": "LINCPA",
+			"api_key_id": "e2e-sender",
+			"api_sender_password": "e2e-sender-password",
+			"field_map": '{"root_types": {"3000": "Equity"}}',
+		},
+	),
 )
 
 
@@ -645,6 +663,7 @@ def main() -> None:
 		"assert_netsuite": assert_netsuite,
 		"assert_sap_business_one": assert_sap_business_one,
 		"assert_acumatica": assert_acumatica,
+		"assert_sage_intacct": assert_sage_intacct,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3136,6 +3155,46 @@ def assert_acumatica(state: str) -> None:
 	if changed:
 		records.append(Booked("sales_invoice", "Invoice", "Invoice:AR000004", "docstatus", 0))
 	assert_booked("acumatica-a", records)
+
+
+@check
+def assert_sage_intacct(state: str) -> None:
+	"""The Sage Intacct company of state ``state``: its accounts, departments, items, parties, people,
+	documents, payments and its general journal transaction (the AR journal's postings and the order entry
+	invoice are never booked twice)."""
+	changed = state == "v2"
+	records = [
+		Booked("account", "GLAccount", "3000", "root_type", "Equity"),
+		Booked("account", "GLAccount", "6000", "disabled", 1 if changed else 0),
+		Booked("cost_center", "Department", "ADV-TAX"),
+		Booked("department", "Department", "ADV-TAX"),
+		Booked("warehouse", "Warehouse", "WH1"),
+		Booked("product", "Item", "GUIDE", "is_stock_item", 1),
+		Booked("customer", "Customer", "C-NORTH", "customer_type", "Company"),
+		Booked("supplier", "Vendor", "V-SOFT"),
+		Booked("employee", "Employee", "E-02", "status", "Left" if changed else "Active"),
+		Booked("project", "Project", "P-100"),
+		Booked("draft_order", "SOTransaction", "11", "grand_total", amount(4500)),
+		Booked("sales_order", "SOTransaction", "12", "grand_total", amount(4620)),
+		Booked("purchase_order", "POTransaction", "21", "grand_total", amount(250)),
+		Booked("sales_invoice", "Invoice", "31", "grand_total", amount(4620)),
+		Booked("sales_invoice", "Invoice", "32", "grand_total", amount(800), retired=changed),
+		Booked("purchase_invoice", "Bill", "41", "grand_total", amount(350)),
+		Booked("payment_entry", "ARPayment", "51", "paid_amount", amount(4620)),
+		Booked("payment_entry", "APPayment", "61", "paid_amount", amount(350)),
+		Booked("journal_entry", "GLTransaction", "GJ:7", "total_debit", amount(2200)),
+	]
+	if changed:
+		records.append(Booked("purchase_invoice", "Bill", "42", "grand_total", amount(90)))
+	assert_booked("intacct-s", records)
+	for absent in ("GLTransaction/ARJ:8", "SOTransaction/13"):
+		expect(
+			frappe.db.exists(
+				"Importer Link", {"connection": "intacct-s", "gid": f"gid://sage_intacct/intacct-s/{absent}"}
+			),
+			None,
+			f"{absent}, never booked",
+		)
 
 
 @check

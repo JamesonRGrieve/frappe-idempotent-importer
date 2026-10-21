@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "project",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"0\" total=\"1\">project</listtype><data><project><key>P-100</key><name>Northgate Year-end</name><projectstatus>In Progress</projectstatus><customerid>C-NORTH</customerid><begindate><year>2026</year><month>9</month><day>1</day></begindate><enddate><year>2026</year><month>12</month><day>31</day></enddate><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></project></data></result></operation></response>"
+}

@@ -63,6 +63,7 @@ SOURCES=(
 	netsuite-n:netsuite-fake:assert_netsuite
 	sap-b:sap_business_one-fake:assert_sap_business_one
 	acumatica-a:acumatica-fake:assert_acumatica
+	intacct-s:sage_intacct-fake:assert_sage_intacct
 )
 # The connections approved through OAuth 2: Connect is proven on each.
 OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a)

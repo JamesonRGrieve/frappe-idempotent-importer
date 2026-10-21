@@ -13,11 +13,12 @@ from tools.proofs import (
 	invalid_operations,
 	invalid_rest_fixtures,
 	invalid_source_fixtures,
+	invalid_xml_fixtures,
 	mismatched_shopify_fixtures,
 	mispriced_operations,
 )
 from tools.schemas import shopify_schema
-from tools.specs import sources
+from tools.specs import DTD_DOCUMENTS, sources
 
 REST_SOURCES = ("woocommerce",)
 
@@ -42,6 +43,9 @@ def main() -> int:
 			for source in sources()
 			if (FIXTURES / source).is_dir()
 			for failure in invalid_source_fixtures(source)
+		],
+		"XML fixtures that don't match their source's DTD": [
+			failure for document in DTD_DOCUMENTS for failure in invalid_xml_fixtures(document)
 		],
 	}
 	failed = False

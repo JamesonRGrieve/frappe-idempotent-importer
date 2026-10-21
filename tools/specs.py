@@ -22,6 +22,7 @@ from urllib.parse import urlsplit
 import requests
 import yaml
 
+from tools.dtd import Dtd
 from tools.openapi import ApiSpec
 from tools.spectacle import swagger_of
 from tools.xsd import REF_PREFIX as XSD_REF_PREFIX
@@ -251,6 +252,45 @@ class XsdDocument:
 		return ApiSpec(schemas, XSD_REF_PREFIX, paths, self.prefix_pattern)
 
 
+@dataclass(frozen=True)
+class DtdDocument:
+	"""A source whose only machine-readable spec is a DTD (tools/dtd.py): its files, fetched from a pinned
+	commit and read as one, which the source's XML responses are proven against."""
+
+	source: str
+	name: str
+	base_url: str
+	files: tuple[str, ...]
+
+	def path(self) -> Path:
+		return CACHE / self.source / self.name
+
+	def fetch(self) -> Path:
+		target = self.path()
+		target.mkdir(parents=True, exist_ok=True)
+		for file in self.files:
+			(target / file).write_bytes(download(self.base_url + file, USER_AGENT))
+		return target
+
+	def dtd(self) -> Dtd:
+		folder = self.path()
+		if not all((folder / file).is_file() for file in self.files):
+			folder = self.fetch()
+		return Dtd(*((folder / file).read_text() for file in self.files))
+
+
+# Sage Intacct's XML gateway answers as its 2.1 response DTD declares (github.com/intacct/intacct_dtd,
+# Apache-2.0, the commit of 2025-04-02; Sage's REST API is its successor, documented only behind
+# developer.sage.com).
+INTACCT_RESPONSE = DtdDocument(
+	"sage_intacct",
+	"response-2.1",
+	"https://raw.githubusercontent.com/intacct/intacct_dtd/5e7ff4c65e897fa3c293ea6d15539a695d93896e/v2.1/",
+	("intacct_response.v2.1.dtd",),
+)
+DTD_DOCUMENTS = (INTACCT_RESPONSE,)
+
+
 def committed(source: str, name: str, relative: str, prefix_pattern: str) -> SpecDocument:
 	return SpecDocument(source, name, f"file://{relative}", prefix_pattern, False, committed=ROOT / relative)
 
@@ -436,7 +476,7 @@ def sources() -> list[str]:
 def main() -> int:
 	"""``python -m tools.specs [<source>]``: fetches the pinned documents into .cache/specs."""
 	only = sys.argv[1] if len(sys.argv) > 1 else None
-	for document in catalog():
+	for document in [*catalog(), *DTD_DOCUMENTS]:
 		if only is None or document.source == only:
 			sys.stdout.write(f"{document.source}/{document.name}: {document.fetch()}\n")
 	return 0

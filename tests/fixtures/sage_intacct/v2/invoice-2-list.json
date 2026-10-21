@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "invoice",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">invoice</listtype><data><invoice><key>31</key><customerid>C-NORTH</customerid><datecreated><year>2026</year><month>9</month><day>15</day></datecreated><datedue><year>2026</year><month>10</month><day>15</day></datedue><invoiceno>INV-1001</invoiceno><ponumber>PO-88</ponumber><totalamount>4620</totalamount><description>Audit and guides</description><basecurr>CAD</basecurr><currency>CAD</currency><whenmodified>09/01/2026 12:00:00</whenmodified><state>Posted</state><invoiceitems><lineitem><line_num>1</line_num><glaccountno>4000</glaccountno><amount>4500</amount><memo>Audit engagement</memo><departmentid>ADV</departmentid></lineitem><lineitem><line_num>2</line_num><glaccountno>4000</glaccountno><amount>120</amount><memo>Tax guides</memo></lineitem></invoiceitems><retainagereleased>false</retainagereleased></invoice><invoice><key>32</key><customerid>C-WEST</customerid><datecreated><year>2026</year><month>9</month><day>16</day></datecreated><invoiceno>INV-1002</invoiceno><totalamount>800</totalamount><basecurr>CAD</basecurr><currency>CAD</currency><whenmodified>10/02/2026 12:00:00</whenmodified><state>Reversed</state><invoiceitems><lineitem><line_num>1</line_num><glaccountno>4000</glaccountno><amount>800</amount><memo>Bookkeeping</memo></lineitem></invoiceitems><retainagereleased>false</retainagereleased></invoice></data></result></operation></response>"
+}

@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "employee",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">employee</listtype><data><employee><employeeid>E-01</employeeid><title>Partner</title><departmentid>ADV</departmentid><birthdate><year>1979</year><month>4</month><day>2</day></birthdate><startdate><year>2015</year><month>6</month><day>1</day></startdate><gender>female</gender><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status><personalinfo><contact><contactname>Grace Lin</contactname><printas>Grace Lin</printas><firstname>Grace</firstname><lastname>Lin</lastname><email1>grace@lincpa.example</email1></contact></personalinfo></employee><employee><employeeid>E-02</employeeid><title>Tax Analyst</title><departmentid>ADV-TAX</departmentid><supervisorid>E-01</supervisorid><startdate><year>2022</year><month>9</month><day>6</day></startdate><enddate><year>2026</year><month>10</month><day>1</day></enddate><whenmodified>10/02/2026 12:00:00</whenmodified><status>inactive</status><personalinfo><contact><contactname>Omar Haddad</contactname><printas>Omar Haddad</printas><firstname>Omar</firstname><lastname>Haddad</lastname></contact></personalinfo></employee></data></result></operation></response>"
+}

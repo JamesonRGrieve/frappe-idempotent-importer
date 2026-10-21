@@ -41,6 +41,9 @@ class ConnectionConfig:
 	# The id of the key or certificate that signs the source's credentials, where it needs one (NetSuite's
 	# certificate ID).
 	key_id: str = ""
+	# A second secret, where a source needs one beside the user's (Sage Intacct's Web Services sender
+	# password).
+	sender_secret: str = field(default="", repr=False)
 	# An OAuth refresh token the source replaces on every refresh (Etsy): each new one is handed to
 	# ``save_refresh_token``, which keeps it before the access token is used.
 	refresh_token: str = field(default="", repr=False)

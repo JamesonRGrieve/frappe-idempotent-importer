@@ -23,6 +23,7 @@ from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.netsuite.adapter import NetSuiteAdapter
 from idempotent_importer.sources.odoo.adapter import OdooAdapter
 from idempotent_importer.sources.quickbooks_online.adapter import QuickBooksAdapter
+from idempotent_importer.sources.sage_intacct.adapter import SageIntacctAdapter
 from idempotent_importer.sources.sap_business_one.adapter import SapBusinessOneAdapter
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
@@ -60,7 +61,6 @@ class ListedAdapter:
 LISTED: tuple[ListedAdapter, ...] = (
 	ListedAdapter("peoplesoft", "PeopleSoft"),
 	ListedAdapter("agendrix", "Agendrix"),
-	ListedAdapter("sage", "Sage"),
 )
 
 
@@ -88,6 +88,7 @@ def all_adapters() -> dict[str, Adapter]:
 		NetSuiteAdapter(),
 		SapBusinessOneAdapter(),
 		AcumaticaAdapter(),
+		SageIntacctAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

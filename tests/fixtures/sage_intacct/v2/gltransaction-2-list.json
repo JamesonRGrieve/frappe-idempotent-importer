@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "gltransaction",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">gltransaction</listtype><data><gltransaction><journalid>GJ</journalid><batchno>7</batchno><datecreated><year>2026</year><month>9</month><day>30</day></datecreated><description>September rent</description><gltransactionentries><glentry><trtype>debit</trtype><amount>2200</amount><glaccountno>6000</glaccountno><departmentid>ADV</departmentid></glentry><glentry><trtype>credit</trtype><amount>2200</amount><glaccountno>1000</glaccountno></glentry></gltransactionentries></gltransaction><gltransaction><journalid>ARJ</journalid><batchno>8</batchno><datecreated><year>2026</year><month>9</month><day>15</day></datecreated><description>AR invoice INV-1001</description><gltransactionentries><glentry><trtype>debit</trtype><amount>4620</amount><glaccountno>1100</glaccountno><customerid>C-NORTH</customerid></glentry><glentry><trtype>credit</trtype><amount>4620</amount><glaccountno>4000</glaccountno></glentry></gltransactionentries></gltransaction></data></result></operation></response>"
+}

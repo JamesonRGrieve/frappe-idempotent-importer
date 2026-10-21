@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "bill",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"1\" total=\"2\">bill</listtype><data><bill><key>41</key><vendorid>V-SOFT</vendorid><datecreated><year>2026</year><month>9</month><day>14</day></datecreated><datedue><year>2026</year><month>10</month><day>14</day></datedue><billno>LL-9001</billno><totalamount>350</totalamount><description>Ledgerline licences</description><basecurr>CAD</basecurr><currency>CAD</currency><billitems><lineitem><line_num>1</line_num><glaccountno>6100</glaccountno><amount>350</amount><memo>Licences</memo><departmentid>ADV</departmentid></lineitem></billitems><whenmodified>09/01/2026 12:00:00</whenmodified><state>Posted</state><retainagereleased>false</retainagereleased></bill><bill><key>42</key><vendorid>V-SOFT</vendorid><datecreated><year>2026</year><month>10</month><day>2</day></datecreated><billno>LL-9002</billno><totalamount>90</totalamount><basecurr>CAD</basecurr><currency>CAD</currency><billitems><lineitem><line_num>1</line_num><glaccountno>6100</glaccountno><amount>90</amount><memo>Extra seat</memo></lineitem></billitems><whenmodified>10/02/2026 12:00:00</whenmodified><state>Posted</state><retainagereleased>false</retainagereleased></bill></data></result></operation></response>"
+}

@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "warehouse",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"0\" total=\"1\">warehouse</listtype><data><warehouse><warehouseid>WH1</warehouseid><name>Head Office Store</name><shipto><contact><contactname>Head Office</contactname><printas>Head Office</printas><mailaddress><address1>50 King St W</address1><city>Toronto</city><state>ON</state><zip>M5H 1J8</zip><country>CA</country><isocountrycode>CA</isocountrycode></mailaddress></contact></shipto><status>active</status></warehouse></data></result></operation></response>"
+}

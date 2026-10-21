@@ -1,0 +1,12 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/ia/xml/xmlgw.phtml",
+		"body": {
+			"function": "get_list",
+			"object": "glaccount",
+			"start": "0"
+		}
+	},
+	"response_text": "<response><control><status>success</status><senderid>e2e-sender</senderid><controlid>idempotent-importer</controlid><uniqueid>false</uniqueid><dtdversion>2.1</dtdversion></control><operation><authentication><status>success</status><userid>e2e-reader</userid><companyid>LINCPA</companyid></authentication><result><status>success</status><function>get_list</function><controlid>f1</controlid><listtype start=\"0\" end=\"6\" total=\"7\">glaccount</listtype><data><glaccount><glaccountno>1000</glaccountno><title>Operating Cash</title><normalbalance>debit</normalbalance><accounttype>balancesheet</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>1100</glaccountno><title>Accounts Receivable</title><normalbalance>debit</normalbalance><accounttype>balancesheet</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>2000</glaccountno><title>Accounts Payable</title><normalbalance>credit</normalbalance><accounttype>balancesheet</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>3000</glaccountno><title>Retained Earnings</title><normalbalance>credit</normalbalance><accounttype>balancesheet</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>4000</glaccountno><title>Consulting Revenue</title><normalbalance>credit</normalbalance><accounttype>incomestatement</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>6000</glaccountno><title>Rent</title><normalbalance>debit</normalbalance><accounttype>incomestatement</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount><glaccount><glaccountno>6100</glaccountno><title>Software</title><normalbalance>debit</normalbalance><accounttype>incomestatement</accounttype><whenmodified>09/01/2026 12:00:00</whenmodified><status>active</status></glaccount></data></result></operation></response>"
+}

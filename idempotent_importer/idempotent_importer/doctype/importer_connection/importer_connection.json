@@ -15,6 +15,7 @@
   "api_user",
   "api_secret",
   "api_key_id",
+  "api_sender_password",
   "api_account",
   "field_map",
   "refresh_token",
@@ -103,7 +104,7 @@
    "fieldname": "source",
    "fieldtype": "Select",
    "label": "Source",
-   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nQuickBooks Online\nXero\nZoho Books\nZoho Inventory\nNetSuite\nSAP Business One\nAcumatica\nPeopleSoft\nAgendrix\nSage",
+   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nQuickBooks Online\nXero\nZoho Books\nZoho Inventory\nNetSuite\nSAP Business One\nAcumatica\nSage Intacct\nPeopleSoft\nAgendrix",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1
@@ -132,34 +133,42 @@
    "fieldname": "api_user",
    "fieldtype": "Data",
    "label": "User, Key or Client ID",
-   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login. Dynamics 365: the Microsoft Entra app's client ID. NetSuite: the integration's client ID. SAP Business One: the user name. Acumatica: the connected application's client ID (<id>@<tenant>)."
+   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login. Dynamics 365: the Microsoft Entra app's client ID. NetSuite: the integration's client ID. SAP Business One and Sage Intacct: the user name (ID). Acumatica: the connected application's client ID (<id>@<tenant>)."
   },
   {
    "fieldname": "api_secret",
    "fieldtype": "Password",
    "label": "Secret",
-   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). a Microsoft Entra app's client secret (Dynamics 365), the certificate's private key in PEM (NetSuite) the user's password (SAP Business One) or the connected application's secret (Acumatica). Never shown again or logged."
+   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). a Microsoft Entra app's client secret (Dynamics 365), the certificate's private key in PEM (NetSuite) the user's password (SAP Business One, Sage Intacct) or the connected application's secret (Acumatica). Never shown again or logged."
   },
   {
    "fieldname": "api_key_id",
    "fieldtype": "Data",
    "label": "Key or Certificate ID",
-   "depends_on": "eval:doc.source==\"NetSuite\"",
-   "mandatory_depends_on": "eval:doc.source==\"NetSuite\"",
-   "description": "NetSuite: the certificate ID shown on the OAuth 2.0 Client Credentials (M2M) Setup page for the certificate mapped to the integration; its private key goes in Secret."
+   "depends_on": "eval:in_list([\"NetSuite\", \"Sage Intacct\"], doc.source)",
+   "mandatory_depends_on": "eval:in_list([\"NetSuite\", \"Sage Intacct\"], doc.source)",
+   "description": "NetSuite: the certificate ID shown on the OAuth 2.0 Client Credentials (M2M) Setup page for the certificate mapped to the integration; its private key goes in Secret. Sage Intacct: the Web Services sender ID."
+  },
+  {
+   "fieldname": "api_sender_password",
+   "fieldtype": "Password",
+   "label": "Sender Password",
+   "depends_on": "eval:doc.source==\"Sage Intacct\"",
+   "mandatory_depends_on": "eval:doc.source==\"Sage Intacct\"",
+   "description": "Sage Intacct: the Web Services sender's password. Never shown again or logged."
   },
   {
    "fieldname": "api_account",
    "fieldtype": "Data",
    "label": "Account",
-   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code (blank for default), Lightspeed eCom cluster and shop language (e.g. us1/en), Ecwid store ID, Odoo database (<database>:<company id> for one company of several), Business Central company id, Dynamics 365 Sales tenant (id or domain), Finance & Operations <tenant>/<legal entity>, NetSuite account ID, SAP Business One company database."
+   "description": "The account the credentials open, where the source needs one: BigCommerce store hash, Wix site ID, Magento store view code (blank for default), Lightspeed eCom cluster and shop language (e.g. us1/en), Ecwid store ID, Odoo database (<database>:<company id> for one company of several), Business Central company id, Dynamics 365 Sales tenant (id or domain), Finance & Operations <tenant>/<legal entity>, NetSuite account ID, SAP Business One company database, Sage Intacct company ID."
   },
   {
    "fieldname": "field_map",
    "fieldtype": "Code",
    "label": "Field Map",
    "options": "JSON",
-   "depends_on": "eval:in_list([\"Dynamics 365 Finance & Operations\", \"SAP Business One\"], doc.source)",
+   "depends_on": "eval:in_list([\"Dynamics 365 Finance & Operations\", \"SAP Business One\", \"Sage Intacct\"], doc.source)",
    "description": "Finance & Operations: which data entity and fields each kind is read from, where your environment differs from (or the entity reference doesn't document) the defaults, e.g. {\"sales_order\": {\"fields\": {\"date\": \"OrderDate\"}}, \"supplier\": {\"entity\": \"VendorsV2\", \"fields\": {\"key\": \"VendorAccountNumber\", \"name\": \"VendorOrganizationName\"}}}. See coverage/dynamics_finance_operations.md. SAP Business One: the root type of each \"other\" drawer of the chart (and optionally the price list items are priced from), e.g. {\"root_types\": {\"1\": \"Asset\", \"2\": \"Liability\", \"3\": \"Equity\"}, \"price_list\": 1}. See coverage/sap_business_one.md."
   },
   {
@@ -559,7 +568,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-20 14:00:00.000000",
+ "modified": "2026-10-20 18:00:00.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

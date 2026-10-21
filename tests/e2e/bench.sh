@@ -36,7 +36,7 @@ DB_READY_ATTEMPTS=120
 DB_READY_INTERVAL=1
 APPS=(erpnext hrms blog payments webshop public_site_router idempotent_importer)
 # The fake store's names: two WooCommerce stores, Shopify, and the WooCommerce stores' media host.
-FAKE_HOSTS=(woo-a-fake woo-b-fake shopify-fake woo-fake etsy-fake square_online-fake bigcommerce-fake squarespace-fake wix-fake magento-fake lightspeed-fake ecwid-fake odoo-fake dynamics_business_central-fake dynamics_sales-fake dynamics_finance_operations-fake quickbooks_online-fake xero-fake zoho_books-fake zoho_inventory-fake netsuite-fake sap_business_one-fake acumatica-fake sage_intacct-fake square_stored_value-fake agendrix-fake highlevel-fake peoplesoft-fake hubspot-fake salesforce-fake)
+FAKE_HOSTS=(woo-a-fake woo-b-fake shopify-fake woo-fake etsy-fake square_online-fake bigcommerce-fake squarespace-fake wix-fake magento-fake lightspeed-fake ecwid-fake odoo-fake dynamics_business_central-fake dynamics_sales-fake dynamics_finance_operations-fake quickbooks_online-fake xero-fake zoho_books-fake zoho_inventory-fake netsuite-fake sap_business_one-fake acumatica-fake sage_intacct-fake square_stored_value-fake agendrix-fake highlevel-fake peoplesoft-fake hubspot-fake salesforce-fake pipedrive-fake)
 
 # The suite's own podman store. Podman's default graph root follows $HOME but its run root and temporary
 # directory follow $XDG_RUNTIME_DIR, so two environments with different homes (one per agent session or

@@ -1,0 +1,37 @@
+{
+	"request": {
+		"path": "/api/v2/persons/102",
+		"query": {}
+	},
+	"response": {
+		"success": true,
+		"data": {
+			"id": 102,
+			"name": "Sam Shore",
+			"first_name": "Sam",
+			"last_name": "Shore",
+			"owner_id": 1,
+			"add_time": "2026-08-03T15:00:00Z",
+			"update_time": "2026-09-15T15:00:00Z",
+			"emails": [
+				{
+					"value": "sam@river-co.example",
+					"primary": true,
+					"label": "work"
+				}
+			],
+			"phones": [
+				{
+					"value": "+1 902 555 0102",
+					"primary": true,
+					"label": "work"
+				}
+			],
+			"is_deleted": false,
+			"visible_to": 3,
+			"label_ids": [],
+			"custom_fields": {},
+			"org_id": 201
+		}
+	}
+}

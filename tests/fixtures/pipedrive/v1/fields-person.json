@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/api/v2/personFields",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"field_name": "Preferred contact time",
+				"field_code": "7c1dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+				"field_type": "varchar",
+				"options": null,
+				"subfields": null,
+				"is_custom_field": true,
+				"is_optional_response_field": false
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

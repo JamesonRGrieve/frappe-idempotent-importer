@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/api/v2/organizations/201",
+		"query": {}
+	},
+	"response": {
+		"success": true,
+		"data": {
+			"id": 201,
+			"name": "River Co",
+			"owner_id": 1,
+			"add_time": "2026-08-03T15:00:00Z",
+			"update_time": "2026-09-15T15:00:00Z",
+			"is_deleted": false,
+			"visible_to": 3,
+			"label_ids": [],
+			"custom_fields": {
+				"9e2bcccccccccccccccccccccccccccccccccccc": 21
+			},
+			"address": {
+				"value": "1 Harbour Rd, Halifax, NS B3H 1A1, Canada",
+				"country": "Canada",
+				"admin_area_level_1": "NS",
+				"admin_area_level_2": null,
+				"locality": "Halifax",
+				"sublocality": null,
+				"route": "Harbour Rd",
+				"street_number": "1",
+				"subpremise": null,
+				"postal_code": "B3H 1A1"
+			},
+			"website": "https://river.example"
+		}
+	}
+}

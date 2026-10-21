@@ -176,10 +176,13 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		False,
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
 	),
+	"pipedrive-fake": ("pipedrive", "/oauth/token", False, {"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"}),
 }
 # What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
 GRANT_EXTRAS: dict[str, dict[str, str]] = {
 	"highlevel-fake": {"locationId": "loc0harbour0studio01", "userType": "Location"},
+	# Pipedrive's, the company domain its API answers on.
+	"pipedrive-fake": {"api_domain": "https://harbour.pipedrive.com"},
 }
 # The OAuth sources whose token endpoint takes JSON and wants the redirect URI on a refresh too.
 JSON_GRANT_HOSTS = frozenset({"agendrix-fake"})

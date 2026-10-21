@@ -1,0 +1,70 @@
+{
+	"request": {
+		"path": "/api/v1/users",
+		"query": {
+			"limit": "100",
+			"start": "0"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 1,
+				"name": "Morgan Sales",
+				"default_currency": "CAD",
+				"locale": "en_CA",
+				"lang": 1,
+				"email": "morgan@studio.example",
+				"phone": null,
+				"activated": true,
+				"last_login": "2026-10-01 15:00:00",
+				"created": "2026-08-03 15:00:00",
+				"modified": "2026-08-03 15:00:00",
+				"has_created_company": true,
+				"access": [
+					{
+						"app": "sales",
+						"admin": true,
+						"permission_set_id": "62cc4d7f-4038-4352-abf3-a8c1c822b631"
+					}
+				],
+				"active_flag": true,
+				"timezone_name": "America/Halifax",
+				"timezone_offset": "-03:00",
+				"role_id": 1,
+				"icon_url": null,
+				"is_you": true,
+				"is_deleted": false
+			},
+			{
+				"id": 2,
+				"name": "Jamie Front",
+				"default_currency": "CAD",
+				"locale": "en_CA",
+				"lang": 1,
+				"email": "jamie@studio.example",
+				"phone": null,
+				"activated": true,
+				"last_login": "2026-10-01 15:00:00",
+				"created": "2026-08-03 15:00:00",
+				"modified": "2026-08-03 15:00:00",
+				"has_created_company": false,
+				"access": [
+					{
+						"app": "sales",
+						"admin": false,
+						"permission_set_id": "62cc4d7f-4038-4352-abf3-a8c1c822b631"
+					}
+				],
+				"active_flag": false,
+				"timezone_name": "America/Halifax",
+				"timezone_offset": "-03:00",
+				"role_id": 1,
+				"icon_url": null,
+				"is_you": false,
+				"is_deleted": false
+			}
+		]
+	}
+}

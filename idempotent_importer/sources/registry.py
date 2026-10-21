@@ -26,6 +26,7 @@ from idempotent_importer.sources.magento.adapter import MagentoAdapter
 from idempotent_importer.sources.netsuite.adapter import NetSuiteAdapter
 from idempotent_importer.sources.odoo.adapter import OdooAdapter
 from idempotent_importer.sources.peoplesoft.adapter import PeopleSoftAdapter
+from idempotent_importer.sources.pipedrive.adapter import PipedriveAdapter
 from idempotent_importer.sources.quickbooks_online.adapter import QuickBooksAdapter
 from idempotent_importer.sources.sage_intacct.adapter import SageIntacctAdapter
 from idempotent_importer.sources.salesforce.adapter import SalesforceAdapter
@@ -97,6 +98,7 @@ def all_adapters() -> dict[str, Adapter]:
 		PeopleSoftAdapter(),
 		HubSpotAdapter(),
 		SalesforceAdapter(),
+		PipedriveAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

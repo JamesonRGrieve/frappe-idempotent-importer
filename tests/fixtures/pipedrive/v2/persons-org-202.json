@@ -1,0 +1,16 @@
+{
+	"request": {
+		"path": "/api/v2/persons",
+		"query": {
+			"limit": "100",
+			"org_id": "202"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/api/v1/leads/archived",
+		"query": {
+			"limit": "100",
+			"start": "0"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": "6f1b0a52-0000-4000-8000-000000000002",
+				"title": "Shore catalogue",
+				"owner_id": 1,
+				"creator_id": 1,
+				"label_ids": [],
+				"person_id": 102,
+				"organization_id": null,
+				"source_name": "Manually created",
+				"origin": "ManuallyCreated",
+				"origin_id": null,
+				"channel": null,
+				"channel_id": null,
+				"is_archived": true,
+				"was_seen": true,
+				"value": {
+					"amount": 2000,
+					"currency": "CAD"
+				},
+				"expected_close_date": "2026-12-15",
+				"next_activity_id": null,
+				"add_time": "2026-09-01T15:00:00.000Z",
+				"update_time": "2026-09-01T15:00:00.000Z",
+				"visible_to": "3",
+				"cc_email": "harbour+lead@pipedrivemail.com"
+			}
+		],
+		"additional_data": {
+			"start": 0,
+			"limit": 100,
+			"more_items_in_collection": false
+		}
+	}
+}

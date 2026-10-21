@@ -1,0 +1,83 @@
+{
+	"request": {
+		"path": "/api/v1/activityTypes",
+		"query": {}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 1,
+				"name": "Call",
+				"icon_key": "call",
+				"color": "000000",
+				"order_nr": 1,
+				"key_string": "call",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			},
+			{
+				"id": 2,
+				"name": "Meeting",
+				"icon_key": "meeting",
+				"color": "000000",
+				"order_nr": 2,
+				"key_string": "meeting",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			},
+			{
+				"id": 3,
+				"name": "Task",
+				"icon_key": "task",
+				"color": "000000",
+				"order_nr": 3,
+				"key_string": "task",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			},
+			{
+				"id": 4,
+				"name": "Deadline",
+				"icon_key": "deadline",
+				"color": "000000",
+				"order_nr": 4,
+				"key_string": "deadline",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			},
+			{
+				"id": 5,
+				"name": "Email",
+				"icon_key": "email",
+				"color": "000000",
+				"order_nr": 5,
+				"key_string": "email",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			},
+			{
+				"id": 6,
+				"name": "Lunch",
+				"icon_key": "lunch",
+				"color": "000000",
+				"order_nr": 6,
+				"key_string": "lunch",
+				"active_flag": true,
+				"is_custom_flag": false,
+				"add_time": "2026-08-03 15:00:00",
+				"update_time": "2026-08-03 15:00:00"
+			}
+		]
+	}
+}

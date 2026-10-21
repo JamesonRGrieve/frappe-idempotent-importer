@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/api/v2/dealFields",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"field_name": "Title",
+				"field_code": "title",
+				"field_type": "varchar",
+				"options": null,
+				"subfields": null,
+				"is_custom_field": false,
+				"is_optional_response_field": false
+			},
+			{
+				"field_name": "Lead source detail",
+				"field_code": "3a4fdddddddddddddddddddddddddddddddddddd",
+				"field_type": "varchar",
+				"options": null,
+				"subfields": null,
+				"is_custom_field": true,
+				"is_optional_response_field": false
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

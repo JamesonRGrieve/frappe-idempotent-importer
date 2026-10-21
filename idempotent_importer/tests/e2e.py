@@ -417,6 +417,16 @@ BUSINESSES = (
 		"https://northwind.my.salesforce.com",
 		OAUTH_CREDENTIALS,
 	),
+	Business(
+		"PD",
+		"Pipeline D",
+		"pipedrive-p",
+		"Pipedrive",
+		"pipedrive",
+		"pipedrive-fake",
+		"https://harbour.pipedrive.com",
+		{**OAUTH_CREDENTIALS, "api_account": "https://harbour.pipedrive.com"},
+	),
 )
 
 
@@ -810,6 +820,7 @@ def main() -> None:
 		"assert_peoplesoft": assert_peoplesoft,
 		"assert_hubspot": assert_hubspot,
 		"assert_salesforce": assert_salesforce,
+		"assert_pipedrive": assert_pipedrive,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3125,6 +3136,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"pipedrive-p": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{"api_account": "https://harbour.pipedrive.com"},
+	),
 }
 
 
@@ -3959,6 +3977,55 @@ def assert_salesforce(state: str) -> None:
 		),
 		2,
 		"the account's contacts",
+	)
+
+
+@check
+def assert_pipedrive(state: str) -> None:
+	"""The Pipedrive studio of state ``state`` (tools/pipedrive_fixtures.py): users, products with variations,
+	persons, organizations, the customers of won deals, the pipeline, deals and leads at their stage,
+	activities, notes and a call log, and the studio's custom fields (v2: a user deactivated, a new price, a
+	won deal, a done task, a new note)."""
+	changed = state == "v2"
+	connection = "pipedrive-p"
+	inbox = "6f1b0a52-0000-4000-8000-000000000001"
+	assert_booked(
+		connection,
+		[
+			Booked("employee", "User", "2", "status", "Inactive" if changed else "Active"),
+			Booked("lead", "Person", "101", "job_title", "Director"),
+			Booked("prospect", "Organization", "202", "company_name", "Delta Works - PD"),
+			Booked("customer", "Organization", "201", "customer_type", "Company"),
+			Booked("customer", "Person", "103", "customer_type", "Individual"),
+			Booked("opportunity_type", "Pipeline", "1"),
+			Booked("opportunity", "Deal", "301", "status", "Converted" if changed else "Open"),
+			Booked(
+				"opportunity",
+				"Deal",
+				"301",
+				"sales_stage",
+				"Negotiations - PD" if changed else "Proposal made - PD",
+			),
+			Booked("opportunity", "Deal", "303", "status", "Closed"),
+			Booked("opportunity", "Lead", inbox, "opportunity_from", "Prospect"),
+			Booked("communication", "Activity", "601", "communication_medium", "Phone"),
+			Booked("communication", "Note", "701", "reference_doctype", "Opportunity"),
+			Booked("communication", "CallLog", "cl-0001", "communication_medium", "Phone"),
+			Booked("event", "Activity", "602", "status", "Completed"),
+			Booked("todo", "Activity", "603", "status", "Closed" if changed else "Open"),
+		],
+	)
+	if changed:
+		assert_booked(connection, [Booked("communication", "Note", "703", "communication_medium", "Other")])
+	session = target(connection, "product", "Product", "401")
+	expect(item_price(connection, session), amount(175 if changed else 150), "the design session's price")
+	prints = target(connection, "product", "Product", "402")
+	expect(frappe.db.count("Item", {"variant_of": prints}), 2, "the print's variations")
+	river = target(connection, "prospect", "Organization", "201")
+	expect(
+		json.loads(frappe.db.get_value("Prospect", river, "importer_custom_fields")),
+		{"Account tier": "Gold"},
+		"the organization's custom field",
 	)
 
 

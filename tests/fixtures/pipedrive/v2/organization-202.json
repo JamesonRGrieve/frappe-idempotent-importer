@@ -1,0 +1,21 @@
+{
+	"request": {
+		"path": "/api/v2/organizations/202",
+		"query": {}
+	},
+	"response": {
+		"success": true,
+		"data": {
+			"id": 202,
+			"name": "Delta Works",
+			"owner_id": 1,
+			"add_time": "2026-08-03T15:00:00Z",
+			"update_time": "2026-09-15T15:00:00Z",
+			"is_deleted": false,
+			"visible_to": 3,
+			"label_ids": [],
+			"custom_fields": {},
+			"website": "https://delta.example"
+		}
+	}
+}

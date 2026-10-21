@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/api/v2/productFields",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"field_name": "Finish",
+				"field_code": "5f0eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"field_type": "enum",
+				"options": [
+					{
+						"id": 11,
+						"label": "Matte"
+					},
+					{
+						"id": 12,
+						"label": "Gloss"
+					}
+				],
+				"subfields": null,
+				"is_custom_field": true,
+				"is_optional_response_field": false
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

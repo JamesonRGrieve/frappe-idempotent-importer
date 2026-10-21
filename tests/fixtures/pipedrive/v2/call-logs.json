@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/api/v1/callLogs",
+		"query": {
+			"limit": "100",
+			"start": "0"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": "cl-0001",
+				"user_id": 1,
+				"subject": "Samples follow-up",
+				"duration": "125",
+				"outcome": "connected",
+				"from_phone_number": "+1 902 555 0100",
+				"to_phone_number": "+1 902 555 0102",
+				"start_time": "2026-09-08T15:00:00.000Z",
+				"end_time": "2026-09-08T15:02:05.000Z",
+				"person_id": 102,
+				"note": "Samples arrive Friday.",
+				"has_recording": false,
+				"company_id": 7001
+			}
+		],
+		"additional_data": {
+			"pagination": {
+				"start": 0,
+				"limit": 100,
+				"more_items_in_collection": false
+			}
+		}
+	}
+}

@@ -1,0 +1,102 @@
+{
+	"request": {
+		"path": "/api/v2/persons",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 101,
+				"name": "Riley River",
+				"first_name": "Riley",
+				"last_name": "River",
+				"owner_id": 1,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-09-15T15:00:00Z",
+				"emails": [
+					{
+						"value": "riley@river-co.example",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"phones": [
+					{
+						"value": "+1 902 555 0101",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"is_deleted": false,
+				"visible_to": 3,
+				"label_ids": [],
+				"custom_fields": {
+					"7c1dbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": "Mornings"
+				},
+				"org_id": 201,
+				"job_title": "Director"
+			},
+			{
+				"id": 102,
+				"name": "Sam Shore",
+				"first_name": "Sam",
+				"last_name": "Shore",
+				"owner_id": 1,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-09-15T15:00:00Z",
+				"emails": [
+					{
+						"value": "sam@river-co.example",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"phones": [
+					{
+						"value": "+1 902 555 0102",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"is_deleted": false,
+				"visible_to": 3,
+				"label_ids": [],
+				"custom_fields": {},
+				"org_id": 201
+			},
+			{
+				"id": 103,
+				"name": "Quinn Quay",
+				"first_name": "Quinn",
+				"last_name": "Quay",
+				"owner_id": 1,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-09-15T15:00:00Z",
+				"emails": [
+					{
+						"value": "quinn@river-co.example",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"phones": [
+					{
+						"value": "+1 902 555 0103",
+						"primary": true,
+						"label": "work"
+					}
+				],
+				"is_deleted": false,
+				"visible_to": 3,
+				"label_ids": [],
+				"custom_fields": {}
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

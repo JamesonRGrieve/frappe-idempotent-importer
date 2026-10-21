@@ -1,0 +1,25 @@
+{
+	"request": {
+		"path": "/api/v2/pipelines",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 1,
+				"name": "Sales",
+				"order_nr": 1,
+				"is_deleted": false,
+				"is_deal_probability_enabled": true,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-08-03T15:00:00Z"
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

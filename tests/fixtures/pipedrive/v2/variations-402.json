@@ -1,0 +1,46 @@
+{
+	"request": {
+		"path": "/api/v2/products/402/variations",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 501,
+				"name": "A4",
+				"product_id": 402,
+				"prices": [
+					{
+						"price": 45.0,
+						"cost": 0,
+						"currency": "CAD",
+						"direct_cost": 0,
+						"notes": "",
+						"product_variation_id": 501
+					}
+				]
+			},
+			{
+				"id": 502,
+				"name": "A3",
+				"product_id": 402,
+				"prices": [
+					{
+						"price": 60.0,
+						"cost": 0,
+						"currency": "CAD",
+						"direct_cost": 0,
+						"notes": "",
+						"product_variation_id": 502
+					}
+				]
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

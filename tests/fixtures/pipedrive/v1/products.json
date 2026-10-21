@@ -1,0 +1,63 @@
+{
+	"request": {
+		"path": "/api/v2/products",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"id": 401,
+				"name": "Design session",
+				"code": "SESSION",
+				"unit": "each",
+				"tax": 0,
+				"is_deleted": false,
+				"is_linkable": true,
+				"owner_id": 1,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-09-15T15:00:00Z",
+				"description": "",
+				"category": null,
+				"custom_fields": {},
+				"billing_frequency": "one-time",
+				"billing_frequency_cycles": null,
+				"prices": [
+					{
+						"price": 150.0,
+						"cost": 0,
+						"currency": "CAD",
+						"direct_cost": 0,
+						"notes": "",
+						"product_id": 401
+					}
+				]
+			},
+			{
+				"id": 402,
+				"name": "Studio print",
+				"code": "PRINT",
+				"unit": "each",
+				"tax": 0,
+				"is_deleted": false,
+				"is_linkable": true,
+				"owner_id": 1,
+				"add_time": "2026-08-03T15:00:00Z",
+				"update_time": "2026-09-15T15:00:00Z",
+				"description": "",
+				"category": null,
+				"custom_fields": {
+					"5f0eaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa": 11
+				},
+				"billing_frequency": "one-time",
+				"billing_frequency_cycles": null,
+				"prices": []
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

@@ -581,6 +581,27 @@ def catalog() -> list[Document]:
 		# adapter reads, transcribed by tools/salesforce_schema.py from the REST API Developer Guide and the
 		# Object Reference.
 		committed("salesforce", "rest-api-reference", "tests/schemas/salesforce.json", ""),
+		# Pipedrive's OpenAPI 3 documents for API v1 and v2 (the API reference's own, developers.pipedrive.com),
+		# published at unversioned URLs, so pinned to the bytes fetched on 2026-10-21. A company's API answers on
+		# its own domain under /api/v1 and /api/v2.
+		SpecDocument(
+			"pipedrive",
+			"api-v1",
+			"https://developers.pipedrive.com/docs/api/v1/openapi.yaml",
+			"/api/v1",
+			False,
+			YAML,
+			"16a59954e145348795dd9c7acb37612a05497c6bd108d86a90736504c79b9a83",
+		),
+		SpecDocument(
+			"pipedrive",
+			"api-v2",
+			"https://developers.pipedrive.com/docs/api/v1/openapi-v2.yaml",
+			"/api/v2",
+			False,
+			YAML,
+			"b14dad2526cf6dc8696270a2e42a9b141fecc0f47198f45a837ada7330d457d5",
+		),
 		# HubSpot's CRM v3 documents; their paths are full on api.hubapi.com.
 		*(
 			SpecDocument(

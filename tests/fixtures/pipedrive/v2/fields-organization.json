@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/api/v2/organizationFields",
+		"query": {
+			"limit": "100"
+		}
+	},
+	"response": {
+		"success": true,
+		"data": [
+			{
+				"field_name": "Account tier",
+				"field_code": "9e2bcccccccccccccccccccccccccccccccccccc",
+				"field_type": "enum",
+				"options": [
+					{
+						"id": 21,
+						"label": "Gold"
+					},
+					{
+						"id": 22,
+						"label": "Silver"
+					}
+				],
+				"subfields": null,
+				"is_custom_field": true,
+				"is_optional_response_field": false
+			}
+		],
+		"additional_data": {
+			"next_cursor": null
+		}
+	}
+}

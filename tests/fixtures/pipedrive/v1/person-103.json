@@ -1,0 +1,36 @@
+{
+	"request": {
+		"path": "/api/v2/persons/103",
+		"query": {}
+	},
+	"response": {
+		"success": true,
+		"data": {
+			"id": 103,
+			"name": "Quinn Quay",
+			"first_name": "Quinn",
+			"last_name": "Quay",
+			"owner_id": 1,
+			"add_time": "2026-08-03T15:00:00Z",
+			"update_time": "2026-09-15T15:00:00Z",
+			"emails": [
+				{
+					"value": "quinn@river-co.example",
+					"primary": true,
+					"label": "work"
+				}
+			],
+			"phones": [
+				{
+					"value": "+1 902 555 0103",
+					"primary": true,
+					"label": "work"
+				}
+			],
+			"is_deleted": false,
+			"visible_to": 3,
+			"label_ids": [],
+			"custom_fields": {}
+		}
+	}
+}

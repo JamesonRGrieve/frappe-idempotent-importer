@@ -25,6 +25,7 @@ from erpnext.accounts.doctype.pricing_rule.utils import validate_coupon_code
 from frappe.desk.doctype.tag.tag import DocTags
 from frappe.tests import IntegrationTestCase
 from frappe.utils import add_days, nowdate
+from frappe.utils.password import set_encrypted_password
 
 from idempotent_importer import contract
 from idempotent_importer.contract import (
@@ -2051,6 +2052,8 @@ class TestWriters(IntegrationTestCase):
 		endpoints = dict(frappe.conf.get(stored_value.TEST_ENDPOINTS) or {})
 		square = endpoints.get(f"{TEMPLATE}:square")
 		self.assertTrue(square, "the e2e connection writes to the fake Square")
+		# A copied connection carries no secrets: give it the fake Square's token.
+		set_encrypted_password("Importer Connection", CONNECTION, "e2e-square-token", "square_access_token")
 		with (
 			patch.dict(
 				frappe.conf, {stored_value.TEST_ENDPOINTS: {**endpoints, f"{CONNECTION}:square": square}}

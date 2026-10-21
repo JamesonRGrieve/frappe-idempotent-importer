@@ -380,7 +380,7 @@ def gift_card(gid: str) -> Any:
 
 
 def assert_gift_cards(
-	gid: str, gan: str, square_id: str, source: str, loaded: str, kinds: list[str], what: str
+	gid: str, gan: str | None, square_id: str | None, source: str, loaded: str, kinds: list[str], what: str
 ) -> Any:
 	card = gift_card(gid)
 	expect((card.gan, card.square_id), (gan, square_id), f"{what}: its Square card")
@@ -904,11 +904,11 @@ def assert_woocommerce(connection: str, state: str) -> None:
 		assert_gift_cards(
 			"gid://woocommerce/woo-a/GiftCard/178",
 			"Z9KQW2LPNM4RXT7B",
-			"GC_W178",
+			None,
 			"100",
 			"0",
 			["issued"],
-			"the switched-off gift card (no balance in Square)",
+			"the switched-off gift card (nothing to spend: no Square card)",
 		)
 	else:
 		expect(
@@ -1471,14 +1471,22 @@ def assert_bigcommerce(state: str) -> None:
 		["issue", "observed", "activate", "adjust_decrement"] if spent else ["issue", "activate"],
 		"the gift certificate (its own code; spent at BigCommerce in v2)",
 	)
+	credit = gift_card("gid://bigcommerce/bigcommerce-c/StoreCredit/41")
+	expect(
+		(credit.kind, credit.square_id, credit.loaded_balance, credit.gan),
+		("store_credit", "GC_SC41", "15", "9489748124649236")
+		if spent
+		else ("store_credit", None, "0", credit.gan),
+		"the customer's store credit (none in v1: no Square card yet; 15 in v2: a Square card with a new number)",
+	)
 	unpaid = assert_gift_cards(
 		f"{certificate}/902",
 		"9034877072048837",
-		"GC_BC902",
+		None,
 		"25",
 		"0",
 		["issue"],
-		"the unpaid certificate (a new number, no balance)",
+		"the unpaid certificate (a new number; nothing to spend, so no Square card yet)",
 	)
 	expect(unpaid.state, "disabled", "the unpaid certificate's state")
 	usd = frappe.get_doc("Sales Invoice", target(connection, "order", "Order", "504"))
@@ -1709,7 +1717,7 @@ def assert_wix(state: str) -> None:
 	redeemed = state != "v1"
 	assert_gift_cards(
 		"gid://wix/wix-x/LoyaltyAccount/5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
-		"",
+		None,
 		"LA_MAYA",
 		"70" if redeemed else "120",
 		"70" if redeemed else "120",

@@ -48,7 +48,7 @@
         "form_fields": [],
         "store_credit_amounts": [
           {
-            "amount": "0.00"
+            "amount": "15.00"
           }
         ],
         "accepts_product_review_abandoned_cart_emails": true,

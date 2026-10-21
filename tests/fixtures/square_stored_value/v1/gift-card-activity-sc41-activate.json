@@ -1,0 +1,47 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/gift-cards/activities",
+  "body": {
+   "idempotency_key": "77b03c2ef1bb8fd6340f56b7c81e64b61b347b750e37c",
+   "gift_card_activity": {
+    "type": "ACTIVATE",
+    "location_id": "LOCMAIN1",
+    "gift_card_id": "GC_SC41",
+    "activate_activity_details": {
+     "amount_money": {
+      "amount": 1500,
+      "currency": "CAD"
+     },
+     "buyer_payment_instrument_ids": [
+      "gid://bigcommerce/bigcommerce-c/StoreCredit/41"
+     ],
+     "reference_id": "gid://bigcommerce/bigcommerce-c/StoreCredit/41"
+    }
+   }
+  }
+ },
+ "response": {
+  "gift_card_activity": {
+   "id": "GCA-sc41",
+   "type": "ACTIVATE",
+   "location_id": "LOCMAIN1",
+   "created_at": "2026-10-20T10:00:01Z",
+   "gift_card_id": "GC_SC41",
+   "gift_card_balance_money": {
+    "amount": 1500,
+    "currency": "CAD"
+   },
+   "activate_activity_details": {
+    "amount_money": {
+     "amount": 1500,
+     "currency": "CAD"
+    },
+    "buyer_payment_instrument_ids": [
+     "gid://bigcommerce/bigcommerce-c/StoreCredit/41"
+    ],
+    "reference_id": "gid://bigcommerce/bigcommerce-c/StoreCredit/41"
+   }
+  }
+ }
+}

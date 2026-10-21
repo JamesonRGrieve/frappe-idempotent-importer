@@ -38,6 +38,7 @@ ORDER_PARTS = ("products", "shipping_addresses", "taxes", "coupons", "shipments"
 BLOG_PAGE_TYPE = "blog"
 COUPON_PROMOTION = "COUPON"
 PHASE_COUPONS, PHASE_PROMOTIONS, PHASE_GROUPS, PHASE_BULK = "coupons", "promotions", "groups", "bulk"
+PHASE_CERTIFICATES, PHASE_STORE_CREDIT = "certificates", "credit"
 DISCOUNT_PHASES = (PHASE_COUPONS, PHASE_PROMOTIONS, PHASE_GROUPS, PHASE_BULK)
 BULK_PRICING = "bulk_pricing_rules"
 # A customer group discount rule's own identity: its group, its type and what it targets.
@@ -156,10 +157,7 @@ class BigCommerceReader:
 			case Kind.REVIEW:
 				return self._reviews(cursor)
 			case Kind.GIFT_CARD:
-				items, following = self._v2_page("/v2/gift_certificates", {}, cursor)
-				return paged(
-					[self._identified("GiftCertificate", c.integer("id"), c.raw()) for c in items], following
-				)
+				return self._gift_cards(cursor)
 			case _:
 				raise SourceError(f"BigCommerce has no {kind.value}.")
 
@@ -221,6 +219,15 @@ class BigCommerceReader:
 			case Kind.URL_REDIRECT:
 				return self._first(
 					"/v3/storefront/redirects", {"id:in": source_id, "include": "to_url"}, "Redirect", "id"
+				)
+			case Kind.GIFT_CARD if identity.type == "StoreCredit":
+				customer = self._first(
+					"/v3/customers", {"id:in": source_id, "include": CUSTOMER_INCLUDES}, "Customer", "id"
+				)
+				return (
+					self._store_credit(customer)
+					if customer and customer.get("store_credit_amounts")
+					else None
 				)
 			case Kind.GIFT_CARD:
 				result = self._client.get(f"/v2/gift_certificates/{source_id}")
@@ -398,6 +405,42 @@ class BigCommerceReader:
 					)
 				)
 		return paged(nodes, following)
+
+	def _gift_cards(self, cursor: str | None) -> Page:
+		"""Gift certificates (v2), then each customer's store credit (as a StoreCredit node, in the store's
+		currency); the cursor is "<phase>:<page>"."""
+		phase, _, page = (cursor or PHASE_CERTIFICATES).partition(CURSOR_SEPARATOR)
+		if phase == PHASE_CERTIFICATES:
+			items, following = self._v2_page("/v2/gift_certificates", {}, page or None)
+			nodes = [self._identified("GiftCertificate", c.integer("id"), c.raw()) for c in items]
+			return Page(
+				nodes,
+				True,
+				f"{phase}{CURSOR_SEPARATOR}{following}"
+				if following
+				else f"{PHASE_STORE_CREDIT}{CURSOR_SEPARATOR}",
+			)
+		customers, following = self._v3_page(
+			"/v3/customers",
+			{"include": CUSTOMER_INCLUDES, "sort": "date_created:asc"},
+			page or None,
+			PAGE_SIZE,
+		)
+		credits = [self._store_credit(c) for c in customers if c.get("store_credit_amounts")]
+		return Page(
+			credits,
+			following is not None,
+			f"{PHASE_STORE_CREDIT}{CURSOR_SEPARATOR}{following}" if following else None,
+		)
+
+	def _store_credit(self, customer: Node) -> Node:
+		"""A customer's store credit, which BigCommerce keeps in the store's currency."""
+		raw = {**customer.raw(), "currency": self._store_node().string("currency")}
+		return self._identified(
+			"StoreCredit",
+			customer.string("source_id") if customer.has("source_id") else customer.integer("id"),
+			raw,
+		)
 
 	def _store_node(self) -> Node:
 		if self._store is None:

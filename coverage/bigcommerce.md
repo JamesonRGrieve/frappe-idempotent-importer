@@ -47,6 +47,7 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Blog posts | **Blog Post** by its author (**Blogger**) | Tags; unpublished posts are unpublished. |
 | Approved product reviews | **Item Review** | Rating out of 5. |
 | Storefront 301 redirects | **Website Route Redirect** | A redirect to a product, category, brand, page or post targets that object's storefront path, which redirects on to the mirrored record. |
+| Customer store credit | **Square Gift Cards**: a card linked to the customer (store credit lives there), kept as an **Importer Gift Card** | The sum of its amounts, in the store's currency, with a new number; none until there is credit to spend. BigCommerce keeps no store credit history: the ledger is the balance it reported. |
 | Gift certificates (code, balance, status, recipient, buyer) | **Square Gift Cards**, kept as an **Importer Gift Card** | Written to Square (switch on "Gift Cards and Store Credit" and give the connection its Square account): the card's number is its own code where Square takes it (8 to 20 letters and digits, separators dropped), else a new 16-digit number when "New Numbers for Unusable Codes" is on. Its balance is loaded once; afterwards only what the source changes is applied (a rise is held unless "Load Balance Increases" is on, since Square charges a load fee on it; a drop beyond what Square holds is reported, never taken below zero). Linked to the recipient's Square customer (by email, created when missing). Each card is an **Importer Gift Card** with its ledger: the source history and every write made in Square. Pending (unpaid) and disabled certificates carry no balance. BigCommerce keeps no redemption history: the ledger is the issue and what was spent before the move. |
 
 ## Gaps
@@ -58,7 +59,7 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Pending and disapproved reviews | Not published at the source. |
 | Blog post thumbnails | Blog Post has no image of its own. |
 | Abandoned checkouts (incomplete orders), cancelled and declined orders | Not sales. |
-| Store credit, customer attributes and form fields | No first-party home for a storefront's custom fields. |
+| Customer attributes and form fields | No first-party home for a storefront's custom fields. |
 | Product options and modifiers that aren't variants, related products, videos | Planned: product options (card 408); related products and videos have no first-party Item field. |
 | Wishlists | Planned (card 386): the Webshop's Wishlist. |
 | Brands' own pages, carts, channels, sites, themes, widgets, scripts, menus | Storefront presentation (menus: card 406; abandoned carts: card 415). |

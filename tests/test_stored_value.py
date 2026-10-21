@@ -168,6 +168,24 @@ def test_bigcommerce_gift_certificates() -> None:
 	]
 
 
+def test_bigcommerce_store_credit_is_a_card_for_its_customer() -> None:
+	source = BigCommerceAdapter().reader(BIGCOMMERCE, rest_source("bigcommerce", "v2"), RecordingSleeper())
+	first = source.page(Kind.GIFT_CARD, None, None, "")
+	assert first.has_next_page and first.end_cursor == "credit:"
+	[credit_node] = source.page(Kind.GIFT_CARD, first.end_cursor, None, "").nodes
+	mapper = next(m for m in BigCommerceAdapter().mappers(BIGCOMMERCE) if m.kind == Kind.GIFT_CARD)
+	desired = mapper.map(credit_node)
+	assert desired is not None
+	credit = desired.values()
+	assert (credit.string("kind"), credit.optional_string("code"), credit.decimal("balance")) == (
+		"store_credit",
+		None,
+		D(15),
+	)
+	assert credit.optional_string("customer") == "gid://bigcommerce/bigcommerce-c/Customer/41"
+	assert credit_node.id() == "gid://bigcommerce/bigcommerce-c/StoreCredit/41"
+
+
 WOO = ConnectionConfig(
 	"woocommerce",
 	"woo-a",

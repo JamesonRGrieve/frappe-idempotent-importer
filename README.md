@@ -195,7 +195,7 @@ writes each source card or account to its Square account (environment, location 
 connection) and keeps it in ERPNext as an **Importer Gift Card** with its ledger, since Square can't backdate
 activity. Balances are loaded once; afterwards only what the source changes is applied, so what is spent in
 Square stays spent, and a write in Square is recorded at once so a retried run never repeats it. Sources
-today: WooCommerce Gift Cards, BigCommerce gift certificates and Wix Loyalty (each coverage page has the
+today: WooCommerce Gift Cards, BigCommerce gift certificates and store credit, and Wix Loyalty (each coverage page has the
 details). **None of this has run against the Square sandbox yet**: every Square request and response the
 tests use is recorded, and validated against Square's published API specification.
 

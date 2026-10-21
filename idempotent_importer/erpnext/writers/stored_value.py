@@ -173,6 +173,10 @@ class GiftCardWriter(StoredValueWriter):
 		)
 		self.source_history(doc, values.records("ledger"), "amount")
 		self.save(doc)
+		target = values.decimal("balance") if values.string("state") == "active" else Decimal(0)
+		if not doc.square_id and target == 0:
+			# Nothing to spend yet (store credit at zero): no Square card until there is.
+			return Target(CARD, doc.name)
 		square = self.square()
 		card = (
 			(square.card(doc.square_id) if doc.square_id else None)
@@ -181,7 +185,6 @@ class GiftCardWriter(StoredValueWriter):
 		)
 		doc.square_id = card.string("id")
 		self.settle(doc, doc.loaded_balance, doc.get("held"))
-		target = values.decimal("balance") if values.string("state") == "active" else Decimal(0)
 		loaded = Decimal(doc.loaded_balance)
 		step = plans.gift_card_step(
 			target, loaded, card.string("state"), balance_of(card, currency), values.flag("load_increases")

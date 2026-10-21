@@ -19,6 +19,7 @@ from idempotent_importer.contract import (
 	FEE,
 	GIFT_CARD,
 	SHIPPING,
+	STORE_CREDIT,
 	TAX,
 	Address,
 	Charge,
@@ -1180,6 +1181,8 @@ class GiftCertificateMapper:
 		self._context = context
 
 	def map(self, node: Node) -> Desired | None:
+		if Identity.parse(node.id()).type == "StoreCredit":
+			return self._store_credit(node)
 		id_ = node.string("source_id")
 		currency = node.optional_string("currency_code")
 		if not currency:
@@ -1226,6 +1229,47 @@ class GiftCertificateMapper:
 			family_name=family or None,
 			ledger=ledger,
 			details={field: node.get(field) for field in self.DETAILS if node.has(field)},
+			load_increases=self._context.config.gift_card_load_increases,
+			new_numbers=self._context.config.gift_card_new_numbers,
+		)
+		return Desired(self.kind, node.id(), gift_card_fields(card))
+
+	def _store_credit(self, node: Node) -> Desired:
+		"""A customer's store credit → a Square gift card linked to the customer (the store credit ruling):
+		its balance (the sum of its amounts, in the store's currency), no code (a new number), and as its ledger
+		the balance BigCommerce reported (it keeps no store credit history)."""
+		id_ = node.string("source_id")
+		balance = sum(
+			(amount_or_zero(credit, "amount") for credit in node.children("store_credit_amounts")), Decimal(0)
+		)
+		ledger = (
+			[
+				LedgerEntry(
+					self._context.gid("StoreCreditBalance", f"{id_}-{balance}"),
+					None,
+					"observed",
+					balance,
+					balance,
+					None,
+					"Store credit at BigCommerce",
+				)
+			]
+			if balance
+			else []
+		)
+		card = GiftCard(
+			kind=STORE_CREDIT,
+			code=None,
+			code_hint=None,
+			currency=node.string("currency"),
+			balance=balance,
+			state=ACTIVE,
+			customer=self._context.gid("Customer", id_),
+			email=node.optional_string("email"),
+			given_name=node.optional_string("first_name"),
+			family_name=node.optional_string("last_name"),
+			ledger=ledger,
+			details={},
 			load_increases=self._context.config.gift_card_load_increases,
 			new_numbers=self._context.config.gift_card_new_numbers,
 		)

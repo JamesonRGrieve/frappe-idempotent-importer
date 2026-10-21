@@ -185,7 +185,51 @@ class EmployeeTimeWriter(Writer):
 
 
 class ShiftAssignmentWriter(EmployeeTimeWriter):
+	"""A shift. HRMS refuses to cancel a shift its punches fall in (each punch names the shift HRMS finds
+	for it), so a published shift that moved first lets go of its punches, and they find their shift again
+	once it is amended."""
+
 	doctype = SHIFT_ASSIGNMENT
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		doc = self.existing(link)
+		punches = self._released(doc) if doc is not None else []
+		target = super().write(desired, link)
+		self._relink(punches)
+		return target
+
+	def retire(self, link: Link) -> None:
+		punches = self._released(frappe.get_doc(SHIFT_ASSIGNMENT, link.target.name))
+		super().retire(link)
+		self._relink(punches)
+
+	@staticmethod
+	def _relink(punches: list[str]) -> None:
+		"""Each punch finds its shift again (HRMS's own lookup, on save)."""
+		for punch in punches:
+			frappe.get_doc(EMPLOYEE_CHECKIN, punch).save(ignore_permissions=True)
+
+	def _released(self, doc: Any) -> list[str]:
+		"""The punches a submitted shift holds, let go of so it can be cancelled."""
+		punches = self._punches(doc) if doc.docstatus == SUBMITTED else []
+		for punch in punches:
+			frappe.db.set_value(EMPLOYEE_CHECKIN, punch, "shift", None, update_modified=False)
+		return punches
+
+	@staticmethod
+	def _punches(doc: Any) -> list[str]:
+		"""The punches HRMS links to a shift assignment (its own query when it refuses a cancellation)."""
+		return list(
+			frappe.get_all(
+				EMPLOYEE_CHECKIN,
+				filters={
+					"employee": doc.employee,
+					"shift": doc.shift_type,
+					"time": ["between", [doc.start_date, doc.end_date]],
+				},
+				pluck="name",
+			)
+		)
 
 	def fill(self, doc: Any, values: Values) -> None:
 		day = values.string("date")

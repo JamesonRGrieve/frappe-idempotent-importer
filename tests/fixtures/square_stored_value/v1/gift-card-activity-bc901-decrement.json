@@ -1,0 +1,41 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/gift-cards/activities",
+  "body": {
+   "idempotency_key": "81141ea76a84cb04b9303c03518dbdb29c442d9135007",
+   "gift_card_activity": {
+    "type": "ADJUST_DECREMENT",
+    "location_id": "LOCMAIN1",
+    "gift_card_id": "GC_BC901",
+    "adjust_decrement_activity_details": {
+     "amount_money": {
+      "amount": 2000,
+      "currency": "CAD"
+     },
+     "reason": "SUPPORT_ISSUE"
+    }
+   }
+  }
+ },
+ "response": {
+  "gift_card_activity": {
+   "id": "GCA-bc901-decrement",
+   "type": "ADJUST_DECREMENT",
+   "location_id": "LOCMAIN1",
+   "created_at": "2026-10-20T10:00:01Z",
+   "gift_card_id": "GC_BC901",
+   "gift_card_balance_money": {
+    "amount": 3000,
+    "currency": "CAD"
+   },
+   "adjust_decrement_activity_details": {
+    "amount_money": {
+     "amount": 2000,
+     "currency": "CAD"
+    },
+    "reason": "SUPPORT_ISSUE"
+   }
+  }
+ }
+}

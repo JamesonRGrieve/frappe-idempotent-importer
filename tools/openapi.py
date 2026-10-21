@@ -202,23 +202,39 @@ class ApiSpec:
 			prefix_pattern,
 		)
 
-	def response_schema(self, method: str, path: str) -> Schema | None:
+	def operation(self, method: str, path: str) -> dict[str, Any] | None:
+		"""The operation for ``method`` on a concrete request path. Literal templates win over templated
+		ones (``/v2/gift-cards/from-gan`` is not ``/v2/gift-cards/{id}``)."""
 		relative = self._relative(path)
 		if relative is None:
 			return None
 		method = method.lower()
-		for template, operations in self.paths.items():
+		for template in sorted(self.paths, key=lambda t: t.count("{")):
+			operations = self.paths[template]
 			pattern = "^" + TEMPLATE_PARAMETER.sub("[^/]+", re.escape(template)) + "$"
-			if (
-				not re.match(pattern, relative)
-				or not isinstance(operations, dict)
-				or method not in operations
-			):
-				continue
-			return at(
-				operations, (method, "responses", "200", "content", "application/json", "schema")
-			) or at(operations, (method, "responses", "200", "schema"))
+			if re.match(pattern, relative) and isinstance(operations, dict) and method in operations:
+				operation = operations[method]
+				return operation if isinstance(operation, dict) else None
 		return None
+
+	def response_schema(self, method: str, path: str) -> Schema | None:
+		operation = self.operation(method, path)
+		if operation is None:
+			return None
+		return at(operation, ("responses", "200", "content", "application/json", "schema")) or at(
+			operation, ("responses", "200", "schema")
+		)
+
+	def request_schema(self, method: str, path: str) -> Schema | None:
+		"""The JSON request body schema (OpenAPI 3's requestBody, or Swagger 2's body parameter)."""
+		operation = self.operation(method, path)
+		if operation is None:
+			return None
+		body = at(operation, ("requestBody", "content", "application/json", "schema"))
+		for parameter in operation.get("parameters") or []:
+			if body is None and isinstance(parameter, dict) and parameter.get("in") == "body":
+				body = parameter.get("schema")
+		return body
 
 	def _relative(self, path: str) -> str | None:
 		if not self.prefix_pattern:

@@ -339,6 +339,15 @@ def catalog() -> list[Document]:
 			"",
 			False,
 		),
+		# The same document for the Square account gift cards and loyalty are written to (any source).
+		SpecDocument(
+			"square_stored_value",
+			"connect-api-2026-09-16",
+			"https://raw.githubusercontent.com/square/connect-api-specification/"
+			"79ccc3f89e1527f7b943cc2f6628b6098572583e/api.json",
+			"",
+			False,
+		),
 		*(
 			SpecDocument("bigcommerce", name, f"{BIGCOMMERCE_BASE}{name}.json", "", False, JSON, sha256)
 			for name, sha256 in BIGCOMMERCE_DOCUMENTS.items()

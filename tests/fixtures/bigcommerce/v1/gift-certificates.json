@@ -1,0 +1,46 @@
+{
+  "request": {
+    "path": "/stores/bcfix123/v2/gift_certificates",
+    "query": {
+      "page": 1
+    }
+  },
+  "response": [
+    {
+      "id": 901,
+      "customer_id": 41,
+      "order_id": 501,
+      "to_name": "Ingrid Larsen",
+      "to_email": "Ingrid@Example.com",
+      "from_name": "Ingrid Larsen",
+      "from_email": "ingrid@example.com",
+      "amount": "50.0000",
+      "balance": "50.0000",
+      "purchase_date": "Tue, 01 Sep 2026 16:00:00 +0000",
+      "expiry_date": "",
+      "template": "general.html",
+      "message": "Enjoy",
+      "code": "4KZ-X0O-UHI-JHC",
+      "status": "active",
+      "currency_code": "CAD"
+    },
+    {
+      "id": 902,
+      "customer_id": 0,
+      "order_id": 0,
+      "to_name": "Grace Hopper",
+      "to_email": "grace@example.com",
+      "from_name": "Ingrid Larsen",
+      "from_email": "ingrid@example.com",
+      "amount": "25.0000",
+      "balance": "25.0000",
+      "purchase_date": "Tue, 01 Sep 2026 16:00:00 +0000",
+      "expiry_date": "",
+      "template": "general.html",
+      "message": "Enjoy",
+      "code": "SHORT1",
+      "status": "pending",
+      "currency_code": "CAD"
+    }
+  ]
+}

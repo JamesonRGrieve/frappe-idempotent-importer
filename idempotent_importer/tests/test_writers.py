@@ -63,10 +63,11 @@ from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Field, Fields
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
-from idempotent_importer.core.sync import Handler, ObjectSync, Outcome
+from idempotent_importer.core.sync import Handler, ObjectSync, Outcome, Target
 from idempotent_importer.erpnext.context import ConnectionContext
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
+from idempotent_importer.erpnext.writers import stored_value
 from idempotent_importer.erpnext.writers.base import Writer
 from idempotent_importer.erpnext.writers.books import (
 	AccountWriter,
@@ -2040,3 +2041,155 @@ class TestWriters(IntegrationTestCase):
 			Outcome.UNSUPPORTED,
 			"a purchase's freight needs the source's account",
 		)
+
+	# -- gift cards and loyalty (Square) ------------------------------------------------------------------
+
+	@contextmanager
+	def fake_square(self) -> Iterator[None]:
+		"""The writer-test connection writes to the e2e fake Square (tests/fixtures/square_stored_value), and
+		the importer's commit after each Square write stays inside the test's rollback."""
+		endpoints = dict(frappe.conf.get(stored_value.TEST_ENDPOINTS) or {})
+		square = endpoints.get(f"{TEMPLATE}:square")
+		self.assertTrue(square, "the e2e connection writes to the fake Square")
+		with (
+			patch.dict(
+				frappe.conf, {stored_value.TEST_ENDPOINTS: {**endpoints, f"{CONNECTION}:square": square}}
+			),
+			patch.object(stored_value.StoredValueWriter, "commit", lambda self: None),
+		):
+			yield
+
+	def certificate(
+		self, balance: str, ledger: list[contract.LedgerEntry], load_increases: bool = False
+	) -> Fields:
+		return contract.gift_card_fields(
+			contract.GiftCard(
+				kind=contract.GIFT_CARD,
+				code="4KZ-X0O-UHI-JHC",
+				code_hint=None,
+				currency="CAD",
+				balance=Decimal(balance),
+				state=contract.ACTIVE,
+				customer=None,
+				email="ingrid@example.com",
+				given_name="Ingrid",
+				family_name="Larsen",
+				ledger=ledger,
+				details={"to_name": "Ingrid Larsen"},
+				load_increases=load_increases,
+				new_numbers=True,
+			)
+		)
+
+	def test_gift_cards_are_loaded_once_then_follow_only_the_source_changes(self) -> None:
+		# The e2e BigCommerce certificate's identity, so the fake Square answers its recorded requests.
+		key = "gid://bigcommerce/bigcommerce-c/GiftCertificate/901"
+		issue = contract.LedgerEntry("issue-901", "2026-09-01T16:00:00Z", "issue", Decimal(50), Decimal(50))
+		spent = contract.LedgerEntry("spent-901", None, "observed", Decimal(-20), Decimal(30))
+		with self.fake_square():
+			self.assertEqual(
+				self.mirror(
+					Kind.GIFT_CARD, stored_value.GiftCardWriter, key, self.certificate("50", [issue])
+				),
+				Outcome.CREATED,
+			)
+			card = frappe.get_doc("Importer Gift Card", self.target(Kind.GIFT_CARD, key))
+			self.assertEqual(
+				(card.gan, card.square_id, card.loaded_balance), ("4KZX0OUHIJHC", "GC_BC901", "50")
+			)
+			self.assertEqual(
+				[(r.origin, r.entry_kind) for r in card.entries],
+				[("source", "issue"), ("square", "activate")],
+			)
+			self.assertEqual(
+				self.mirror(
+					Kind.GIFT_CARD, stored_value.GiftCardWriter, key, self.certificate("50", [issue])
+				),
+				Outcome.SKIPPED,
+			)
+			self.assertEqual(
+				self.mirror(
+					Kind.GIFT_CARD, stored_value.GiftCardWriter, key, self.certificate("30", [issue, spent])
+				),
+				Outcome.UPDATED,
+			)
+			card.reload()
+			self.assertEqual(card.loaded_balance, "30", "spent at the source: deducted in Square")
+			self.assertEqual(
+				[r.entry_kind for r in card.entries], ["issue", "observed", "activate", "adjust_decrement"]
+			)
+			# A rise at the source costs Square's load fee: held while the connection doesn't allow it.
+			self.mirror(Kind.GIFT_CARD, stored_value.GiftCardWriter, key, self.certificate("40", [issue]))
+			card.reload()
+			self.assertEqual(card.loaded_balance, "30")
+			self.assertIn("load fee", card.held)
+		self.assertEqual(self.retire(Kind.GIFT_CARD, stored_value.GiftCardWriter, key), Outcome.RETIRED)
+		self.assertEqual(frappe.db.get_value("Importer Gift Card", card.name, "state"), "retired")
+
+	def test_a_card_whose_code_square_cant_use_is_held_without_new_numbers(self) -> None:
+		fields = {**self.certificate("10", []), "code": "SHORT1", "new_numbers": False}
+		with self.fake_square():
+			self.assertEqual(
+				self.mirror(Kind.GIFT_CARD, stored_value.GiftCardWriter, gid("GiftCard", "short"), fields),
+				Outcome.FAILED,
+			)
+
+	def loyalty(self, points: int, customer: str | None) -> Fields:
+		return contract.loyalty_fields(
+			contract.LoyaltyAccount(
+				points=points,
+				customer=customer,
+				email="maya.thunderchild@example.com",
+				given_name="Maya",
+				family_name="Thunderchild",
+				ledger=[contract.LedgerEntry("earn-1", "2026-08-20T10:00:00Z", "earn", 100)],
+				details={},
+			)
+		)
+
+	def test_loyalty_accounts_enrol_by_phone_and_follow_the_source(self) -> None:
+		customer = frappe.get_doc(
+			{
+				"doctype": "Customer",
+				"customer_name": "Maya Thunderchild WT",
+				"customer_group": "Individual",
+				"territory": "Canada",
+				"mobile_no": "+1 306 555 0177",
+			}
+		).insert()
+		contact = gid("Customer", "maya")
+		self.links.save(Kind.CUSTOMER, contact, Target("Customer", customer.name), "given", 1)
+		key = "gid://wix/wix-x/LoyaltyAccount/5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001"
+		with self.fake_square():
+			self.assertEqual(
+				self.mirror(
+					Kind.LOYALTY_ACCOUNT, stored_value.LoyaltyWriter, key, self.loyalty(120, contact)
+				),
+				Outcome.CREATED,
+			)
+			account = frappe.get_doc("Importer Gift Card", self.target(Kind.LOYALTY_ACCOUNT, key))
+			self.assertEqual(
+				(account.square_id, account.loaded_balance, account.customer),
+				("LA_MAYA", "120", customer.name),
+			)
+			self.assertEqual(
+				self.mirror(Kind.LOYALTY_ACCOUNT, stored_value.LoyaltyWriter, key, self.loyalty(70, contact)),
+				Outcome.UPDATED,
+			)
+			account.reload()
+			self.assertEqual(account.loaded_balance, "70")
+			self.assertEqual(
+				[r.entry_kind for r in account.entries], ["earn", "adjust_points", "adjust_points"]
+			)
+
+	def test_a_loyalty_account_without_a_phone_waits(self) -> None:
+		with self.fake_square():
+			self.assertEqual(
+				self.mirror(
+					Kind.LOYALTY_ACCOUNT,
+					stored_value.LoyaltyWriter,
+					gid("LoyaltyAccount", "none"),
+					self.loyalty(5, None),
+				),
+				Outcome.DEFERRED,
+			)

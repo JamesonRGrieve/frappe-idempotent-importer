@@ -1,0 +1,20 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/customers",
+  "body": {
+   "idempotency_key": "1bd4d47c4bc6a4a1f7663ccc9e86bc98c2c3c6d2238f9",
+   "given_name": "Grace",
+   "family_name": "Hopper",
+   "email_address": "grace@example.com",
+   "reference_id": "gid://bigcommerce/bigcommerce-c/GiftCertificate/902"
+  }
+ },
+ "response": {
+  "customer": {
+   "id": "SQC_GRACE",
+   "email_address": "grace@example.com",
+   "reference_id": "gid://bigcommerce/bigcommerce-c/GiftCertificate/902"
+  }
+ }
+}

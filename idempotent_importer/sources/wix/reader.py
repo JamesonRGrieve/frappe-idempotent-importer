@@ -180,6 +180,8 @@ class WixReader:
 				return paged([self._identified("Contact", c.raw()) for c in contacts], following)
 			case Kind.DISCOUNT:
 				return self._discounts(cursor)
+			case Kind.LOYALTY_ACCOUNT:
+				return self._loyalty_accounts(cursor)
 			case Kind.ORDER:
 				orders, following = self._cursor_page(
 					"/ecom/v1/orders/search",
@@ -441,6 +443,41 @@ class WixReader:
 		nodes = [self._identified("DiscountRule", r.raw()) for r in rules]
 		return Page(
 			nodes, following is not None, f"{PHASE_RULES}{CURSOR_SEPARATOR}{following}" if following else None
+		)
+
+	def _loyalty_accounts(self, cursor: str | None) -> Page:
+		"""Loyalty accounts (the Wix Loyalty Program app), each with its whole transaction history, oldest
+		first, read for the page's accounts at once."""
+		oldest: Body = {"sort": oldest_first("createdDate")}
+		accounts, following = self._cursor_page(
+			"/loyalty-accounts/v1/accounts/query",
+			"query",
+			oldest,
+			{},
+			"loyaltyAccounts",
+			"pagingMetadata",
+			cursor,
+		)
+		ids: list[JsonValue] = [account.string("id") for account in accounts]
+		history: dict[str, list[JsonValue]] = {}
+		if ids:
+			for transaction in self._all_cursor(
+				"/loyalty-transactions/v1/loyalty-transactions/query",
+				"query",
+				{"filter": {"accountId": {"$in": ids}}, **oldest},
+				{},
+				"loyaltyTransactions",
+				"pagingMetadata",
+			):
+				history.setdefault(transaction.string("accountId"), []).append(transaction.raw())
+		return paged(
+			[
+				self._identified(
+					"LoyaltyAccount", {**account.raw(), "transactions": history.get(account.string("id"), [])}
+				)
+				for account in accounts
+			],
+			following,
 		)
 
 	def _cursor_page(

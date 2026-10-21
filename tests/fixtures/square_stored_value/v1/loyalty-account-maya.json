@@ -1,0 +1,21 @@
+{
+ "request": {
+  "path": "/v2/loyalty/accounts/LA_MAYA"
+ },
+ "response": {
+  "loyalty_account": {
+   "id": "LA_MAYA",
+   "program_id": "LP_MAIN",
+   "balance": 120,
+   "lifetime_points": 120,
+   "customer_id": "SQC_MAYA",
+   "created_at": "2026-10-20T10:00:00Z",
+   "updated_at": "2026-10-20T10:00:00Z",
+   "mapping": {
+    "id": "LM_MAYA",
+    "created_at": "2026-10-20T10:00:00Z",
+    "phone_number": "+13065550177"
+   }
+  }
+ }
+}

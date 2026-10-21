@@ -1,0 +1,16 @@
+{
+ "request": {
+  "path": "/v2/loyalty/programs/main"
+ },
+ "response": {
+  "program": {
+   "id": "LP_MAIN",
+   "status": "ACTIVE",
+   "created_at": "2026-10-20T10:00:00Z",
+   "updated_at": "2026-10-20T10:00:00Z",
+   "location_ids": [
+    "LOCMAIN1"
+   ]
+  }
+ }
+}

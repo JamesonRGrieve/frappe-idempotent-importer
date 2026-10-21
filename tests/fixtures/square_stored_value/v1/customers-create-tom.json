@@ -1,0 +1,18 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/customers",
+  "body": {
+   "idempotency_key": "ce820a0a9a825611ab3ec69b900460f1b7b681e6a7d82",
+   "email_address": "tom@example.test",
+   "reference_id": "gid://woocommerce/woo-a/GiftCard/178"
+  }
+ },
+ "response": {
+  "customer": {
+   "id": "SQC_TOM",
+   "email_address": "tom@example.test",
+   "reference_id": "gid://woocommerce/woo-a/GiftCard/178"
+  }
+ }
+}

@@ -47,6 +47,7 @@ window runs out, and a 429 or server error is retried with backoff and then paus
 | Blog posts | **Blog Post** by its author (**Blogger**) | Tags; unpublished posts are unpublished. |
 | Approved product reviews | **Item Review** | Rating out of 5. |
 | Storefront 301 redirects | **Website Route Redirect** | A redirect to a product, category, brand, page or post targets that object's storefront path, which redirects on to the mirrored record. |
+| Gift certificates (code, balance, status, recipient, buyer) | **Square Gift Cards**, kept as an **Importer Gift Card** | Written to Square (switch on "Gift Cards and Store Credit" and give the connection its Square account): the card's number is its own code where Square takes it (8 to 20 letters and digits, separators dropped), else a new 16-digit number when "New Numbers for Unusable Codes" is on. Its balance is loaded once; afterwards only what the source changes is applied (a rise is held unless "Load Balance Increases" is on, since Square charges a load fee on it; a drop beyond what Square holds is reported, never taken below zero). Linked to the recipient's Square customer (by email, created when missing). Each card is an **Importer Gift Card** with its ledger: the source history and every write made in Square. Pending (unpaid) and disabled certificates carry no balance. BigCommerce keeps no redemption history: the ledger is the issue and what was spent before the move. |
 
 ## Gaps
 

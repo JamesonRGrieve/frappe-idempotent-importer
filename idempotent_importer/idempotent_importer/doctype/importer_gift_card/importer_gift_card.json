@@ -1,0 +1,176 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-10-20 21:00:00.000000",
+ "description": "A gift card, store credit account or loyalty account a connection mirrored into Square (where its one balance lives), with its ledger: the source's history, which Square can't backdate, and every write the importer made in Square.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "connection",
+  "gid",
+  "kind",
+  "customer",
+  "column_break_card",
+  "gan",
+  "square_id",
+  "state",
+  "balances_section",
+  "currency",
+  "source_balance",
+  "column_break_balances",
+  "loaded_balance",
+  "held",
+  "ledger_section",
+  "entries",
+  "details"
+ ],
+ "fields": [
+  {
+   "fieldname": "connection",
+   "fieldtype": "Link",
+   "label": "Connection",
+   "options": "Importer Connection",
+   "reqd": 1,
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "gid",
+   "fieldtype": "Data",
+   "label": "Source Identity",
+   "reqd": 1,
+   "length": 255,
+   "search_index": 1
+  },
+  {
+   "fieldname": "kind",
+   "fieldtype": "Select",
+   "label": "Kind",
+   "options": "gift_card\nstore_credit\nloyalty",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "in_list_view": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_card",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "gan",
+   "fieldtype": "Data",
+   "label": "Square Gift Card Number",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "square_id",
+   "fieldtype": "Data",
+   "label": "Square ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "Source State",
+   "read_only": 1
+  },
+  {
+   "fieldname": "balances_section",
+   "fieldtype": "Section Break",
+   "label": "Balances"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Data",
+   "label": "Currency",
+   "read_only": 1,
+   "description": "The card's currency; PTS for loyalty points."
+  },
+  {
+   "fieldname": "source_balance",
+   "fieldtype": "Data",
+   "label": "Source Balance",
+   "read_only": 1,
+   "description": "The balance at the source, as last read."
+  },
+  {
+   "fieldname": "column_break_balances",
+   "fieldtype": "Column Break",
+   "label": ""
+  },
+  {
+   "fieldname": "loaded_balance",
+   "fieldtype": "Data",
+   "label": "Brought into Square",
+   "read_only": 1,
+   "description": "The source balance Square reflects: only changes from here on are applied, so what is spent in Square stays spent."
+  },
+  {
+   "fieldname": "held",
+   "fieldtype": "Small Text",
+   "label": "Held",
+   "read_only": 1,
+   "description": "Why a change isn't in Square (a rise that would cost Square's load fee, money spent in both stores, a missing phone number)."
+  },
+  {
+   "fieldname": "ledger_section",
+   "fieldtype": "Section Break",
+   "label": "Ledger"
+  },
+  {
+   "fieldname": "entries",
+   "fieldtype": "Table",
+   "label": "Entries",
+   "options": "Importer Gift Card Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Code",
+   "label": "Source Details",
+   "options": "JSON",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-20 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Idempotent Importer",
+ "name": "Importer Gift Card",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 0,
+   "export": 1,
+   "print": 0,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 0,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "export": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "naming_rule": "Random",
+ "in_create": 1,
+ "title_field": "gan"
+}

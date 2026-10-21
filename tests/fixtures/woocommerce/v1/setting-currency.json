@@ -1,0 +1,19 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/settings/general/woocommerce_currency"
+ },
+ "response": {
+  "id": "woocommerce_currency",
+  "label": "Currency",
+  "description": "This controls what currency prices are listed at in the catalog and which currency gateways will take payments in.",
+  "type": "select",
+  "default": "USD",
+  "options": {
+   "CAD": "Canadian dollar ($)",
+   "USD": "United States (US) dollar ($)"
+  },
+  "tip": "This controls what currency prices are listed at in the catalog and which currency gateways will take payments in.",
+  "value": "CAD",
+  "group_id": "general"
+ }
+}

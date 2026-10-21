@@ -13,7 +13,11 @@ from decimal import Decimal
 from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
+	ACTIVE,
+	DISABLED,
+	EXPIRED,
 	FEE,
+	GIFT_CARD,
 	SHIPPING,
 	TAX,
 	Address,
@@ -22,6 +26,8 @@ from idempotent_importer.contract import (
 	Condition,
 	Discount,
 	FreeItem,
+	GiftCard,
+	LedgerEntry,
 	OrderLine,
 	Shipment,
 	Tier,
@@ -30,6 +36,7 @@ from idempotent_importer.contract import (
 	contents_of,
 	date_of,
 	discount_desired,
+	gift_card_fields,
 	line_fields,
 	order_line,
 	rating_fraction,
@@ -46,7 +53,9 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target, slugify
 from idempotent_importer.core.source import ConnectionConfig
+from idempotent_importer.core.times import iso_utc
 from idempotent_importer.sources.bigcommerce.reader import COUPON_PROMOTION
+from idempotent_importer.sources.common import from_unix
 
 WEIGHT_UNITS = {
 	"lbs": "lbs",
@@ -1141,6 +1150,97 @@ class UrlRedirectMapper:
 		return Desired(self.kind, node.id(), {"source": source, "target": target, "status": 301})
 
 
+# A certificate's status → the card's state: a pending one isn't paid for yet, so it carries no balance.
+CERTIFICATE_STATES = {"active": ACTIVE, "pending": DISABLED, "disabled": DISABLED, "expired": EXPIRED}
+
+
+class GiftCertificateMapper:
+	"""A gift certificate → a Square gift card (``contract.GiftCard``) with its code, remaining balance and
+	state (active; pending, which isn't paid for yet, and disabled carry no balance; expired). It belongs to
+	its recipient (``to_email``), and to the customer who bought it when that customer is mirrored.
+	BigCommerce keeps no redemption history, only the amount issued and what remains, so the ledger is the
+	issue and what was spent from it before the move. The rest is kept with the card."""
+
+	kind = Kind.GIFT_CARD
+	version = 1
+	DETAILS = (
+		"to_name",
+		"from_name",
+		"from_email",
+		"amount",
+		"template",
+		"message",
+		"status",
+		"order_id",
+		"purchase_date",
+		"expiry_date",
+	)
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
+
+	def map(self, node: Node) -> Desired | None:
+		id_ = node.string("source_id")
+		currency = node.optional_string("currency_code")
+		if not currency:
+			raise Unsupported(f"Gift certificate {id_} names no currency.")
+		amount = amount_or_zero(node, "amount")
+		balance = node.optional_decimal("balance")
+		balance = amount if balance is None else balance
+		order_id = node.optional_integer("order_id")
+		order = self._context.gid("Order", order_id) if order_id else None
+		ledger = [
+			LedgerEntry(
+				self._context.gid("GiftCertificateIssue", id_),
+				certificate_time(node.optional_string("purchase_date")),
+				"issue",
+				amount,
+				amount,
+				order,
+			)
+		]
+		if balance != amount:
+			ledger.append(
+				LedgerEntry(
+					self._context.gid("GiftCertificateBalance", f"{id_}-{balance}"),
+					None,
+					"observed",
+					balance - amount,
+					balance,
+					None,
+					"Spent at BigCommerce before the move",
+				)
+			)
+		customer_id = node.optional_integer("customer_id")
+		given, _, family = (node.optional_string("to_name") or "").strip().partition(" ")
+		card = GiftCard(
+			kind=GIFT_CARD,
+			code=node.optional_string("code"),
+			code_hint=None,
+			currency=currency,
+			balance=balance,
+			state=CERTIFICATE_STATES.get(node.optional_string("status") or "", DISABLED),
+			customer=self._context.gid("Customer", customer_id) if customer_id else None,
+			email=node.optional_string("to_email"),
+			given_name=given or None,
+			family_name=family or None,
+			ledger=ledger,
+			details={field: node.get(field) for field in self.DETAILS if node.has(field)},
+			load_increases=self._context.config.gift_card_load_increases,
+			new_numbers=self._context.config.gift_card_new_numbers,
+		)
+		return Desired(self.kind, node.id(), gift_card_fields(card))
+
+
+def certificate_time(value: str | None) -> str | None:
+	"""A gift certificate date (a Unix timestamp, or RFC 2822 as v2 dates usually are) as UTC."""
+	if not value:
+		return None
+	if value.isdigit():
+		return from_unix(int(value))
+	return iso_utc(value)
+
+
 def mappers(config: ConnectionConfig) -> list[Mapper]:
 	context = Context(config)
 	host = urlsplit(config.store_url.strip()).hostname
@@ -1156,4 +1256,5 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 		ArticleMapper(context),
 		ReviewMapper(context),
 		UrlRedirectMapper(host),
+		GiftCertificateMapper(context),
 	]

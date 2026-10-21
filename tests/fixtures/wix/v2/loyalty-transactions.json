@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/loyalty-transactions/v1/loyalty-transactions/query",
+    "body": {
+      "query": {
+        "filter": {
+          "accountId": {
+            "$in": [
+              "5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001"
+            ]
+          }
+        },
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "loyaltyTransactions": [
+      {
+        "id": "7c1d0000-0001-4000-8000-000000000001",
+        "accountId": "5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
+        "createdDate": "2026-08-20T10:00:00.000Z",
+        "amount": 100,
+        "transactionType": "EARN",
+        "description": "",
+        "earnInfo": {
+          "appId": "wix-stores",
+          "activityType": "order",
+          "orderId": "8f1e2d30-0001-4c5b-a69d-7e8f9a0b0001"
+        }
+      },
+      {
+        "id": "7c1d0000-0002-4000-8000-000000000002",
+        "accountId": "5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
+        "createdDate": "2026-08-21T10:00:00.000Z",
+        "amount": 20,
+        "transactionType": "ADJUST",
+        "description": "",
+        "adjustInfo": {
+          "appId": "wix-dashboard",
+          "amountBefore": 100,
+          "amountAfter": 120
+        }
+      },
+      {
+        "id": "7c1d0000-0003-4000-8000-000000000003",
+        "accountId": "5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
+        "createdDate": "2026-09-05T10:00:00.000Z",
+        "amount": 50,
+        "transactionType": "REDEEM",
+        "description": "",
+        "redeemInfo": {
+          "rewardId": "9d2e0000-0001-4000-8000-000000000001",
+          "rewardType": "DISCOUNT_AMOUNT"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 3,
+      "cursors": {},
+      "hasNext": false
+    }
+  }
+}

@@ -187,6 +187,18 @@ This is the operator's decision to confirm (see below).
      transaction definitions and journals ([coverage/sage_intacct.md](coverage/sage_intacct.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
+## Gift cards, store credit and loyalty
+
+Gift cards and store credit live in **Square Gift Cards**, loyalty in **Square Loyalty**: one balance, spent
+online and at the Square counter. A connection with "Gift Cards and Store Credit" or "Loyalty Accounts" on
+writes each source card or account to its Square account (environment, location and access token on the
+connection) and keeps it in ERPNext as an **Importer Gift Card** with its ledger, since Square can't backdate
+activity. Balances are loaded once; afterwards only what the source changes is applied, so what is spent in
+Square stays spent, and a write in Square is recorded at once so a retried run never repeats it. Sources
+today: WooCommerce Gift Cards, BigCommerce gift certificates and Wix Loyalty (each coverage page has the
+details). **None of this has run against the Square sandbox yet**: every Square request and response the
+tests use is recorded, and validated against Square's published API specification.
+
 ## Commands
 
 ```sh

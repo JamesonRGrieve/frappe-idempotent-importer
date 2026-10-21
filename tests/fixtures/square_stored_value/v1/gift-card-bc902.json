@@ -1,0 +1,22 @@
+{
+ "request": {
+  "path": "/v2/gift-cards/GC_BC902"
+ },
+ "response": {
+  "gift_card": {
+   "id": "GC_BC902",
+   "type": "DIGITAL",
+   "gan_source": "OTHER",
+   "state": "PENDING",
+   "balance_money": {
+    "amount": 0,
+    "currency": "CAD"
+   },
+   "gan": "9034877072048837",
+   "created_at": "2026-10-20T10:00:00Z",
+   "customer_ids": [
+    "SQC_GRACE"
+   ]
+  }
+ }
+}

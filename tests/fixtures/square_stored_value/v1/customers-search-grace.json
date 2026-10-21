@@ -1,0 +1,17 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/customers/search",
+  "body": {
+   "limit": 1,
+   "query": {
+    "filter": {
+     "email_address": {
+      "exact": "grace@example.com"
+     }
+    }
+   }
+  }
+ },
+ "response": {}
+}

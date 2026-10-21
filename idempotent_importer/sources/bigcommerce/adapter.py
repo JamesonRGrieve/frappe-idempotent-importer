@@ -2,7 +2,7 @@
 """BigCommerce, through its REST Management API (v2 and v3): categories, products with their variants,
 prices, sales, stock, images and brands, customer groups, customers, legacy coupons, promotions, customer
 group discounts and bulk pricing, orders with their
-payments, refunds and shipments, content pages, the blog and its posts, product reviews and storefront
+payments, refunds and shipments, gift certificates (into Square Gift Cards), content pages, the blog and its posts, product reviews and storefront
 redirects. The operator creates a store-level API account with read-only scopes and enters the store's
 storefront URL, its store hash (the account) and the account's access token."""
 
@@ -35,6 +35,7 @@ class BigCommerceAdapter:
 			Kind.CUSTOMER,
 			Kind.DISCOUNT,
 			Kind.ORDER,
+			Kind.GIFT_CARD,
 			Kind.PAGE,
 			Kind.BLOG,
 			Kind.ARTICLE,

@@ -28,6 +28,7 @@ class WixAdapter:
 			Kind.CUSTOMER,
 			Kind.DISCOUNT,
 			Kind.ORDER,
+			Kind.LOYALTY_ACCOUNT,
 			Kind.BLOG,
 			Kind.ARTICLE,
 			Kind.REVIEW,

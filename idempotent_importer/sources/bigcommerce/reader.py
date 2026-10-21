@@ -155,6 +155,11 @@ class BigCommerceReader:
 				)
 			case Kind.REVIEW:
 				return self._reviews(cursor)
+			case Kind.GIFT_CARD:
+				items, following = self._v2_page("/v2/gift_certificates", {}, cursor)
+				return paged(
+					[self._identified("GiftCertificate", c.integer("id"), c.raw()) for c in items], following
+				)
 			case _:
 				raise SourceError(f"BigCommerce has no {kind.value}.")
 
@@ -216,6 +221,13 @@ class BigCommerceReader:
 			case Kind.URL_REDIRECT:
 				return self._first(
 					"/v3/storefront/redirects", {"id:in": source_id, "include": "to_url"}, "Redirect", "id"
+				)
+			case Kind.GIFT_CARD:
+				result = self._client.get(f"/v2/gift_certificates/{source_id}")
+				return (
+					None
+					if result is None
+					else self._identified("GiftCertificate", source_id, result.node.raw())
 				)
 			case _:
 				raise SourceError(f"BigCommerce can't read a single {kind.value}.")

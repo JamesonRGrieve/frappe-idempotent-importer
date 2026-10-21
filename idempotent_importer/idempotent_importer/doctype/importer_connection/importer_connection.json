@@ -71,6 +71,15 @@
   "import_journal_entries",
   "import_crm",
   "import_hr",
+  "stored_value_section",
+  "import_gift_cards",
+  "import_loyalty",
+  "gift_card_load_increases",
+  "gift_card_new_numbers",
+  "column_break_stored_value",
+  "square_environment",
+  "square_location_id",
+  "square_access_token",
   "filters",
   "status_section",
   "last_run",
@@ -508,6 +517,66 @@
    "default": "1"
   },
   {
+   "fieldname": "stored_value_section",
+   "fieldtype": "Section Break",
+   "label": "Gift Cards and Loyalty (Square)",
+   "description": "Gift cards, store credit and loyalty live in Square (one balance, spent online and at the Square counter). Each source card is created in Square Gift Cards and each loyalty account in Square Loyalty; only what the source changes is applied afterwards."
+  },
+  {
+   "fieldname": "import_gift_cards",
+   "fieldtype": "Check",
+   "label": "Gift Cards and Store Credit",
+   "default": "0"
+  },
+  {
+   "fieldname": "import_loyalty",
+   "fieldtype": "Check",
+   "label": "Loyalty Accounts",
+   "default": "0"
+  },
+  {
+   "fieldname": "gift_card_load_increases",
+   "fieldtype": "Check",
+   "label": "Load Balance Increases",
+   "default": "0",
+   "depends_on": "import_gift_cards",
+   "description": "Square charges a load fee on increases (US, Canada, Australia). Off: an increase at the source is held and reported."
+  },
+  {
+   "fieldname": "gift_card_new_numbers",
+   "fieldtype": "Check",
+   "label": "New Numbers for Unusable Codes",
+   "default": "1",
+   "depends_on": "import_gift_cards",
+   "description": "A card whose code Square can't use (or the source hides) gets a new number. Off: such cards are held."
+  },
+  {
+   "fieldname": "column_break_stored_value",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "square_environment",
+   "fieldtype": "Select",
+   "label": "Square Environment",
+   "options": "Production\nSandbox",
+   "default": "Production",
+   "depends_on": "eval:doc.import_gift_cards || doc.import_loyalty"
+  },
+  {
+   "fieldname": "square_location_id",
+   "fieldtype": "Data",
+   "label": "Square Location",
+   "depends_on": "eval:doc.import_gift_cards || doc.import_loyalty",
+   "mandatory_depends_on": "eval:doc.import_gift_cards || doc.import_loyalty"
+  },
+  {
+   "fieldname": "square_access_token",
+   "fieldtype": "Password",
+   "label": "Square Access Token",
+   "depends_on": "eval:doc.import_gift_cards || doc.import_loyalty",
+   "description": "Scopes GIFTCARDS_READ GIFTCARDS_WRITE LOYALTY_READ LOYALTY_WRITE CUSTOMERS_READ CUSTOMERS_WRITE. Written by the deploy pipeline from OpenBao."
+  },
+  {
    "fieldname": "filters",
    "fieldtype": "Code",
    "label": "Filters",
@@ -568,7 +637,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-20 18:00:00.000000",
+ "modified": "2026-10-20 21:00:00.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

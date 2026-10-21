@@ -71,6 +71,11 @@ REST_SOURCES: dict[str, tuple[str, dict[str, str]]] = {
 		{"Authorization": "Bearer e2e-square-token", "Square-Version": "2026-09-16"},
 	),
 	"bigcommerce-fake": ("bigcommerce", {"X-Auth-Token": "e2e-bigcommerce-token"}),
+	# The Square account gift cards and loyalty are written to (whatever the source).
+	"square_stored_value-fake": (
+		"square_stored_value",
+		{"Authorization": "Bearer e2e-square-token", "Square-Version": "2026-09-16"},
+	),
 	"squarespace-fake": (
 		"squarespace",
 		{"Authorization": "Bearer e2e-squarespace-key", "User-Agent": "frappe-idempotent-importer"},

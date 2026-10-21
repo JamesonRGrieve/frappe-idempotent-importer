@@ -30,6 +30,10 @@ truth for what each source mirrors and what is a gap. Python rules:
   journal and payment entries), trade (sales and purchase orders and invoices), crm (leads,
   opportunities), hr (departments, designations, employees)), `engine` (builds and drives a run), `jobs`
   (scheduler + step jobs).
+- `stored_value/` — gift cards, store credit and loyalty for the Square account they live in: numbers,
+  how a balance change is applied (`plans`, pure), phone numbers, and the Square client (`square`); the
+  writers are `erpnext/writers/stored_value` (records: Importer Gift Card + Importer Gift Card Entry). A
+  write in Square can't be rolled back, so the writer commits what Square holds right after each one.
 - `api.py` (Sync Now), `commands.py` (`bench idempotent-import`), `hooks.py`, doctypes under
   `idempotent_importer/doctype/` (Importer Connection, Importer Link, Importer Run, Importer Seen).
 

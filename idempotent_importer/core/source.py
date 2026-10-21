@@ -53,6 +53,10 @@ class ConnectionConfig:
 	field_map: str = ""
 	# Test harness only (site config, never the desk): where a fake store answers for this connection.
 	endpoint_override: str | None = None
+	# The connection's Square gift card policies, carried into each card so changing one rewrites them all:
+	# load a balance increase (Square charges a fee on it), and give a code Square can't use a new number.
+	gift_card_load_increases: bool = False
+	gift_card_new_numbers: bool = True
 
 	def identity(self, type_: str, id_: int | str) -> str:
 		return Identity.of(self.source, self.connection, type_, id_)

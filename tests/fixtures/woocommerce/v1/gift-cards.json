@@ -1,0 +1,82 @@
+{
+ "request": {
+  "path": "/wp-json/wc/v3/gift-cards",
+  "query": {
+   "page": 1
+  }
+ },
+ "headers": {
+  "X-WP-Total": "2",
+  "X-WP-TotalPages": "1"
+ },
+ "response": [
+  {
+   "id": 177,
+   "code": "5QY5-E4AX-TAVR-LCPK",
+   "recipient": "ingrid@example.test",
+   "sender": "The Shop",
+   "sender_email": "0",
+   "message": "",
+   "balance": 100,
+   "remaining": 100,
+   "order_id": 0,
+   "order_item_id": 0,
+   "create_date": "2026-08-01 10:00:00",
+   "deliver_date": 0,
+   "expire_date": 0,
+   "redeem_date": "2026-08-02 10:00:00",
+   "redeemed_by": 201,
+   "delivered": "201",
+   "is_active": "on",
+   "activities": [
+    {
+     "id": 60,
+     "type": "issued",
+     "user_id": 0,
+     "user_email": "0",
+     "object_id": 0,
+     "gc_id": 177,
+     "gc_code": "5QY5-E4AX-TAVR-LCPK",
+     "amount": 100,
+     "date": "2026-08-01 10:00:00",
+     "note": ""
+    }
+   ],
+   "meta_data": []
+  },
+  {
+   "id": 178,
+   "code": "Z9KQ-W2LP-NM4R-XT7B",
+   "recipient": "tom@example.test",
+   "sender": "The Shop",
+   "sender_email": "0",
+   "message": "",
+   "balance": 100,
+   "remaining": 100,
+   "order_id": 0,
+   "order_item_id": 0,
+   "create_date": "2026-08-01 10:00:00",
+   "deliver_date": 0,
+   "expire_date": 0,
+   "redeem_date": 0,
+   "redeemed_by": 0,
+   "delivered": "no",
+   "is_active": "off",
+   "activities": [
+    {
+     "id": 62,
+     "type": "issued",
+     "user_id": 0,
+     "user_email": "0",
+     "object_id": 0,
+     "gc_id": 178,
+     "gc_code": "Z9KQ-W2LP-NM4R-XT7B",
+     "amount": 100,
+     "date": "2026-08-01 11:00:00",
+     "note": ""
+    }
+   ],
+   "meta_data": []
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/loyalty/accounts/LA_MAYA/adjust",
+  "body": {
+   "idempotency_key": "c5a41d09e9128e0644b71562af38e12a6cb36170be149",
+   "adjust_points": {
+    "points": -50,
+    "reason": "Moved from the previous store"
+   }
+  }
+ },
+ "response": {
+  "event": {
+   "id": "LE_redeemed",
+   "type": "ADJUST_POINTS",
+   "created_at": "2026-10-20T10:00:01Z",
+   "adjust_points": {
+    "points": -50,
+    "reason": "Moved from the previous store",
+    "loyalty_program_id": "LP_MAIN"
+   },
+   "loyalty_account_id": "LA_MAYA",
+   "source": "LOYALTY_API"
+  }
+ }
+}

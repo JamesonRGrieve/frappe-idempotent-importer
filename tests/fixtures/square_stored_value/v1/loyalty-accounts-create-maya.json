@@ -1,0 +1,32 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/loyalty/accounts",
+  "body": {
+   "loyalty_account": {
+    "program_id": "LP_MAIN",
+    "mapping": {
+     "phone_number": "+13065550177"
+    },
+    "customer_id": "SQC_MAYA"
+   },
+   "idempotency_key": "1de61ecddfc95a8bd3868af01d2df1c9624f8e50abfaa"
+  }
+ },
+ "response": {
+  "loyalty_account": {
+   "id": "LA_MAYA",
+   "program_id": "LP_MAIN",
+   "balance": 0,
+   "lifetime_points": 0,
+   "customer_id": "SQC_MAYA",
+   "created_at": "2026-10-20T10:00:00Z",
+   "updated_at": "2026-10-20T10:00:00Z",
+   "mapping": {
+    "id": "LM_MAYA",
+    "created_at": "2026-10-20T10:00:00Z",
+    "phone_number": "+13065550177"
+   }
+  }
+ }
+}

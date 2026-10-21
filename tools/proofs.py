@@ -124,10 +124,15 @@ def first_difference(expected: Any, actual: Any, path: str = "$") -> str | None:
 	return f"{path}: the fixture has {expected!r}, the schema serialises {actual!r}"
 
 
+# Systems the importer writes to: their fixtures record whole request bodies, each validated too.
+WRITE_DESTINATIONS = frozenset({"square_stored_value"})
+
+
 def invalid_source_fixtures(source: str) -> Iterator[str]:
 	"""Every recorded response of a source in tools/specs.py's catalog against its pinned documents: the
 	request must be an operation one of them defines, and the response must match its 200 schema strictly
-	(tools/openapi.py)."""
+	(tools/openapi.py); for a system the importer writes to, the whole request body against the operation's
+	request schema too."""
 	documents = [(document.load(), document.complete_objects) for document in for_source(source)]
 	for state in states(source):
 		for fixture in rest_fixtures(source, state):
@@ -138,6 +143,14 @@ def invalid_source_fixtures(source: str) -> Iterator[str]:
 					continue
 				validator = OpenApiValidator(spec.schemas, spec.ref_prefix, complete)
 				yield from (f"{name}: {error}" for error in validator.validate(fixture.response, schema))
+				if source in WRITE_DESTINATIONS and fixture.body:
+					request = spec.request_schema(fixture.method, fixture.path)
+					if request is None:
+						yield f"{name}: {fixture.method} {fixture.path} takes no request body"
+					else:
+						yield from (
+							f"{name} request: {error}" for error in validator.validate(fixture.body, request)
+						)
 				break
 			else:
 				yield f"{name}: {fixture.method} {fixture.path} is not an operation in the {source} spec"

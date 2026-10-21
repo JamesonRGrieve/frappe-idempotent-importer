@@ -1,0 +1,48 @@
+{
+  "request": {
+    "method": "POST",
+    "path": "/loyalty-accounts/v1/accounts/query",
+    "body": {
+      "query": {
+        "sort": [
+          {
+            "fieldName": "createdDate",
+            "order": "ASC"
+          }
+        ]
+      }
+    }
+  },
+  "response": {
+    "loyaltyAccounts": [
+      {
+        "id": "5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
+        "contactId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+        "memberId": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+        "points": {
+          "balance": 120,
+          "earned": 100,
+          "adjusted": 20,
+          "redeemed": 0,
+          "expired": 0
+        },
+        "rewardAvailable": true,
+        "createdDate": "2026-08-10T12:05:00.000Z",
+        "updatedDate": "2026-09-01T10:00:00.000Z",
+        "lastActivityDate": "2026-09-01T10:00:00.000Z",
+        "revision": 3,
+        "contact": {
+          "id": "2c4e6a80-0001-4b3d-9e1f-5a6b7c8d0001",
+          "name": "Maya Thunderchild",
+          "email": "Maya.Thunderchild@example.com",
+          "displayName": "Maya Thunderchild"
+        }
+      }
+    ],
+    "pagingMetadata": {
+      "count": 1,
+      "cursors": {},
+      "hasNext": false
+    }
+  }
+}

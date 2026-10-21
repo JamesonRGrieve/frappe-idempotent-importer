@@ -64,6 +64,7 @@ from idempotent_importer.erpnext.writers.hr import DepartmentWriter, Designation
 from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter, SupplierWriter
 from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
+from idempotent_importer.erpnext.writers.stored_value import GiftCardWriter, LoyaltyWriter
 from idempotent_importer.erpnext.writers.trade import (
 	PurchaseInvoiceWriter,
 	PurchaseOrderWriter,
@@ -113,6 +114,8 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.PURCHASE_INVOICE: PurchaseInvoiceWriter,
 	Kind.PAYMENT_ENTRY: PaymentEntryWriter,
 	Kind.JOURNAL_ENTRY: JournalEntryWriter,
+	Kind.GIFT_CARD: GiftCardWriter,
+	Kind.LOYALTY_ACCOUNT: LoyaltyWriter,
 }
 # The connection's "What to Mirror" switch for each kind.
 SWITCHES: dict[Kind, str] = {
@@ -148,6 +151,8 @@ SWITCHES: dict[Kind, str] = {
 	Kind.PURCHASE_INVOICE: "import_purchases",
 	Kind.PAYMENT_ENTRY: "import_payments",
 	Kind.JOURNAL_ENTRY: "import_journal_entries",
+	Kind.GIFT_CARD: "import_gift_cards",
+	Kind.LOYALTY_ACCOUNT: "import_loyalty",
 }
 
 
@@ -208,6 +213,8 @@ def config_of(doc: Any, adapter: Adapter) -> ConnectionConfig:
 		save_refresh_token=lambda token: save_refresh_token(connection, token),
 		field_map=str(doc.get("field_map") or ""),
 		endpoint_override=endpoints.get(doc.name),
+		gift_card_load_increases=bool(doc.get("gift_card_load_increases")),
+		gift_card_new_numbers=bool(doc.get("gift_card_new_numbers")),
 	)
 
 

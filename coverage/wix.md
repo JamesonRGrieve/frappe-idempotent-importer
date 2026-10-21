@@ -41,6 +41,7 @@ sits out a minute on a 429, which pauses the run.
 | Published blog posts | **Blog Post** in its first category | Rich content rendered to HTML (paragraphs, headings, lists, quotes, code, dividers, images, links and text marks), its images copied into **Files**; hashtags as **Tags**; excerpt. |
 | Published Stores reviews (approved, or without moderation) | **Item Review** | |
 | Site redirects | **Website Route Redirect** | A target on the site redirects on to its mirrored object. |
+| Loyalty Program accounts and their transactions | **Square Loyalty**, kept as an **Importer Gift Card** (kind loyalty) | Switch on "Loyalty Accounts" and give the connection its Square account. Square enrols by phone: the account is the one Square has for the customer's phone (E.164, from the mirrored customer; a 10-digit number in a US or Canadian company gets +1), created and linked to their Square customer when missing; a customer with no usable phone is deferred and retried. The points are added once, then only what Wix changes is applied (never below zero). Earned, adjusted, redeemed, refunded and expired points are the ledger. The seller needs a Square Loyalty subscription. |
 
 ## Gaps
 

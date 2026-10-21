@@ -1,0 +1,30 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/gift-cards",
+  "body": {
+   "idempotency_key": "7747a1a88e4acccd08efa87a246a3ccf15251e08201f9",
+   "location_id": "LOCMAIN1",
+   "gift_card": {
+    "type": "DIGITAL",
+    "gan_source": "OTHER",
+    "gan": "Z9KQW2LPNM4RXT7B"
+   }
+  }
+ },
+ "response": {
+  "gift_card": {
+   "id": "GC_W178",
+   "type": "DIGITAL",
+   "gan_source": "OTHER",
+   "state": "PENDING",
+   "balance_money": {
+    "amount": 0,
+    "currency": "CAD"
+   },
+   "gan": "Z9KQW2LPNM4RXT7B",
+   "created_at": "2026-10-20T10:00:00Z",
+   "customer_ids": []
+  }
+ }
+}

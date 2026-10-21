@@ -6,21 +6,30 @@ types, catalog visibility) into that contract; writers never see a WooCommerce v
 from __future__ import annotations
 
 import html
+from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from decimal import Decimal
 from urllib.parse import urlsplit
 
 from idempotent_importer.contract import (
+	ACTIVE,
+	DISABLED,
+	EXPIRED,
+	GIFT_CARD,
 	Address,
 	Charge,
 	Condition,
 	Discount,
+	GiftCard,
+	LedgerEntry,
 	OrderLine,
 	Shipment,
 	address_fields,
 	charge_fields,
 	date_of,
 	discount_desired,
+	gift_card_fields,
 	line_fields,
 	order_line,
 	rating_fraction,
@@ -34,6 +43,7 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.paths import path_of, redirect_target
 from idempotent_importer.core.source import ConnectionConfig
+from idempotent_importer.core.times import parse_utc
 from idempotent_importer.html import embedded_images, hosted_on
 from idempotent_importer.sources.common import from_unix
 
@@ -641,6 +651,94 @@ class RedirectMapper:
 		return Desired(self.kind, node.id(), fields)
 
 
+# Gift card activity types that take money off the card; the others add, or carry their own sign.
+GIFT_CARD_DEBITS = frozenset({"used"})
+GIFT_CARD_CREDITS = frozenset({"issued", "refunded"})
+GIFT_CARD_DETAILS = (
+	"sender",
+	"sender_email",
+	"message",
+	"balance",
+	"order_id",
+	"order_item_id",
+	"create_date",
+	"deliver_date",
+	"expire_date",
+	"redeem_date",
+	"delivered",
+	"meta_data",
+)
+
+
+def gift_card_time(value: str | int | None) -> str | None:
+	"""A gift card date (``Y-m-d H:i:s``, 0 when unset), taken as UTC (the extension doesn't say)."""
+	return f"{str(value).replace(' ', 'T')}Z" if value not in (None, 0, "0", "") else None
+
+
+class GiftCardMapper:
+	"""A WooCommerce Gift Cards card → a Square gift card (``contract.GiftCard``) with its code, remaining
+	balance and state (off, or past its expiry date, carries no balance). It belongs to the customer who
+	redeemed it into their account, else to its recipient. Its activities (issued, used, refunded) are the
+	ledger. The rest (sender, message, dates, order, meta) is kept with the card."""
+
+	kind = Kind.GIFT_CARD
+	version = 1
+
+	def __init__(self, context: Context, now: Callable[[], datetime] = lambda: datetime.now(UTC)) -> None:
+		self._context = context
+		self._now = now
+
+	def map(self, node: Node) -> Desired | None:
+		expiry = node.get("expire_date")
+		expires = gift_card_time(expiry if isinstance(expiry, str | int) else None)
+		state = ACTIVE
+		if node.optional_string("is_active") == "off":
+			state = DISABLED
+		elif expires and parse_utc(expires) <= self._now():
+			state = EXPIRED
+		ledger = []
+		for activity in node.children("activities"):
+			kind = activity.string("type")
+			amount = activity.optional_decimal("amount") or Decimal(0)
+			signed = (
+				-abs(amount)
+				if kind in GIFT_CARD_DEBITS
+				else abs(amount)
+				if kind in GIFT_CARD_CREDITS
+				else amount
+			)
+			object_id = activity.optional_integer("object_id")
+			ledger.append(
+				LedgerEntry(
+					self._context.gid("GiftCardActivity", str(activity.integer("id"))),
+					gift_card_time(activity.optional_string("date")),
+					kind,
+					signed,
+					None,
+					str(object_id) if object_id else None,
+					activity.optional_string("note") or None,
+				)
+			)
+		redeemed_by = node.optional_integer("redeemed_by")
+		card = GiftCard(
+			kind=GIFT_CARD,
+			code=node.optional_string("code"),
+			code_hint=None,
+			currency=node.string("currency"),
+			balance=node.optional_decimal("remaining") or Decimal(0),
+			state=state,
+			customer=self._context.gid("Customer", str(redeemed_by)) if redeemed_by else None,
+			email=node.optional_string("recipient"),
+			given_name=None,
+			family_name=None,
+			ledger=ledger,
+			details={field: node.get(field) for field in GIFT_CARD_DETAILS if node.has(field)},
+			load_increases=self._context.config.gift_card_load_increases,
+			new_numbers=self._context.config.gift_card_new_numbers,
+		)
+		return Desired(self.kind, node.id(), gift_card_fields(card))
+
+
 def mappers(config: ConnectionConfig) -> list[Mapper]:
 	context = Context(config)
 	return [
@@ -654,4 +752,5 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 		PostMapper(context),
 		ReviewMapper(context),
 		RedirectMapper(urlsplit(config.store_url).hostname),
+		GiftCardMapper(context),
 	]

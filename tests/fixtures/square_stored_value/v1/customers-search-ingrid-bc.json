@@ -1,0 +1,25 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/customers/search",
+  "body": {
+   "limit": 1,
+   "query": {
+    "filter": {
+     "email_address": {
+      "exact": "ingrid@example.com"
+     }
+    }
+   }
+  }
+ },
+ "response": {
+  "customers": [
+   {
+    "id": "SQC_INGRID",
+    "email_address": "ingrid@example.com",
+    "created_at": "2026-10-20T10:00:00Z"
+   }
+  ]
+ }
+}

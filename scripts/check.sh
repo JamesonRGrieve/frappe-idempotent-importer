@@ -23,6 +23,7 @@ run mypy
 run python -I -m pytest -q \
 	--cov=idempotent_importer.core --cov=idempotent_importer.sources \
 	--cov=idempotent_importer.contract --cov=idempotent_importer.naming --cov=idempotent_importer.html \
+	--cov=idempotent_importer.stored_value \
 	--cov-report=term:skip-covered --cov-fail-under="$(cat .coverage-baseline)"
 run python -m tools.prove
 echo "== All checks passed"

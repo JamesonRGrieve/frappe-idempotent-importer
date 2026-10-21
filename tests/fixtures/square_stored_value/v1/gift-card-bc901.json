@@ -1,0 +1,22 @@
+{
+ "request": {
+  "path": "/v2/gift-cards/GC_BC901"
+ },
+ "response": {
+  "gift_card": {
+   "id": "GC_BC901",
+   "type": "DIGITAL",
+   "gan_source": "OTHER",
+   "state": "ACTIVE",
+   "balance_money": {
+    "amount": 5000,
+    "currency": "CAD"
+   },
+   "gan": "4KZX0OUHIJHC",
+   "created_at": "2026-10-20T10:00:00Z",
+   "customer_ids": [
+    "SQC_INGRID"
+   ]
+  }
+ }
+}

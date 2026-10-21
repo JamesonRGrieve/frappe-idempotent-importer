@@ -1,0 +1,17 @@
+{
+ "request": {
+  "method": "POST",
+  "path": "/v2/loyalty/accounts/search",
+  "body": {
+   "query": {
+    "mappings": [
+     {
+      "phone_number": "+13065550177"
+     }
+    ]
+   },
+   "limit": 1
+  }
+ },
+ "response": {}
+}

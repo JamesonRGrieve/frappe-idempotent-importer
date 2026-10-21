@@ -357,6 +357,42 @@ BUSINESSES = (
 )
 
 
+# The connections that mirror gift cards or loyalty into the fake Square (tests/fixtures/square_stored_value).
+SQUARE_FAKE = f"http://square_stored_value-fake:{FAKE_PORT}"
+SQUARE_ACCOUNT = {
+	"square_environment": "Sandbox",
+	"square_location_id": "LOCMAIN1",
+	"square_access_token": "e2e-square-token",
+}
+SQUARE_STORED_VALUE = {
+	"woo-a": {"import_gift_cards": 1, **SQUARE_ACCOUNT},
+	"bigcommerce-c": {"import_gift_cards": 1, **SQUARE_ACCOUNT},
+	"wix-x": {"import_loyalty": 1, **SQUARE_ACCOUNT},
+}
+GIFT_CARD_NUMBER_KEY = "idempotent_importer_gift_card_number_key"
+
+
+def gift_card(gid: str) -> Any:
+	name = frappe.db.get_value("Importer Gift Card", {"connection": gid.split("/")[3], "gid": gid})
+	if not name:
+		raise AssertionError(f"{gid} is not mirrored into Square")
+	return frappe.get_doc("Importer Gift Card", name)
+
+
+def assert_gift_cards(
+	gid: str, gan: str, square_id: str, source: str, loaded: str, kinds: list[str], what: str
+) -> Any:
+	card = gift_card(gid)
+	expect((card.gan, card.square_id), (gan, square_id), f"{what}: its Square card")
+	expect((card.source_balance, card.loaded_balance), (source, loaded), f"{what}: its balance in Square")
+	expect(ledger_kinds(card), kinds, f"{what}: its ledger")
+	return card
+
+
+def ledger_kinds(card: Any) -> list[str]:
+	return [row.entry_kind for row in card.entries]
+
+
 def business(abbr: str) -> Business:
 	return next(spec for spec in BUSINESSES if spec.abbr == abbr)
 
@@ -366,6 +402,8 @@ def business_of(connection: str) -> Business:
 
 
 CONTENT_DOCTYPES = (
+	"Importer Gift Card",
+	"Importer Gift Card Entry",
 	"Item Group",
 	"Item",
 	"Item Attribute Value",
@@ -472,7 +510,9 @@ def setup_site() -> None:
 			).insert()
 		make_business(spec)
 	endpoints = {spec.connection: spec.endpoint for spec in BUSINESSES}
+	endpoints |= {f"{connection}:square": SQUARE_FAKE for connection in SQUARE_STORED_VALUE}
 	update_site_config("idempotent_importer_test_endpoints", endpoints)
+	update_site_config(GIFT_CARD_NUMBER_KEY, "e2e-gift-card-key")
 	frappe.db.commit()
 
 
@@ -610,6 +650,7 @@ def make_business(spec: Business) -> None:
 			"shipping_account": account(abbr, "Shipping Revenue", "Direct Income", "Income Account"),
 			"fee_account": account(abbr, "Fee Revenue", "Direct Income", "Income Account"),
 			"cost_center": f"Main - {abbr}",
+			**SQUARE_STORED_VALUE.get(spec.connection, {}),
 		}
 	).insert()
 
@@ -849,6 +890,32 @@ def assert_discount(
 @check
 def assert_woocommerce(connection: str, state: str) -> None:
 	"""The WooCommerce fixtures' state ``state`` as it should land in ERPNext."""
+	if connection == "woo-a":
+		used = state != "v1"
+		assert_gift_cards(
+			"gid://woocommerce/woo-a/GiftCard/177",
+			"5QY5E4AXTAVRLCPK",
+			"GC_W177",
+			"60" if used else "100",
+			"60" if used else "100",
+			["issued", "used", "activate", "adjust_decrement"] if used else ["issued", "activate"],
+			"the WooCommerce gift card (redeemed into Ingrid's account; partly used in v2)",
+		)
+		assert_gift_cards(
+			"gid://woocommerce/woo-a/GiftCard/178",
+			"Z9KQW2LPNM4RXT7B",
+			"GC_W178",
+			"100",
+			"0",
+			["issued"],
+			"the switched-off gift card (no balance in Square)",
+		)
+	else:
+		expect(
+			frappe.db.count("Importer Gift Card", {"connection": connection}),
+			0,
+			f"{connection} mirrors no gift cards",
+		)
 	abbr = frappe.db.get_value("Importer Connection", connection, "abbreviation")
 	toque = target(connection, "product", "Product", "101")
 	expect(toque, f"{abbr}-TOQUE-1", "the toque's item code")
@@ -1393,6 +1460,27 @@ def assert_square_online(state: str) -> None:
 @check
 def assert_bigcommerce(state: str) -> None:
 	connection = "bigcommerce-c"
+	spent = state != "v1"
+	certificate = "gid://bigcommerce/bigcommerce-c/GiftCertificate"
+	assert_gift_cards(
+		f"{certificate}/901",
+		"4KZX0OUHIJHC",
+		"GC_BC901",
+		"30" if spent else "50",
+		"30" if spent else "50",
+		["issue", "observed", "activate", "adjust_decrement"] if spent else ["issue", "activate"],
+		"the gift certificate (its own code; spent at BigCommerce in v2)",
+	)
+	unpaid = assert_gift_cards(
+		f"{certificate}/902",
+		"9034877072048837",
+		"GC_BC902",
+		"25",
+		"0",
+		["issue"],
+		"the unpaid certificate (a new number, no balance)",
+	)
+	expect(unpaid.state, "disabled", "the unpaid certificate's state")
 	usd = frappe.get_doc("Sales Invoice", target(connection, "order", "Order", "504"))
 	expect(
 		(
@@ -1618,6 +1706,18 @@ def assert_squarespace(state: str) -> None:
 @check
 def assert_wix(state: str) -> None:
 	connection = "wix-x"
+	redeemed = state != "v1"
+	assert_gift_cards(
+		"gid://wix/wix-x/LoyaltyAccount/5b0e7c40-0001-4a1b-8c2d-3e4f5a6b0001",
+		"",
+		"LA_MAYA",
+		"70" if redeemed else "120",
+		"70" if redeemed else "120",
+		["earn", "adjust", "redeem", "adjust_points", "adjust_points"]
+		if redeemed
+		else ["earn", "adjust", "adjust_points"],
+		"the Wix loyalty account, enrolled in Square Loyalty by the customer's phone",
+	)
 	assert_tax_inclusive(
 		connection,
 		"8f1e2d30-0005-4c5b-a69d-7e8f9a0b0005",

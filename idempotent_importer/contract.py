@@ -41,6 +41,14 @@ delivery_profile  name, rules ([{gid, label, countries (ISO codes), amount, enab
 comment      article (identity), author_name, author_email, html, published_on (date)
 review       product (identity), author_name, author_email, text, rating (0..1), published_on (date)
 url_redirect source (path), target (path or URL), status (HTTP code)
+gift_card    kind ("gift_card" | "store_credit"), code (the full code, None when the source hides it),
+             code_hint, currency, balance, state ("active" | "disabled" | "expired"), customer (identity |
+             None), email, given_name, family_name, ledger ([{gid, at, kind, amount, balance_after,
+             reference, note}]: the source's history, oldest first, amounts signed), details (JSON text),
+             load_increases, new_numbers (the connection's Square policies, so changing one rewrites
+             every card): written to Square Gift Cards (``gift_card_fields``)
+loyalty_account  points, customer (identity | None), email, given_name, family_name, ledger ([{gid, at,
+             kind, points, note}]), details (JSON text): written to Square Loyalty (``loyalty_fields``)
 
 The books and the business around them (ERP and HR sources; dates are ``YYYY-MM-DD``):
 
@@ -1160,4 +1168,100 @@ def employee_fields(employee: Employee) -> Fields:
 		"company_email": employee.company_email,
 		"personal_email": employee.personal_email,
 		"phone": employee.phone,
+	}
+
+
+# ── gift cards, store credit and loyalty (Square) ────────────────────────────────────────────────────
+
+GIFT_CARD, STORE_CREDIT = "gift_card", "store_credit"
+ACTIVE, DISABLED, EXPIRED = "active", "disabled", "expired"
+CARD_STATES = frozenset({ACTIVE, DISABLED, EXPIRED})
+
+
+@dataclass(frozen=True)
+class LedgerEntry:
+	"""One line of a card's or account's source history: ``amount`` signed (a redemption is negative), in
+	the card's currency, or points for a loyalty account."""
+
+	gid: str
+	at: str | None
+	kind: str
+	amount: Decimal | int
+	balance_after: Decimal | None = None
+	reference: str | None = None
+	note: str | None = None
+
+
+def ledger_fields(entry: LedgerEntry, amount_key: str = "amount") -> Fields:
+	return {
+		"gid": entry.gid,
+		"at": entry.at,
+		"kind": entry.kind,
+		amount_key: entry.amount,
+		"balance_after": entry.balance_after,
+		"reference": entry.reference,
+		"note": entry.note,
+	}
+
+
+@dataclass(frozen=True)
+class GiftCard:
+	kind: str
+	code: str | None
+	code_hint: str | None
+	currency: str
+	balance: Decimal
+	state: str
+	customer: str | None
+	email: str | None
+	given_name: str | None
+	family_name: str | None
+	ledger: list[LedgerEntry]
+	details: dict[str, JsonValue]
+	load_increases: bool
+	new_numbers: bool
+
+
+def gift_card_fields(card: GiftCard) -> Fields:
+	return {
+		"kind": one_of(card.kind, frozenset({GIFT_CARD, STORE_CREDIT}), "gift card kind"),
+		"code": card.code,
+		"code_hint": card.code_hint,
+		"currency": card.currency.upper(),
+		"balance": card.balance,
+		"state": one_of(card.state, CARD_STATES, "gift card state"),
+		"customer": card.customer,
+		"email": card.email.lower() if card.email else None,
+		"given_name": card.given_name,
+		"family_name": card.family_name,
+		"ledger": [ledger_fields(entry) for entry in card.ledger],
+		"details": json.dumps(card.details, sort_keys=True, default=str),
+		"load_increases": card.load_increases,
+		"new_numbers": card.new_numbers,
+	}
+
+
+@dataclass(frozen=True)
+class LoyaltyAccount:
+	points: int
+	customer: str | None
+	email: str | None
+	given_name: str | None
+	family_name: str | None
+	ledger: list[LedgerEntry]
+	details: dict[str, JsonValue]
+
+
+def loyalty_fields(account: LoyaltyAccount) -> Fields:
+	return {
+		"points": account.points,
+		"customer": account.customer,
+		"email": account.email.lower() if account.email else None,
+		"given_name": account.given_name,
+		"family_name": account.family_name,
+		"ledger": [
+			{k: v for k, v in ledger_fields(entry, "points").items() if k != "balance_after"}
+			for entry in account.ledger
+		],
+		"details": json.dumps(account.details, sort_keys=True, default=str),
 	}

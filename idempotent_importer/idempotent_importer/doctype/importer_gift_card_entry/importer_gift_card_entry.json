@@ -1,0 +1,80 @@
+{
+ "actions": [],
+ "creation": "2026-10-20 21:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "entry_gid",
+  "origin",
+  "occurred_at",
+  "entry_kind",
+  "amount",
+  "balance_after",
+  "reference",
+  "note"
+ ],
+ "fields": [
+  {
+   "fieldname": "entry_gid",
+   "fieldtype": "Data",
+   "label": "Entry",
+   "reqd": 1,
+   "length": 255
+  },
+  {
+   "fieldname": "origin",
+   "fieldtype": "Select",
+   "label": "Origin",
+   "options": "source\nsquare",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "occurred_at",
+   "fieldtype": "Datetime",
+   "label": "When",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "entry_kind",
+   "fieldtype": "Data",
+   "label": "What",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Data",
+   "label": "Amount",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "balance_after",
+   "fieldtype": "Data",
+   "label": "Balance After",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "reference",
+   "fieldtype": "Data",
+   "label": "Reference",
+   "length": 255
+  },
+  {
+   "fieldname": "note",
+   "fieldtype": "Small Text",
+   "label": "Note"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-10-20 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Idempotent Importer",
+ "name": "Importer Gift Card Entry",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "ASC",
+ "states": []
+}

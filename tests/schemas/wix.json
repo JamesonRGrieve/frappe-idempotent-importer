@@ -352,6 +352,44 @@
           }
         }
       }
+    },
+    "/loyalty-accounts/v1/accounts/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryLoyaltyAccountsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loyalty-transactions/v1/loyalty-transactions/query": {
+      "post": {
+        "externalDocs": {
+          "url": "https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryLoyaltyTransactionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4927,6 +4965,282 @@
         "required": [
           "discountRules"
         ]
+      },
+      "QueryLoyaltyAccountsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+        "properties": {
+          "loyaltyAccounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyAccount"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        }
+      },
+      "LoyaltyAccount": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "contactId": {
+            "type": "string"
+          },
+          "memberId": {
+            "type": "string"
+          },
+          "points": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+            "properties": {
+              "balance": {
+                "type": "integer"
+              },
+              "earned": {
+                "type": "integer"
+              },
+              "adjusted": {
+                "type": "integer"
+              },
+              "redeemed": {
+                "type": "integer"
+              },
+              "expired": {
+                "type": "integer"
+              }
+            }
+          },
+          "rewardAvailable": {
+            "type": "boolean"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "updatedDate": {
+            "type": "string"
+          },
+          "lastActivityDate": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "number"
+          },
+          "tier": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "updatedDate": {
+                "type": "string"
+              },
+              "points": {
+                "type": "integer"
+              }
+            }
+          },
+          "contact": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "picture": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "height": {
+                    "type": "integer"
+                  },
+                  "width": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "email": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              }
+            }
+          },
+          "pointsExpiration": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/accounts/query-loyalty-accounts.md",
+            "properties": {
+              "expirationDate": {
+                "type": "string"
+              },
+              "expiringPointsAmount": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "QueryLoyaltyTransactionsResponse": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+        "properties": {
+          "loyaltyTransactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyTransaction"
+            }
+          },
+          "pagingMetadata": {
+            "$ref": "#/components/schemas/CursorPagingMetadata"
+          }
+        }
+      },
+      "LoyaltyTransaction": {
+        "type": "object",
+        "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+        "properties": {
+          "earnInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "followedSocialMedia": {
+                "type": "object",
+                "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+                "properties": {
+                  "channel": {
+                    "type": "string"
+                  }
+                }
+              },
+              "appId": {
+                "type": "string"
+              },
+              "activityType": {
+                "type": "string"
+              },
+              "orderId": {
+                "type": "string"
+              },
+              "limitApplied": {
+                "type": "boolean"
+              }
+            }
+          },
+          "redeemInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "rewardId": {
+                "type": "string"
+              },
+              "rewardType": {
+                "type": "string"
+              },
+              "referenceEntityId": {
+                "type": "string"
+              }
+            }
+          },
+          "adjustInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "appId": {
+                "type": "string"
+              },
+              "amountBefore": {
+                "type": "integer"
+              },
+              "amountAfter": {
+                "type": "integer"
+              }
+            }
+          },
+          "refundInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "appId": {
+                "type": "string"
+              },
+              "refundedTransactionId": {
+                "type": "string"
+              }
+            }
+          },
+          "expireInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "amountBefore": {
+                "type": "integer"
+              },
+              "amountAfter": {
+                "type": "integer"
+              }
+            }
+          },
+          "earnAttemptInfo": {
+            "type": "object",
+            "description": "Transcribed from https://dev.wix.com/docs/api-reference/crm/loyalty-program/accounts/transactions/query-loyalty-transactions.md",
+            "properties": {
+              "appId": {
+                "type": "string"
+              },
+              "activityType": {
+                "type": "string"
+              },
+              "orderId": {
+                "type": "string"
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "createdDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "transactionType": {
+            "type": "string",
+            "enum": [
+              "UNKNOWN",
+              "EARN",
+              "REDEEM",
+              "ADJUST",
+              "REFUND",
+              "EXPIRE",
+              "EARN_ATTEMPT"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          }
+        }
       }
     }
   }

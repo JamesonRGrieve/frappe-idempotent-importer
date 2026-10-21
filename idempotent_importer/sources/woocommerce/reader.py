@@ -41,6 +41,7 @@ WORDPRESS_LOGIN = "Application Password"
 CONSUMER_KEY = "Consumer Key"
 VARIABLE = "variable"
 WEIGHT_UNIT_SETTING = "/wc/v3/settings/products/woocommerce_weight_unit"
+CURRENCY_SETTING = "/wc/v3/settings/general/woocommerce_currency"
 TAGS_PATH = "/wp/v2/tags"
 INCREMENTAL = frozenset({Kind.PRODUCT, Kind.DISCOUNT, Kind.ORDER, Kind.PAGE, Kind.ARTICLE})
 TYPES: Mapping[Kind, str] = {
@@ -54,6 +55,7 @@ TYPES: Mapping[Kind, str] = {
 	Kind.ARTICLE: "Post",
 	Kind.REVIEW: "ProductReview",
 	Kind.URL_REDIRECT: "Redirect",
+	Kind.GIFT_CARD: "GiftCard",
 }
 PATHS: Mapping[Kind, str] = {
 	Kind.COLLECTION: "/wc/v3/products/categories",
@@ -66,6 +68,8 @@ PATHS: Mapping[Kind, str] = {
 	Kind.ARTICLE: "/wp/v2/posts",
 	Kind.REVIEW: "/wc/v3/products/reviews",
 	Kind.URL_REDIRECT: "/redirection/v1/redirect",
+	# The WooCommerce Gift Cards extension's REST API (https://woocommerce.com/document/gift-cards/rest-api-reference/).
+	Kind.GIFT_CARD: "/wc/v3/gift-cards",
 }
 
 
@@ -78,6 +82,7 @@ class WooCommerceReader:
 		self._authors: dict[int, str] = {}
 		self._tags: dict[int, str] = {}
 		self._store_weight_unit: str | None = None
+		self._store_currency: str | None = None
 
 	@classmethod
 	def connect(
@@ -124,6 +129,9 @@ class WooCommerceReader:
 			case Kind.PAGE | Kind.ARTICLE:
 				items, more = self._list(kind, number, since, PAGE_SIZE, self._content_statuses())
 				nodes = [self._content(kind, item) for item in items]
+			case Kind.GIFT_CARD:
+				items, more = self._list(kind, number, since, PAGE_SIZE, {})
+				nodes = [self._gift_card(item) for item in items]
 			case Kind.COLLECTION | Kind.DISCOUNT | Kind.BLOG:
 				items, more = self._list(kind, number, since, PAGE_SIZE, {})
 				nodes = [self._identified(kind, item) for item in items]
@@ -188,6 +196,16 @@ class WooCommerceReader:
 		return self._identified(
 			Kind.PRODUCT, product.with_fields(variation_nodes=variations, weight_unit=self._weight_unit())
 		)
+
+	def _gift_card(self, card: Node) -> Node:
+		"""A gift card with the store's currency (cards are in it; the extension doesn't repeat it)."""
+		if self._store_currency is None:
+			setting = self._client.get(CURRENCY_SETTING)
+			value = setting.node.get("value") if setting else None
+			if not isinstance(value, str) or not value:
+				raise SourceError("WooCommerce didn't say the store's currency.")
+			self._store_currency = value
+		return self._identified(Kind.GIFT_CARD, card.with_fields(currency=self._store_currency))
 
 	def _weight_unit(self) -> str | None:
 		"""The store's one weight unit (a WooCommerce setting, not part of each product)."""

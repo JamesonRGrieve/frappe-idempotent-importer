@@ -27,6 +27,7 @@ class WooCommerceAdapter:
 			Kind.CUSTOMER,
 			Kind.DISCOUNT,
 			Kind.ORDER,
+			Kind.GIFT_CARD,
 			Kind.PAGE,
 			Kind.BLOG,
 			Kind.ARTICLE,

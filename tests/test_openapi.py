@@ -106,6 +106,7 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 	assert set(sources()) == {
 		"etsy",
 		"square_online",
+		"square_stored_value",
 		"bigcommerce",
 		"squarespace",
 		"wix",

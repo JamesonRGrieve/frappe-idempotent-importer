@@ -20,7 +20,9 @@ from idempotent_importer.contract import (
 	Condition,
 	Discount,
 	FreeItem,
+	LedgerEntry,
 	LineRates,
+	LoyaltyAccount,
 	OrderLine,
 	Shipment,
 	address_fields,
@@ -30,6 +32,7 @@ from idempotent_importer.contract import (
 	discount_desired,
 	included_taxes,
 	line_fields,
+	loyalty_fields,
 	order_line,
 	rating_fraction,
 	refund_balance,
@@ -1087,6 +1090,63 @@ class RedirectMapper:
 		return Desired(self.kind, node.id(), {"source": source, "target": target, "status": 301})
 
 
+# Loyalty transaction types that take points away (Wix records their amounts as counts).
+SUBTRACTING = frozenset({"REDEEM", "EXPIRE"})
+
+
+class LoyaltyAccountMapper:
+	"""A Wix Loyalty Program account → a Square Loyalty account (``contract.LoyaltyAccount``): its points
+	balance, the contact it belongs to (a mirrored customer, whose phone Square enrols by), and its
+	transactions as the ledger (earned and refunded points add, redeemed and expired points take away,
+	adjustments are as signed as Wix records them). Its tier, expiring points and totals stay with it."""
+
+	kind = Kind.LOYALTY_ACCOUNT
+	version = 1
+	DETAILS = (
+		"memberId",
+		"tier",
+		"pointsExpiration",
+		"rewardAvailable",
+		"lastActivityDate",
+		"createdDate",
+		"points",
+	)
+
+	def __init__(self, context: Context) -> None:
+		self._context = context
+
+	def map(self, node: Node) -> Desired | None:
+		contact = node.child("contact")
+		contact_id = node.optional_string("contactId")
+		given, _, family = (
+			((contact.optional_string("name") if contact else None) or "").strip().partition(" ")
+		)
+		ledger = []
+		for transaction in node.children("transactions"):
+			kind = transaction.string("transactionType")
+			amount = transaction.optional_integer("amount") or 0
+			ledger.append(
+				LedgerEntry(
+					self._context.gid("LoyaltyTransaction", transaction.string("id")),
+					transaction.optional_time("createdDate"),
+					kind.lower(),
+					-abs(amount) if kind in SUBTRACTING else amount,
+					note=transaction.optional_string("description") or None,
+				)
+			)
+		points = node.child("points")
+		account = LoyaltyAccount(
+			points=(points.optional_integer("balance") if points else None) or 0,
+			customer=self._context.gid("Contact", contact_id) if contact_id else None,
+			email=contact.optional_string("email") if contact else None,
+			given_name=given or None,
+			family_name=family or None,
+			ledger=ledger,
+			details={field: node.get(field) for field in self.DETAILS if node.has(field)},
+		)
+		return Desired(self.kind, node.id(), loyalty_fields(account))
+
+
 def mappers(config: ConnectionConfig) -> list[Mapper]:
 	context = Context(config)
 	return [
@@ -1095,6 +1155,7 @@ def mappers(config: ConnectionConfig) -> list[Mapper]:
 		ContactMapper(),
 		CouponMapper(context),
 		OrderMapper(context),
+		LoyaltyAccountMapper(context),
 		BlogMapper(),
 		ArticleMapper(context),
 		ReviewMapper(context),

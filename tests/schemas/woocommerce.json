@@ -519,6 +519,47 @@
      }
     }
    }
+  },
+  "/wp-json/wc/v3/gift-cards": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.com/document/gift-cards/rest-api-reference/"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/GiftCard"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/wp-json/wc/v3/gift-cards/{id}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://woocommerce.com/document/gift-cards/rest-api-reference/"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/GiftCard"
+        }
+       }
+      }
+     }
+    }
+   }
   }
  },
  "components": {
@@ -2944,6 +2985,147 @@
       "type": "integer"
      }
     }
+   },
+   "GiftCardActivity": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.com/document/gift-cards/rest-api-reference/"
+    },
+    "required": [
+     "id",
+     "type",
+     "amount",
+     "date"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "type": {
+      "type": "string",
+      "description": "e.g. issued (the reference lists no full set)"
+     },
+     "user_id": {
+      "type": "integer"
+     },
+     "user_email": {
+      "type": "string"
+     },
+     "object_id": {
+      "type": "integer"
+     },
+     "gc_id": {
+      "type": "integer"
+     },
+     "gc_code": {
+      "type": "string"
+     },
+     "amount": {
+      "type": "number"
+     },
+     "date": {
+      "type": "string"
+     },
+     "note": {
+      "type": "string"
+     }
+    },
+    "additionalProperties": false
+   },
+   "GiftCard": {
+    "type": "object",
+    "externalDocs": {
+     "url": "https://woocommerce.com/document/gift-cards/rest-api-reference/"
+    },
+    "required": [
+     "id",
+     "code",
+     "balance",
+     "remaining",
+     "is_active"
+    ],
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "code": {
+      "type": "string"
+     },
+     "recipient": {
+      "type": "string"
+     },
+     "sender": {
+      "type": "string"
+     },
+     "sender_email": {
+      "type": "string"
+     },
+     "message": {
+      "type": "string"
+     },
+     "balance": {
+      "type": "number"
+     },
+     "remaining": {
+      "type": "number"
+     },
+     "order_id": {
+      "type": "integer"
+     },
+     "order_item_id": {
+      "type": "integer"
+     },
+     "create_date": {
+      "type": "string"
+     },
+     "deliver_date": {
+      "type": [
+       "string",
+       "integer"
+      ],
+      "description": "Y-m-d H:i:s, or 0 when unset (as the reference's example shows)"
+     },
+     "expire_date": {
+      "type": [
+       "string",
+       "integer"
+      ],
+      "description": "Y-m-d H:i:s, or 0 when unset (as the reference's example shows)"
+     },
+     "redeem_date": {
+      "type": [
+       "string",
+       "integer"
+      ],
+      "description": "Y-m-d H:i:s, or 0 when unset (as the reference's example shows)"
+     },
+     "redeemed_by": {
+      "type": "integer"
+     },
+     "delivered": {
+      "type": "string"
+     },
+     "is_active": {
+      "type": "string",
+      "enum": [
+       "on",
+       "off"
+      ]
+     },
+     "activities": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/GiftCardActivity"
+      }
+     },
+     "meta_data": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/MetaData"
+      }
+     }
+    },
+    "additionalProperties": false
    }
   }
  }

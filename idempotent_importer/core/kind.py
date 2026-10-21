@@ -60,6 +60,9 @@ class Kind(StrEnum):
 	PURCHASE_INVOICE = "purchase_invoice"
 	PAYMENT_ENTRY = "payment_entry"
 	JOURNAL_ENTRY = "journal_entry"
+	# Stored value, written to the Square account it lives in (Square Gift Cards, Square Loyalty).
+	GIFT_CARD = "gift_card"
+	LOYALTY_ACCOUNT = "loyalty_account"
 
 	@classmethod
 	def parse(cls, value: str) -> Kind:
@@ -87,6 +90,8 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.OPPORTUNITY,
 	Kind.DISCOUNT,
 	Kind.ORDER,
+	Kind.GIFT_CARD,
+	Kind.LOYALTY_ACCOUNT,
 	Kind.DRAFT_ORDER,
 	Kind.SALES_ORDER,
 	Kind.PURCHASE_ORDER,

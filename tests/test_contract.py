@@ -13,23 +13,29 @@ from idempotent_importer import contract
 from idempotent_importer.contract import (
 	RECEIVE,
 	Allocation,
+	Attendance,
 	Charge,
+	Checkin,
 	Code,
 	Condition,
 	Discount,
 	Employee,
 	JournalLine,
 	Lead,
+	LeaveApplication,
 	LedgerAccount,
 	Opportunity,
 	OrderLine,
 	Party,
 	Payment,
+	ShiftAssignment,
 	TradeDocument,
 	TradeLine,
 	TradeTax,
 	account_fields,
+	attendance_fields,
 	booked,
+	checkin_fields,
 	conditions_json,
 	conditions_summary,
 	date_of,
@@ -38,6 +44,8 @@ from idempotent_importer.contract import (
 	included_taxes,
 	journal_fields,
 	lead_fields,
+	leave_application_fields,
+	leave_type_fields,
 	line_fields,
 	opportunity_fields,
 	order_line,
@@ -48,6 +56,7 @@ from idempotent_importer.contract import (
 	rating_fraction,
 	refund_balance,
 	required_date,
+	shift_assignment_fields,
 	trade_fields,
 	tree_fields,
 	variant_attributes,
@@ -409,3 +418,43 @@ class TestBooks:
 			employee_fields(replace(employee, gender="F"))
 		with pytest.raises(ValueError, match="employee status"):
 			employee_fields(replace(employee, status="Gone"))
+		assert "branch" not in fields, "an employee without a branch keeps its change signal"
+		assert employee_fields(replace(employee, branch="gid://x/c/Site/1"))["branch"] == "gid://x/c/Site/1"
+
+	def test_shifts_punches_attendance_and_leave(self) -> None:
+		shift = ShiftAssignment("gid://x/c/Member/1", "2026-10-05", "22:00:00", "06:00:00")
+		assert shift_assignment_fields(shift)["shift"] == {
+			"name": "22:00-06:00",
+			"start_time": "22:00:00",
+			"end_time": "06:00:00",
+		}
+		with pytest.raises(ValueError, match="time of day"):
+			shift_assignment_fields(replace(shift, start_time="22:00"))
+		with pytest.raises(ValueError, match="shift status"):
+			shift_assignment_fields(replace(shift, status="Draft"))
+		checkin = Checkin("gid://x/c/Member/1", "2026-10-05T11:58:12Z", "IN")
+		assert checkin_fields(checkin)["log_type"] == "IN"
+		with pytest.raises(ValueError, match="UTC time"):
+			checkin_fields(replace(checkin, time="2026-10-05 07:58"))
+		with pytest.raises(ValueError, match="log type"):
+			checkin_fields(replace(checkin, log_type="BREAK"))
+		day = Attendance("gid://x/c/Member/1", "2026-10-05", "Present", 450, "2026-10-05T12:00:00Z")
+		assert attendance_fields(day)["working_minutes"] == 450
+		with pytest.raises(Unsupported, match="minutes worked"):
+			attendance_fields(replace(day, working_minutes=-1))
+		with pytest.raises(ValueError, match="attendance status"):
+			attendance_fields(replace(day, status="Late"))
+		assert leave_type_fields("Vacation", True) == {"name": "Vacation", "paid": True}
+		leave = LeaveApplication(
+			"gid://x/c/Member/1",
+			"gid://x/c/LeaveType/1",
+			"2026-10-09",
+			"2026-10-10",
+			"Approved",
+			"2026-09-01",
+		)
+		assert leave_application_fields(leave)["to_date"] == "2026-10-10"
+		with pytest.raises(Unsupported, match="ending before it starts"):
+			leave_application_fields(replace(leave, to_date="2026-10-08"))
+		with pytest.raises(ValueError, match="leave status"):
+			leave_application_fields(replace(leave, status="Pending"))

@@ -15,6 +15,7 @@ import frappe
 from frappe import _
 
 from idempotent_importer.core.errors import SourceError
+from idempotent_importer.core.oauth import CALLBACK_PATH
 from idempotent_importer.core.run import Mode
 from idempotent_importer.core.source import OAuthSource
 from idempotent_importer.core.transport import RequestsTransport
@@ -22,7 +23,6 @@ from idempotent_importer.erpnext import engine, jobs
 from idempotent_importer.erpnext.stores import CONNECTION, FrappeCredentialHold
 from idempotent_importer.sources.registry import by_label
 
-CALLBACK_METHOD = "/api/method/idempotent_importer.api."
 # How long an approval may take before its state expires.
 STATE_TTL_SECONDS = 15 * 60
 STATE_CACHE = "idempotent_importer_oauth_state:"
@@ -60,7 +60,7 @@ def redirect_uri(source: OAuthSource, doc: Any) -> str:
 	"""The callback URL registered with the source's app."""
 	config = engine.config_of(doc, by_label(doc.source))
 	callback = source.oauth(config, RequestsTransport()).provider.callback
-	return frappe.utils.get_url(CALLBACK_METHOD + callback)
+	return frappe.utils.get_url(CALLBACK_PATH + callback)
 
 
 @frappe.whitelist(methods=["POST"])

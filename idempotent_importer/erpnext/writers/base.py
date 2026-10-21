@@ -51,6 +51,32 @@ def cancel_booked(doc: Any) -> None:
 			frappe.db.set_value(doctype, name, "disabled", 1, update_modified=False)
 
 
+DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
+RETIRED_COMMENT = "Removed at the source."
+
+
+def writable(doctype: str, doc: Any | None) -> Any:
+	"""The record a submittable document is written into: a new one (none yet, or the last was cancelled),
+	the linked draft, or, for a submitted one, its amendment (the submitted one is cancelled)."""
+	if doc is None or doc.docstatus == CANCELLED:
+		return frappe.new_doc(doctype)
+	if doc.docstatus == SUBMITTED:
+		doc.cancel()
+		amended = frappe.copy_doc(doc)
+		amended.docstatus = DRAFT
+		amended.amended_from = doc.name
+		return amended
+	return doc
+
+
+def mark_retired(doctype: str, name: str) -> None:
+	"""Marks a record the source removed that has no state of its own to switch off: a comment on it, once."""
+	if not frappe.db.exists(
+		"Comment", {"reference_doctype": doctype, "reference_name": name, "content": RETIRED_COMMENT}
+	):
+		frappe.get_doc(doctype, name).add_comment("Comment", RETIRED_COMMENT)
+
+
 class Writer(ABC):
 	"""A writer of one kind (``core.sync.Writer``)."""
 

@@ -24,11 +24,10 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money
-from idempotent_importer.erpnext.writers.base import Writer, cancel_booked
+from idempotent_importer.erpnext.writers.base import DRAFT, SUBMITTED, Writer, cancel_booked, writable
 
 ACCOUNT, COST_CENTER, WAREHOUSE, PROJECT = "Account", "Cost Center", "Warehouse", "Project"
 JOURNAL_ENTRY, PAYMENT_ENTRY = "Journal Entry", "Payment Entry"
-DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 NAME_LENGTH = 140
 REMARK_LENGTH = 140
 RETIRED_REMARK = "Retired: removed at the source."
@@ -184,15 +183,7 @@ class PostedWriter(Writer):
 
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
-		doc = self.existing(link)
-		if doc is None or doc.docstatus == CANCELLED:
-			doc = frappe.new_doc(self.doctype)
-		elif doc.docstatus == SUBMITTED:
-			doc.cancel()
-			amended = frappe.copy_doc(doc)
-			amended.docstatus = DRAFT
-			amended.amended_from = doc.name
-			doc = amended
+		doc = writable(self.doctype, self.existing(link))
 		self.fill(doc, values)
 		doc.save(ignore_permissions=True)
 		if values.flag("submitted"):

@@ -43,14 +43,13 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.money import decimal_text
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity, system_datetime
-from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+from idempotent_importer.erpnext.writers.base import CANCELLED, DRAFT, PART_HASH, SUBMITTED, Writer
 from idempotent_importer.erpnext.writers.parties import address_values, link_to
 
 INVOICE = "Sales Invoice"
 QUOTATION = "Quotation"
 PAYMENT = "Payment Entry"
 SHIPMENT = "Shipment"
-DRAFT, SUBMITTED, CANCELLED = 0, 1, 2
 UOM = "Nos"
 MULTI_CURRENCY_SETTING = "allow_multi_currency_invoices_against_single_party_account"
 ACCOUNT_NAME_LENGTH = 140

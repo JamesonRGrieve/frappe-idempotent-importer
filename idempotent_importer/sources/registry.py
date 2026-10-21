@@ -12,6 +12,7 @@ from idempotent_importer.core.http import HttpTransport, Sleeper
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.source import Adapter, ConnectionConfig, SourceReader
 from idempotent_importer.sources.acumatica.adapter import AcumaticaAdapter
+from idempotent_importer.sources.agendrix.adapter import AgendrixAdapter
 from idempotent_importer.sources.bigcommerce.adapter import BigCommerceAdapter
 from idempotent_importer.sources.dynamics_business_central.adapter import BusinessCentralAdapter
 from idempotent_importer.sources.dynamics_finance_operations.adapter import FinanceOperationsAdapter
@@ -58,10 +59,7 @@ class ListedAdapter:
 		return None
 
 
-LISTED: tuple[ListedAdapter, ...] = (
-	ListedAdapter("peoplesoft", "PeopleSoft"),
-	ListedAdapter("agendrix", "Agendrix"),
-)
+LISTED: tuple[ListedAdapter, ...] = (ListedAdapter("peoplesoft", "PeopleSoft"),)
 
 
 def all_adapters() -> dict[str, Adapter]:
@@ -89,6 +87,7 @@ def all_adapters() -> dict[str, Adapter]:
 		SapBusinessOneAdapter(),
 		AcumaticaAdapter(),
 		SageIntacctAdapter(),
+		AgendrixAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

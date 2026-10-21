@@ -1,0 +1,17 @@
+{
+	"request": {
+		"path": "/v1/positions/00000000-0000-4000-0002-000000000002",
+		"query": {}
+	},
+	"response": {
+		"data": {
+			"id": "00000000-0000-4000-0002-000000000002",
+			"name": "Kitchen",
+			"normalized_name": "kitchen",
+			"rank": 2,
+			"color": "#0f6973",
+			"created_at": "2026-09-01T09:00:00-04:00",
+			"updated_at": "2026-09-15T09:00:00-04:00"
+		}
+	}
+}

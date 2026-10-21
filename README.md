@@ -38,7 +38,8 @@ stores can import into two businesses at once and never touch each other's recor
 | SAP Business One | Built | The chart of accounts, profit centers, warehouses, item groups and items, customers, suppliers and leads with their contact persons and addresses, departments, positions, employees, projects, sales opportunities, quotations, sales and purchase orders, A/R and A/P invoices and credit notes, incoming and outgoing payments, and manual journal entries — [coverage/sap_business_one.md](coverage/sap_business_one.md) |
 | Acumatica | Built | GL accounts, subaccounts, warehouses, item classes, stock and non-stock items, customers and vendors with their contacts, departments and job titles, employees, projects, leads, opportunities, quotations, sales and purchase orders, A/R invoices, memos and cash sales, A/P bills and adjustments, payments and checks, and general ledger batches — [coverage/acumatica.md](coverage/acumatica.md) |
 | Sage Intacct | Built | GL accounts, departments, warehouses, items, customers and vendors with their contact lists, employees and titles, projects, order entry quotes and sales orders, purchase orders, AR invoices, AP bills, AR and AP payments, and general journal transactions; the other Sage products are planned — [coverage/sage_intacct.md](coverage/sage_intacct.md) |
-| PeopleSoft, Agendrix | Listed | Connections can be created but refuse to run until a later phase builds the adapter; each has a coverage page in [coverage/](coverage/). |
+| Agendrix | Built | Sites, positions and members into HRMS, time off types and requests, shifts on the Shift Types of their hours, time clock punches and each day's attendance from its time entries — [coverage/agendrix.md](coverage/agendrix.md) |
+| PeopleSoft | Listed | Connections can be created but refuse to run until a later phase builds the adapter; it has a coverage page in [coverage/](coverage/). |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -185,6 +186,10 @@ This is the operator's decision to confirm (see below).
      the company ID as the account, the user ID and password, the sender ID as **Key or Certificate ID** and
      its password as **Sender Password**, and in the **Field Map** any equity accounts and the company's own
      transaction definitions and journals ([coverage/sage_intacct.md](coverage/sage_intacct.md)).
+   - **Agendrix:** on an organisation on Agendrix's Plus plan, create an application in its developer
+     portal (developers.agendrix.com) with the same redirect URI; enter `https://app.agendrix.com` as the
+     Store URL and the application's client ID and secret, save, then click **Connect to Agendrix** signed in
+     as an administrator of the organisation ([coverage/agendrix.md](coverage/agendrix.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty
@@ -363,7 +368,7 @@ Still to do:
 2. **Router clean URLs** (frappe-public-site-router): serve Website Items, Item Groups and Blog Posts at
    `/<path>` on a site's hosts from `<prefix>/<path>`, and resolve Website Route Redirects whose source
    is under the site's prefix before Frappe's global redirect lookup.
-3. **ERP and HR sources** (PeopleSoft, Agendrix): a later phase.
+3. **ERP and HR sources** (PeopleSoft): a later phase.
 4. **Native mirroring still to build (card 386):** multi-location stock as one Warehouse per source
    location; fixed bundles as Product Bundles; wishlists in the Webshop's Wishlist; units of measure
    (Square's measurement units, Ecwid's carats); itemised refunds where the source gives the refunded items

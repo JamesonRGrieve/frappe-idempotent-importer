@@ -102,6 +102,23 @@ def test_operations_are_found_by_path_after_the_server_prefix() -> None:
 	assert spec.response_schema("GET", "/V1/things/7") is None
 
 
+def test_a_shared_response_is_followed() -> None:
+	document = {
+		"openapi": "3.0.0",
+		"components": {
+			"schemas": {"Thing": {"type": "object"}},
+			"responses": {
+				"ThingMany": {
+					"content": {"application/json": {"schema": {"$ref": "#/components/schemas/Thing"}}}
+				}
+			},
+		},
+		"paths": {"/things": {"get": {"responses": {"200": {"$ref": "#/components/responses/ThingMany"}}}}},
+	}
+	spec = ApiSpec.of(document, "")
+	assert spec.response_schema("GET", "/things") == {"$ref": "#/components/schemas/Thing"}
+
+
 def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None:
 	assert set(sources()) == {
 		"etsy",
@@ -124,6 +141,7 @@ def test_the_catalog_pins_every_fetched_document_and_names_its_sources() -> None
 		"netsuite",
 		"sap_business_one",
 		"acumatica",
+		"agendrix",
 	}
 	commit = re.compile(r"/[0-9a-f]{40}/")
 	for document in catalog():

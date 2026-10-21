@@ -66,7 +66,14 @@ department   name, parent (identity | None), is_group
 designation  name
 employee     first_name, middle_name, last_name, gender, date_of_birth, date_of_joining, relieving_date,
              status, employee_number, department, designation, reports_to (identities | None),
-             company_email, personal_email, phone
+             company_email, personal_email, phone; optionally branch (identity)
+branch       name (a place the company works from)
+leave_type   name, paid
+shift_assignment  employee, date, shift ({name, start_time, end_time}: HH:MM:SS on the source's clock),
+             status, submitted
+employee_checkin  employee, time, log_type ("IN" | "OUT"), device
+attendance   employee, date, status, working_minutes, in_time, out_time, leave_type, submitted
+leave_application  employee, leave_type, from_date, to_date, status, posting_date, half_day, description
 sales_order, purchase_order, sales_invoice, purchase_invoice
              number, date, due_date (an order's delivery date), party (customer or supplier identity),
              currency, exchange_rate, lines ([line + account, cost_center, project]), taxes
@@ -1149,10 +1156,13 @@ class Employee:
 	company_email: str | None = None
 	personal_email: str | None = None
 	phone: str | None = None
+	branch: str | None = None
 
 
 def employee_fields(employee: Employee) -> Fields:
-	return {
+	"""An ``employee``'s fields; its branch only when the source keeps one, so an employee mapped before
+	branches existed keeps its change signal."""
+	fields: Fields = {
 		"first_name": employee.first_name,
 		"middle_name": employee.middle_name,
 		"last_name": employee.last_name,
@@ -1168,6 +1178,151 @@ def employee_fields(employee: Employee) -> Fields:
 		"company_email": employee.company_email,
 		"personal_email": employee.personal_email,
 		"phone": employee.phone,
+	}
+	return fields | {"branch": employee.branch} if employee.branch else fields
+
+
+# -- Time and leave (HR sources) -------------------------------------------------------------------------
+
+UTC_TIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+WALL_TIME = re.compile(r"^\d{2}:\d{2}:\d{2}$")
+SHIFT_STATUSES = frozenset({"Active", "Inactive"})
+LOG_TYPES = frozenset({"IN", "OUT"})
+ATTENDANCE_STATUSES = frozenset({"Present", "Absent", "On Leave", "Half Day", "Work From Home"})
+LEAVE_STATUSES = frozenset({"Open", "Approved", "Rejected", "Cancelled"})
+# A leave the source approved or refused is decided (submitted); an open or cancelled one is not.
+DECIDED_LEAVE = frozenset({"Approved", "Rejected"})
+
+
+def checked_time(value: str | None, what: str) -> str | None:
+	"""A UTC ``YYYY-MM-DDTHH:MM:SSZ`` time, or None; anything else is a mapper's mistake."""
+	if value is not None and not UTC_TIME.match(value):
+		raise ValueError(f"{what} is not a UTC time: {value!r}")
+	return value
+
+
+def wall_time(value: str, what: str) -> str:
+	"""A time of day as the source's clock shows it (``HH:MM:SS``, no zone)."""
+	if not WALL_TIME.match(value):
+		raise ValueError(f"{what} is not an HH:MM:SS time of day: {value!r}")
+	return value
+
+
+def shift_name(start_time: str, end_time: str) -> str:
+	"""The Shift Type a shift's hours are kept as, named by them: 08:00-16:30."""
+	return f"{start_time[:5]}-{end_time[:5]}"
+
+
+@dataclass(frozen=True)
+class ShiftAssignment:
+	"""A shift an employee (an identity) is scheduled for: the day it starts, and its hours as the source's
+	clock shows them (the Shift Type of those hours; one ending before it starts runs past midnight).
+	``submitted`` once the source has published it; ``status`` "Inactive" for one the employee won't work."""
+
+	employee: str
+	date: str
+	start_time: str
+	end_time: str
+	submitted: bool = True
+	status: str = "Active"
+
+
+def shift_assignment_fields(shift: ShiftAssignment) -> Fields:
+	start = wall_time(shift.start_time, "a shift's start")
+	end = wall_time(shift.end_time, "a shift's end")
+	return {
+		"employee": shift.employee,
+		"date": required_date(shift.date, "a shift's date"),
+		"shift": {"name": shift_name(start, end), "start_time": start, "end_time": end},
+		"status": one_of(shift.status, SHIFT_STATUSES, "shift status"),
+		"submitted": shift.submitted,
+	}
+
+
+@dataclass(frozen=True)
+class Checkin:
+	"""One punch of the time clock: the employee (an identity), when (UTC), in or out, and the device."""
+
+	employee: str
+	time: str
+	log_type: str
+	device: str | None = None
+
+
+def checkin_fields(checkin: Checkin) -> Fields:
+	return {
+		"employee": checkin.employee,
+		"time": checked_time(checkin.time, "a punch's time"),
+		"log_type": one_of(checkin.log_type, LOG_TYPES, "log type"),
+		"device": checkin.device,
+	}
+
+
+@dataclass(frozen=True)
+class Attendance:
+	"""An employee's (an identity) attendance on a day: its status, the minutes worked, the first punch in
+	and last punch out (UTC), the leave type (an identity) of a day on leave, and ``submitted`` once the
+	source has approved the day's time."""
+
+	employee: str
+	date: str
+	status: str
+	working_minutes: int
+	in_time: str | None = None
+	out_time: str | None = None
+	leave_type: str | None = None
+	submitted: bool = True
+
+
+def attendance_fields(attendance: Attendance) -> Fields:
+	if attendance.working_minutes < 0:
+		raise Unsupported(f"{attendance.working_minutes} minutes worked can't be booked")
+	return {
+		"employee": attendance.employee,
+		"date": required_date(attendance.date, "an attendance's date"),
+		"status": one_of(attendance.status, ATTENDANCE_STATUSES, "attendance status"),
+		"working_minutes": attendance.working_minutes,
+		"in_time": checked_time(attendance.in_time, "an attendance's first punch"),
+		"out_time": checked_time(attendance.out_time, "an attendance's last punch"),
+		"leave_type": attendance.leave_type,
+		"submitted": attendance.submitted,
+	}
+
+
+def leave_type_fields(name: str, paid: bool) -> Fields:
+	"""A kind of leave: its name, and whether it is paid (an unpaid one is leave without pay)."""
+	return {"name": name, "paid": paid}
+
+
+@dataclass(frozen=True)
+class LeaveApplication:
+	"""A leave an employee (an identity) asked for: its type (an identity), first and last day, status
+	(LEAVE_STATUSES), whether it is half a day, the employee's reason and the day it was asked on."""
+
+	employee: str
+	leave_type: str
+	from_date: str
+	to_date: str
+	status: str
+	posting_date: str
+	half_day: bool = False
+	description: str | None = None
+
+
+def leave_application_fields(leave: LeaveApplication) -> Fields:
+	start = required_date(leave.from_date, "a leave's first day")
+	end = required_date(leave.to_date, "a leave's last day")
+	if end < start:
+		raise Unsupported(f"a leave from {start} ending before it starts ({end})")
+	return {
+		"employee": leave.employee,
+		"leave_type": leave.leave_type,
+		"from_date": start,
+		"to_date": end,
+		"status": one_of(leave.status, LEAVE_STATUSES, "leave status"),
+		"posting_date": required_date(leave.posting_date, "a leave's posting date"),
+		"half_day": leave.half_day,
+		"description": leave.description,
 	}
 
 

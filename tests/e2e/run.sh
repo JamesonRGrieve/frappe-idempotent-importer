@@ -64,9 +64,10 @@ SOURCES=(
 	sap-b:sap_business_one-fake:assert_sap_business_one
 	acumatica-a:acumatica-fake:assert_acumatica
 	intacct-s:sage_intacct-fake:assert_sage_intacct
+	agendrix-a:agendrix-fake:assert_agendrix
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

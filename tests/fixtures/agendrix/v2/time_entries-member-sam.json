@@ -1,0 +1,22 @@
+{
+	"request": {
+		"path": "/v1/time_entries",
+		"query": {
+			"page": "1",
+			"search[member_id]": "00000000-0000-4000-0003-000000000003"
+		}
+	},
+	"response": {
+		"data": [],
+		"pagination": {
+			"page_size": 100,
+			"limit": 100,
+			"current_page": 1,
+			"total_pages": 1,
+			"first_page": true,
+			"last_page": true,
+			"out_of_range": false,
+			"total_count": 0
+		}
+	}
+}

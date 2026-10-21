@@ -60,7 +60,17 @@ from idempotent_importer.erpnext.writers.content import (
 )
 from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.hr import DepartmentWriter, DesignationWriter, EmployeeWriter
+from idempotent_importer.erpnext.writers.hr import (
+	AttendanceWriter,
+	BranchWriter,
+	CheckinWriter,
+	DepartmentWriter,
+	DesignationWriter,
+	EmployeeWriter,
+	LeaveApplicationWriter,
+	LeaveTypeWriter,
+	ShiftAssignmentWriter,
+)
 from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter, SupplierWriter
 from idempotent_importer.erpnext.writers.sales import DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
@@ -107,7 +117,13 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.OPPORTUNITY: OpportunityWriter,
 	Kind.DEPARTMENT: DepartmentWriter,
 	Kind.DESIGNATION: DesignationWriter,
+	Kind.BRANCH: BranchWriter,
 	Kind.EMPLOYEE: EmployeeWriter,
+	Kind.LEAVE_TYPE: LeaveTypeWriter,
+	Kind.SHIFT_ASSIGNMENT: ShiftAssignmentWriter,
+	Kind.EMPLOYEE_CHECKIN: CheckinWriter,
+	Kind.LEAVE_APPLICATION: LeaveApplicationWriter,
+	Kind.ATTENDANCE: AttendanceWriter,
 	Kind.SALES_ORDER: SalesOrderWriter,
 	Kind.PURCHASE_ORDER: PurchaseOrderWriter,
 	Kind.SALES_INVOICE: SalesInvoiceWriter,
@@ -144,7 +160,13 @@ SWITCHES: dict[Kind, str] = {
 	Kind.OPPORTUNITY: "import_crm",
 	Kind.DEPARTMENT: "import_hr",
 	Kind.DESIGNATION: "import_hr",
+	Kind.BRANCH: "import_hr",
 	Kind.EMPLOYEE: "import_hr",
+	Kind.LEAVE_TYPE: "import_hr",
+	Kind.SHIFT_ASSIGNMENT: "import_hr",
+	Kind.EMPLOYEE_CHECKIN: "import_hr",
+	Kind.LEAVE_APPLICATION: "import_hr",
+	Kind.ATTENDANCE: "import_hr",
 	Kind.SALES_ORDER: "import_sales_orders",
 	Kind.PURCHASE_ORDER: "import_purchases",
 	Kind.SALES_INVOICE: "import_invoices",
@@ -213,6 +235,7 @@ def config_of(doc: Any, adapter: Adapter) -> ConnectionConfig:
 		save_refresh_token=lambda token: save_refresh_token(connection, token),
 		field_map=str(doc.get("field_map") or ""),
 		endpoint_override=endpoints.get(doc.name),
+		site_url=frappe.utils.get_url(),
 		gift_card_load_increases=bool(doc.get("gift_card_load_increases")),
 		gift_card_new_numbers=bool(doc.get("gift_card_new_numbers")),
 	)

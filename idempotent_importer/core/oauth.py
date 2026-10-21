@@ -48,6 +48,9 @@ RSA_ALGORITHM = "PS256"
 PEM_ON_ONE_LINE = re.compile(r"-----BEGIN ([A-Z ]+)-----([A-Za-z0-9+/=\s]+)-----END \1-----")
 PEM_LINE_LENGTH = 64
 FORM_HEADERS = {"Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json"}
+JSON_CONTENT_TYPE = "application/json"
+# Where a source sends the owner back: this path, then the provider's ``callback`` method.
+CALLBACK_PATH = "/api/method/idempotent_importer.api."
 # Token-response fields that are credentials, never kept in a grant's ``extra``.
 TOKEN_FIELDS = ("access_token", "refresh_token", "id_token")
 
@@ -88,6 +91,10 @@ class OAuthProvider:
 	authorize_params: tuple[tuple[str, str], ...] = ()
 	# The desk method the source sends the owner back to (the redirect URI registered with the app).
 	callback: str = "oauth_callback"
+	# A provider whose token endpoint takes its parameters as JSON rather than a form (Agendrix's).
+	json_token_requests: bool = False
+	# A provider that wants the redirect URI on every refresh too (Agendrix's).
+	redirect_on_refresh: bool = False
 
 	@property
 	def pkce(self) -> bool:
@@ -166,10 +173,16 @@ def token_response(
 	form: Mapping[str, str],
 	label: str,
 	reconnect: str,
+	as_json: bool = False,
 ) -> dict[str, JsonValue]:
-	"""A token endpoint's answer to ``form``: rate limiting and server errors pause the run, any other
-	refusal (an HTTP error, or a 200 carrying an ``error``) rejects the credentials."""
-	response = transport.post(url, dict(headers), urlencode(form).encode(), TOKEN_REQUEST_TIMEOUT_SECONDS)
+	"""A token endpoint's answer to ``form`` (sent as JSON when ``as_json``): rate limiting and server errors
+	pause the run, any other refusal (an HTTP error, or a 200 carrying an ``error``) rejects the credentials."""
+	if as_json:
+		headers = {**headers, "Content-Type": JSON_CONTENT_TYPE}
+		body = json.dumps(dict(form), separators=(",", ":")).encode()
+	else:
+		body = urlencode(form).encode()
+	response = transport.post(url, dict(headers), body, TOKEN_REQUEST_TIMEOUT_SECONDS)
 	if response.status == HTTP_TOO_MANY_REQUESTS or response.status >= HTTP_SERVER_ERROR:
 		raise RetryLater(
 			RetryPolicy.wait(response, FIRST_ATTEMPT) or RetryPolicy.backoff(FIRST_ATTEMPT),
@@ -218,8 +231,11 @@ class OAuthClient:
 		refresh_token: str,
 		save: Callable[[str], None],
 		token_url: str | None = None,
+		redirect_uri: str | None = None,
 	) -> None:
 		self.provider = provider
+		# The callback registered with the app, for a provider that wants it on every refresh.
+		self._redirect_uri = redirect_uri
 		self._app = app
 		self._transport = transport
 		self._refresh_token = refresh_token
@@ -256,17 +272,25 @@ class OAuthClient:
 			raise CredentialsRejected(
 				f"{self.provider.label} is not connected: use Connect on the connection."
 			)
-		return self.token(
-			{"grant_type": "refresh_token", "refresh_token": self._refresh_token},
-			needs_refresh_token=self.provider.rotates_refresh_token,
-		)
+		form = {"grant_type": "refresh_token", "refresh_token": self._refresh_token}
+		if self.provider.redirect_on_refresh:
+			if not self._redirect_uri:
+				raise SourceError(f"{self.provider.label} needs the app's redirect URI to refresh its token.")
+			form["redirect_uri"] = self._redirect_uri
+		return self.token(form, needs_refresh_token=self.provider.rotates_refresh_token)
 
 	def token(self, form: dict[str, str], needs_refresh_token: bool) -> TokenGrant:
 		"""One token request of ``form``'s grant, the client authenticated as the provider says."""
 		headers, body = authenticated(self.provider.client_auth, self._app, form)
 		label = self.provider.label
 		document = token_response(
-			self._transport, self._token_url, headers, body, label, self.provider.reconnect
+			self._transport,
+			self._token_url,
+			headers,
+			body,
+			label,
+			self.provider.reconnect,
+			self.provider.json_token_requests,
 		)
 		refresh = document.get("refresh_token")
 		if isinstance(refresh, str) and refresh:

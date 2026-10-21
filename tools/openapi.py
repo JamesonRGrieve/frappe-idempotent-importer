@@ -12,12 +12,13 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 NULL_TYPE = "null"
 OPENAPI_REF_PREFIX = "#/components/schemas/"
 SWAGGER_REF_PREFIX = "#/definitions/"
+RESPONSE_REF_PREFIX = "#/components/responses/"
 TEMPLATE_PARAMETER = re.compile(r"\\\{[A-Za-z_]+\\\}")
 
 type Schema = dict[str, Any]
@@ -188,6 +189,8 @@ class ApiSpec:
 	ref_prefix: str
 	paths: dict[str, dict[str, Any]]
 	prefix_pattern: str
+	# OpenAPI 3's shared responses (``components.responses``), which an operation may refer to by $ref.
+	responses: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 	@classmethod
 	def of(cls, document: dict[str, Any], prefix_pattern: str) -> ApiSpec:
@@ -200,6 +203,7 @@ class ApiSpec:
 			SWAGGER_REF_PREFIX if swagger else OPENAPI_REF_PREFIX,
 			dict(document.get("paths") or {}),
 			prefix_pattern,
+			{} if swagger else dict((document.get("components") or {}).get("responses") or {}),
 		)
 
 	def operation(self, method: str, path: str) -> dict[str, Any] | None:
@@ -221,9 +225,11 @@ class ApiSpec:
 		operation = self.operation(method, path)
 		if operation is None:
 			return None
-		return at(operation, ("responses", "200", "content", "application/json", "schema")) or at(
-			operation, ("responses", "200", "schema")
-		)
+		response = at(operation, ("responses", "200"))
+		reference = response.get("$ref") if response else None
+		if isinstance(reference, str) and reference.startswith(RESPONSE_REF_PREFIX):
+			response = self.responses.get(reference.removeprefix(RESPONSE_REF_PREFIX))
+		return at(response, ("content", "application/json", "schema")) or at(response, ("schema",))
 
 	def request_schema(self, method: str, path: str) -> Schema | None:
 		"""The JSON request body schema (OpenAPI 3's requestBody, or Swagger 2's body parameter)."""

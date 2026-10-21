@@ -156,7 +156,16 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		True,
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
 	),
+	# Agendrix takes its token requests as JSON, and every API request is JSON.
+	"agendrix-fake": (
+		"agendrix",
+		"/oauth/token",
+		True,
+		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}", "Content-Type": "application/json"},
+	),
 }
+# The OAuth sources whose token endpoint takes JSON and wants the redirect URI on a refresh too.
+JSON_GRANT_HOSTS = frozenset({"agendrix-fake"})
 XERO_CONNECTIONS = "/Connections"
 # NetSuite's machine-to-machine grant: a client assertion signed by the e2e certificate's key (generated on
 # the bench, so its signature isn't checked here), for the account's canonical token endpoint.
@@ -235,6 +244,9 @@ class FakeStore(BaseHTTPRequestHandler):
 		if host in OAUTH_SOURCES:
 			source, grant_path, rotates, headers = OAUTH_SOURCES[host]
 			if method == "POST" and self.path.split("?", 1)[0] == grant_path:
+				if host in JSON_GRANT_HOSTS:
+					self.send(json_grant(body))
+					return
 				self.send(
 					oauth_grant(rotates, parse_qs(body.decode()).get("grant_type") == ["authorization_code"])
 				)
@@ -337,6 +349,19 @@ def oauth_grant(rotates: bool, exchange: bool) -> Answer:
 	if rotates or exchange:
 		grant["refresh_token"] = OAUTH_ROTATED_REFRESH_TOKEN
 	return Answer(200, json.dumps(grant).encode())
+
+
+def json_grant(body: bytes) -> Answer:
+	"""A token request sent as JSON, naming the redirect URI on a refresh as well as an exchange (Agendrix's);
+	anything else is refused as an OAuth 2 server refuses it."""
+	try:
+		request = json.loads(body)
+	except ValueError:
+		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_request"}')
+	grant_type = request.get("grant_type") if isinstance(request, dict) else None
+	if grant_type not in ("authorization_code", "refresh_token") or not request.get("redirect_uri"):
+		return Answer(HTTP_BAD_REQUEST, b'{"error":"invalid_request"}')
+	return oauth_grant(True, grant_type == "authorization_code")
 
 
 def pdf() -> bytes:

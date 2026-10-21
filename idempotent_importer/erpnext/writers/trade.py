@@ -29,15 +29,8 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money
-from idempotent_importer.erpnext.writers.base import cancel_booked
-from idempotent_importer.erpnext.writers.sales import (
-	CANCELLED,
-	DRAFT,
-	RETIRED_MARK,
-	RETIRED_REMARK,
-	SUBMITTED,
-	SalesDocuments,
-)
+from idempotent_importer.erpnext.writers.base import DRAFT, SUBMITTED, cancel_booked, writable
+from idempotent_importer.erpnext.writers.sales import RETIRED_MARK, RETIRED_REMARK, SalesDocuments
 
 REMARK_LENGTH = 140
 
@@ -83,15 +76,7 @@ class TradeWriter(SalesDocuments):
 
 	def write(self, desired: Desired, link: Link | None) -> Target:
 		values = desired.values()
-		doc = self.existing(link)
-		if doc is None or doc.docstatus == CANCELLED:
-			doc = frappe.new_doc(self.spec.doctype)
-		elif doc.docstatus == SUBMITTED:
-			doc.cancel()
-			amended = frappe.copy_doc(doc)
-			amended.docstatus = DRAFT
-			amended.amended_from = doc.name
-			doc = amended
+		doc = writable(self.spec.doctype, self.existing(link))
 		self._fill(doc, values)
 		doc.save(ignore_permissions=True)
 		# Every tax row is an amount ERPNext books as given; only the totals are computed.

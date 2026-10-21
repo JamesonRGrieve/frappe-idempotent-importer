@@ -8,6 +8,7 @@ from __future__ import annotations
 import base64
 import json
 from collections.abc import Callable
+from dataclasses import replace
 from urllib.parse import parse_qs, urlsplit
 
 import jwt
@@ -88,6 +89,28 @@ def test_a_form_client_sends_its_secret_and_a_kept_refresh_token_stays() -> None
 	assert "Authorization" not in transport.requests[0].headers
 	assert saved == []
 	assert "a1" not in repr(issued) and "secret" not in repr(flow)
+
+
+def test_a_json_provider_sends_json_and_its_refresh_names_the_redirect_uri() -> None:
+	json_provider = replace(provider(ClientAuth.FORM), json_token_requests=True, redirect_on_refresh=True)
+	transport = scripted(grant(access_token="a1", refresh_token="r2"))
+	saved = Saved()
+	flow = OAuthClient(
+		json_provider, OAuthApp("id", "secret"), transport, "r1", saved, redirect_uri="https://erp/cb"
+	)
+	assert flow.refresh() == "a1" and saved == ["r2"]
+	request = transport.requests[0]
+	assert request.headers["Content-Type"] == "application/json"
+	assert json.loads(request.body) == {
+		"grant_type": "refresh_token",
+		"refresh_token": "r1",
+		"redirect_uri": "https://erp/cb",
+		"client_id": "id",
+		"client_secret": "secret",
+	}
+	without = OAuthClient(json_provider, OAuthApp("id", "secret"), scripted(), "r1", Saved())
+	with pytest.raises(SourceError, match="redirect URI"):
+		without.refresh()
 
 
 def test_the_code_exchange_must_grant_a_refresh_token() -> None:

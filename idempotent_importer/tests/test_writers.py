@@ -30,6 +30,8 @@ from frappe.utils.password import set_encrypted_password
 from idempotent_importer import contract
 from idempotent_importer.contract import (
 	Allocation,
+	Attendance,
+	Checkin,
 	Code,
 	Condition,
 	ContactPerson,
@@ -37,24 +39,31 @@ from idempotent_importer.contract import (
 	Employee,
 	JournalLine,
 	Lead,
+	LeaveApplication,
 	LedgerAccount,
 	Opportunity,
 	Party,
 	Payment,
+	ShiftAssignment,
 	Tier,
 	TradeDocument,
 	TradeLine,
 	TradeTax,
 	account_fields,
+	attendance_fields,
+	checkin_fields,
 	discount_fields,
 	employee_fields,
 	journal_fields,
 	lead_fields,
+	leave_application_fields,
+	leave_type_fields,
 	opportunity_fields,
 	order_line,
 	party_fields,
 	payment_fields,
 	project_fields,
+	shift_assignment_fields,
 	trade_fields,
 	tree_fields,
 	warehouse_fields,
@@ -65,7 +74,7 @@ from idempotent_importer.core.fields import Field, Fields
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.node import Node
 from idempotent_importer.core.sync import Handler, ObjectSync, Outcome, Target
-from idempotent_importer.erpnext.context import ConnectionContext
+from idempotent_importer.erpnext.context import ConnectionContext, system_datetime
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
 from idempotent_importer.erpnext.writers import stored_value
@@ -91,7 +100,17 @@ from idempotent_importer.erpnext.writers.content import (
 )
 from idempotent_importer.erpnext.writers.crm import LeadWriter, OpportunityWriter
 from idempotent_importer.erpnext.writers.discounts import DiscountWriter
-from idempotent_importer.erpnext.writers.hr import DepartmentWriter, DesignationWriter, EmployeeWriter
+from idempotent_importer.erpnext.writers.hr import (
+	AttendanceWriter,
+	BranchWriter,
+	CheckinWriter,
+	DepartmentWriter,
+	DesignationWriter,
+	EmployeeWriter,
+	LeaveApplicationWriter,
+	LeaveTypeWriter,
+	ShiftAssignmentWriter,
+)
 from idempotent_importer.erpnext.writers.parties import CustomerGroupWriter, CustomerWriter, SupplierWriter
 from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING, DraftOrderWriter, OrderWriter
 from idempotent_importer.erpnext.writers.shipping import DeliveryProfileWriter
@@ -1647,6 +1666,128 @@ class TestWriters(IntegrationTestCase):
 		self.assertEqual(frappe.db.get_value("Employee", employee, "status"), "Inactive")
 		self.retire(Kind.DEPARTMENT, DepartmentWriter, department)
 		self.assertEqual(frappe.db.get_value("Department", team, "disabled"), 1)
+
+	def employee_at(self, key: str, branch: str | None = None) -> str:
+		"""A mirrored employee who joined long ago (attendance can't predate joining)."""
+		fields = employee_fields(
+			Employee("Casey", "Active", last_name="Clock", date_of_joining="2020-01-06", branch=branch)
+		)
+		self.mirror(Kind.EMPLOYEE, EmployeeWriter, key, fields)
+		return self.target(Kind.EMPLOYEE, key)
+
+	def test_branches_shifts_and_punches(self) -> None:
+		site = gid("Site", "1")
+		_, branch = self.assert_lifecycle(
+			Kind.BRANCH, BranchWriter, site, {"name": "Downtown"}, {"name": "Downtown Café"}
+		)
+		self.assertEqual(branch, "Downtown Café - WT", "renamed with the source")
+		member = gid("Member", "1")
+		employee = self.employee_at(member, site)
+		self.assertEqual(frappe.db.get_value("Employee", employee, "branch"), "Downtown Café - WT")
+		key = gid("Shift", "1")
+		first = shift_assignment_fields(ShiftAssignment(member, "2026-03-02", "08:00:00", "16:00:00"))
+		moved = shift_assignment_fields(ShiftAssignment(member, "2026-03-02", "09:00:00", "17:00:00"))
+		_, assignment = self.assert_lifecycle(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, key, first, moved)
+		doc = frappe.get_doc("Shift Assignment", assignment)
+		self.assertEqual((doc.shift_type, doc.docstatus, doc.employee), ("09:00-17:00 - WT", 1, employee))
+		self.assertTrue(doc.amended_from, "a published shift that moved is amended")
+		self.assertEqual(str(frappe.db.get_value("Shift Type", "09:00-17:00 - WT", "start_time")), "9:00:00")
+		self.retire(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, key)
+		self.assertEqual(frappe.db.get_value("Shift Assignment", assignment, "docstatus"), 2)
+		draft_key = gid("Shift", "2")
+		draft = shift_assignment_fields(
+			ShiftAssignment(member, "2026-03-03", "08:00:00", "16:00:00", submitted=False)
+		)
+		self.mirror(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, draft_key, draft)
+		self.retire(Kind.SHIFT_ASSIGNMENT, ShiftAssignmentWriter, draft_key)
+		name = self.target(Kind.SHIFT_ASSIGNMENT, draft_key)
+		self.assertEqual(
+			frappe.db.get_value("Shift Assignment", name, ["docstatus", "status"]), (0, "Inactive")
+		)
+
+		punch = gid("ClockLog", "1")
+		_, checkin = self.assert_lifecycle(
+			Kind.EMPLOYEE_CHECKIN,
+			CheckinWriter,
+			punch,
+			checkin_fields(Checkin(member, "2026-03-02T15:58:12Z", "IN", "tablet")),
+			checkin_fields(Checkin(member, "2026-03-02T15:59:12Z", "IN", "tablet")),
+		)
+		self.assertEqual(
+			str(frappe.db.get_value("Employee Checkin", checkin, "time")),
+			str(system_datetime("2026-03-02T15:59:12Z")),
+			"a punch is kept in the site's time zone",
+		)
+		self.retire(Kind.EMPLOYEE_CHECKIN, CheckinWriter, punch)
+		self.assertEqual(
+			frappe.db.get_value("Employee Checkin", checkin, ["skip_auto_attendance", "device_id"]),
+			(1, "[Removed at source] tablet"),
+		)
+
+	def test_attendance_and_leave(self) -> None:
+		member = gid("Member", "2")
+		employee = self.employee_at(member)
+		day = gid("Attendance", "2:2026-03-02")
+		first = attendance_fields(
+			Attendance(member, "2026-03-02", "Present", 450, "2026-03-02T13:00:00Z", "2026-03-02T21:00:00Z")
+		)
+		_, attendance = self.assert_lifecycle(
+			Kind.ATTENDANCE, AttendanceWriter, day, first, {**first, "working_minutes": 465}
+		)
+		self.assertEqual(
+			frappe.db.get_value("Attendance", attendance, ["working_hours", "docstatus", "status"]),
+			(7.75, 1, "Present"),
+		)
+		self.retire(Kind.ATTENDANCE, AttendanceWriter, day)
+		self.assertEqual(frappe.db.get_value("Attendance", attendance, "docstatus"), 2)
+
+		vacation = gid("LeaveType", "1")
+		_, leave_type = self.assert_lifecycle(
+			Kind.LEAVE_TYPE,
+			LeaveTypeWriter,
+			vacation,
+			leave_type_fields("Vacation", True),
+			leave_type_fields("Vacation", False),
+		)
+		self.assertEqual(
+			frappe.db.get_value("Leave Type", leave_type, ["is_lwp", "allow_negative", "include_holiday"]),
+			(1, 1, 1),
+		)
+		request = gid("LeaveRequest", "1")
+		asked = leave_application_fields(
+			LeaveApplication(
+				member, vacation, "2026-03-09", "2026-03-10", "Open", "2026-03-01", description="Trip"
+			)
+		)
+		_, leave = self.assert_lifecycle(
+			Kind.LEAVE_APPLICATION, LeaveApplicationWriter, request, asked, {**asked, "status": "Approved"}
+		)
+		self.assertEqual(
+			frappe.db.get_value("Leave Application", leave, ["docstatus", "status"]), (1, "Approved")
+		)
+		marked = frappe.db.get_value(
+			"Attendance", {"employee": employee, "attendance_date": "2026-03-09", "docstatus": 1}, "status"
+		)
+		self.assertEqual(marked, "On Leave", "HRMS marks an approved leave's days")
+		on_leave = gid("Attendance", "2:2026-03-09")
+		worked = attendance_fields(Attendance(member, "2026-03-09", "Present", 60, "2026-03-09T13:00:00Z"))
+		self.assertEqual(
+			self.mirror(Kind.ATTENDANCE, AttendanceWriter, on_leave, worked), Outcome.UNSUPPORTED
+		)
+		self.retire(Kind.LEAVE_APPLICATION, LeaveApplicationWriter, request)
+		self.assertEqual(frappe.db.get_value("Leave Application", leave, "docstatus"), 2)
+		pending = gid("LeaveRequest", "2")
+		self.mirror(
+			Kind.LEAVE_APPLICATION,
+			LeaveApplicationWriter,
+			pending,
+			{**asked, "from_date": "2026-04-06", "to_date": "2026-04-06"},
+		)
+		self.retire(Kind.LEAVE_APPLICATION, LeaveApplicationWriter, pending)
+		name = self.target(Kind.LEAVE_APPLICATION, pending)
+		self.assertEqual(
+			frappe.db.get_value("Leave Application", name, ["docstatus", "status"]), (0, "Cancelled")
+		)
 
 	def trade(
 		self, party: str, qty: str = "2", submitted: bool = True, account: str | None = None

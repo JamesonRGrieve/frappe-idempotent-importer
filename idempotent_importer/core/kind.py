@@ -54,6 +54,12 @@ class Kind(StrEnum):
 	DEPARTMENT = "department"
 	DESIGNATION = "designation"
 	EMPLOYEE = "employee"
+	BRANCH = "branch"
+	LEAVE_TYPE = "leave_type"
+	SHIFT_ASSIGNMENT = "shift_assignment"
+	EMPLOYEE_CHECKIN = "employee_checkin"
+	LEAVE_APPLICATION = "leave_application"
+	ATTENDANCE = "attendance"
 	SALES_ORDER = "sales_order"
 	PURCHASE_ORDER = "purchase_order"
 	SALES_INVOICE = "sales_invoice"
@@ -84,7 +90,14 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.SUPPLIER,
 	Kind.DEPARTMENT,
 	Kind.DESIGNATION,
+	Kind.BRANCH,
 	Kind.EMPLOYEE,
+	Kind.LEAVE_TYPE,
+	Kind.SHIFT_ASSIGNMENT,
+	Kind.EMPLOYEE_CHECKIN,
+	# A leave HRMS books marks its days' attendance itself, before the source's own attendance.
+	Kind.LEAVE_APPLICATION,
+	Kind.ATTENDANCE,
 	Kind.PROJECT,
 	Kind.LEAD,
 	Kind.OPPORTUNITY,

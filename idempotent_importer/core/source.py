@@ -51,6 +51,8 @@ class ConnectionConfig:
 	# How a source whose data model is the customer's own (Finance & Operations) names what it reads: the
 	# connection's field map, as JSON text (see that adapter's ``fieldmap``).
 	field_map: str = ""
+	# This site's own URL, for a source whose OAuth refresh names the app's redirect URI (Agendrix).
+	site_url: str = ""
 	# Test harness only (site config, never the desk): where a fake store answers for this connection.
 	endpoint_override: str | None = None
 	# The connection's Square gift card policies, carried into each card so changing one rewrites them all:

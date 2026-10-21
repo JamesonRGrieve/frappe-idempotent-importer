@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/v1/members/00000000-0000-4000-0003-000000000001",
+		"query": {}
+	},
+	"response": {
+		"data": {
+			"id": "00000000-0000-4000-0003-000000000001",
+			"user_id": "00000000-0000-4000-0103-000000000001",
+			"profile_id": "00000000-0000-4000-0009-000000000001",
+			"identification_number": "E-001",
+			"highest_role": "member",
+			"main_position_id": "00000000-0000-4000-0002-000000000001",
+			"main_site_id": "00000000-0000-4000-0001-000000000001",
+			"admin": false,
+			"visible": true,
+			"seniority_date": "2025-03-01",
+			"created_at": "2026-09-01T09:00:00-04:00",
+			"updated_at": "2026-09-15T09:00:00-04:00",
+			"profile": {
+				"id": "00000000-0000-4000-0009-000000000001",
+				"first_name": "Avery",
+				"last_name": "Writer",
+				"full_name": "Avery Writer",
+				"email": "avery@cafe.example",
+				"phone_1_number": "+15145550001",
+				"phone_1_type": "mobile",
+				"created_at": "2026-09-01T09:00:00-04:00",
+				"updated_at": "2026-09-15T09:00:00-04:00",
+				"birthdate": "1990-04-05"
+			}
+		}
+	}
+}

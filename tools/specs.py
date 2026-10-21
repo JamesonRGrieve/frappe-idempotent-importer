@@ -469,6 +469,18 @@ def catalog() -> list[Document]:
 		# adapter reads, transcribed by tools/acumatica_schema.py from the official REST client's generated
 		# models of Default 24.200.001 at a pinned commit.
 		committed("acumatica", "default-24.200.001", "tests/schemas/acumatica.json", ""),
+		# Agendrix's OpenAPI 3 document (agendrix/openapi, en/open_api.json, version 1.14.4, the commit of
+		# 2026-10-15), which generates its developer portal's reference. Its server is /v1 on the API host.
+		SpecDocument(
+			"agendrix",
+			"open-api-1.14.4",
+			"https://raw.githubusercontent.com/agendrix/openapi/"
+			"5a61151915d82b5ba1b26d1688fc3d4eb9256634/en/open_api.json",
+			"/v1",
+			False,
+			JSON,
+			"d118ecab8c953a90d96128f08b065bf1e42642ebcaab8fd5d9a7aa522f3277ff",
+		),
 		# SuiteQL's endpoint is outside the Record API: its response, transcribed from the official page.
 		committed("netsuite", "suiteql", "tests/schemas/netsuite-suiteql.json", ""),
 	]

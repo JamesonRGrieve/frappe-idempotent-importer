@@ -28,7 +28,8 @@ truth for what each source mirrors and what is a gap. Python rules:
   (customers and suppliers), discounts, sales (a storefront's orders as invoices, and quotations),
   shipping, content; and for ERP and HR sources books (accounts, cost centers, warehouses, projects,
   journal and payment entries), trade (sales and purchase orders and invoices), crm (leads,
-  opportunities), hr (departments, designations, employees)), `engine` (builds and drives a run), `jobs`
+  opportunities), hr (departments, designations, branches, employees, leave types, shift assignments, checkins,
+  attendance, leave applications)), `engine` (builds and drives a run), `jobs`
   (scheduler + step jobs).
 - `stored_value/` — gift cards, store credit and loyalty for the Square account they live in: numbers,
   how a balance change is applied (`plans`, pure), phone numbers, and the Square client (`square`); the

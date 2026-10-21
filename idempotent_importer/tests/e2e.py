@@ -29,6 +29,7 @@ from frappe.desk.page.setup_wizard.setup_wizard import setup_complete
 from frappe.installer import update_site_config
 
 from idempotent_importer import api
+from idempotent_importer.core.oauth import CALLBACK_PATH
 from idempotent_importer.erpnext import engine, jobs
 from idempotent_importer.erpnext.stores import (
 	FrappeRunLock,
@@ -354,6 +355,16 @@ BUSINESSES = (
 			"field_map": '{"root_types": {"3000": "Equity"}}',
 		},
 	),
+	Business(
+		"AG",
+		"People A",
+		"agendrix-a",
+		"Agendrix",
+		"agendrix",
+		"agendrix-fake",
+		"https://app.agendrix.com",
+		OAUTH_CREDENTIALS,
+	),
 )
 
 
@@ -458,7 +469,15 @@ CONTENT_DOCTYPES = (
 	"CRM Note",
 	"Department",
 	"Designation",
+	"Branch",
 	"Employee",
+	"Shift Type",
+	"Shift Assignment",
+	"Employee Checkin",
+	"Attendance",
+	"Leave Type",
+	"Leave Application",
+	"Leave Ledger Entry",
 	"Sales Order",
 	"Sales Order Item",
 	"Purchase Order",
@@ -624,6 +643,27 @@ def make_business(spec: Business) -> None:
 			}
 		).insert()
 	guest_name = frappe.db.get_value("Customer", {"customer_name": guest})
+	holidays = f"{company} Holidays"
+	if not frappe.db.exists("Holiday List", holidays):
+		# HRMS counts leave days against the company's holiday list (none: every day is a working day).
+		frappe.get_doc(
+			{
+				"doctype": "Holiday List",
+				"holiday_list_name": holidays,
+				"from_date": FISCAL_YEAR_START,
+				"to_date": FISCAL_YEAR_END,
+			}
+		).insert()
+		frappe.db.set_value("Company", company, "default_holiday_list", holidays)
+		frappe.get_doc(
+			{
+				"doctype": "Holiday List Assignment",
+				"applicable_for": "Company",
+				"assigned_to": company,
+				"holiday_list": holidays,
+				"from_date": FISCAL_YEAR_START,
+			}
+		).submit()
 	if frappe.db.exists("Importer Connection", spec.connection):
 		return
 	frappe.get_doc(
@@ -705,6 +745,7 @@ def main() -> None:
 		"assert_sap_business_one": assert_sap_business_one,
 		"assert_acumatica": assert_acumatica,
 		"assert_sage_intacct": assert_sage_intacct,
+		"assert_agendrix": assert_agendrix,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -2783,6 +2824,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"agendrix-a": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "scope": "read"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 	"zoho-books-b": OAuthConnect(
 		{"client_id": "e2e-oauth-client", "access_type": "offline"},
 		"oauth_callback",
@@ -2804,7 +2852,7 @@ def assert_oauth_connect(connection: str) -> None:
 	query = parse_qs(urlsplit(url).query)
 	expect(
 		{name: query.get(name, [""])[0] for name in [*want.query, "redirect_uri"]},
-		{**want.query, "redirect_uri": frappe.utils.get_url(api.CALLBACK_METHOD + want.redirect)},
+		{**want.query, "redirect_uri": frappe.utils.get_url(CALLBACK_PATH + want.redirect)},
 		"the approval URL",
 	)
 	callback = getattr(api, want.redirect)
@@ -3303,6 +3351,91 @@ def assert_sage_intacct(state: str) -> None:
 			None,
 			f"{absent}, never booked",
 		)
+
+
+def agendrix_id(group: int, n: int) -> str:
+	return f"00000000-0000-4000-{group:04d}-{n:012d}"
+
+
+@check
+def assert_agendrix(state: str) -> None:
+	"""The Agendrix café of state ``state`` (tools/agendrix_fixtures.py): its sites as branches, positions
+	as designations, members as employees (one archived in v2), time off types, shifts on the Shift Type of
+	their hours (one moved, a draft removed in v2), punches, a day's attendance from its time entries (a
+	longer afternoon in v2), and time off requests (one declined in v2); an approved leave's day is marked
+	by HRMS itself, and the open shift and the part-day request aren't mirrored."""
+	changed = state == "v2"
+	connection = "agendrix-a"
+	site, position, member, leave, shift, clock, _, request = range(1, 9)
+	avery = agendrix_id(member, 1)
+	downtown = "Downtown Café - AG" if changed else "Downtown - AG"
+	assert_booked(
+		connection,
+		[
+			Booked("branch", "Site", agendrix_id(site, 1), "branch", downtown),
+			Booked(
+				"designation", "Position", agendrix_id(position, 3), "designation_name", "Kitchen - Prep - AG"
+			),
+			Booked("employee", "Member", avery, "branch", downtown),
+			Booked("employee", "Member", avery, "designation", "Barista - AG"),
+			Booked("employee", "Member", agendrix_id(member, 3), "status", "Left" if changed else "Active"),
+			Booked("leave_type", "LeaveType", agendrix_id(leave, 2), "is_lwp", 1),
+			Booked(
+				"shift_assignment",
+				"Shift",
+				agendrix_id(shift, 1),
+				"shift_type",
+				"09:00-17:00 - AG" if changed else "08:00-16:00 - AG",
+			),
+			Booked("shift_assignment", "Shift", agendrix_id(shift, 2), "shift_type", "22:00-06:00 - AG"),
+			Booked("employee_checkin", "ClockLog", agendrix_id(clock, 1), "log_type", "IN"),
+			Booked(
+				"attendance", "Attendance", f"{avery}:2026-10-05", "working_hours", 7.75 if changed else 7.5
+			),
+			Booked("attendance", "Attendance", f"{agendrix_id(member, 2)}:2026-10-05", "docstatus", 0),
+			Booked("leave_application", "LeaveRequest", agendrix_id(request, 1), "docstatus", 1),
+			Booked(
+				"leave_application",
+				"LeaveRequest",
+				agendrix_id(request, 2),
+				"status",
+				"Rejected" if changed else "Open",
+			),
+		],
+	)
+	draft = target(connection, "shift_assignment", "Shift", agendrix_id(shift, 3))
+	expect(
+		frappe.db.get_value("Shift Assignment", draft, ["docstatus", "status"]),
+		(0, "Inactive" if changed else "Active"),
+		"the draft shift, removed in v2",
+	)
+	employee = target(connection, "employee", "Member", avery)
+	expect(
+		frappe.db.get_value("Attendance", {"employee": employee, "attendance_date": "2026-10-09"}, "status"),
+		"On Leave",
+		"the approved leave's day, marked by HRMS",
+	)
+	for absent in (f"Shift/{agendrix_id(shift, 4)}", f"LeaveRequest/{agendrix_id(request, 3)}"):
+		expect(
+			frappe.db.count(
+				"Importer Link", {"connection": connection, "gid": f"gid://agendrix/{connection}/{absent}"}
+			),
+			0,
+			f"{absent}, which has no first-party home",
+		)
+	expect(
+		frappe.db.count(
+			"Employee Checkin",
+			{
+				"employee": (
+					"in",
+					[employee, target(connection, "employee", "Member", agendrix_id(member, 2))],
+				)
+			},
+		),
+		4 if changed else 3,
+		"successful punches",
+	)
 
 
 @check

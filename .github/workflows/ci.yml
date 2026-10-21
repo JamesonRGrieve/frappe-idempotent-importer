@@ -23,6 +23,7 @@ jobs:
           git -C ../frappe-webshop checkout --quiet "$WEBSHOP_REF"
           git clone https://github.com/JamesonRGrieve/frappe-public-site-router ../frappe-public-site-router
         env:
-          # The Webshop fork's store-scoped coupon codes (Coupon Code.webshop_store), which the importer writes.
-          WEBSHOP_REF: 83fcd3ccee
+          # The Webshop fork's store-scoped coupon codes (Coupon Code.webshop_store) and the discount limits it
+          # enforces (card 405: per-customer limits, eligibility, shipping discounts), which the importer writes.
+          WEBSHOP_REF: a8344c603c
       - run: tests/e2e/run.sh

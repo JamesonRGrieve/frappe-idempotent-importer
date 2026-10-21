@@ -1,0 +1,32 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, WhoId, WhatId, AccountId, Subject, Description, CreatedDate, Location, StartDateTime, EndDateTime, IsAllDayEvent, ActivityDate FROM Event ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 1,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Event",
+					"url": "/services/data/v62.0/sobjects/Event/00U5e000006AaAAAA1"
+				},
+				"Id": "00U5e000006AaAAAA1",
+				"WhoId": null,
+				"WhatId": "0065e000004AaAAAA1",
+				"AccountId": "0015e000002AaAAAA1",
+				"Subject": "Concept review",
+				"Description": "Three directions",
+				"CreatedDate": "2026-09-01T15:00:00.000+0000",
+				"Location": "Studio",
+				"StartDateTime": "2026-09-10T16:00:00.000+0000",
+				"EndDateTime": "2026-09-10T17:00:00.000+0000",
+				"IsAllDayEvent": false,
+				"ActivityDate": "2026-09-10"
+			}
+		]
+	}
+}

@@ -1,0 +1,76 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/EmailMessage/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "EmailMessage",
+		"label": "EmailMessage",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Subject",
+				"label": "Subject",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "TextBody",
+				"label": "Text Body",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "FromAddress",
+				"label": "From Address",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ToAddress",
+				"label": "To Address",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Incoming",
+				"label": "Incoming",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "MessageDate",
+				"label": "Message Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "RelatedToId",
+				"label": "Related To Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Status",
+				"label": "Status",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

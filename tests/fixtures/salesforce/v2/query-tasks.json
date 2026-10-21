@@ -1,0 +1,74 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, WhoId, WhatId, AccountId, Subject, Description, CreatedDate, Status, IsClosed, ActivityDate, TaskSubtype, CallType, CallDurationInSeconds, CallDisposition FROM Task ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 3,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Task",
+					"url": "/services/data/v62.0/sobjects/Task/00T5e000005AaAAAA1"
+				},
+				"Id": "00T5e000005AaAAAA1",
+				"WhoId": null,
+				"WhatId": "0065e000004AaAAAA1",
+				"AccountId": "0015e000002AaAAAA1",
+				"Subject": "Kick-off call",
+				"Description": "Walked through the brief.",
+				"CreatedDate": "2026-09-05T15:00:00.000+0000",
+				"Status": "Completed",
+				"IsClosed": true,
+				"ActivityDate": null,
+				"TaskSubtype": "Call",
+				"CallType": "Outbound",
+				"CallDurationInSeconds": 754,
+				"CallDisposition": "Connected"
+			},
+			{
+				"attributes": {
+					"type": "Task",
+					"url": "/services/data/v62.0/sobjects/Task/00T5e000005AbBBAA2"
+				},
+				"Id": "00T5e000005AbBBAA2",
+				"WhoId": "00Q5e000003AbBBAA2",
+				"WhatId": null,
+				"AccountId": null,
+				"Subject": "Send samples",
+				"Description": "Paper and foil",
+				"CreatedDate": "2026-09-06T15:00:00.000+0000",
+				"Status": "Completed",
+				"IsClosed": true,
+				"ActivityDate": "2026-09-30",
+				"TaskSubtype": "Task",
+				"CallType": null,
+				"CallDurationInSeconds": null,
+				"CallDisposition": null
+			},
+			{
+				"attributes": {
+					"type": "Task",
+					"url": "/services/data/v62.0/sobjects/Task/00T5e000005AcCCAA3"
+				},
+				"Id": "00T5e000005AcCCAA3",
+				"WhoId": "0035e000003AaAAAA1",
+				"WhatId": null,
+				"AccountId": "0015e000002AaAAAA1",
+				"Subject": "Email: Proposal",
+				"Description": "Attached the proposal.",
+				"CreatedDate": "2026-09-07T15:00:00.000+0000",
+				"Status": "Completed",
+				"IsClosed": true,
+				"ActivityDate": null,
+				"TaskSubtype": "Email",
+				"CallType": null,
+				"CallDurationInSeconds": null,
+				"CallDisposition": null
+			}
+		]
+	}
+}

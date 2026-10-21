@@ -1,0 +1,111 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Task/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Task",
+		"label": "Task",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "WhoId",
+				"label": "Who Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "WhatId",
+				"label": "What Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountId",
+				"label": "Account Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Subject",
+				"label": "Subject",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CreatedDate",
+				"label": "Created Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Status",
+				"label": "Status",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "IsClosed",
+				"label": "Is Closed",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ActivityDate",
+				"label": "Activity Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "TaskSubtype",
+				"label": "Task Subtype",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CallType",
+				"label": "Call Type",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CallDurationInSeconds",
+				"label": "Call Duration In Seconds",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CallDisposition",
+				"label": "Call Disposition",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

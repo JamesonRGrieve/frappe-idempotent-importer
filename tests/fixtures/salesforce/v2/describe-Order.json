@@ -1,0 +1,76 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Order/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Order",
+		"label": "Order",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "OrderNumber",
+				"label": "Order Number",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountId",
+				"label": "Account Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "EffectiveDate",
+				"label": "Effective Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Status",
+				"label": "Status",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "StatusCode",
+				"label": "Status Code",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "TotalAmount",
+				"label": "Total Amount",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "PoNumber",
+				"label": "Po Number",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

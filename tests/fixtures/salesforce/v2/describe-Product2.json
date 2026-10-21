@@ -1,0 +1,62 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Product2/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Product2",
+		"label": "Product2",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Name",
+				"label": "Name",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ProductCode",
+				"label": "Product Code",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "IsActive",
+				"label": "Is Active",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Family",
+				"label": "Family",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "StockKeepingUnit",
+				"label": "Stock Keeping Unit",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

@@ -68,9 +68,10 @@ SOURCES=(
 	highlevel-h:highlevel-fake:assert_highlevel
 	peoplesoft-p:peoplesoft-fake:assert_peoplesoft
 	hubspot-s:hubspot-fake:assert_hubspot
+	salesforce-f:salesforce-fake:assert_salesforce
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f)
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")

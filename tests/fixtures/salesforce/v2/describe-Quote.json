@@ -1,0 +1,104 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Quote/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Quote",
+		"label": "Quote",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Name",
+				"label": "Name",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "QuoteNumber",
+				"label": "Quote Number",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Status",
+				"label": "Status",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountId",
+				"label": "Account Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ContactId",
+				"label": "Contact Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ExpirationDate",
+				"label": "Expiration Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CreatedDate",
+				"label": "Created Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Subtotal",
+				"label": "Subtotal",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "TotalPrice",
+				"label": "Total Price",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Tax",
+				"label": "Tax",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ShippingHandling",
+				"label": "Shipping Handling",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "GrandTotal",
+				"label": "Grand Total",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

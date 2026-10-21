@@ -1,0 +1,14 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {},
+		"query_patterns": {
+			"q": "SELECT\\ Id,\\ Name,\\ ProductCode,\\ Description,\\ IsActive,\\ Family,\\ StockKeepingUnit,\\ \\(SELECT\\ Id,\\ UnitPrice\\ FROM\\ PricebookEntries\\ WHERE\\ Pricebook2\\.IsStandard\\ =\\ true\\ AND\\ IsActive\\ =\\ true\\)\\ FROM\\ Product2\\ WHERE\\ SystemModstamp\\ >=\\ \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z\\ ORDER\\ BY\\ Id\\ LIMIT\\ 200"
+		}
+	},
+	"response": {
+		"totalSize": 0,
+		"done": true,
+		"records": []
+	}
+}

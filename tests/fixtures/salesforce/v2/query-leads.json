@@ -1,0 +1,104 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, FirstName, LastName, Company, Email, Phone, MobilePhone, Title, Website, Status, IsConverted, Description, Street, City, State, PostalCode, Country, Preferred_Contact_Time__c, (SELECT Id, Title, Body, CreatedDate FROM Notes ORDER BY CreatedDate) FROM Lead ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 3,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Lead",
+					"url": "/services/data/v62.0/sobjects/Lead/00Q5e000003AaAAAA1"
+				},
+				"Id": "00Q5e000003AaAAAA1",
+				"FirstName": "Quinn",
+				"LastName": "Quay",
+				"Company": "Quay Ltd",
+				"Email": "quinn@quay-ltd.example",
+				"Phone": null,
+				"MobilePhone": null,
+				"Title": null,
+				"Website": null,
+				"Status": "Closed - Not Converted",
+				"IsConverted": false,
+				"Description": null,
+				"Street": null,
+				"City": null,
+				"State": null,
+				"PostalCode": null,
+				"Country": null,
+				"Preferred_Contact_Time__c": "am",
+				"Notes": null
+			},
+			{
+				"attributes": {
+					"type": "Lead",
+					"url": "/services/data/v62.0/sobjects/Lead/00Q5e000003AbBBAA2"
+				},
+				"Id": "00Q5e000003AbBBAA2",
+				"FirstName": "Casey",
+				"LastName": "Cove",
+				"Company": "Cove Cafe",
+				"Email": "casey@cove-cafe.example",
+				"Phone": null,
+				"MobilePhone": "+1 902 555 0110",
+				"Title": null,
+				"Website": null,
+				"Status": "Working - Contacted",
+				"IsConverted": false,
+				"Description": null,
+				"Street": null,
+				"City": null,
+				"State": null,
+				"PostalCode": null,
+				"Country": null,
+				"Preferred_Contact_Time__c": null,
+				"Notes": {
+					"totalSize": 1,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "Note",
+								"url": "/services/data/v62.0/sobjects/Note/0025e000000AbBBAA2"
+							},
+							"Id": "0025e000000AbBBAA2",
+							"Title": "Call back",
+							"Body": "Wants the spring catalogue",
+							"CreatedDate": "2026-09-02T14:30:00.000+0000"
+						}
+					]
+				}
+			},
+			{
+				"attributes": {
+					"type": "Lead",
+					"url": "/services/data/v62.0/sobjects/Lead/00Q5e000003AcCCAA3"
+				},
+				"Id": "00Q5e000003AcCCAA3",
+				"FirstName": "Alex",
+				"LastName": "Arm",
+				"Company": "River Co",
+				"Email": null,
+				"Phone": null,
+				"MobilePhone": null,
+				"Title": null,
+				"Website": null,
+				"Status": "Closed - Converted",
+				"IsConverted": true,
+				"Description": null,
+				"Street": null,
+				"City": null,
+				"State": null,
+				"PostalCode": null,
+				"Country": null,
+				"Preferred_Contact_Time__c": null,
+				"Notes": null
+			}
+		]
+	}
+}

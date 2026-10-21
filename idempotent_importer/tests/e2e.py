@@ -407,6 +407,16 @@ BUSINESSES = (
 		"https://app.hubspot.com",
 		OAUTH_CREDENTIALS,
 	),
+	Business(
+		"SF",
+		"Pipeline F",
+		"salesforce-f",
+		"Salesforce",
+		"salesforce",
+		"salesforce-fake",
+		"https://northwind.my.salesforce.com",
+		OAUTH_CREDENTIALS,
+	),
 )
 
 
@@ -799,6 +809,7 @@ def main() -> None:
 		"assert_highlevel": assert_highlevel,
 		"assert_peoplesoft": assert_peoplesoft,
 		"assert_hubspot": assert_hubspot,
+		"assert_salesforce": assert_salesforce,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3107,6 +3118,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"salesforce-f": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "scope": "api refresh_token"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 }
 
 
@@ -3875,6 +3893,73 @@ def assert_hubspot(state: str) -> None:
 			0,
 			f"{absent}, voided or failed",
 		)
+
+
+@check
+def assert_salesforce(state: str) -> None:
+	"""The Salesforce studio org of state ``state`` (tools/salesforce_fixtures.py): users, products, accounts as
+	prospects with their contacts (the customer one a customer too), leads, opportunity types and
+	opportunities at their stage, logged activities, an email message, a task, an event, a quote to an
+	organisation and orders, and the org's custom fields (v2: a user deactivated, a new price, a lead closed,
+	a won opportunity, a closed task, an activated order, a new email)."""
+	changed = state == "v2"
+	connection = "salesforce-f"
+	river, delta = "0015e000002AaAAAA1", "0015e000002AbBBAA2"
+	assert_booked(
+		connection,
+		[
+			Booked("employee", "User", "0055e000001AbBBAA2", "status", "Inactive" if changed else "Active"),
+			Booked("customer", "Account", river, "customer_type", "Company"),
+			Booked("prospect", "Account", delta, "company_name", "Delta Works - SF"),
+			Booked("lead", "Lead", "00Q5e000003AaAAAA1", "disabled", 1 if changed else 0),
+			Booked("lead", "Lead", "00Q5e000003AcCCAA3", "status", "Converted"),
+			Booked("opportunity_type", "OpportunityType", "New%20Customer"),
+			Booked(
+				"opportunity",
+				"Opportunity",
+				"0065e000004AaAAAA1",
+				"status",
+				"Converted" if changed else "Open",
+			),
+			Booked(
+				"opportunity",
+				"Opportunity",
+				"0065e000004AaAAAA1",
+				"sales_stage",
+				"Closed Won - SF" if changed else "Proposal/Price Quote - SF",
+			),
+			Booked(
+				"opportunity", "Opportunity", "0065e000004AaAAAA1", "opportunity_type", "New Customer - SF"
+			),
+			Booked("communication", "Task", "00T5e000005AaAAAA1", "reference_doctype", "Opportunity"),
+			Booked("communication", "EmailMessage", "02s5e000007AaAAAA1", "sent_or_received", "Received"),
+			Booked("todo", "Task", "00T5e000005AbBBAA2", "status", "Closed" if changed else "Open"),
+			Booked("event", "Event", "00U5e000006AaAAAA1", "subject", "Concept review"),
+			Booked("draft_order", "Quote", "0Q05e000008AaAAAA1", "grand_total", amount("310.5")),
+			Booked("sales_order", "Order", "8015e000009AaAAAA1", "grand_total", amount(135)),
+			Booked("sales_order", "Order", "8015e000009AbBBAA2", "docstatus", 1 if changed else 0),
+		],
+	)
+	if changed:
+		assert_booked(
+			connection,
+			[Booked("communication", "EmailMessage", "02s5e000007AbBBAA2", "reference_doctype", "Prospect")],
+		)
+	session = target(connection, "product", "Product2", "01t5e000000AaAAAA1")
+	expect(item_price(connection, session), amount(175 if changed else 150), "the design session's price")
+	prospect = target(connection, "prospect", "Account", river)
+	expect(
+		json.loads(frappe.db.get_value("Prospect", prospect, "importer_custom_fields")),
+		{"Account Tier": "Gold"},
+		"the account's custom field",
+	)
+	expect(
+		frappe.db.count(
+			"Dynamic Link", {"link_doctype": "Prospect", "link_name": prospect, "parenttype": "Contact"}
+		),
+		2,
+		"the account's contacts",
+	)
 
 
 @check

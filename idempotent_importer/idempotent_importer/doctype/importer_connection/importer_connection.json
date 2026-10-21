@@ -113,7 +113,7 @@
    "fieldname": "source",
    "fieldtype": "Select",
    "label": "Source",
-   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nQuickBooks Online\nXero\nZoho Books\nZoho Inventory\nNetSuite\nSAP Business One\nAcumatica\nSage Intacct\nAgendrix\nHighLevel\nPeopleSoft\nHubSpot",
+   "options": "WooCommerce\nShopify\nEtsy\nSquare Online\nBigCommerce\nSquarespace\nWix\nMagento / Adobe Commerce\nLightspeed eCom (C-Series)\nEcwid\nOdoo\nDynamics 365 Business Central\nDynamics 365 Sales\nDynamics 365 Finance & Operations\nQuickBooks Online\nXero\nZoho Books\nZoho Inventory\nNetSuite\nSAP Business One\nAcumatica\nSage Intacct\nAgendrix\nHighLevel\nPeopleSoft\nHubSpot\nSalesforce",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1
@@ -127,7 +127,7 @@
    "fieldtype": "Data",
    "label": "Store URL",
    "reqd": 1,
-   "description": "The storefront's https:// address (its old URLs redirect to the mirrored records). Shopify: the store's <name>.myshopify.com domain. Magento: the store's base URL, which its REST API is under. Odoo: the database's URL (https://mycompany.odoo.com). Business Central: https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>. Dynamics 365 Sales: https://<org>.crm.dynamics.com. Finance & Operations: https://<environment>.operations.dynamics.com. NetSuite: the account's address (https://<account id>.app.netsuite.com; the API host follows the account ID). SAP Business One: the Service Layer's address (https://<server>:50000). Acumatica: the instance's address (https://<company>.acumatica.com). Agendrix: https://app.agendrix.com (or https://sandbox.agendrix.net for the sandbox). HighLevel: https://app.gohighlevel.com (the sub-account comes from Connect). PeopleSoft: the web server the Integration Broker gateway answers on (https://<host>:<port>). HubSpot: https://app.hubspot.com (the account comes from Connect)."
+   "description": "The storefront's https:// address (its old URLs redirect to the mirrored records). Shopify: the store's <name>.myshopify.com domain. Magento: the store's base URL, which its REST API is under. Odoo: the database's URL (https://mycompany.odoo.com). Business Central: https://api.businesscentral.dynamics.com/v2.0/<tenant>/<environment>. Dynamics 365 Sales: https://<org>.crm.dynamics.com. Finance & Operations: https://<environment>.operations.dynamics.com. NetSuite: the account's address (https://<account id>.app.netsuite.com; the API host follows the account ID). SAP Business One: the Service Layer's address (https://<server>:50000). Acumatica: the instance's address (https://<company>.acumatica.com). Agendrix: https://app.agendrix.com (or https://sandbox.agendrix.net for the sandbox). HighLevel: https://app.gohighlevel.com (the sub-account comes from Connect). PeopleSoft: the web server the Integration Broker gateway answers on (https://<host>:<port>). HubSpot: https://app.hubspot.com (the account comes from Connect). Salesforce: the org's My Domain URL (https://<domain>.my.salesforce.com)."
   },
   {
    "fieldname": "auth_method",
@@ -142,13 +142,13 @@
    "fieldname": "api_user",
    "fieldtype": "Data",
    "label": "User, Key or Client ID",
-   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login. Dynamics 365: the Microsoft Entra app's client ID. NetSuite: the integration's client ID. SAP Business One and Sage Intacct: the user name (ID). Acumatica: the connected application's client ID (<id>@<tenant>). Agendrix: the application's client ID. HighLevel: the Marketplace app's client ID. PeopleSoft: the PeopleSoft user ID (with the QAS REST service operations and query access). HubSpot: the app's client ID."
+   "description": "WooCommerce: the WordPress user name, or the consumer key. Shopify: the app's client ID. Etsy: the app's keystring. Lightspeed eCom: the API key. Odoo (JSON-RPC): the user's login. Dynamics 365: the Microsoft Entra app's client ID. NetSuite: the integration's client ID. SAP Business One and Sage Intacct: the user name (ID). Acumatica: the connected application's client ID (<id>@<tenant>). Agendrix: the application's client ID. HighLevel: the Marketplace app's client ID. PeopleSoft: the PeopleSoft user ID (with the QAS REST service operations and query access). HubSpot: the app's client ID. Salesforce: the External Client App's consumer key."
   },
   {
    "fieldname": "api_secret",
    "fieldtype": "Password",
    "label": "Secret",
-   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). a Microsoft Entra app's client secret (Dynamics 365), the certificate's private key in PEM (NetSuite) the user's password (SAP Business One, Sage Intacct) or the connected application's secret (Acumatica). Never shown again or logged. Agendrix: the application's client secret. HighLevel: the Marketplace app's client secret. PeopleSoft: the user's password. HubSpot: the app's client secret."
+   "description": "The source's secret: the Application Password or consumer secret (WooCommerce), client secret or legacy access token (Shopify), shared secret (Etsy), access token (Square, BigCommerce, Magento, Ecwid), API key (Squarespace, Wix, Odoo) or API secret (Lightspeed). a Microsoft Entra app's client secret (Dynamics 365), the certificate's private key in PEM (NetSuite) the user's password (SAP Business One, Sage Intacct) or the connected application's secret (Acumatica). Never shown again or logged. Agendrix: the application's client secret. HighLevel: the Marketplace app's client secret. PeopleSoft: the user's password. HubSpot: the app's client secret. Salesforce: the app's consumer secret."
   },
   {
    "fieldname": "api_key_id",
@@ -185,7 +185,7 @@
    "fieldtype": "Password",
    "label": "Refresh Token",
    "read_only": 1,
-   "depends_on": "eval:in_list([\"Etsy\", \"QuickBooks Online\", \"Xero\", \"Zoho Books\", \"Zoho Inventory\", \"Acumatica\", \"Agendrix\", \"HighLevel\", \"HubSpot\"], doc.source)",
+   "depends_on": "eval:in_list([\"Etsy\", \"QuickBooks Online\", \"Xero\", \"Zoho Books\", \"Zoho Inventory\", \"Acumatica\", \"Agendrix\", \"HighLevel\", \"HubSpot\", \"Salesforce\"], doc.source)",
    "description": "Etsy: set by Connect to Etsy and replaced on every token refresh. Never shown or logged."
   },
   {
@@ -637,7 +637,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-10-21 17:07:06.000000",
+ "modified": "2026-10-21 17:07:39.000000",
  "modified_by": "Administrator",
  "module": "Idempotent Importer",
  "name": "Importer Connection",

@@ -1,0 +1,66 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, Name, Type, Phone, Website, Industry, Description, AccountNumber, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry, Account_Tier__c, (SELECT Id, FirstName, LastName, Email, Phone, MobilePhone, Title FROM Contacts ORDER BY Id) FROM Account WHERE (Type LIKE 'Customer%' OR Id IN (SELECT AccountId FROM Order)) ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 1,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Account",
+					"url": "/services/data/v62.0/sobjects/Account/0015e000002AaAAAA1"
+				},
+				"Id": "0015e000002AaAAAA1",
+				"Name": "River Co",
+				"Type": "Customer - Direct",
+				"Phone": "+1 902 555 0100",
+				"Website": "https://river.example",
+				"Industry": null,
+				"Description": "Harbour tours",
+				"AccountNumber": null,
+				"BillingStreet": "1 Harbour Rd",
+				"BillingCity": "Halifax",
+				"BillingState": "NS",
+				"BillingPostalCode": "B3H 1A1",
+				"BillingCountry": "Canada",
+				"Account_Tier__c": "gold",
+				"Contacts": {
+					"totalSize": 2,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "Contact",
+								"url": "/services/data/v62.0/sobjects/Contact/0035e000003AaAAAA1"
+							},
+							"Id": "0035e000003AaAAAA1",
+							"FirstName": "Riley",
+							"LastName": "River",
+							"Email": "riley@river.example",
+							"Phone": "+1 902 555 0101",
+							"MobilePhone": null,
+							"Title": "Director"
+						},
+						{
+							"attributes": {
+								"type": "Contact",
+								"url": "/services/data/v62.0/sobjects/Contact/0035e000003AbBBAA2"
+							},
+							"Id": "0035e000003AbBBAA2",
+							"FirstName": "Sam",
+							"LastName": "Shore",
+							"Email": "sam@river.example",
+							"Phone": "+1 902 555 0101",
+							"MobilePhone": null,
+							"Title": null
+						}
+					]
+				}
+			}
+		]
+	}
+}

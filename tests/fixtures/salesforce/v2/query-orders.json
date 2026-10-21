@@ -1,0 +1,94 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, OrderNumber, AccountId, EffectiveDate, Status, StatusCode, TotalAmount, Description, PoNumber, (SELECT Id, Product2Id, Product2.Name, Description, Quantity, UnitPrice, TotalPrice FROM OrderItems ORDER BY OrderItemNumber) FROM Order ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 2,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Order",
+					"url": "/services/data/v62.0/sobjects/Order/8015e000009AaAAAA1"
+				},
+				"Id": "8015e000009AaAAAA1",
+				"OrderNumber": "00000100",
+				"AccountId": "0015e000002AaAAAA1",
+				"EffectiveDate": "2026-09-14",
+				"Status": "Activated",
+				"StatusCode": "Activated",
+				"TotalAmount": 135.0,
+				"Description": null,
+				"PoNumber": "PO-77",
+				"OrderItems": {
+					"totalSize": 1,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "OrderItem",
+								"url": "/services/data/v62.0/sobjects/OrderItem/8025e000000AaAAAA1"
+							},
+							"Id": "8025e000000AaAAAA1",
+							"Product2Id": "01t5e000000AbBBAA2",
+							"Product2": {
+								"attributes": {
+									"type": "Product2",
+									"url": "/services/data/v62.0/sobjects/Product2/01t5e000000AbBBAA2"
+								},
+								"Name": "Studio print"
+							},
+							"Description": null,
+							"Quantity": 3,
+							"UnitPrice": 45.0,
+							"TotalPrice": 135.0
+						}
+					]
+				}
+			},
+			{
+				"attributes": {
+					"type": "Order",
+					"url": "/services/data/v62.0/sobjects/Order/8015e000009AbBBAA2"
+				},
+				"Id": "8015e000009AbBBAA2",
+				"OrderNumber": "00000101",
+				"AccountId": "0015e000002AaAAAA1",
+				"EffectiveDate": "2026-09-20",
+				"Status": "Activated",
+				"StatusCode": "Activated",
+				"TotalAmount": 150.0,
+				"Description": null,
+				"PoNumber": null,
+				"OrderItems": {
+					"totalSize": 1,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "OrderItem",
+								"url": "/services/data/v62.0/sobjects/OrderItem/8025e000000AbBBAA2"
+							},
+							"Id": "8025e000000AbBBAA2",
+							"Product2Id": "01t5e000000AaAAAA1",
+							"Product2": {
+								"attributes": {
+									"type": "Product2",
+									"url": "/services/data/v62.0/sobjects/Product2/01t5e000000AaAAAA1"
+								},
+								"Name": "Design session"
+							},
+							"Description": null,
+							"Quantity": 1,
+							"UnitPrice": 150.0,
+							"TotalPrice": 150.0
+						}
+					]
+				}
+			}
+		]
+	}
+}

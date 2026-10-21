@@ -1,0 +1,14 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {},
+		"query_patterns": {
+			"q": "SELECT\\ Id,\\ Name,\\ QuoteNumber,\\ Status,\\ AccountId,\\ ContactId,\\ ExpirationDate,\\ CreatedDate,\\ Subtotal,\\ TotalPrice,\\ Tax,\\ ShippingHandling,\\ GrandTotal,\\ \\(SELECT\\ Id,\\ Product2Id,\\ Product2\\.Name,\\ Description,\\ Quantity,\\ UnitPrice,\\ TotalPrice\\ FROM\\ QuoteLineItems\\ ORDER\\ BY\\ SortOrder,\\ Id\\)\\ FROM\\ Quote\\ WHERE\\ SystemModstamp\\ >=\\ \\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z\\ ORDER\\ BY\\ Id\\ LIMIT\\ 200"
+		}
+	},
+	"response": {
+		"totalSize": 0,
+		"done": true,
+		"records": []
+	}
+}

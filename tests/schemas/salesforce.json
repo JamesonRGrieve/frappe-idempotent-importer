@@ -1,0 +1,2164 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "Salesforce REST API v62.0: the answers read by frappe-idempotent-importer",
+  "version": "2026-10-21",
+  "description": "Writes tests/schemas/salesforce.json: the REST API answers the Salesforce adapter reads, as an OpenAPI\ndocument transcribed from Salesforce's official references (Salesforce publishes no static OpenAPI document\nfor its standard objects; its sObjects OpenAPI generator is a per-org beta):\n\n- the Query resource's answer (REST API Developer Guide, \"Execute a SOQL Query\",\n  https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_query.htm): ``totalSize``,\n  ``done``, ``nextRecordsUrl`` while not done, and ``records``, each with its ``attributes`` (``type``,\n  ``url``) and the fields the query selects; a child relationship's records nest as a query result of their\n  own (SOQL and SOSL Reference, \"Relationship Queries\");\n- the sObject Describe resource's answer (https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/\n  api_rest/resources_sobject_describe.htm, DescribeSObjectResult and Field in the SOAP API's\n  \"describeSObjects()\" reference): the object's ``name``, ``label`` and ``custom``, and each field's\n  ``name``, ``label``, ``type``, ``custom`` and ``picklistValues`` (``value``, ``label``, ``active``,\n  ``defaultValue``);\n- each object's fields as the Object Reference types them\n  (https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_<object>.htm):\n  a field without a value is null; custom fields (API names ending ``__c``) are the org's own, so any other\n  field of a record is a string, number, boolean or null.\n\n``python -m tools.salesforce_schema`` rewrites it."
+ },
+ "paths": {
+  "/services/data/v62.0/query": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QueryResult"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/services/data/v62.0/query/{locator}": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/QueryResult"
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/services/data/v62.0/sobjects/{sObject}/describe": {
+   "get": {
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DescribeSObjectResult"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "User": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_user.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "User"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "FirstName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "LastName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "MobilePhone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Department": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "EmployeeNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ManagerId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsActive": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Product2": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_product2.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Product2"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ProductCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsActive": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "Family": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "StockKeepingUnit": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "PricebookEntries": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/PricebookEntryResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "PricebookEntry": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_pricebookentry.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "PricebookEntry"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "UnitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Account": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_account.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Account"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Industry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "BillingStreet": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "BillingCity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "BillingState": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "BillingPostalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "BillingCountry": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsPersonAccount": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "PersonEmail": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Contacts": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/ContactResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "Notes": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/NoteResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Contact": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_contact.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Contact"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "FirstName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "LastName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "MobilePhone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Note": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_note.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Note"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Body": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CreatedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Lead": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_lead.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Lead"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "FirstName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "LastName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Company": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "MobilePhone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsConverted": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Street": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "City": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "State": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "PostalCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Notes": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/NoteResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Opportunity": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_opportunity.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Opportunity"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Amount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "CloseDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "StageName": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Probability": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "IsClosed": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "IsWon": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "Type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CreatedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CurrencyIsoCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Notes": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/NoteResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Task": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_task.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Task"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "WhoId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "WhatId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Subject": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CreatedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsClosed": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "ActivityDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "TaskSubtype": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CallType": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CallDurationInSeconds": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "CallDisposition": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Event": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_event.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Event"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "WhoId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "WhatId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Subject": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CreatedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Location": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "StartDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "EndDateTime": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "IsAllDayEvent": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "ActivityDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "EmailMessage": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_emailmessage.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "EmailMessage"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Subject": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "TextBody": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "FromAddress": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ToAddress": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Incoming": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "MessageDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "RelatedToId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Quote": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_quote.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Quote"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "QuoteNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ContactId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "ExpirationDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CreatedDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Subtotal": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "TotalPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "Tax": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "ShippingHandling": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "GrandTotal": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "CurrencyIsoCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "QuoteLineItems": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/QuoteLineItemResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "QuoteLineItem": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_quotelineitem.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "QuoteLineItem"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Product2Id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "UnitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "TotalPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "Product2": {
+      "oneOf": [
+       {
+        "type": "object",
+        "required": [
+         "attributes"
+        ],
+        "properties": {
+         "attributes": {
+          "type": "object",
+          "properties": {
+           "type": {
+            "type": "string"
+           },
+           "url": {
+            "type": "string"
+           }
+          }
+         },
+         "Name": {
+          "type": "string"
+         }
+        }
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Order": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_order.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Order"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "OrderNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "AccountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "EffectiveDate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "StatusCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "TotalAmount": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "PoNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "CurrencyIsoCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "OrderItems": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/OrderItemResult"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "OrderItem": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_orderitem.htm",
+    "required": [
+     "attributes",
+     "Id"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "OrderItem"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "Product2Id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "Quantity": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "UnitPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "TotalPrice": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "Product2": {
+      "oneOf": [
+       {
+        "type": "object",
+        "required": [
+         "attributes"
+        ],
+        "properties": {
+         "attributes": {
+          "type": "object",
+          "properties": {
+           "type": {
+            "type": "string"
+           },
+           "url": {
+            "type": "string"
+           }
+          }
+         },
+         "Name": {
+          "type": "string"
+         }
+        }
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "Organization": {
+    "type": "object",
+    "description": "https://developer.salesforce.com/docs/atlas.en-us.object_reference.meta/object_reference/sforce_api_objects_organization.htm",
+    "required": [
+     "attributes"
+    ],
+    "properties": {
+     "attributes": {
+      "type": "object",
+      "required": [
+       "type"
+      ],
+      "properties": {
+       "type": {
+        "type": "string",
+        "enum": [
+         "Organization"
+        ]
+       },
+       "url": {
+        "type": "string"
+       }
+      }
+     },
+     "Id": {
+      "type": "string"
+     },
+     "DefaultCurrencyIsoCode": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": {
+     "type": [
+      "string",
+      "number",
+      "boolean",
+      "null"
+     ]
+    }
+   },
+   "UserResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/User"
+      }
+     }
+    }
+   },
+   "Product2Result": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Product2"
+      }
+     }
+    }
+   },
+   "PricebookEntryResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/PricebookEntry"
+      }
+     }
+    }
+   },
+   "AccountResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Account"
+      }
+     }
+    }
+   },
+   "ContactResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Contact"
+      }
+     }
+    }
+   },
+   "NoteResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Note"
+      }
+     }
+    }
+   },
+   "LeadResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Lead"
+      }
+     }
+    }
+   },
+   "OpportunityResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Opportunity"
+      }
+     }
+    }
+   },
+   "TaskResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Task"
+      }
+     }
+    }
+   },
+   "EventResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Event"
+      }
+     }
+    }
+   },
+   "EmailMessageResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/EmailMessage"
+      }
+     }
+    }
+   },
+   "QuoteResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Quote"
+      }
+     }
+    }
+   },
+   "QuoteLineItemResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/QuoteLineItem"
+      }
+     }
+    }
+   },
+   "OrderResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Order"
+      }
+     }
+    }
+   },
+   "OrderItemResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/OrderItem"
+      }
+     }
+    }
+   },
+   "OrganizationResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Organization"
+      }
+     }
+    }
+   },
+   "QueryResult": {
+    "type": "object",
+    "required": [
+     "totalSize",
+     "done",
+     "records"
+    ],
+    "properties": {
+     "totalSize": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "done": {
+      "type": "boolean"
+     },
+     "nextRecordsUrl": {
+      "type": "string"
+     },
+     "records": {
+      "type": "array",
+      "items": {
+       "oneOf": [
+        {
+         "$ref": "#/components/schemas/User"
+        },
+        {
+         "$ref": "#/components/schemas/Product2"
+        },
+        {
+         "$ref": "#/components/schemas/PricebookEntry"
+        },
+        {
+         "$ref": "#/components/schemas/Account"
+        },
+        {
+         "$ref": "#/components/schemas/Contact"
+        },
+        {
+         "$ref": "#/components/schemas/Note"
+        },
+        {
+         "$ref": "#/components/schemas/Lead"
+        },
+        {
+         "$ref": "#/components/schemas/Opportunity"
+        },
+        {
+         "$ref": "#/components/schemas/Task"
+        },
+        {
+         "$ref": "#/components/schemas/Event"
+        },
+        {
+         "$ref": "#/components/schemas/EmailMessage"
+        },
+        {
+         "$ref": "#/components/schemas/Quote"
+        },
+        {
+         "$ref": "#/components/schemas/QuoteLineItem"
+        },
+        {
+         "$ref": "#/components/schemas/Order"
+        },
+        {
+         "$ref": "#/components/schemas/OrderItem"
+        },
+        {
+         "$ref": "#/components/schemas/Organization"
+        }
+       ]
+      }
+     }
+    }
+   },
+   "PicklistEntry": {
+    "type": "object",
+    "required": [
+     "value",
+     "label",
+     "active"
+    ],
+    "properties": {
+     "value": {
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "active": {
+      "type": "boolean"
+     },
+     "defaultValue": {
+      "type": "boolean"
+     }
+    }
+   },
+   "Field": {
+    "type": "object",
+    "required": [
+     "name",
+     "label",
+     "type",
+     "custom",
+     "picklistValues"
+    ],
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "type": {
+      "type": "string"
+     },
+     "custom": {
+      "type": "boolean"
+     },
+     "picklistValues": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/PicklistEntry"
+      }
+     }
+    }
+   },
+   "DescribeSObjectResult": {
+    "type": "object",
+    "required": [
+     "name",
+     "label",
+     "custom",
+     "fields"
+    ],
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "custom": {
+      "type": "boolean"
+     },
+     "fields": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Field"
+      }
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,48 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, FirstName, LastName, Email, Phone, MobilePhone, Title, Department, EmployeeNumber, ManagerId, IsActive FROM User WHERE UserType = 'Standard' ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 2,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "User",
+					"url": "/services/data/v62.0/sobjects/User/0055e000001AaAAAA1"
+				},
+				"Id": "0055e000001AaAAAA1",
+				"FirstName": "Morgan",
+				"LastName": "Sales",
+				"Email": "morgan@studio.example",
+				"Phone": null,
+				"MobilePhone": null,
+				"Title": null,
+				"Department": null,
+				"EmployeeNumber": null,
+				"ManagerId": null,
+				"IsActive": true
+			},
+			{
+				"attributes": {
+					"type": "User",
+					"url": "/services/data/v62.0/sobjects/User/0055e000001AbBBAA2"
+				},
+				"Id": "0055e000001AbBBAA2",
+				"FirstName": "Jamie",
+				"LastName": "Front",
+				"Email": "jamie@studio.example",
+				"Phone": null,
+				"MobilePhone": null,
+				"Title": null,
+				"Department": null,
+				"EmployeeNumber": "E-2",
+				"ManagerId": "0055e000001AaAAAA1",
+				"IsActive": false
+			}
+		]
+	}
+}

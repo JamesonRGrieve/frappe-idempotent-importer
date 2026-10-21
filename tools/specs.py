@@ -577,6 +577,10 @@ def catalog() -> list[Document]:
 			)
 			for name, sha256 in HIGHLEVEL_DOCUMENTS.items()
 		),
+		# Salesforce publishes no static OpenAPI document for its standard objects: the REST API answers the
+		# adapter reads, transcribed by tools/salesforce_schema.py from the REST API Developer Guide and the
+		# Object Reference.
+		committed("salesforce", "rest-api-reference", "tests/schemas/salesforce.json", ""),
 		# HubSpot's CRM v3 documents; their paths are full on api.hubapi.com.
 		*(
 			SpecDocument(

@@ -42,6 +42,7 @@ stores can import into two businesses at once and never touch each other's recor
 | HighLevel | Built | One sub-account's users, products with variant prices, contacts as leads with their notes (billed ones as customers), businesses as prospects, pipelines and opportunities, conversation messages, appointments, tasks, invoices and payments with their refunds — [coverage/highlevel.md](coverage/highlevel.md) |
 | PeopleSoft | Built | Through the Integration Broker's Query Access Service and the queries the connection's field map names: departments, job codes and employees into HRMS; customers, suppliers, ChartField accounts, AR invoices, AP vouchers, payments and journals into the books — [coverage/peoplesoft.md](coverage/peoplesoft.md) |
 | HubSpot | Built | Owners, products, contacts as leads with their notes, companies as prospects with their people, customers, deal pipelines and deals at their stage, calls, emails, meetings and tasks, quotes, orders, invoices and commerce payments with their refunds, and every property the account defined — [coverage/hubspot.md](coverage/hubspot.md) |
+| Salesforce | Built | Users, products at their standard price, accounts as prospects with their contacts and notes (customer accounts as customers), leads with their notes, opportunity types and opportunities at their stage, logged calls and emails, email messages, tasks, events, quotes and orders, and every custom field — [coverage/salesforce.md](coverage/salesforce.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -203,6 +204,10 @@ This is the operator's decision to confirm (see below).
    - **HubSpot:** create an app in a HubSpot developer account with the same redirect URI and the read
      scopes in [coverage/hubspot.md](coverage/hubspot.md); enter `https://app.hubspot.com` as the Store URL
      and the app's client ID and secret, save, then click **Connect to HubSpot** and choose the account.
+   - **Salesforce:** create an External Client App (or a connected app) with OAuth, the `api` and
+     `refresh_token` scopes and the same callback URL; enter the org's My Domain URL
+     (`https://<domain>.my.salesforce.com`) as the Store URL and the app's consumer key and secret, save, then
+     click **Connect to Salesforce** ([coverage/salesforce.md](coverage/salesforce.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty

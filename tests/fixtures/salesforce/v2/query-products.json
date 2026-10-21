@@ -1,0 +1,68 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, Name, ProductCode, Description, IsActive, Family, StockKeepingUnit, (SELECT Id, UnitPrice FROM PricebookEntries WHERE Pricebook2.IsStandard = true AND IsActive = true) FROM Product2 ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 2,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Product2",
+					"url": "/services/data/v62.0/sobjects/Product2/01t5e000000AaAAAA1"
+				},
+				"Id": "01t5e000000AaAAAA1",
+				"Name": "Design session",
+				"ProductCode": "SESSION",
+				"Description": "One hour",
+				"IsActive": true,
+				"Family": null,
+				"StockKeepingUnit": null,
+				"PricebookEntries": {
+					"totalSize": 1,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "PricebookEntry",
+								"url": "/services/data/v62.0/sobjects/PricebookEntry/01u5e000000AaAAAA1"
+							},
+							"Id": "01u5e000000AaAAAA1",
+							"UnitPrice": 175.0
+						}
+					]
+				}
+			},
+			{
+				"attributes": {
+					"type": "Product2",
+					"url": "/services/data/v62.0/sobjects/Product2/01t5e000000AbBBAA2"
+				},
+				"Id": "01t5e000000AbBBAA2",
+				"Name": "Studio print",
+				"ProductCode": null,
+				"Description": null,
+				"IsActive": true,
+				"Family": null,
+				"StockKeepingUnit": "PRINT-1",
+				"PricebookEntries": {
+					"totalSize": 1,
+					"done": true,
+					"records": [
+						{
+							"attributes": {
+								"type": "PricebookEntry",
+								"url": "/services/data/v62.0/sobjects/PricebookEntry/01u5e000000AbBBAA2"
+							},
+							"Id": "01u5e000000AbBBAA2",
+							"UnitPrice": 45.0
+						}
+					]
+				}
+			}
+		]
+	}
+}

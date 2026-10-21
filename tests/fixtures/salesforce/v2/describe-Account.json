@@ -1,0 +1,124 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Account/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Account",
+		"label": "Account",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Name",
+				"label": "Name",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Type",
+				"label": "Type",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Phone",
+				"label": "Phone",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Website",
+				"label": "Website",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Industry",
+				"label": "Industry",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountNumber",
+				"label": "Account Number",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "BillingStreet",
+				"label": "Billing Street",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "BillingCity",
+				"label": "Billing City",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "BillingState",
+				"label": "Billing State",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "BillingPostalCode",
+				"label": "Billing Postal Code",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "BillingCountry",
+				"label": "Billing Country",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Account_Tier__c",
+				"label": "Account Tier",
+				"type": "picklist",
+				"custom": true,
+				"picklistValues": [
+					{
+						"value": "gold",
+						"label": "Gold",
+						"active": true,
+						"defaultValue": false
+					},
+					{
+						"value": "silver",
+						"label": "Silver",
+						"active": true,
+						"defaultValue": false
+					}
+				]
+			}
+		]
+	}
+}

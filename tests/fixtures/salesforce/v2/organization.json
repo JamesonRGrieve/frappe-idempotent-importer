@@ -1,0 +1,20 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT DefaultCurrencyIsoCode FROM Organization"
+		}
+	},
+	"response": {
+		"totalSize": 1,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "Organization"
+				},
+				"DefaultCurrencyIsoCode": "CAD"
+			}
+		]
+	}
+}

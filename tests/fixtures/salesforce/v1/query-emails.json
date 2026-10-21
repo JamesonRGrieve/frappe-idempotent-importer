@@ -1,0 +1,29 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/query",
+		"query": {
+			"q": "SELECT Id, Subject, TextBody, FromAddress, ToAddress, Incoming, MessageDate, RelatedToId, Status FROM EmailMessage ORDER BY Id LIMIT 200"
+		}
+	},
+	"response": {
+		"totalSize": 1,
+		"done": true,
+		"records": [
+			{
+				"attributes": {
+					"type": "EmailMessage",
+					"url": "/services/data/v62.0/sobjects/EmailMessage/02s5e000007AaAAAA1"
+				},
+				"Id": "02s5e000007AaAAAA1",
+				"Subject": "Samples",
+				"TextBody": "Could you send the paper samples?",
+				"FromAddress": "sam@river.example",
+				"ToAddress": "morgan@studio.example",
+				"Incoming": true,
+				"MessageDate": "2026-09-06T15:00:00.000+0000",
+				"RelatedToId": "0065e000004AaAAAA1",
+				"Status": "1"
+			}
+		]
+	}
+}

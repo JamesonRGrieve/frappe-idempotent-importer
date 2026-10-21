@@ -1,0 +1,97 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Event/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Event",
+		"label": "Event",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "WhoId",
+				"label": "Who Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "WhatId",
+				"label": "What Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountId",
+				"label": "Account Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Subject",
+				"label": "Subject",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CreatedDate",
+				"label": "Created Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Location",
+				"label": "Location",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "StartDateTime",
+				"label": "Start Date Time",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "EndDateTime",
+				"label": "End Date Time",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "IsAllDayEvent",
+				"label": "Is All Day Event",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "ActivityDate",
+				"label": "Activity Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			}
+		]
+	}
+}

@@ -1,0 +1,142 @@
+{
+	"request": {
+		"path": "/services/data/v62.0/sobjects/Opportunity/describe",
+		"query": {}
+	},
+	"response": {
+		"name": "Opportunity",
+		"label": "Opportunity",
+		"custom": false,
+		"fields": [
+			{
+				"name": "Id",
+				"label": "Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Name",
+				"label": "Name",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "AccountId",
+				"label": "Account Id",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Amount",
+				"label": "Amount",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CloseDate",
+				"label": "Close Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "StageName",
+				"label": "Stage Name",
+				"type": "picklist",
+				"custom": false,
+				"picklistValues": [
+					{
+						"value": "Prospecting",
+						"label": "Prospecting",
+						"active": true,
+						"defaultValue": false
+					},
+					{
+						"value": "Proposal/Price Quote",
+						"label": "Proposal/Price Quote",
+						"active": true,
+						"defaultValue": false
+					},
+					{
+						"value": "Closed Won",
+						"label": "Closed Won",
+						"active": true,
+						"defaultValue": false
+					},
+					{
+						"value": "Closed Lost",
+						"label": "Closed Lost",
+						"active": true,
+						"defaultValue": false
+					}
+				]
+			},
+			{
+				"name": "Probability",
+				"label": "Probability",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "IsClosed",
+				"label": "Is Closed",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "IsWon",
+				"label": "Is Won",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Type",
+				"label": "Type",
+				"type": "picklist",
+				"custom": false,
+				"picklistValues": [
+					{
+						"value": "New Customer",
+						"label": "New Customer",
+						"active": true,
+						"defaultValue": false
+					},
+					{
+						"value": "Existing Customer - Upgrade",
+						"label": "Existing Customer - Upgrade",
+						"active": true,
+						"defaultValue": false
+					}
+				]
+			},
+			{
+				"name": "Description",
+				"label": "Description",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "CreatedDate",
+				"label": "Created Date",
+				"type": "string",
+				"custom": false,
+				"picklistValues": []
+			},
+			{
+				"name": "Lead_Source_Detail__c",
+				"label": "Lead Source Detail",
+				"type": "string",
+				"custom": true,
+				"picklistValues": []
+			}
+		]
+	}
+}

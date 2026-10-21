@@ -387,6 +387,12 @@ Each of these is the operator's call.
 27. **Finance & Operations reads through a per-connection field map:** the defaults name only what
     Microsoft's entity reference documents; whatever else a kind needs (an order date, a product name,
     vendors' and purchase orders' entities) the operator maps for their environment.
+28. **A source's own fields are kept by label, not as ERPNext fields:** the values of the fields a CRM's
+    users defined (HubSpot properties, Salesforce and Zoho custom fields, Pipedrive's) land in a read-only
+    **Source Fields** JSON field the app adds to Item, Lead, Prospect, Opportunity, Customer, Supplier,
+    Communication, Event and ToDo, so every value is mirrored and change-tracked without one connection's
+    fields reshaping the site's doctypes. Promoting a field to a Custom Field of its own is the operator's
+    call.
 
 ## Next steps
 

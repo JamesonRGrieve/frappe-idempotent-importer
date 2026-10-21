@@ -1500,6 +1500,20 @@ class TestWriters(IntegrationTestCase):
 			str(frappe.db.get_value("Quotation", name, "title")).startswith("[Removed at source]")
 		)
 
+	def test_a_crm_quote_to_an_organisation_that_isnt_a_customer(self) -> None:
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		company = gid("Company", "5")
+		self.mirror(Kind.PROSPECT, ProspectWriter, company, prospect_fields(Prospect("Quoted Co")))
+		key = gid("Quote", "5")
+		quote = {**self.draft(), "customer": None, "quoted": contract.quoted_party(Kind.PROSPECT, company)}
+		_, name = self.assert_lifecycle(
+			Kind.DRAFT_ORDER, DraftOrderWriter, key, quote, {**quote, **self.draft("3"), "customer": None}
+		)
+		self.assertEqual(
+			frappe.db.get_value("Quotation", name, ["quotation_to", "party_name", "docstatus"]),
+			("Prospect", self.target(Kind.PROSPECT, company), 0),
+		)
+
 	def profile(self, *rules: tuple[str, str]) -> Fields:
 		return {
 			"name": "General profile",
@@ -2037,6 +2051,139 @@ class TestWriters(IntegrationTestCase):
 		)
 		self.retire(Kind.TODO, ToDoWriter, task)
 		self.assertEqual(frappe.db.get_value("ToDo", todo_name, "status"), "Cancelled")
+
+	def test_a_deal_with_an_organisation_at_its_stage_and_the_fields_users_added(self) -> None:
+		company = gid("Company", "9")
+		prospect = prospect_fields(
+			Prospect(
+				"Delta Works",
+				custom={"Industry tier": "Gold"},
+				crm_notes=[Note(gid("Note", "9"), "2026-09-01T15:00:00Z", "Expanding in spring")],
+				contacts=[ContactPerson(gid("Contact", "9"), "Dana Delta", "dana@delta.example")],
+			)
+		)
+		_, organisation = self.assert_lifecycle(
+			Kind.PROSPECT,
+			ProspectWriter,
+			company,
+			prospect,
+			{**prospect, "custom": {"Industry tier": "Platinum"}},
+		)
+		self.assertEqual(
+			json.loads(frappe.db.get_value("Prospect", organisation, "importer_custom_fields")),
+			{"Industry tier": "Platinum"},
+		)
+		self.assertEqual(
+			[row.note for row in frappe.get_doc("Prospect", organisation).notes], ["Expanding in spring"]
+		)
+		dana = self.target(Kind.CONTACT, f"{company}#person:{gid('Contact', '9')}")
+		self.assertTrue(
+			frappe.db.exists(
+				"Dynamic Link",
+				{"parent": dana, "link_doctype": "Prospect", "link_name": organisation},
+			),
+			"the organisation's contact is linked to it",
+		)
+		key = gid("Deal", "9")
+		deal = opportunity_fields(
+			Opportunity(
+				Kind.PROSPECT,
+				company,
+				"Delta fit-out",
+				"Open",
+				"2026-09-10",
+				sales_stage="Qualified",
+				custom={"Source campaign": "Expo"},
+			)
+		)
+		_, opportunity = self.assert_lifecycle(
+			Kind.OPPORTUNITY,
+			OpportunityWriter,
+			key,
+			deal,
+			{**deal, "sales_stage": "Proposal sent", "custom": {}},
+		)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Opportunity",
+				opportunity,
+				["opportunity_from", "party_name", "sales_stage", "importer_custom_fields"],
+			),
+			("Prospect", organisation, "Proposal sent - WT", None),
+			"at its stage's Sales Stage; a field the source cleared is cleared",
+		)
+		self.assertTrue(frappe.db.exists("Sales Stage", "Qualified - WT"), "the earlier stage stays")
+		meeting = gid("Meeting", "9")
+		booked = event_fields(
+			Event(
+				"Site walk",
+				"2026-10-22T16:00:00Z",
+				"Open",
+				"2026-10-22T17:00:00Z",
+				participants=[(Kind.OPPORTUNITY, key), (Kind.PROSPECT, company)],
+			)
+		)
+		self.mirror(Kind.EVENT, EventWriter, meeting, booked)
+		doc = frappe.get_doc("Event", self.target(Kind.EVENT, meeting))
+		self.assertEqual(
+			(
+				doc.starts_on,
+				[(p.reference_doctype, p.reference_docname) for p in doc.event_participants],
+			),
+			(
+				system_datetime("2026-10-22T16:00:00Z"),
+				[("Opportunity", opportunity), ("Prospect", organisation)],
+			),
+			"a UTC time on the site's clock, with the deal and its organisation",
+		)
+		call = gid("Call", "9")
+		self.mirror(
+			Kind.COMMUNICATION,
+			CommunicationWriter,
+			call,
+			communication_fields(
+				Communication(
+					Kind.OPPORTUNITY,
+					key,
+					"Phone",
+					True,
+					"2026-10-01T15:00:00Z",
+					"Pricing call",
+					"Walked through pricing.",
+					custom={"Call outcome": "Connected"},
+				)
+			),
+		)
+		self.assertEqual(
+			frappe.db.get_value(
+				"Communication",
+				self.target(Kind.COMMUNICATION, call),
+				["reference_doctype", "reference_name", "importer_custom_fields"],
+			),
+			("Opportunity", opportunity, '{"Call outcome": "Connected"}'),
+		)
+		task = gid("Task", "9")
+		self.mirror(
+			Kind.TODO,
+			ToDoWriter,
+			task,
+			todo_fields(ToDo("Send the quote", "Open", Kind.PROSPECT, company)),
+		)
+		self.assertEqual(
+			frappe.db.get_value("ToDo", self.target(Kind.TODO, task), ["reference_type", "reference_name"]),
+			("Prospect", organisation),
+		)
+		customer = gid("Customer", "9")
+		self.mirror(
+			Kind.CUSTOMER,
+			CustomerWriter,
+			customer,
+			party_fields(Party("Delta Works Ltd", "Company", custom={"Account tier": "A"})),
+		)
+		self.assertEqual(
+			frappe.db.get_value("Customer", self.target(Kind.CUSTOMER, customer), "importer_custom_fields"),
+			'{"Account tier": "A"}',
+		)
 
 	def test_a_shift_with_punches_in_it_moves_and_goes(self) -> None:
 		member = gid("Member", "3")

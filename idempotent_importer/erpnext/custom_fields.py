@@ -3,7 +3,8 @@
 
 Pricing Rule, Promotional Scheme and Coupon Code record a mirrored discount's conditions ERPNext's pricing
 doesn't enforce (``contract.CONDITIONS``) for the Webshop fork, and whether the discount is held awaiting
-that enforcement (``erpnext.writers.discounts``)."""
+that enforcement (``erpnext.writers.discounts``). The records a CRM or business system's users extend with
+fields of their own keep those fields' values, by label, in Source Fields (``contract.with_custom``)."""
 
 from __future__ import annotations
 
@@ -16,6 +17,18 @@ DISCOUNT_DOCTYPES = {
 	"Promotional Scheme": "disable",
 	"Coupon Code": "pricing_rule",
 }
+CUSTOM_VALUES = "importer_custom_fields"
+SOURCE_FIELD_DOCTYPES = (
+	"Item",
+	"Lead",
+	"Prospect",
+	"Opportunity",
+	"Customer",
+	"Supplier",
+	"Communication",
+	"Event",
+	"ToDo",
+)
 
 
 def discount_fields(after: str) -> list[dict[str, Any]]:
@@ -41,8 +54,22 @@ def discount_fields(after: str) -> list[dict[str, Any]]:
 	]
 
 
+def source_fields() -> list[dict[str, Any]]:
+	return [
+		{
+			"fieldname": CUSTOM_VALUES,
+			"label": "Source Fields",
+			"fieldtype": "JSON",
+			"read_only": 1,
+			"no_copy": 1,
+			"description": "The values of the fields the source's users defined themselves, by label",
+		}
+	]
+
+
 def custom_fields() -> dict[str, list[dict[str, Any]]]:
-	return {doctype: discount_fields(after) for doctype, after in DISCOUNT_DOCTYPES.items()}
+	fields = {doctype: discount_fields(after) for doctype, after in DISCOUNT_DOCTYPES.items()}
+	return fields | dict.fromkeys(SOURCE_FIELD_DOCTYPES, source_fields())
 
 
 def install() -> None:

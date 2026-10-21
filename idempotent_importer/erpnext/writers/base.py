@@ -4,6 +4,7 @@ parts), media, and the record helpers."""
 
 from __future__ import annotations
 
+import json
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -12,9 +13,11 @@ from frappe.desk.doctype.tag.tag import DocTags
 
 from idempotent_importer.core.desired import Desired
 from idempotent_importer.core.errors import UnresolvedDependency
+from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import ConnectionContext
+from idempotent_importer.erpnext.custom_fields import CUSTOM_VALUES
 from idempotent_importer.erpnext.media import Media
 from idempotent_importer.erpnext.stores import FrappeLinkStore
 
@@ -49,6 +52,18 @@ def cancel_booked(doc: Any) -> None:
 	finally:
 		for doctype, name in disabled:
 			frappe.db.set_value(doctype, name, "disabled", 1, update_modified=False)
+
+
+def custom_json(values: Values) -> str | None:
+	"""The values of the source's own fields (``custom``, by label) as a record's Source Fields
+	(``custom_fields.CUSTOM_VALUES``), or None."""
+	custom = values.record("custom")
+	found = custom.all() if custom is not None else {}
+	return json.dumps(found, sort_keys=True) if found else None
+
+
+def set_custom(doc: Any, values: Values) -> None:
+	doc.set(CUSTOM_VALUES, custom_json(values))
 
 
 DRAFT, SUBMITTED, CANCELLED = 0, 1, 2

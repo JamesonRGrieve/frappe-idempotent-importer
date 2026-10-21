@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """A source's sales pipeline in ERPNext's CRM: Leads (the person, their organisation, how to reach them and
 their notes), Prospects (the organisations, with their Contact, Address and leads), Opportunity Types (a
-source's pipelines, named with the connection's abbreviation), Opportunities with a lead or a customer;
-and the conversations around them as Communications, appointments as Events and tasks as ToDos, each
-linked to its lead or customer.
+source's pipelines, named with the connection's abbreviation), Opportunities with a lead, a customer or a
+prospect, at their pipeline stage's Sales Stage (named the same way); and the conversations around them as
+Communications, appointments as Events and tasks as ToDos, each linked to its lead, customer, prospect or
+opportunity. Each keeps the values of the source's own fields in its Source Fields.
 
 Nothing here sends anything: a Communication is recorded, never sent, and mail is muted for every write.
 Retiring disables a lead, closes an opportunity, cancels an event or a task and marks a communication; a
@@ -20,15 +21,21 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, system_datetime
-from idempotent_importer.erpnext.writers.base import Writer, mark_retired
+from idempotent_importer.erpnext.writers.base import Writer, mark_retired, set_custom
 from idempotent_importer.erpnext.writers.parties import ReachableWriter
 
 LEAD, OPPORTUNITY, CUSTOMER, PROSPECT = "Lead", "Opportunity", "Customer", "Prospect"
+SALES_STAGE = "Sales Stage"
 OPPORTUNITY_TYPE, COMMUNICATION, EVENT, TODO = "Opportunity Type", "Communication", "Event", "ToDo"
 CLOSED, CANCELLED = "Closed", "Cancelled"
 TITLE_LENGTH = 140
 SUBJECT_LENGTH = 140
-PARTY_DOCTYPES = {Kind.LEAD.value: (Kind.LEAD, LEAD), Kind.CUSTOMER.value: (Kind.CUSTOMER, CUSTOMER)}
+PARTY_DOCTYPES = {
+	Kind.LEAD.value: (Kind.LEAD, LEAD),
+	Kind.CUSTOMER.value: (Kind.CUSTOMER, CUSTOMER),
+	Kind.PROSPECT.value: (Kind.PROSPECT, PROSPECT),
+	Kind.OPPORTUNITY.value: (Kind.OPPORTUNITY, OPPORTUNITY),
+}
 
 
 def crm_notes(values: Values) -> list[dict[str, Any]]:
@@ -41,8 +48,15 @@ def crm_notes(values: Values) -> list[dict[str, Any]]:
 	return rows
 
 
+def on_site_clock(time: str | None) -> Any:
+	"""An event's time as the site shows it: as the source's clock showed it, or a UTC time converted."""
+	if time is None or not time.endswith("Z"):
+		return time
+	return system_datetime(time)
+
+
 class PartyLinked(Writer):
-	"""A writer whose record is about a lead or a customer (``{kind, party}``)."""
+	"""A writer whose record is about a lead, a customer, a prospect or an opportunity (``{kind, party}``)."""
 
 	def party(self, party: Values) -> tuple[str, str]:
 		kind, doctype = PARTY_DOCTYPES[party.string("kind")]
@@ -69,6 +83,7 @@ class LeadWriter(Writer):
 			}
 		)
 		doc.set("notes", crm_notes(values))
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		return Target(LEAD, doc.name)
 
@@ -77,8 +92,8 @@ class LeadWriter(Writer):
 
 
 class ProspectWriter(ReachableWriter):
-	"""An organisation, named with the connection's abbreviation, with its Contact and Address and its
-	people as its leads."""
+	"""An organisation, named with the connection's abbreviation, with its Contact and Address, its people as
+	its leads, and the people a CRM keeps at it as its Contacts."""
 
 	doctype = PROSPECT
 
@@ -95,8 +110,10 @@ class ProspectWriter(ReachableWriter):
 		doc.update({"company": self.context.company, "website": values.optional_string("website")})
 		doc.set("notes", crm_notes(values))
 		doc.set("leads", [{"lead": self.dependency(Kind.LEAD, lead)} for lead in values.strings("leads")])
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		self._contact(desired.gid, doc.name, values)
+		self._people(desired.gid, doc.name, values.records("contacts"))
 		self._addresses(desired.gid, doc.name, values)
 		return Target(PROSPECT, doc.name)
 
@@ -147,12 +164,24 @@ class OpportunityWriter(Writer):
 		)
 		if opportunity_type:
 			doc.opportunity_type = self.dependency(Kind.OPPORTUNITY_TYPE, opportunity_type)
+		stage = values.optional_string("sales_stage")
+		if stage:
+			doc.sales_stage = self.stage(stage)
 		doc.set("notes", crm_notes(values))
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		return Target(OPPORTUNITY, doc.name)
 
 	def retire(self, link: Link) -> None:
 		frappe.db.set_value(OPPORTUNITY, link.target.name, "status", CLOSED)
+
+	def stage(self, name: str) -> str:
+		"""The Sales Stage of a pipeline stage, named with the connection's abbreviation (made once; a stage
+		has nothing else to keep, and stays for the opportunities that were at it)."""
+		stage = self.context.suffixed(name)
+		if not frappe.db.exists(SALES_STAGE, stage):
+			frappe.get_doc({"doctype": SALES_STAGE, "stage_name": stage}).insert(ignore_permissions=True)
+		return stage
 
 
 class CommunicationWriter(PartyLinked):
@@ -178,6 +207,7 @@ class CommunicationWriter(PartyLinked):
 				"status": "Linked",
 			}
 		)
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		return Target(COMMUNICATION, doc.name)
 
@@ -195,8 +225,8 @@ class EventWriter(PartyLinked):
 		doc.update(
 			{
 				"subject": values.string("subject")[:SUBJECT_LENGTH],
-				"starts_on": values.string("starts_on"),
-				"ends_on": values.optional_string("ends_on"),
+				"starts_on": on_site_clock(values.string("starts_on")),
+				"ends_on": on_site_clock(values.optional_string("ends_on")),
 				"status": values.string("status"),
 				"description": values.optional_string("description"),
 				"event_type": "Private",
@@ -208,6 +238,7 @@ class EventWriter(PartyLinked):
 			"event_participants",
 			[{"reference_doctype": doctype, "reference_docname": name} for doctype, name in participants],
 		)
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		return Target(EVENT, doc.name)
 
@@ -231,6 +262,7 @@ class ToDoWriter(PartyLinked):
 				"reference_name": party,
 			}
 		)
+		set_custom(doc, values)
 		doc.save(ignore_permissions=True)
 		return Target(TODO, doc.name)
 

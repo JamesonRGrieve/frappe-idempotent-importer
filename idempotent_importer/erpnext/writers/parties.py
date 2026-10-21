@@ -14,7 +14,7 @@ from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
-from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer, set_custom
 
 
 def country_of(code: str | None) -> str:
@@ -98,54 +98,6 @@ class ReachableWriter(Writer):
 		self.links.save(Kind.ADDRESS, key, Target("Address", doc.name), PART_HASH, 1)
 		return str(doc.name)
 
-	def _addresses(self, gid: str, party: str, values: Values) -> list[str]:
-		return [
-			self._address(f"{gid}#address:{index}", party, address)
-			for index, address in enumerate(values.records("addresses"))
-		]
-
-
-class PartyWriter(ReachableWriter):
-	"""What a Customer and a Supplier share: the party itself, a Contact (name, email, phone) and an
-	Address per source address linked to it, and its primary contact and address."""
-
-	name_field: str
-	type_field: str
-
-	def write(self, desired: Desired, link: Link | None) -> Target:
-		values = desired.values()
-		doc = self.existing(link) or frappe.new_doc(self.doctype)
-		if doc.is_new():
-			doc.update(self.defaults())
-		self.fill(doc, values)
-		doc.update({self.name_field: values.string("name"), self.type_field: values.string("type")})
-		if values.has("tax_id"):
-			doc.tax_id = values.string("tax_id")
-		doc.disabled = int(bool(values.all().get("disabled")))
-		doc.save(ignore_permissions=True)
-		contact = self._contact(desired.gid, doc.name, values)
-		self._people(desired.gid, doc.name, values.records("contacts"))
-		addresses = self._addresses(desired.gid, doc.name, values)
-		prefix = self.doctype.lower()
-		primary = {
-			f"{prefix}_primary_contact": contact,
-			f"{prefix}_primary_address": addresses[0] if addresses else None,
-		}
-		if any(doc.get(field) != value for field, value in primary.items()):
-			doc.update(primary)
-			doc.save(ignore_permissions=True)
-		return Target(self.doctype, doc.name)
-
-	def retire(self, link: Link) -> None:
-		frappe.db.set_value(self.doctype, link.target.name, "disabled", 1)
-
-	def defaults(self) -> dict[str, Any]:
-		"""A new record's fields the source doesn't map."""
-		return {}
-
-	def fill(self, doc: Any, values: Values) -> None:
-		"""The party's own mapped fields beyond its name, type and tax id."""
-
 	def _people(self, gid: str, party: str, people: list[Values]) -> None:
 		"""A Contact for each of the party's other people; one the source drops is unlinked from the party
 		(a Contact has no disabled state)."""
@@ -186,6 +138,55 @@ class PartyWriter(ReachableWriter):
 					)
 					contact.save(ignore_permissions=True)
 				self.links.retire(Kind.CONTACT, link.gid)
+
+	def _addresses(self, gid: str, party: str, values: Values) -> list[str]:
+		return [
+			self._address(f"{gid}#address:{index}", party, address)
+			for index, address in enumerate(values.records("addresses"))
+		]
+
+
+class PartyWriter(ReachableWriter):
+	"""What a Customer and a Supplier share: the party itself, a Contact (name, email, phone) and an
+	Address per source address linked to it, and its primary contact and address."""
+
+	name_field: str
+	type_field: str
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		doc = self.existing(link) or frappe.new_doc(self.doctype)
+		if doc.is_new():
+			doc.update(self.defaults())
+		self.fill(doc, values)
+		doc.update({self.name_field: values.string("name"), self.type_field: values.string("type")})
+		if values.has("tax_id"):
+			doc.tax_id = values.string("tax_id")
+		doc.disabled = int(bool(values.all().get("disabled")))
+		set_custom(doc, values)
+		doc.save(ignore_permissions=True)
+		contact = self._contact(desired.gid, doc.name, values)
+		self._people(desired.gid, doc.name, values.records("contacts"))
+		addresses = self._addresses(desired.gid, doc.name, values)
+		prefix = self.doctype.lower()
+		primary = {
+			f"{prefix}_primary_contact": contact,
+			f"{prefix}_primary_address": addresses[0] if addresses else None,
+		}
+		if any(doc.get(field) != value for field, value in primary.items()):
+			doc.update(primary)
+			doc.save(ignore_permissions=True)
+		return Target(self.doctype, doc.name)
+
+	def retire(self, link: Link) -> None:
+		frappe.db.set_value(self.doctype, link.target.name, "disabled", 1)
+
+	def defaults(self) -> dict[str, Any]:
+		"""A new record's fields the source doesn't map."""
+		return {}
+
+	def fill(self, doc: Any, values: Values) -> None:
+		"""The party's own mapped fields beyond its name, type and tax id."""
 
 
 class CustomerWriter(PartyWriter):

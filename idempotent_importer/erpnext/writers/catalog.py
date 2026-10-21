@@ -23,7 +23,8 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, quantity
-from idempotent_importer.erpnext.writers.base import PART_HASH, Writer
+from idempotent_importer.erpnext.custom_fields import CUSTOM_VALUES
+from idempotent_importer.erpnext.writers.base import PART_HASH, Writer, custom_json
 from idempotent_importer.naming import unique_abbr
 
 STOCK_UOM = "Nos"
@@ -89,6 +90,7 @@ class ProductWriter(Writer):
 				"is_stock_item": int(values.flag("is_stock_item")),
 				"has_variants": int(variable),
 				"disabled": 0,
+				CUSTOM_VALUES: custom_json(values),
 				**self._weight(values),
 			},
 			[attribute.string("name") for attribute in values.records("attributes")] if variable else [],

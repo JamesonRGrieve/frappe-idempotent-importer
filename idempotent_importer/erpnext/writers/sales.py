@@ -48,6 +48,8 @@ from idempotent_importer.erpnext.writers.parties import address_values, link_to
 
 INVOICE = "Sales Invoice"
 QUOTATION = "Quotation"
+# Who else a proposal can be to: a lead, or an organisation (a prospect) that isn't a customer yet.
+QUOTED_PARTIES = {Kind.LEAD.value: (Kind.LEAD, "Lead"), Kind.PROSPECT.value: (Kind.PROSPECT, "Prospect")}
 PAYMENT = "Payment Entry"
 SHIPMENT = "Shipment"
 UOM = "Nos"
@@ -137,7 +139,7 @@ class SalesDocuments(Writer):
 		customer = values.optional_string("customer")
 		return self.dependency(Kind.CUSTOMER, customer) if customer else self.context.guest_customer
 
-	def common(self, values: Values, posted_at: str, party: str) -> dict[str, Any]:
+	def common(self, values: Values, posted_at: str, party: str | None) -> dict[str, Any]:
 		posted = system_datetime(posted_at)
 		return {
 			"company": self.context.company,
@@ -631,8 +633,8 @@ class OrderWriter(SalesDocuments):
 
 
 class DraftOrderWriter(SalesDocuments):
-	"""A draft order (a proposal the merchant sent or kept open) as a draft Quotation to its customer. It
-	is never submitted: a completed draft became an order, which is mirrored as such, so the draft's copy
+	"""A draft order (a proposal the merchant sent or kept open) as a draft Quotation to its customer (or, for
+	a CRM's quote, to the lead or organisation it was for: quoted). It is never submitted: a completed draft became an order, which is mirrored as such, so the draft's copy
 	is retired (its title marked; a draft Quotation has no closed state)."""
 
 	def write(self, desired: Desired, link: Link | None) -> Target:
@@ -640,12 +642,19 @@ class DraftOrderWriter(SalesDocuments):
 		quotation = self.existing(link) or frappe.new_doc(QUOTATION)
 		if quotation.docstatus != DRAFT:
 			quotation = frappe.new_doc(QUOTATION)
-		customer = self.customer_of(values)
+		quoted = values.record("quoted")
+		if quoted is None:
+			quotation_to, party = "Customer", self.customer_of(values)
+			common = self.common(values, values.string("created_at"), party)
+		else:
+			kind, quotation_to = QUOTED_PARTIES[quoted.string("kind")]
+			party = self.dependency(kind, quoted.string("party"))
+			common = self.common(values, values.string("created_at"), None)
 		quotation.update(
 			{
-				**self.common(values, values.string("created_at"), customer),
-				"quotation_to": "Customer",
-				"party_name": customer,
+				**common,
+				"quotation_to": quotation_to,
+				"party_name": party,
 				"order_type": "Sales",
 				"title": f"Draft order {values.string('number')}"[:TITLE_LENGTH],
 				"valid_till": None,

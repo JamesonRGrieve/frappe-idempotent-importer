@@ -599,14 +599,19 @@ class TestBooks:
 		assert communication_fields(message)["with"] == {"kind": "lead", "party": "gid://x/c/Lead/1"}
 		with pytest.raises(ValueError, match="communication medium"):
 			communication_fields(replace(message, medium="Fax"))
-		with pytest.raises(ValueError, match="a lead or a customer"):
+		with pytest.raises(ValueError, match="a lead, customer, prospect or opportunity"):
 			communication_fields(replace(message, party_kind=Kind.SUPPLIER))
+		about_deal = communication_fields(replace(message, party_kind=Kind.OPPORTUNITY))
+		assert about_deal["with"] == {"kind": "opportunity", "party": "gid://x/c/Lead/1"}
 		call = Event(
 			"Discovery", "2026-10-22 10:00:00", "Open", participants=[(Kind.LEAD, "gid://x/c/Lead/1")]
 		)
 		assert event_fields(call)["participants"] == [{"kind": "lead", "party": "gid://x/c/Lead/1"}]
+		assert event_fields(replace(call, starts_on="2026-10-22T10:00:00Z"))["starts_on"] == (
+			"2026-10-22T10:00:00Z"
+		), "a source keeping UTC times gives them as such"
 		with pytest.raises(ValueError, match="HH:MM:SS"):
-			event_fields(replace(call, starts_on="2026-10-22T10:00:00Z"))
+			event_fields(replace(call, starts_on="2026-10-22T10:00:00"))
 		task = ToDo("Send samples", "Open", Kind.CUSTOMER, "gid://x/c/Customer/1", "2026-10-30")
 		assert todo_fields(task)["about"] == {"kind": "customer", "party": "gid://x/c/Customer/1"}
 		with pytest.raises(ValueError, match="task status"):
@@ -623,10 +628,37 @@ class TestBooks:
 			Kind.LEAD, "gid://x/c/Lead/1", "Fit-out", "Open", "2026-02-01", "CAD", Decimal(500)
 		)
 		assert opportunity_fields(opportunity)["party_kind"] == "lead"
-		with pytest.raises(ValueError, match="lead or a customer"):
+		with pytest.raises(ValueError, match="a lead, a customer or a prospect"):
 			opportunity_fields(replace(opportunity, party_kind=Kind.SUPPLIER))
 		with pytest.raises(ValueError, match="opportunity status"):
 			opportunity_fields(replace(opportunity, status="Won"))
+
+	def test_pipeline_stages_and_the_fields_users_add(self) -> None:
+		deal = Opportunity(Kind.PROSPECT, "gid://x/c/Company/1", "Fit-out", "Open", "2026-02-01")
+		plain = opportunity_fields(deal)
+		assert "sales_stage" not in plain and "custom" not in plain, "an unstaged deal keeps its signal"
+		staged = opportunity_fields(replace(deal, sales_stage="Qualified", custom={"b": "2", "a": "1"}))
+		assert staged["sales_stage"] == "Qualified" and staged["party_kind"] == "prospect"
+		custom = staged["custom"]
+		assert isinstance(custom, dict) and list(custom) == ["a", "b"], "by label, in order"
+		assert lead_fields(Lead("Lead", "Riley", custom={"Tier": "Gold"}))["custom"] == {"Tier": "Gold"}
+		assert "custom" not in party_fields(Party("Acme", "Company"))
+		assert party_fields(Party("Acme", "Company", custom={"Tier": "A"}))["custom"] == {"Tier": "A"}
+		assert prospect_fields(Prospect("Acme", custom={"Size": "50"}))["custom"] == {"Size": "50"}
+		assert contract.quoted_party(Kind.PROSPECT, "gid://x/c/Company/1") == {
+			"kind": "prospect",
+			"party": "gid://x/c/Company/1",
+		}
+		with pytest.raises(ValueError, match="a lead or a prospect"):
+			contract.quoted_party(Kind.CUSTOMER, "gid://x/c/Company/1")
+		noted = opportunity_fields(
+			replace(deal, crm_notes=[Note("gid://x/c/Note/1", "2026-09-02T14:30:00Z", "Call back")])
+		)
+		assert noted["crm_notes"] == [
+			{"gid": "gid://x/c/Note/1", "date": "2026-09-02T14:30:00Z", "text": "Call back"}
+		]
+		task = ToDo("Call", "Open", Kind.OPPORTUNITY, "gid://x/c/Deal/1", custom={"Kind": "Call"})
+		assert todo_fields(task)["custom"] == {"Kind": "Call"}
 
 	def test_employees(self) -> None:
 		employee = Employee(

@@ -32,7 +32,8 @@ order        number, currency, created_at, submitted, customer (identity | None)
              currency too (checked exactly), and the source's base_currency when it names it (the writer
              refuses one that isn't the company's)
 draft_order  number, currency, created_at, customer, guest, billing, shipping, lines, discount, charges,
-             total, remarks, taxes_included (as for an order: a proposal, never booked)
+             total, remarks, taxes_included (as for an order: a proposal, never booked); optionally quoted
+             ({kind, party}: a CRM's quote to a lead or a prospect rather than a customer, ``quoted_party``)
 page         title, slug, parent (identity | None), published, html, images (source-hosted URLs it embeds)
 blog         title, slug, description
 article      title, slug, category (identity), author ({key, name}), published, published_on (date),
@@ -60,14 +61,20 @@ warehouse    name, parent, is_group, address (address | None)
 project      name, status, customer, cost_center (identities | None), start, end, notes
 lead         status, first_name, last_name, company, email, phone, mobile, job_title, website, notes,
              optionally disabled, crm_notes ([{gid, date, text}])
-opportunity  party_kind ("lead" | "customer"), party, title, status, date, currency, amount, probability,
-             expected_closing, notes; optionally opportunity_type (identity)
-prospect     name, website, email, phone, addresses ([address]), notes, leads (identities)
+opportunity  party_kind ("lead" | "customer" | "prospect"), party, title, status, date, currency, amount,
+             probability, expected_closing, notes; optionally opportunity_type (identity), sales_stage (the
+             pipeline stage's name)
+prospect     name, website, email, phone, addresses ([address]), notes, leads (identities); optionally
+             crm_notes (as a lead's; an opportunity's too) and contacts (as a supplier's)
 opportunity_type  name, description
-communication  with ({kind, party}), medium, sent, date, subject, content, phone, email
-event        subject, starts_on, ends_on (YYYY-MM-DD HH:MM:SS on the source's clock), status, description,
-             participants ([{kind, party}])
+communication  with ({kind, party}: a lead, customer, prospect or opportunity), medium, sent, date, subject,
+             content, phone, email
+event        subject, starts_on, ends_on (YYYY-MM-DD HH:MM:SS on the source's clock, or a UTC time), status,
+             description, participants ([{kind, party}])
 todo         description, status, date, about ({kind, party})
+
+A product, lead, prospect, opportunity, communication, event, todo, customer or supplier optionally carries
+``custom`` ({label: text}): the values of the fields the source's users defined themselves, by label.
 department   name, parent (identity | None), is_group
 designation  name
 employee     first_name, middle_name, last_name, gender, date_of_birth, date_of_joining, relieving_date,
@@ -989,6 +996,8 @@ LEAD_STATUSES = frozenset(
 	}
 )
 OPPORTUNITY_STATUSES = frozenset({"Open", "Quotation", "Converted", "Lost", "Replied", "Closed"})
+# Who an opportunity is with.
+OPPORTUNITY_PARTIES = frozenset({Kind.LEAD, Kind.CUSTOMER, Kind.PROSPECT})
 EMPLOYEE_STATUSES = frozenset({"Active", "Inactive", "Suspended", "Left"})
 # ERPNext's own Gender records (setup's install fixtures).
 GENDERS = frozenset(
@@ -1014,6 +1023,14 @@ def one_of(value: str, allowed: frozenset[str], what: str) -> str:
 	if value not in allowed:
 		raise ValueError(f"{what} {value!r} is not one of {sorted(allowed)}")
 	return value
+
+
+def with_custom(fields: Fields, custom: dict[str, str]) -> Fields:
+	"""A record's fields with the values of its source's own fields (``custom``, by label), only when it has
+	any, so a record mapped before they were mirrored keeps its change signal."""
+	if not custom:
+		return fields
+	return fields | {"custom": {label: custom[label] for label in sorted(custom)}}
 
 
 @dataclass(frozen=True)
@@ -1046,6 +1063,20 @@ class Party:
 	currency: str | None = None
 	contacts: list[ContactPerson] = field(default_factory=list)
 	disabled: bool = False
+	custom: dict[str, str] = field(default_factory=dict)
+
+
+def people_fields(people: list[ContactPerson]) -> list[Field]:
+	return [
+		{
+			"gid": person.gid,
+			"name": person.name,
+			"email": person.email,
+			"phone": person.phone,
+			"job_title": person.job_title,
+		}
+		for person in people
+	]
 
 
 def party_fields(party: Party) -> Fields:
@@ -1064,20 +1095,12 @@ def party_fields(party: Party) -> Fields:
 	extra: Fields = {
 		"tax_id": party.tax_id,
 		"currency": party.currency,
-		"contacts": [
-			{
-				"gid": person.gid,
-				"name": person.name,
-				"email": person.email,
-				"phone": person.phone,
-				"job_title": person.job_title,
-			}
-			for person in party.contacts
-		]
-		or None,
+		"contacts": people_fields(party.contacts) or None,
 		"disabled": party.disabled or None,
 	}
-	return fields | {key: value for key, value in extra.items() if value is not None}
+	return with_custom(
+		fields | {key: value for key, value in extra.items() if value is not None}, party.custom
+	)
 
 
 @dataclass(frozen=True)
@@ -1383,6 +1406,7 @@ class Lead:
 	notes: str | None = None
 	disabled: bool = False
 	crm_notes: list[Note] = field(default_factory=list)
+	custom: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -1392,6 +1416,12 @@ class Note:
 	gid: str
 	date: str | None
 	text: str
+
+
+def noted(notes: list[Note]) -> Fields:
+	"""A record's notes of its own (``crm_notes``), only when it has any, so a record mapped before they were
+	mirrored keeps its change signal."""
+	return {"crm_notes": note_fields(notes)} if notes else {}
 
 
 def note_fields(notes: list[Note]) -> list[Field]:
@@ -1420,7 +1450,7 @@ def lead_fields(lead: Lead) -> Fields:
 	}
 	if lead.crm_notes:
 		fields["crm_notes"] = note_fields(lead.crm_notes)
-	return fields | {"disabled": True} if lead.disabled else fields
+	return with_custom(fields | {"disabled": True} if lead.disabled else fields, lead.custom)
 
 
 @dataclass(frozen=True)
@@ -1440,26 +1470,39 @@ class Opportunity:
 	notes: str | None = None
 	# The source's pipeline (an ``opportunity_type`` identity), where it keeps several.
 	opportunity_type: str | None = None
+	# The pipeline stage it is at, by name (an ERPNext Sales Stage).
+	sales_stage: str | None = None
+	custom: dict[str, str] = field(default_factory=dict)
+	crm_notes: list[Note] = field(default_factory=list)
 
 
 def opportunity_fields(opportunity: Opportunity) -> Fields:
 	"""An ``opportunity``'s fields; its type only when the source names one, so an opportunity mapped before
 	types existed keeps its change signal."""
-	if opportunity.party_kind not in (Kind.LEAD, Kind.CUSTOMER):
-		raise ValueError(f"an opportunity is with a lead or a customer, not a {opportunity.party_kind}")
+	if opportunity.party_kind not in OPPORTUNITY_PARTIES:
+		raise ValueError(
+			f"an opportunity is with a lead, a customer or a prospect, not a {opportunity.party_kind}"
+		)
 	typed: Fields = {"opportunity_type": opportunity.opportunity_type} if opportunity.opportunity_type else {}
-	return typed | {
-		"party_kind": opportunity.party_kind.value,
-		"party": opportunity.party,
-		"title": opportunity.title,
-		"status": one_of(opportunity.status, OPPORTUNITY_STATUSES, "opportunity status"),
-		"date": required_date(opportunity.date, f"{opportunity.title}'s date"),
-		"currency": opportunity.currency,
-		"amount": opportunity.amount,
-		"probability": opportunity.probability,
-		"expected_closing": checked_date(opportunity.expected_closing, f"{opportunity.title}'s closing"),
-		"notes": opportunity.notes,
-	}
+	if opportunity.sales_stage:
+		typed["sales_stage"] = opportunity.sales_stage
+	return with_custom(
+		typed
+		| {
+			"party_kind": opportunity.party_kind.value,
+			"party": opportunity.party,
+			"title": opportunity.title,
+			"status": one_of(opportunity.status, OPPORTUNITY_STATUSES, "opportunity status"),
+			"date": required_date(opportunity.date, f"{opportunity.title}'s date"),
+			"currency": opportunity.currency,
+			"amount": opportunity.amount,
+			"probability": opportunity.probability,
+			"expected_closing": checked_date(opportunity.expected_closing, f"{opportunity.title}'s closing"),
+			"notes": opportunity.notes,
+		}
+		| noted(opportunity.crm_notes),
+		opportunity.custom,
+	)
 
 
 @dataclass(frozen=True)
@@ -1659,14 +1702,26 @@ def leave_application_fields(leave: LeaveApplication) -> Fields:
 COMMUNICATION_MEDIUMS = frozenset({"Email", "Chat", "Phone", "SMS", "Other"})
 EVENT_STATUSES = frozenset({"Open", "Completed", "Closed", "Cancelled"})
 TODO_STATUSES = frozenset({"Open", "Closed", "Cancelled"})
-# Who a conversation, an appointment or a task is with: a lead or a customer.
-CRM_PARTIES = frozenset({Kind.LEAD, Kind.CUSTOMER})
+# Who or what a conversation, an appointment or a task is about: a lead, a customer, an organisation (a
+# prospect) or a deal (an opportunity).
+CRM_PARTIES = frozenset({Kind.LEAD, Kind.CUSTOMER, Kind.PROSPECT, Kind.OPPORTUNITY})
 LOCAL_TIME = re.compile(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$")
 
 
 def crm_party(kind: Kind, gid: str) -> Fields:
 	if kind not in CRM_PARTIES:
-		raise ValueError(f"a lead or a customer, not a {kind}")
+		raise ValueError(f"a lead, customer, prospect or opportunity, not a {kind}")
+	return {"kind": kind.value, "party": gid}
+
+
+QUOTED_PARTIES = frozenset({Kind.LEAD, Kind.PROSPECT})
+
+
+def quoted_party(kind: Kind, gid: str) -> Fields:
+	"""A draft order's ``quoted``: a CRM's quote to a lead or an organisation (a prospect) that isn't a
+	customer."""
+	if kind not in QUOTED_PARTIES:
+		raise ValueError(f"a quote is to a lead or a prospect, not a {kind}")
 	return {"kind": kind.value, "party": gid}
 
 
@@ -1677,10 +1732,19 @@ def local_time(value: str | None, what: str) -> str | None:
 	return value
 
 
+def event_time(value: str | None, what: str) -> str | None:
+	"""An event's time: as the source's clock shows it, or (for a source that keeps them in UTC) a UTC time,
+	which the writer shows on the site's clock."""
+	if value is not None and UTC_TIME.match(value):
+		return value
+	return local_time(value, what)
+
+
 @dataclass(frozen=True)
 class Prospect:
 	"""An organisation the sales pipeline works with: its name, website, how to reach it, its address
-	(``address_fields``), a description, and its people (lead identities)."""
+	(``address_fields``), a description, and its people: leads (lead identities), and the contacts a CRM keeps
+	at it (``contacts``, as a party's other people)."""
 
 	name: str
 	website: str | None = None
@@ -1689,10 +1753,13 @@ class Prospect:
 	address: Fields | None = None
 	notes: str | None = None
 	leads: list[str] = field(default_factory=list)
+	custom: dict[str, str] = field(default_factory=dict)
+	crm_notes: list[Note] = field(default_factory=list)
+	contacts: list[ContactPerson] = field(default_factory=list)
 
 
 def prospect_fields(prospect: Prospect) -> Fields:
-	return {
+	fields: Fields = {
 		"name": prospect.name,
 		"website": prospect.website,
 		"email": prospect.email,
@@ -1701,6 +1768,9 @@ def prospect_fields(prospect: Prospect) -> Fields:
 		"notes": prospect.notes,
 		"leads": list[Field](prospect.leads),
 	}
+	if prospect.contacts:
+		fields["contacts"] = people_fields(prospect.contacts)
+	return with_custom(fields | noted(prospect.crm_notes), prospect.custom)
 
 
 def opportunity_type_fields(name: str, description: str | None = None) -> Fields:
@@ -1723,19 +1793,23 @@ class Communication:
 	content: str
 	phone: str | None = None
 	email: str | None = None
+	custom: dict[str, str] = field(default_factory=dict)
 
 
 def communication_fields(message: Communication) -> Fields:
-	return {
-		"with": crm_party(message.party_kind, message.party),
-		"medium": one_of(message.medium, COMMUNICATION_MEDIUMS, "communication medium"),
-		"sent": message.sent,
-		"date": checked_time(message.date, "a message's time"),
-		"subject": message.subject,
-		"content": message.content,
-		"phone": message.phone,
-		"email": message.email,
-	}
+	return with_custom(
+		{
+			"with": crm_party(message.party_kind, message.party),
+			"medium": one_of(message.medium, COMMUNICATION_MEDIUMS, "communication medium"),
+			"sent": message.sent,
+			"date": checked_time(message.date, "a message's time"),
+			"subject": message.subject,
+			"content": message.content,
+			"phone": message.phone,
+			"email": message.email,
+		},
+		message.custom,
+	)
 
 
 @dataclass(frozen=True)
@@ -1749,17 +1823,21 @@ class Event:
 	ends_on: str | None = None
 	description: str | None = None
 	participants: list[tuple[Kind, str]] = field(default_factory=list)
+	custom: dict[str, str] = field(default_factory=dict)
 
 
 def event_fields(event: Event) -> Fields:
-	return {
-		"subject": event.subject,
-		"starts_on": local_time(event.starts_on, f"{event.subject}'s start"),
-		"ends_on": local_time(event.ends_on, f"{event.subject}'s end"),
-		"status": one_of(event.status, EVENT_STATUSES, "event status"),
-		"description": event.description,
-		"participants": [crm_party(kind, gid) for kind, gid in event.participants],
-	}
+	return with_custom(
+		{
+			"subject": event.subject,
+			"starts_on": event_time(event.starts_on, f"{event.subject}'s start"),
+			"ends_on": event_time(event.ends_on, f"{event.subject}'s end"),
+			"status": one_of(event.status, EVENT_STATUSES, "event status"),
+			"description": event.description,
+			"participants": [crm_party(kind, gid) for kind, gid in event.participants],
+		},
+		event.custom,
+	)
 
 
 @dataclass(frozen=True)
@@ -1771,15 +1849,19 @@ class ToDo:
 	party_kind: Kind
 	party: str
 	date: str | None = None
+	custom: dict[str, str] = field(default_factory=dict)
 
 
 def todo_fields(todo: ToDo) -> Fields:
-	return {
-		"description": todo.description,
-		"status": one_of(todo.status, TODO_STATUSES, "task status"),
-		"date": checked_date(todo.date, "a task's due date"),
-		"about": crm_party(todo.party_kind, todo.party),
-	}
+	return with_custom(
+		{
+			"description": todo.description,
+			"status": one_of(todo.status, TODO_STATUSES, "task status"),
+			"date": checked_date(todo.date, "a task's due date"),
+			"about": crm_party(todo.party_kind, todo.party),
+		},
+		todo.custom,
+	)
 
 
 # ── gift cards, store credit and loyalty (Square)────────────────────────────────────────────────────

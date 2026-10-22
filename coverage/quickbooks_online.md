@@ -54,6 +54,7 @@ hold scheduled runs.
 
 | QuickBooks Online | Status |
 |---|---|
+| QuickBooks Desktop company files | Out of scope by operator decision (2026-10-21): QuickBooks is web only; migrate the file to QuickBooks Online and connect that ([quickbooks_desktop.md](quickbooks_desktop.md)). |
 | Bundles (Group items) | Planned (card 386): **Product Bundle**. |
 | A payment that applies a credit memo, a bill payment that applies a vendor credit | Planned (card 386): the payment entry allocates positive amounts only; the credit's application against an invoice is a reconciliation the writer doesn't make yet. |
 | Expenses with tax, expenses of items | Planned (card 386): the tax posts to the tax agency's account and an item's expense to its own account, which the expense doesn't name. |

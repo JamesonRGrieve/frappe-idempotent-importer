@@ -68,8 +68,8 @@ class ListedAdapter:
 		return None
 
 
-# The sources listed before their adapter is built (each page says why, and what building it needs).
-LISTED: tuple[ListedAdapter, ...] = (ListedAdapter("quickbooks_desktop", "QuickBooks Desktop"),)
+# Every source is built; a source added to the list before its adapter is built goes here.
+LISTED: tuple[ListedAdapter, ...] = ()
 
 
 def all_adapters() -> dict[str, Adapter]:

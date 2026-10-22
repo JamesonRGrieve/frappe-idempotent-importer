@@ -4248,7 +4248,7 @@ def assert_freshbooks(state: str) -> None:
 		Booked("product", "Service", "4054453"),
 		Booked("customer", "Client", "220399", "customer_type", "Company"),
 		Booked("customer", "Client", "220400", "disabled", 1, retired=changed),
-		Booked("supplier", "Vendor", "1563", "supplier_name", "Paper Mill"),
+		Booked("supplier", "Vendor", "1563", "supplier_name", "Truro Paper Mill"),
 		Booked("project", "Project", "779597", "status", "Open"),
 		Booked("timesheet", "TimeEntry", "5095", "total_hours", 1.5),
 		Booked("draft_order", "Estimate", "500", "grand_total", amount("310.5")),

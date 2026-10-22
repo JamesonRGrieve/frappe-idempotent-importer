@@ -176,7 +176,7 @@ def store_v1() -> dict[str, Any]:
 		"vendors": [
 			{
 				"vendorid": 1563,
-				"vendor_name": "Paper Mill",
+				"vendor_name": "Truro Paper Mill",
 				"primary_contact_first_name": "Pat",
 				"primary_contact_last_name": "Mill",
 				"primary_contact_email": "pat@mill.example",

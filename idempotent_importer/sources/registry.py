@@ -35,6 +35,7 @@ from idempotent_importer.sources.sap_business_one.adapter import SapBusinessOneA
 from idempotent_importer.sources.shopify.adapter import ShopifyAdapter
 from idempotent_importer.sources.square_online.adapter import SquareOnlineAdapter
 from idempotent_importer.sources.squarespace.adapter import SquarespaceAdapter
+from idempotent_importer.sources.wave.adapter import WaveAdapter
 from idempotent_importer.sources.webflow.adapter import WebflowAdapter
 from idempotent_importer.sources.wix.adapter import WixAdapter
 from idempotent_importer.sources.woocommerce.adapter import WooCommerceAdapter
@@ -105,6 +106,7 @@ def all_adapters() -> dict[str, Adapter]:
 		ZohoCrmAdapter(),
 		WebflowAdapter(),
 		FreshBooksAdapter(),
+		WaveAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

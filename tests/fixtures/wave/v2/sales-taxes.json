@@ -1,0 +1,61 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "SalesTaxes",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"salesTaxes": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjE=",
+								"name": "Harmonized Sales Tax",
+								"abbreviation": "HST",
+								"taxNumber": "123456789RT0001",
+								"rate": "0.15",
+								"isCompound": false,
+								"isArchived": false
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjI=",
+								"name": "Quebec Sales Tax",
+								"abbreviation": "QST",
+								"taxNumber": null,
+								"rate": "0.09975",
+								"isCompound": true,
+								"isArchived": false
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjM=",
+								"name": "Provincial Sales Tax",
+								"abbreviation": "PST",
+								"taxNumber": null,
+								"rate": "0.07",
+								"isCompound": false,
+								"isArchived": true
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

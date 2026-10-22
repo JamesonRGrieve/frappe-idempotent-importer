@@ -1,0 +1,90 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "InvoicePayments",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"invoices": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2U6MQ==",
+								"customer": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjE="
+								},
+								"currency": {
+									"code": "CAD"
+								},
+								"payments": [
+									{
+										"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2VQYXltZW50OjE=",
+										"paymentDate": "2026-09-16",
+										"amount": "39.10",
+										"memo": null,
+										"paymentMethod": "BANK_TRANSFER",
+										"exchangeRate": "1",
+										"active": true,
+										"account": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6MQ=="
+										},
+										"customer": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjE="
+										},
+										"paymentCurrency": {
+											"code": "CAD"
+										}
+									}
+								]
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2U6Mg==",
+								"customer": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjI="
+								},
+								"currency": {
+									"code": "CAD"
+								},
+								"payments": [
+									{
+										"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2VQYXltZW50OjI=",
+										"paymentDate": "2026-10-02",
+										"amount": "138.00",
+										"memo": null,
+										"paymentMethod": "BANK_TRANSFER",
+										"exchangeRate": "1",
+										"active": true,
+										"account": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6MQ=="
+										},
+										"customer": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjI="
+										},
+										"paymentCurrency": {
+											"code": "CAD"
+										}
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

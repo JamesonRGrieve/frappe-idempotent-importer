@@ -1,0 +1,96 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Customers",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"customers": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjE=",
+								"name": "River Cafe",
+								"firstName": "Riley",
+								"lastName": "River",
+								"displayId": null,
+								"email": "riley@river-wave.example",
+								"mobile": null,
+								"phone": "+1 902 555 0142",
+								"tollFree": null,
+								"website": null,
+								"internalNotes": null,
+								"currency": {
+									"code": "CAD"
+								},
+								"address": {
+									"addressLine1": "12 Water St",
+									"addressLine2": null,
+									"city": "Halifax",
+									"postalCode": "B3J 1A1",
+									"province": {
+										"code": "CA-NS",
+										"name": "Nova Scotia"
+									},
+									"country": {
+										"code": "CA",
+										"name": "Canada"
+									}
+								},
+								"isArchived": false,
+								"modifiedAt": "2026-09-01T15:00:00.000Z"
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjI=",
+								"name": "Sam Shore",
+								"firstName": "Sam",
+								"lastName": "Shore",
+								"displayId": null,
+								"email": "sam@shore-wave.example",
+								"mobile": null,
+								"phone": "+1 902 555 0142",
+								"tollFree": null,
+								"website": null,
+								"internalNotes": null,
+								"currency": {
+									"code": "CAD"
+								},
+								"address": {
+									"addressLine1": "12 Water St",
+									"addressLine2": null,
+									"city": "Halifax",
+									"postalCode": "B3J 1A1",
+									"province": {
+										"code": "CA-NS",
+										"name": "Nova Scotia"
+									},
+									"country": {
+										"code": "CA",
+										"name": "Canada"
+									}
+								},
+								"isArchived": false,
+								"modifiedAt": "2026-09-01T15:00:00.000Z"
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

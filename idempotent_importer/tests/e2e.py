@@ -464,6 +464,16 @@ BUSINESSES = (
 		"https://my.freshbooks.com",
 		{**OAUTH_CREDENTIALS, "api_account": "Zv8pR3|240340|046cc001-0002-e93e-1db1-1186b2983879"},
 	),
+	Business(
+		"WV",
+		"Bakery W",
+		"wave-v",
+		"Wave",
+		"wave",
+		"wave-fake",
+		"https://next.waveapps.com",
+		{**OAUTH_CREDENTIALS, "api_account": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm"},
+	),
 )
 
 
@@ -870,6 +880,7 @@ def main() -> None:
 		"assert_zoho_crm": assert_zoho_crm,
 		"assert_webflow": assert_webflow,
 		"assert_freshbooks": assert_freshbooks,
+		"assert_wave": assert_wave,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3213,6 +3224,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"wave-v": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 }
 
 
@@ -4266,6 +4284,43 @@ def assert_freshbooks(state: str) -> None:
 		0,
 		"a compound tax, planned",
 	)
+
+
+@check
+def assert_wave(state: str) -> None:
+	"""The Wave bakery of state ``state`` (tools/wave_fixtures.py): its chart, tax template, products,
+	customers, vendor, estimate, invoices and the payment against the paid one (v2: a new price, the draft
+	invoice sent and paid, a customer archived). An archived tax isn't kept; a compound one is planned."""
+	changed = state == "v2"
+	connection = "wave-v"
+	records = [
+		Booked("account", "Account", "1", "account_type", "Bank"),
+		Booked("account", "Account", "4", "account_type", "Tax"),
+		Booked("tax_rate", "SalesTax", "1"),
+		Booked("product", "Product", "2"),
+		Booked("product", "Product", "3"),
+		Booked("customer", "Customer", "1", "customer_type", "Company"),
+		Booked("customer", "Customer", "2", "disabled", 1 if changed else 0),
+		Booked("supplier", "Vendor", "1", "supplier_name", "Mill Co"),
+		Booked("draft_order", "Estimate", "1", "grand_total", amount("248.4")),
+		Booked("sales_invoice", "Invoice", "1", "grand_total", amount("39.1")),
+		Booked("sales_invoice", "Invoice", "2", "docstatus", 1 if changed else 0),
+		Booked("payment_entry", "InvoicePayment", "1", "paid_amount", amount("39.1")),
+	]
+	if changed:
+		records.append(Booked("payment_entry", "InvoicePayment", "2", "paid_amount", amount(138)))
+	assert_booked(connection, records)
+	loaf = target(connection, "product", "Product", "1")
+	expect(item_price(connection, loaf), amount(9 if changed else "8.5"), "the loaf's price")
+	for tax, why in (("2", "a compound tax, planned"), ("3", "an archived tax")):
+		expect(
+			frappe.db.count(
+				"Importer Link",
+				{"connection": connection, "gid": f"gid://wave/{connection}/SalesTax/{tax}", "retired": 0},
+			),
+			0,
+			why,
+		)
 
 
 @check

@@ -1,0 +1,73 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Products",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"products": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6MQ==",
+								"name": "Sourdough loaf",
+								"description": "Sourdough loaf, baked daily",
+								"unitPrice": "9.00",
+								"isSold": true,
+								"isBought": false,
+								"isArchived": false,
+								"incomeAccount": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6Mw=="
+								},
+								"expenseAccount": null
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6Mg==",
+								"name": "Catering",
+								"description": "Catering, baked daily",
+								"unitPrice": "120.00",
+								"isSold": true,
+								"isBought": false,
+								"isArchived": false,
+								"incomeAccount": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6Mw=="
+								},
+								"expenseAccount": null
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6Mw==",
+								"name": "Old muffin",
+								"description": null,
+								"unitPrice": "2.00",
+								"isSold": true,
+								"isBought": false,
+								"isArchived": true,
+								"incomeAccount": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6Mw=="
+								},
+								"expenseAccount": null
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

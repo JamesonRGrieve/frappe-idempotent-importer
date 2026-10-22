@@ -47,6 +47,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Zoho CRM | Built | Users, products, vendors, leads, accounts as prospects with their contacts (customer accounts as customers), pipelines and deals at their stage, calls, notes, events and tasks, quotes, sales orders, invoices and purchase orders, and every custom field — [coverage/zoho_crm.md](coverage/zoho_crm.md) |
 | Webflow | Built | Assets, e-commerce categories, products with their SKUs, prices and inventory, the customers orders name, orders with payments, refunds and shipments, pages with their content, CMS collections and their items as blog posts (their own fields kept), and redirects — [coverage/webflow.md](coverage/webflow.md) |
 | FreshBooks | Built | The chart of accounts, taxes as templates, items and services, clients, bill vendors, projects and their time entries as timesheets, estimates, invoices and credit notes, bills, payments and bill payments, manual journals, and expenses and other income as the ledger posted them — [coverage/freshbooks.md](coverage/freshbooks.md) |
+| Wave | Built | The chart of accounts, sales taxes as templates, products and services, customers, vendors, estimates, invoices and their payments, through Wave's public GraphQL API (which reads no bills or other transactions) — [coverage/wave.md](coverage/wave.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -224,6 +225,9 @@ This is the operator's decision to confirm (see below).
    - **FreshBooks:** create an app in FreshBooks' developer portal with the same redirect URI and the read
      scopes in [coverage/freshbooks.md](coverage/freshbooks.md); enter `https://my.freshbooks.com` as the Store
      URL and the app's client ID and secret, save, then click **Connect to FreshBooks**.
+   - **Wave:** create an application in Wave's developer portal with the same redirect URI; enter
+     `https://next.waveapps.com` as the Store URL and the application's client ID and secret, save, then click
+     **Connect to Wave** ([coverage/wave.md](coverage/wave.md)).
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty

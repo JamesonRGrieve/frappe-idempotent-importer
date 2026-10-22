@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """The published API descriptions the fixtures are proven against: Shopify's Admin GraphQL schema (cached
-in .cache/, it is Shopify's and not committed) and the OpenAPI documents transcribed in tests/schemas."""
+in .cache/, it is Shopify's and not committed), Wave's public GraphQL schema as pruned in tests/schemas, and the
+OpenAPI documents transcribed there."""
 
 from __future__ import annotations
 
@@ -56,6 +57,12 @@ def shopify_schema(version: str = API_VERSION) -> GraphQLSchema:
 	if not path.is_file():
 		path = fetch_shopify_schema(version)
 	return build_schema(path.read_text())
+
+
+def wave_schema() -> GraphQLSchema:
+	"""Wave's public schema as tools/wave_schema.py pruned it (committed: it is introspected without a token)."""
+	document = json.loads((OPENAPI_SCHEMAS / "wave.json").read_text())
+	return build_schema("\n".join(document["sdl"]))
 
 
 def openapi(source: str) -> dict[str, Any]:

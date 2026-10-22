@@ -1,0 +1,108 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Accounts",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"accounts": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6MQ==",
+								"name": "Chequing",
+								"description": null,
+								"displayId": "1010",
+								"currency": {
+									"code": "CAD"
+								},
+								"type": {
+									"value": "ASSET"
+								},
+								"subtype": {
+									"value": "CASH_AND_BANK",
+									"name": "Cash And Bank"
+								},
+								"normalBalanceType": "DEBIT",
+								"isArchived": false
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6Mg==",
+								"name": "Accounts Receivable",
+								"description": null,
+								"displayId": "1200",
+								"currency": {
+									"code": "CAD"
+								},
+								"type": {
+									"value": "ASSET"
+								},
+								"subtype": {
+									"value": "RECEIVABLE_INVOICES",
+									"name": "Receivable Invoices"
+								},
+								"normalBalanceType": "DEBIT",
+								"isArchived": false
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6Mw==",
+								"name": "Sales",
+								"description": null,
+								"displayId": "4000",
+								"currency": {
+									"code": "CAD"
+								},
+								"type": {
+									"value": "INCOME"
+								},
+								"subtype": {
+									"value": "INCOME",
+									"name": "Income"
+								},
+								"normalBalanceType": "CREDIT",
+								"isArchived": false
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0FjY291bnQ6NA==",
+								"name": "HST Payable",
+								"description": null,
+								"displayId": "2200",
+								"currency": {
+									"code": "CAD"
+								},
+								"type": {
+									"value": "LIABILITY"
+								},
+								"subtype": {
+									"value": "SALES_TAX",
+									"name": "Sales Tax"
+								},
+								"normalBalanceType": "CREDIT",
+								"isArchived": false
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

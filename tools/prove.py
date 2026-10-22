@@ -13,11 +13,13 @@ from tools.proofs import (
 	invalid_operations,
 	invalid_rest_fixtures,
 	invalid_source_fixtures,
+	invalid_wave_operations,
 	invalid_xml_fixtures,
 	mismatched_shopify_fixtures,
+	mismatched_wave_fixtures,
 	mispriced_operations,
 )
-from tools.schemas import shopify_schema
+from tools.schemas import shopify_schema, wave_schema
 from tools.specs import DTD_DOCUMENTS, sources
 
 REST_SOURCES = ("woocommerce",)
@@ -27,6 +29,7 @@ def main() -> int:
 	library = QueryLibrary.bundled()
 	schema = shopify_schema()
 	mispriced, shrinking = mispriced_operations(schema, library)
+	wave = wave_schema()
 	checks = {
 		"Shopify operations that don't validate against the Admin schema": invalid_operations(
 			schema, library
@@ -35,6 +38,8 @@ def main() -> int:
 		"Shopify fixtures that don't match Shopify's response shape": mismatched_shopify_fixtures(
 			schema, library
 		),
+		"Wave operations that don't validate against Wave's schema": invalid_wave_operations(wave),
+		"Wave fixtures that don't match Wave's response shape": mismatched_wave_fixtures(wave),
 		"REST fixtures that don't match their source's OpenAPI document": [
 			failure for source in REST_SOURCES for failure in invalid_rest_fixtures(source)
 		],

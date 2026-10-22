@@ -1,0 +1,106 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Estimates",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"estimates": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0VzdGltYXRlOjE=",
+								"status": "SENT",
+								"title": "Estimate",
+								"currency": {
+									"code": "CAD"
+								},
+								"exchangeRate": "1",
+								"customer": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjE="
+								},
+								"memo": null,
+								"footer": null,
+								"poNumber": null,
+								"subtotal": {
+									"value": "240.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"discountTotal": {
+									"value": "24.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"taxTotal": {
+									"value": "32.40",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"total": {
+									"value": "248.40",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"modifiedAt": "2026-09-15T15:00:00.000Z",
+								"items": [
+									{
+										"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2VJdGVtOjEx",
+										"description": null,
+										"quantity": "2",
+										"unitPrice": "120.00",
+										"subtotal": {
+											"value": "240.00",
+											"currency": {
+												"code": "CAD"
+											}
+										},
+										"product": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6Mg==",
+											"name": "Catering"
+										},
+										"taxes": [
+											{
+												"salesTax": {
+													"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjE=",
+													"name": "Harmonized Sales Tax",
+													"abbreviation": "HST"
+												},
+												"amount": {
+													"value": "32.40",
+													"currency": {
+														"code": "CAD"
+													}
+												}
+											}
+										]
+									}
+								],
+								"estimateNumber": "1",
+								"estimateDate": "2026-09-01",
+								"dueDate": "2026-09-30"
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

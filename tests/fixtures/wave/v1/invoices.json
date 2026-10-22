@@ -1,0 +1,184 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Invoices",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"invoices": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2U6MQ==",
+								"status": "PAID",
+								"title": "Invoice",
+								"currency": {
+									"code": "CAD"
+								},
+								"exchangeRate": "1",
+								"customer": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjE="
+								},
+								"memo": null,
+								"footer": null,
+								"poNumber": null,
+								"subtotal": {
+									"value": "34.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"discountTotal": {
+									"value": "0.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"taxTotal": {
+									"value": "5.10",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"total": {
+									"value": "39.10",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"modifiedAt": "2026-09-15T15:00:00.000Z",
+								"items": [
+									{
+										"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2VJdGVtOjIx",
+										"description": null,
+										"quantity": "4",
+										"unitPrice": "8.50",
+										"subtotal": {
+											"value": "34.00",
+											"currency": {
+												"code": "CAD"
+											}
+										},
+										"product": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6MQ==",
+											"name": "Sourdough loaf"
+										},
+										"taxes": [
+											{
+												"salesTax": {
+													"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjE=",
+													"name": "Harmonized Sales Tax",
+													"abbreviation": "HST"
+												},
+												"amount": {
+													"value": "5.10",
+													"currency": {
+														"code": "CAD"
+													}
+												}
+											}
+										]
+									}
+								],
+								"invoiceNumber": "1",
+								"invoiceDate": "2026-09-10",
+								"dueDate": "2026-10-10"
+							}
+						},
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2U6Mg==",
+								"status": "DRAFT",
+								"title": "Invoice",
+								"currency": {
+									"code": "CAD"
+								},
+								"exchangeRate": "1",
+								"customer": {
+									"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0N1c3RvbWVyOjI="
+								},
+								"memo": null,
+								"footer": null,
+								"poNumber": null,
+								"subtotal": {
+									"value": "120.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"discountTotal": {
+									"value": "0.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"taxTotal": {
+									"value": "18.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"total": {
+									"value": "138.00",
+									"currency": {
+										"code": "CAD"
+									}
+								},
+								"modifiedAt": "2026-09-15T15:00:00.000Z",
+								"items": [
+									{
+										"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO0ludm9pY2VJdGVtOjIy",
+										"description": null,
+										"quantity": "1",
+										"unitPrice": "120.00",
+										"subtotal": {
+											"value": "120.00",
+											"currency": {
+												"code": "CAD"
+											}
+										},
+										"product": {
+											"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1Byb2R1Y3Q6Mg==",
+											"name": "Catering"
+										},
+										"taxes": [
+											{
+												"salesTax": {
+													"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1NhbGVzVGF4OjE=",
+													"name": "Harmonized Sales Tax",
+													"abbreviation": "HST"
+												},
+												"amount": {
+													"value": "18.00",
+													"currency": {
+														"code": "CAD"
+													}
+												}
+											}
+										]
+									}
+								],
+								"invoiceNumber": "2",
+								"invoiceDate": "2026-09-10",
+								"dueDate": "2026-10-10"
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

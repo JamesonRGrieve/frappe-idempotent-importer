@@ -196,6 +196,8 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		True,
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
 	),
+	# Wave's GraphQL answers are recorded as POSTs to its endpoint, matched by the operation they name.
+	"wave-fake": ("wave", "/oauth2/token/", False, {"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"}),
 }
 # What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
 GRANT_EXTRAS: dict[str, dict[str, str]] = {

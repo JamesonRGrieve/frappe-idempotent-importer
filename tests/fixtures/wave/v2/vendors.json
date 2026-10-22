@@ -1,0 +1,62 @@
+{
+	"request": {
+		"method": "POST",
+		"path": "/graphql/public",
+		"body": {
+			"operationName": "Vendors",
+			"variables": {
+				"business": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZm",
+				"page": 1,
+				"pageSize": 45
+			}
+		}
+	},
+	"response": {
+		"data": {
+			"business": {
+				"vendors": {
+					"pageInfo": {
+						"currentPage": 1,
+						"totalPages": 1
+					},
+					"edges": [
+						{
+							"node": {
+								"id": "QnVzaW5lc3M6NWQxYzdhMmUtM2I0Zi00ZTZhLTljOGQtMWEyYjNjNGQ1ZTZmO1ZlbmRvcjox",
+								"name": "Mill Co",
+								"firstName": "Pat",
+								"lastName": "Mill",
+								"displayId": null,
+								"email": "pat@mill-wave.example",
+								"mobile": null,
+								"phone": "+1 902 555 0142",
+								"tollFree": null,
+								"website": null,
+								"internalNotes": null,
+								"currency": {
+									"code": "CAD"
+								},
+								"address": {
+									"addressLine1": "12 Water St",
+									"addressLine2": null,
+									"city": "Halifax",
+									"postalCode": "B3J 1A1",
+									"province": {
+										"code": "CA-NS",
+										"name": "Nova Scotia"
+									},
+									"country": {
+										"code": "CA",
+										"name": "Canada"
+									}
+								},
+								"isArchived": false,
+								"modifiedAt": "2026-09-01T15:00:00.000Z"
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

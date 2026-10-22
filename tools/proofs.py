@@ -8,7 +8,9 @@ live store:
 2. every recorded REST response validates against its source's OpenAPI document (WooCommerce's is
    transcribed from its official documentation, tests/schemas/woocommerce.json);
 3. every Shopify operation's static cost estimate (tools/query_cost.py) matches the cost recorded from a
-   live store, and every operation fits under Shopify's single-query limit at page size 1.
+   live store, and every operation fits under Shopify's single-query limit at page size 1;
+4. every Wave GraphQL operation validates against Wave's schema (tests/schemas/wave.json), and every
+   recorded Wave answer executes back through its operation unchanged.
 
 Each check returns its failures (empty when everything holds)."""
 
@@ -25,6 +27,7 @@ from referencing.jsonschema import DRAFT202012
 
 from idempotent_importer.sources.shopify.page_sizes import MAX_QUERY_COST, SMALLEST_SIZE, TARGET_SHARE
 from idempotent_importer.sources.shopify.queries import QueryLibrary
+from idempotent_importer.sources.wave import operations as wave_operations
 from tests.support.fixtures import graphql_fixtures, rest_fixtures, states
 from tools.openapi import OpenApiValidator
 from tools.query_cost import QueryCost, recorded_costs
@@ -75,24 +78,64 @@ def field_resolver(source: Any, info: Any, **_arguments: Any) -> Any:
 	return source.get(info.field_name) if isinstance(source, dict) else None
 
 
+def served_differently(
+	schema: GraphQLSchema, document: str, data: dict[str, Any], variables: dict[str, Any], name: str
+) -> list[str]:
+	"""A recorded response executed back through its operation: the errors, or where what the schema
+	serialises from it differs from it (so the fixture has exactly the shape the source returns)."""
+	result = graphql_sync(
+		schema, document, root_value=data, variable_values=variables, field_resolver=field_resolver
+	)
+	if result.errors:
+		return [f"{name}: {error.message}" for error in result.errors]
+	difference = first_difference(data, result.data)
+	return [] if difference is None else [f"{name}: {difference}"]
+
+
 def mismatched_shopify_fixtures(schema: GraphQLSchema, library: QueryLibrary) -> list[str]:
 	failures = []
 	for state in states("shopify"):
 		for fixture in graphql_fixtures(state):
-			result = graphql_sync(
+			failures += served_differently(
 				schema,
 				library.document(fixture.operation),
-				root_value=fixture.data,
-				variable_values={**library.page_sizes(fixture.operation), **fixture.variables},
-				field_resolver=field_resolver,
+				fixture.data,
+				{**library.page_sizes(fixture.operation), **fixture.variables},
+				f"{state}/{fixture.file.name}",
 			)
-			name = f"{state}/{fixture.file.name}"
-			if result.errors:
-				failures += [f"{name}: {error.message}" for error in result.errors]
+	return failures
+
+
+def invalid_wave_operations(schema: GraphQLSchema) -> list[str]:
+	"""Every Wave operation against Wave's schema (tests/schemas/wave.json)."""
+	return [
+		f"{operation.name}: {error.message}"
+		for operation in wave_operations.OPERATIONS
+		for error in validate(schema, parse(operation.document))
+	]
+
+
+def mismatched_wave_fixtures(schema: GraphQLSchema) -> list[str]:
+	"""Every recorded Wave answer executed back through the operation its request names, with the variables
+	it was sent (a fixture records a GraphQL request as a REST one: a POST to the endpoint whose body names
+	the operation)."""
+	failures: list[str] = []
+	for state in states("wave"):
+		for fixture in rest_fixtures("wave", state):
+			name = f"wave/{state}/{fixture.file.name}"
+			operation = next(
+				(o for o in wave_operations.OPERATIONS if o.name == fixture.body.get("operationName")), None
+			)
+			if operation is None or not isinstance(fixture.response, dict):
+				failures.append(f"{name}: names no Wave operation, or answers no object")
 				continue
-			difference = first_difference(fixture.data, result.data)
-			if difference is not None:
-				failures.append(f"{name}: {difference}")
+			failures += served_differently(
+				schema,
+				operation.document,
+				fixture.response.get("data") or {},
+				dict(fixture.body.get("variables") or {}),
+				name,
+			)
 	return failures
 
 

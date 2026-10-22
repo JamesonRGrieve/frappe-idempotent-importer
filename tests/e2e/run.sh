@@ -74,10 +74,36 @@ SOURCES=(
 )
 # The connections approved through OAuth 2: Connect is proven on each.
 OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f pipedrive-p zoho-crm-z)
+# While a source is being developed, E2E_SOURCES (its connections, space separated) runs only those beside the
+# two WooCommerce stores; the full suite (CI, before every push) runs them all.
+if [ -n "${E2E_SOURCES:-}" ]; then
+	selected=()
+	for source in "${SOURCES[@]}"; do
+		for wanted in $E2E_SOURCES; do
+			if [ "${source%%:*}" = "$wanted" ]; then
+				selected+=("$source")
+			fi
+		done
+	done
+	SOURCES=("${selected[@]}")
+	connects=()
+	for connection in "${OAUTH_CONNECTIONS[@]}"; do
+		for wanted in $E2E_SOURCES; do
+			if [ "$connection" = "$wanted" ]; then
+				connects+=("$connection")
+			fi
+		done
+	done
+	OAUTH_CONNECTIONS=("${connects[@]}")
+fi
 CONNECTIONS=(woo-a woo-b)
 for source in "${SOURCES[@]}"; do
 	CONNECTIONS+=("${source%%:*}")
 done
+# The site sets up only the selected connections (scheduled runs of the others would import mid-suite).
+if [ -n "${E2E_SOURCES:-}" ]; then
+	printf '%s\n' "${CONNECTIONS[@]}" > "$E2E_STATE_DIR/e2e-connections"
+fi
 
 run_all() {
 	for connection in "${CONNECTIONS[@]}"; do

@@ -46,6 +46,8 @@ from idempotent_importer.erpnext.writers.sales import MULTI_CURRENCY_SETTING
 from idempotent_importer.sources.registry import LISTED
 
 STATE_DIR = Path("/state")
+# The connections run.sh selected, one a line (absent: every connection).
+CONNECTIONS_FILE = "e2e-connections"
 FISCAL_YEAR_START = "2026-01-01"
 FISCAL_YEAR_END = "2026-12-31"
 CURRENCY = "CAD"
@@ -595,7 +597,7 @@ def setup_site() -> None:
 	for currency in FOREIGN_CURRENCIES:
 		frappe.db.set_value("Currency", currency, "enabled", 1)
 	make_fallback_item()
-	for spec in BUSINESSES:
+	for spec in selected_businesses():
 		if not frappe.db.exists("Company", spec.company):
 			frappe.get_doc(
 				{
@@ -613,6 +615,15 @@ def setup_site() -> None:
 	update_site_config("idempotent_importer_test_endpoints", endpoints)
 	update_site_config(GIFT_CARD_NUMBER_KEY, "e2e-gift-card-key")
 	frappe.db.commit()
+
+
+def selected_businesses() -> tuple[Business, ...]:
+	"""Every business, or only the connections run.sh selected (E2E_SOURCES, beside the WooCommerce stores)."""
+	selection = STATE_DIR / CONNECTIONS_FILE
+	if not selection.is_file():
+		return BUSINESSES
+	wanted = set(selection.read_text().split())
+	return tuple(spec for spec in BUSINESSES if spec.connection in wanted)
 
 
 def make_fallback_item() -> None:
@@ -3962,7 +3973,7 @@ def assert_salesforce(state: str) -> None:
 				"Opportunity",
 				"0065e000004AaAAAA1",
 				"sales_stage",
-				"Closed Won - SF" if changed else "Proposal/Price Quote - SF",
+				"Closed Won - SF" if changed else "Proposal-Price Quote - SF",
 			),
 			Booked(
 				"opportunity", "Opportunity", "0065e000004AaAAAA1", "opportunity_type", "New Customer - SF"
@@ -3993,8 +4004,8 @@ def assert_salesforce(state: str) -> None:
 		frappe.db.count(
 			"Dynamic Link", {"link_doctype": "Prospect", "link_name": prospect, "parenttype": "Contact"}
 		),
-		2,
-		"the account's contacts",
+		3,
+		"the account's contacts: its own (its phone) and its two people",
 	)
 
 
@@ -4072,7 +4083,7 @@ def assert_zoho_crm(state: str) -> None:
 				"Deals",
 				rebrand,
 				"sales_stage",
-				"Closed Won - ZC" if changed else "Proposal/Price Quote - ZC",
+				"Closed Won - ZC" if changed else "Proposal-Price Quote - ZC",
 			),
 			Booked("communication", "Calls", "5725767000000423002", "reference_doctype", "Prospect"),
 			Booked("communication", "Notes", "5725767000000424001", "communication_medium", "Other"),

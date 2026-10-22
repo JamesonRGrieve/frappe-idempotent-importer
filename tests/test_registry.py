@@ -46,8 +46,10 @@ def test_every_source_has_a_coverage_page(adapter_id: str) -> None:
 
 
 def test_listed_sources_refuse_to_run() -> None:
-	"""Every source is built today; a source listed before its adapter is built refuses to run."""
+	"""A source listed before its adapter is built (QuickBooks Desktop) refuses to run; every other is built."""
 	assert all(adapter.built for adapter in all_adapters().values() if adapter not in LISTED)
+	assert [adapter.label for adapter in LISTED] == ["QuickBooks Desktop"]
+	assert not by_label("QuickBooks Desktop").built
 	listed = ListedAdapter("example", "Example")
 	assert not listed.built
 	assert listed.kinds() == () and listed.filter_hint() is None

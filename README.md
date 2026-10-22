@@ -48,6 +48,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Webflow | Built | Assets, e-commerce categories, products with their SKUs, prices and inventory, the customers orders name, orders with payments, refunds and shipments, pages with their content, CMS collections and their items as blog posts (their own fields kept), and redirects — [coverage/webflow.md](coverage/webflow.md) |
 | FreshBooks | Built | The chart of accounts, taxes as templates, items and services, clients, bill vendors, projects and their time entries as timesheets, estimates, invoices and credit notes, bills, payments and bill payments, manual journals, and expenses and other income as the ledger posted them — [coverage/freshbooks.md](coverage/freshbooks.md) |
 | Wave | Built | The chart of accounts, sales taxes as templates, products and services, customers, vendors, estimates, invoices and their payments, through Wave's public GraphQL API (which reads no bills or other transactions) — [coverage/wave.md](coverage/wave.md) |
+| QuickBooks Desktop | Listed | Not built: its only supported route is the Web Connector calling into this site (or the SDK on the Windows machine), and its qbXML schema is published only inside Intuit's sign-in SDK — the decision it needs is on [coverage/quickbooks_desktop.md](coverage/quickbooks_desktop.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 

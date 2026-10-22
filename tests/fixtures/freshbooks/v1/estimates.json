@@ -1,0 +1,66 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/estimates/estimates",
+		"query": {
+			"page": "1",
+			"per_page": "100",
+			"include[]": "lines"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"estimates": [
+					{
+						"estimateid": 500,
+						"id": 500,
+						"estimate_number": "0000001",
+						"customerid": 220399,
+						"create_date": "2026-09-01",
+						"currency_code": "CAD",
+						"amount": {
+							"amount": "310.50",
+							"code": "CAD"
+						},
+						"discount_value": "10",
+						"discount_total": {
+							"amount": "30.00",
+							"code": "CAD"
+						},
+						"status": 2,
+						"ui_status": "sent",
+						"vis_state": 0,
+						"notes": "Identity work",
+						"terms": null,
+						"lines": [
+							{
+								"lineid": 1,
+								"name": "Design",
+								"description": "",
+								"qty": "2",
+								"unit_cost": {
+									"amount": "150.00",
+									"code": "CAD"
+								},
+								"amount": {
+									"amount": "300.00",
+									"code": "CAD"
+								},
+								"taxName1": "HST",
+								"taxAmount1": "15",
+								"taxName2": null,
+								"taxAmount2": null,
+								"type": 0,
+								"updated": "2026-09-15 15:00:00"
+							}
+						]
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 1
+			}
+		}
+	}
+}

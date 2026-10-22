@@ -1,0 +1,114 @@
+{
+	"request": {
+		"path": "/accounting/businesses/046cc001-0002-e93e-1db1-1186b2983879/reports/chart_of_accounts",
+		"query": {
+			"use_ledger_entries": "true"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"journal_entry_accounts": [
+					{
+						"account_uuid": "7a6c2b9e-1d2f-4c3a-8b5e-6f7a8b9c0d1e",
+						"account_name": "Cash & Bank",
+						"account_number": "1000",
+						"account_type": "asset",
+						"account_sub_type": "Cash & Bank",
+						"currency_code": "CAD",
+						"system_account_name": null,
+						"auto_created": false,
+						"state": "active",
+						"balance": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"sub_accounts": [
+							{
+								"account_uuid": "0f321fa9-78db-41ce-8c5f-11605718e5fb",
+								"account_name": "Checking",
+								"account_number": "1010",
+								"account_type": "asset",
+								"account_sub_type": "Cash & Bank",
+								"currency_code": "CAD",
+								"system_account_name": null,
+								"auto_created": false,
+								"state": "active",
+								"balance": {
+									"amount": "0.00",
+									"code": "CAD"
+								},
+								"parent_account_uuid": "7a6c2b9e-1d2f-4c3a-8b5e-6f7a8b9c0d1e"
+							}
+						]
+					},
+					{
+						"account_uuid": "8b7d3cae-2e3f-4d4b-9c6f-7a8b9c0d1e2f",
+						"account_name": "Office Expenses",
+						"account_number": "6000",
+						"account_type": "expense",
+						"account_sub_type": "Office",
+						"currency_code": "CAD",
+						"system_account_name": null,
+						"auto_created": false,
+						"state": "active",
+						"balance": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"sub_accounts": [
+							{
+								"account_uuid": "184ba7f5-ce2a-4435-ab67-824cbc082c47",
+								"account_name": "Software",
+								"account_number": "6010",
+								"account_type": "expense",
+								"account_sub_type": "Office",
+								"currency_code": "CAD",
+								"system_account_name": null,
+								"auto_created": false,
+								"state": "active",
+								"balance": {
+									"amount": "0.00",
+									"code": "CAD"
+								},
+								"parent_account_uuid": "8b7d3cae-2e3f-4d4b-9c6f-7a8b9c0d1e2f"
+							}
+						]
+					},
+					{
+						"account_uuid": "48c444f7-17cf-4977-a0b3-bc04c8bd0f53",
+						"account_name": "Sales",
+						"account_number": "4000",
+						"account_type": "income",
+						"account_sub_type": "Sales",
+						"currency_code": "CAD",
+						"system_account_name": null,
+						"auto_created": false,
+						"state": "active",
+						"balance": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"sub_accounts": []
+					},
+					{
+						"account_uuid": "5b2e0c11-4a51-4c0e-9d2f-2b7c1f0e6a10",
+						"account_name": "Sales Taxes",
+						"account_number": "2200",
+						"account_type": "liability",
+						"account_sub_type": "Sales Taxes",
+						"currency_code": "CAD",
+						"system_account_name": null,
+						"auto_created": false,
+						"state": "active",
+						"balance": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"sub_accounts": []
+					}
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"request": {
+		"path": "/comments/business/240340/services",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"services": [
+			{
+				"business_id": 240340,
+				"id": 4054453,
+				"name": "Design",
+				"billable": true,
+				"vis_state": 0
+			}
+		],
+		"meta": {
+			"page": 1,
+			"pages": 1,
+			"per_page": 100,
+			"total": 1
+		}
+	}
+}

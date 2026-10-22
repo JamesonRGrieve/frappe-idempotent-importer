@@ -72,9 +72,10 @@ SOURCES=(
 	pipedrive-p:pipedrive-fake:assert_pipedrive
 	zoho-crm-z:zoho_crm-fake:assert_zoho_crm
 	webflow-w:webflow-fake:assert_webflow
+	freshbooks-f:freshbooks-fake:assert_freshbooks
 )
 # The connections approved through OAuth 2: Connect is proven on each.
-OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f pipedrive-p zoho-crm-z webflow-w)
+OAUTH_CONNECTIONS=(etsy-e quickbooks-q xero-x zoho-books-b acumatica-a agendrix-a highlevel-h hubspot-s salesforce-f pipedrive-p zoho-crm-z webflow-w freshbooks-f)
 # While a source is being developed, E2E_SOURCES (its connections, space separated) runs only those beside the
 # two WooCommerce stores; the full suite (CI, before every push) runs them all.
 if [ -n "${E2E_SOURCES:-}" ]; then

@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/credit_notes/credit_notes",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"credit_notes": [
+					{
+						"creditid": 31131,
+						"id": 31131,
+						"credit_number": "00002134",
+						"clientid": "220399",
+						"create_date": "2026-09-22",
+						"credit_type": "goodwill",
+						"amount": {
+							"amount": "25.00",
+							"code": "CAD"
+						},
+						"paid": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"payment_status": "unpaid",
+						"display_status": "created",
+						"status": "created",
+						"vis_state": 0
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 1
+			}
+		}
+	}
+}

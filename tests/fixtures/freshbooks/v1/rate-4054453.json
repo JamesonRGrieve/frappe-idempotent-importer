@@ -1,0 +1,13 @@
+{
+	"request": {
+		"path": "/comments/business/240340/service/4054453/rate",
+		"query": {}
+	},
+	"response": {
+		"service_rate": {
+			"rate": "150.00",
+			"business_id": 240340,
+			"service_id": 4054453
+		}
+	}
+}

@@ -1,0 +1,74 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/bills/bills/1141",
+		"query": {}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"bill": {
+					"id": 1141,
+					"bill_number": "BN101",
+					"vendorid": 1563,
+					"issue_date": "2026-09-05",
+					"due_date": "2026-10-05",
+					"currency_code": "CAD",
+					"amount": {
+						"amount": "1500.00",
+						"code": "CAD"
+					},
+					"total_amount": {
+						"amount": "1725.00",
+						"code": "CAD"
+					},
+					"tax_amount": {
+						"amount": "225.00",
+						"code": "CAD"
+					},
+					"outstanding": {
+						"amount": "0.00",
+						"code": "CAD"
+					},
+					"paid": {
+						"amount": "1725.00",
+						"code": "CAD"
+					},
+					"status": "paid",
+					"vis_state": 0,
+					"created_at": "2026-09-05 15:00:00",
+					"updated_at": "2026-09-20 15:00:00",
+					"lines": [
+						{
+							"id": 2621,
+							"list_index": 1,
+							"description": "Paper stock",
+							"quantity": "15",
+							"unit_cost": {
+								"amount": "100.00",
+								"code": "CAD"
+							},
+							"amount": {
+								"amount": "1500.00",
+								"code": "CAD"
+							},
+							"tax_name1": "HST",
+							"tax_percent1": "15",
+							"tax_amount1": {
+								"amount": "225.00",
+								"code": "CAD"
+							},
+							"tax_name2": null,
+							"tax_percent2": null,
+							"tax_amount2": null,
+							"categoryid": 3696445,
+							"category": {
+								"category": "Supplies",
+								"categoryid": 3696445
+							}
+						}
+					]
+				}
+			}
+		}
+	}
+}

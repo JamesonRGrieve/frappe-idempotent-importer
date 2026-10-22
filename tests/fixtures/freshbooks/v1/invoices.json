@@ -1,0 +1,130 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/invoices/invoices",
+		"query": {
+			"page": "1",
+			"per_page": "100",
+			"include[]": "lines"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"invoices": [
+					{
+						"invoiceid": 600,
+						"id": 600,
+						"accountid": "Zv8pR3",
+						"invoice_number": "0000007",
+						"customerid": 220399,
+						"create_date": "2026-09-10",
+						"due_date": "2026-10-10",
+						"currency_code": "CAD",
+						"amount": {
+							"amount": "103.50",
+							"code": "CAD"
+						},
+						"outstanding": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"paid": {
+							"amount": "103.50",
+							"code": "CAD"
+						},
+						"discount_value": "0",
+						"discount_total": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"status": 4,
+						"v3_status": "paid",
+						"payment_status": "paid",
+						"display_status": "paid",
+						"vis_state": 0,
+						"lines": [
+							{
+								"lineid": 1,
+								"name": "Harbour print",
+								"description": "",
+								"qty": "2",
+								"unit_cost": {
+									"amount": "45.00",
+									"code": "CAD"
+								},
+								"amount": {
+									"amount": "90.00",
+									"code": "CAD"
+								},
+								"taxName1": "HST",
+								"taxAmount1": "15",
+								"taxName2": null,
+								"taxAmount2": null,
+								"type": 0,
+								"updated": "2026-09-15 15:00:00"
+							}
+						]
+					},
+					{
+						"invoiceid": 601,
+						"id": 601,
+						"accountid": "Zv8pR3",
+						"invoice_number": "0000008",
+						"customerid": 220399,
+						"create_date": "2026-09-10",
+						"due_date": "2026-10-10",
+						"currency_code": "CAD",
+						"amount": {
+							"amount": "172.50",
+							"code": "CAD"
+						},
+						"outstanding": {
+							"amount": "172.50",
+							"code": "CAD"
+						},
+						"paid": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"discount_value": "0",
+						"discount_total": {
+							"amount": "0.00",
+							"code": "CAD"
+						},
+						"status": 1,
+						"v3_status": "draft",
+						"payment_status": "unpaid",
+						"display_status": "draft",
+						"vis_state": 0,
+						"lines": [
+							{
+								"lineid": 1,
+								"name": "Design",
+								"description": "",
+								"qty": "1",
+								"unit_cost": {
+									"amount": "150.00",
+									"code": "CAD"
+								},
+								"amount": {
+									"amount": "150.00",
+									"code": "CAD"
+								},
+								"taxName1": "HST",
+								"taxAmount1": "15",
+								"taxName2": null,
+								"taxAmount2": null,
+								"type": 0,
+								"updated": "2026-09-15 15:00:00"
+							}
+						]
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 2
+			}
+		}
+	}
+}

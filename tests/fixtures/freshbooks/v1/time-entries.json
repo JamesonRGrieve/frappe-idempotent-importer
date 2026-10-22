@@ -1,0 +1,35 @@
+{
+	"request": {
+		"path": "/timetracking/business/240340/time_entries",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"time_entries": [
+			{
+				"id": 5095,
+				"identity_id": 8804571,
+				"is_logged": true,
+				"started_at": "2026-09-02T15:00:00Z",
+				"client_id": 220399,
+				"project_id": 779597,
+				"service_id": 4054453,
+				"note": "Concepts",
+				"active": true,
+				"billable": true,
+				"billed": false,
+				"internal": false,
+				"duration": 5400,
+				"timer": null
+			}
+		],
+		"meta": {
+			"page": 1,
+			"pages": 1,
+			"per_page": 100,
+			"total": 1
+		}
+	}
+}

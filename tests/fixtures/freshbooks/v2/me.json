@@ -1,0 +1,23 @@
+{
+	"request": {
+		"path": "/auth/api/v1/users/me",
+		"query": {}
+	},
+	"response": {
+		"response": {
+			"id": 8804571,
+			"business_memberships": [
+				{
+					"id": 111,
+					"role": "owner",
+					"business": {
+						"id": 240340,
+						"business_uuid": "046cc001-0002-e93e-1db1-1186b2983879",
+						"name": "Harbour Studio",
+						"account_id": "Zv8pR3"
+					}
+				}
+			]
+		}
+	}
+}

@@ -1,0 +1,67 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/users/clients",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"clients": [
+					{
+						"id": 220399,
+						"userid": 220399,
+						"fname": "Riley",
+						"lname": "River",
+						"organization": "River Co",
+						"email": "riley@river-fb.example",
+						"home_phone": null,
+						"bus_phone": "+1 902 555 0101",
+						"mob_phone": null,
+						"p_street": "1 Harbour Rd",
+						"p_street2": null,
+						"p_city": "Halifax",
+						"p_province": "NS",
+						"p_code": "B3H 1A1",
+						"p_country": "Canada",
+						"currency_code": "CAD",
+						"vis_state": 0,
+						"updated": "2026-09-15 15:00:00",
+						"accounting_systemid": "Zv8pR3",
+						"vat_name": "HST",
+						"vat_number": "987654321RT0001"
+					},
+					{
+						"id": 220400,
+						"userid": 220400,
+						"fname": "Sam",
+						"lname": "Shore",
+						"organization": null,
+						"email": "sam@shore-fb.example",
+						"home_phone": null,
+						"bus_phone": "+1 902 555 0101",
+						"mob_phone": null,
+						"p_street": "1 Harbour Rd",
+						"p_street2": null,
+						"p_city": "Halifax",
+						"p_province": "NS",
+						"p_code": "B3H 1A1",
+						"p_country": "Canada",
+						"currency_code": "CAD",
+						"vis_state": 2,
+						"updated": "2026-09-15 15:00:00",
+						"accounting_systemid": "Zv8pR3",
+						"vat_name": "HST",
+						"vat_number": null
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 2
+			}
+		}
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/bill_payments/bill_payments",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"bill_payments": [
+					{
+						"id": 1490,
+						"billid": 1141,
+						"amount": {
+							"amount": "1725.00",
+							"code": "CAD"
+						},
+						"payment_type": "Cash",
+						"paid_date": "2026-09-20",
+						"note": "",
+						"vis_state": 0,
+						"matched_with_expense": false
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 1
+			}
+		}
+	}
+}

@@ -189,6 +189,13 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		False,
 		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
 	),
+	# FreshBooks takes its token requests as JSON, and wants the redirect URI on a refresh too.
+	"freshbooks-fake": (
+		"freshbooks",
+		"/auth/oauth/token",
+		True,
+		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
+	),
 }
 # What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
 GRANT_EXTRAS: dict[str, dict[str, str]] = {
@@ -197,7 +204,7 @@ GRANT_EXTRAS: dict[str, dict[str, str]] = {
 	"pipedrive-fake": {"api_domain": "https://harbour.pipedrive.com"},
 }
 # The OAuth sources whose token endpoint takes JSON and wants the redirect URI on a refresh too.
-JSON_GRANT_HOSTS = frozenset({"agendrix-fake"})
+JSON_GRANT_HOSTS = frozenset({"agendrix-fake", "freshbooks-fake"})
 XERO_CONNECTIONS = "/Connections"
 # NetSuite's machine-to-machine grant: a client assertion signed by the e2e certificate's key (generated on
 # the bench, so its signature isn't checked here), for the account's canonical token endpoint.

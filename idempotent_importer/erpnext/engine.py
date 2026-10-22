@@ -44,6 +44,8 @@ from idempotent_importer.erpnext.writers.books import (
 	JournalEntryWriter,
 	PaymentEntryWriter,
 	ProjectWriter,
+	TaxRateWriter,
+	TimesheetWriter,
 	WarehouseWriter,
 )
 from idempotent_importer.erpnext.writers.catalog import CollectionWriter, ProductWriter
@@ -121,6 +123,8 @@ WRITERS: dict[Kind, type[Writer]] = {
 	Kind.WAREHOUSE: WarehouseWriter,
 	Kind.SUPPLIER: SupplierWriter,
 	Kind.PROJECT: ProjectWriter,
+	Kind.TIMESHEET: TimesheetWriter,
+	Kind.TAX_RATE: TaxRateWriter,
 	Kind.LEAD: LeadWriter,
 	Kind.OPPORTUNITY: OpportunityWriter,
 	Kind.PROSPECT: ProspectWriter,
@@ -169,6 +173,8 @@ SWITCHES: dict[Kind, str] = {
 	Kind.WAREHOUSE: "import_warehouses",
 	Kind.SUPPLIER: "import_suppliers",
 	Kind.PROJECT: "import_projects",
+	Kind.TIMESHEET: "import_projects",
+	Kind.TAX_RATE: "import_accounts",
 	Kind.LEAD: "import_crm",
 	Kind.OPPORTUNITY: "import_crm",
 	Kind.PROSPECT: "import_crm",

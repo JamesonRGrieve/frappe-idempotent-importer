@@ -1,0 +1,3315 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "FreshBooks API: the answers read by frappe-idempotent-importer",
+  "version": "2026-10-21",
+  "description": "Writes tests/schemas/freshbooks.json: the FreshBooks API answers the adapter reads, as an OpenAPI document\ntranscribed from FreshBooks' API reference (FreshBooks publishes no OpenAPI document; each path below cites its\npage under https://www.freshbooks.com/api/). Each record lists the documented fields the importer reads or\nthe reference's examples show; a field without a value is null. Money is FreshBooks' ``{amount, code}``: an\nexact decimal string and a three-letter currency code.\n\n``python -m tools.freshbooks_schema`` rewrites it."
+ },
+ "paths": {
+  "/auth/api/v1/users/me": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/identity_model"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "id": {
+             "type": "integer"
+            },
+            "business_memberships": {
+             "type": "array",
+             "items": {
+              "$ref": "#/components/schemas/Membership"
+             }
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "business_memberships"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/taxes/taxes": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/taxes"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "taxes": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Tax"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "taxes",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/items/items": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/items"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "items": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Item"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "items",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/users/clients": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/clients"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "clients": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Client"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "clients",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/bill_vendors/bill_vendors": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/vendors"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "bill_vendors": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Vendor"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "bill_vendors",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/estimates/estimates": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/estimates"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "estimates": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Estimate"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "estimates",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/invoices/invoices": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/invoices"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "invoices": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Invoice"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "invoices",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/credit_notes/credit_notes": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/credits"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "credit_notes": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/CreditNote"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "credit_notes",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/bills/bills": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/bills"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "bills": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Bill"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "bills",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/payments/payments": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/payments"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "payments": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Payment"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "payments",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/bill_payments/bill_payments": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/bill_payments"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "bill_payments": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/BillPayment"
+               }
+              },
+              "page": {
+               "type": "integer"
+              },
+              "pages": {
+               "type": "integer"
+              },
+              "per_page": {
+               "type": "integer"
+              },
+              "total": {
+               "type": "integer"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "bill_payments",
+              "page",
+              "pages",
+              "per_page",
+              "total"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/account/{accountId}/bills/bills/{billId}": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/bills"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "bill": {
+               "$ref": "#/components/schemas/Bill"
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "bill"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/comments/business/{businessId}/services": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/services"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "services": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/Service"
+           }
+          },
+          "meta": {
+           "type": "object",
+           "properties": {
+            "page": {
+             "type": "integer"
+            },
+            "pages": {
+             "type": "integer"
+            },
+            "per_page": {
+             "type": "integer"
+            },
+            "total": {
+             "type": "integer"
+            },
+            "total_logged": {
+             "type": "integer"
+            },
+            "total_unbilled": {
+             "type": "integer"
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "page",
+            "pages",
+            "per_page",
+            "total"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "services",
+          "meta"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/comments/business/{businessId}/service/{serviceId}/rate": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/services"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "service_rate": {
+           "$ref": "#/components/schemas/ServiceRate"
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "service_rate"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/projects/business/{businessId}/projects": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/project"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "projects": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/Project"
+           }
+          },
+          "meta": {
+           "type": "object",
+           "properties": {
+            "page": {
+             "type": "integer"
+            },
+            "pages": {
+             "type": "integer"
+            },
+            "per_page": {
+             "type": "integer"
+            },
+            "total": {
+             "type": "integer"
+            },
+            "total_logged": {
+             "type": "integer"
+            },
+            "total_unbilled": {
+             "type": "integer"
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "page",
+            "pages",
+            "per_page",
+            "total"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "projects",
+          "meta"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/timetracking/business/{businessId}/time_entries": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/time_entries"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "time_entries": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/TimeEntry"
+           }
+          },
+          "meta": {
+           "type": "object",
+           "properties": {
+            "page": {
+             "type": "integer"
+            },
+            "pages": {
+             "type": "integer"
+            },
+            "per_page": {
+             "type": "integer"
+            },
+            "total": {
+             "type": "integer"
+            },
+            "total_logged": {
+             "type": "integer"
+            },
+            "total_unbilled": {
+             "type": "integer"
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "page",
+            "pages",
+            "per_page",
+            "total"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "time_entries",
+          "meta"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/businesses/{businessUuid}/reports/chart_of_accounts": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/chart-of-accounts"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "journal_entry_accounts": {
+               "type": "array",
+               "items": {
+                "$ref": "#/components/schemas/Account"
+               }
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "journal_entry_accounts"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/businesses/{businessUuid}/reports/general_ledger": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/general-ledger-report"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "response": {
+           "type": "object",
+           "properties": {
+            "result": {
+             "type": "object",
+             "properties": {
+              "general_ledger": {
+               "type": "object",
+               "properties": {
+                "company_name": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "start_date": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "end_date": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "currency_code": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "locale": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "summary_only": {
+                 "type": [
+                  "boolean",
+                  "null"
+                 ]
+                },
+                "download_token": {
+                 "type": [
+                  "string",
+                  "null"
+                 ]
+                },
+                "summary": {
+                 "type": "object"
+                },
+                "data": {
+                 "type": "array",
+                 "items": {
+                  "$ref": "#/components/schemas/LedgerAccount"
+                 }
+                }
+               },
+               "additionalProperties": false,
+               "required": [
+                "data"
+               ]
+              }
+             },
+             "additionalProperties": false,
+             "required": [
+              "general_ledger"
+             ]
+            }
+           },
+           "additionalProperties": false,
+           "required": [
+            "result"
+           ]
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "response"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/accounting/businesses/{businessUuid}/journal_entries": {
+   "get": {
+    "externalDocs": {
+     "url": "https://www.freshbooks.com/api/journal-entries"
+    },
+    "responses": {
+     "200": {
+      "description": "OK",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "manualJournalEntries": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/JournalEntry"
+           }
+          },
+          "page": {
+           "type": "object",
+           "properties": {
+            "number": {
+             "type": "integer"
+            },
+            "size": {
+             "type": "integer"
+            },
+            "pages": {
+             "type": "integer"
+            },
+            "total": {
+             "type": "integer"
+            }
+           },
+           "additionalProperties": false
+          }
+         },
+         "additionalProperties": false,
+         "required": [
+          "manualJournalEntries"
+         ]
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "Tax": {
+    "type": "object",
+    "properties": {
+     "taxid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accounting_systemid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "updated": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "compound": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Item": {
+    "type": "object",
+    "properties": {
+     "itemid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "accounting_systemid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "qty": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "inventory": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unit_cost": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "tax1": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "tax2": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "updated": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sku": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Client": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "userid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "fname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lname": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "organization": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "home_phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "bus_phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "mob_phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_street": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_street2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_province": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "p_country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "updated": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accounting_systemid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vat_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vat_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Vendor": {
+    "type": "object",
+    "properties": {
+     "vendorid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "vendor_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "primary_contact_first_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "primary_contact_last_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "primary_contact_email": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "phone": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "website": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "street": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "street2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "city": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "province": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "postal_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "country": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "is_1099": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "created_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "updated_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "tax_defaults": {
+      "type": "array"
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "vendorid"
+    ]
+   },
+   "Line": {
+    "type": "object",
+    "properties": {
+     "lineid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "qty": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unit_cost": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "taxName1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxAmount1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxName2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "taxAmount2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "updated": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false
+   },
+   "Estimate": {
+    "type": "object",
+    "properties": {
+     "estimateid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "estimate_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "create_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "discount_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discount_total": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "status": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "ui_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "notes": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "terms": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Line"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Invoice": {
+    "type": "object",
+    "properties": {
+     "invoiceid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "accountid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "invoice_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "customerid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "create_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "due_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "outstanding": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "paid": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "discount_value": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "discount_total": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "status": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "v3_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "payment_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "display_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Line"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "CreditNote": {
+    "type": "object",
+    "properties": {
+     "creditid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "credit_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "clientid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "create_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "credit_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "paid": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "payment_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "display_status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "creditid"
+    ]
+   },
+   "BillLine": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "list_index": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "quantity": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "unit_cost": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "tax_name1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "tax_percent1": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "tax_amount1": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "tax_name2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "tax_percent2": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "tax_amount2": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "categoryid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "category": {
+      "oneOf": [
+       {
+        "type": "object",
+        "properties": {
+         "category": {
+          "type": [
+           "string",
+           "null"
+          ]
+         },
+         "categoryid": {
+          "type": [
+           "integer",
+           "null"
+          ]
+         }
+        },
+        "additionalProperties": false
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false
+   },
+   "Bill": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "bill_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vendorid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "issue_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "due_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "total_amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "tax_amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "outstanding": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "paid": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "status": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "created_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "updated_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "lines": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/BillLine"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Payment": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "logid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "invoiceid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "creditid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "clientid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "updated": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "gateway": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "from_credit": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "overpaymentid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "orderid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "accounting_systemid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "BillPayment": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "billid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "payment_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "paid_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "matched_with_expense": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id",
+     "billid"
+    ]
+   },
+   "Money": {
+    "type": "object",
+    "properties": {
+     "amount": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "amount",
+     "code"
+    ]
+   },
+   "Service": {
+    "type": "object",
+    "properties": {
+     "business_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billable": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "vis_state": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "ServiceRate": {
+    "type": "object",
+    "properties": {
+     "rate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "business_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "service_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     }
+    },
+    "additionalProperties": false
+   },
+   "Project": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "title": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "due_date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "client_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "internal": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "budget": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "fixed_price": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "rate": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "billing_method": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "project_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "active": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "complete": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "sample": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "created_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "updated_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "logged_duration": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "services": {
+      "type": "array"
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "TimeEntry": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "identity_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "is_logged": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "started_at": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "client_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "project_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "service_id": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "note": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "active": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "billable": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "billed": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "internal": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "duration": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "timer": {
+      "oneOf": [
+       {
+        "type": "object",
+        "properties": {
+         "id": {
+          "type": [
+           "integer",
+           "null"
+          ]
+         },
+         "is_running": {
+          "type": [
+           "boolean",
+           "null"
+          ]
+         }
+        },
+        "additionalProperties": false
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "SubAccount": {
+    "type": "object",
+    "properties": {
+     "account_uuid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_sub_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "system_account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "auto_created": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "parent_account_uuid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "balance": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "account_uuid"
+    ]
+   },
+   "Account": {
+    "type": "object",
+    "properties": {
+     "account_uuid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_sub_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "currency_code": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "system_account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "auto_created": {
+      "type": [
+       "boolean",
+       "null"
+      ]
+     },
+     "state": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "parent_account_uuid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "balance": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "sub_accounts": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/SubAccount"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "account_uuid"
+    ]
+   },
+   "LedgerTransaction": {
+    "type": "object",
+    "properties": {
+     "entity_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "reference": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "date": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "client_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "expenseid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "invoiceid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "paymentid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "incomeid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "creditid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "clientid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "billid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "bill_paymentid": {
+      "type": [
+       "integer",
+       "null"
+      ]
+     },
+     "debit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "credit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false
+   },
+   "LedgerSubAccount": {
+    "type": "object",
+    "properties": {
+     "sub_accountid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sub_account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "sub_account_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_sub_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "debit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "credit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "net_movement_debit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "net_movement_credit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "transactions": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LedgerTransaction"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "sub_accountid"
+    ]
+   },
+   "LedgerAccount": {
+    "type": "object",
+    "properties": {
+     "accountid": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_number": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "account_sub_type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "debit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "credit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "net_movement_debit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "net_movement_credit": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "sub_accounts": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LedgerSubAccount"
+      }
+     },
+     "transactions": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/LedgerTransaction"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "accountid"
+    ]
+   },
+   "JournalDetail": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "accountId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "type": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "manualJournalEntryId": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "amount": {
+      "oneOf": [
+       {
+        "$ref": "#/components/schemas/Money"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "accountId",
+     "type"
+    ]
+   },
+   "JournalEntry": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "name": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "journalEntryNumber": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "description": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "userEnteredDate": {
+      "type": "object",
+      "properties": {
+       "year": {
+        "type": "integer"
+       },
+       "month": {
+        "type": "integer"
+       },
+       "day": {
+        "type": "integer"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "year",
+       "month",
+       "day"
+      ]
+     },
+     "details": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/JournalDetail"
+      }
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "id"
+    ]
+   },
+   "Membership": {
+    "type": "object",
+    "properties": {
+     "id": {
+      "type": "integer"
+     },
+     "role": {
+      "type": "string"
+     },
+     "business": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "integer"
+       },
+       "business_uuid": {
+        "type": "string"
+       },
+       "name": {
+        "type": "string"
+       },
+       "account_id": {
+        "type": "string"
+       }
+      },
+      "additionalProperties": false,
+      "required": [
+       "id",
+       "business_uuid",
+       "account_id"
+      ]
+     }
+    },
+    "additionalProperties": false,
+    "required": [
+     "business"
+    ]
+   }
+  }
+ }
+}

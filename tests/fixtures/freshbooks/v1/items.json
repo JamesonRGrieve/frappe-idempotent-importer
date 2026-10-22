@@ -1,0 +1,39 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/items/items",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"items": [
+					{
+						"itemid": 201225,
+						"id": 201225,
+						"accounting_systemid": "Zv8pR3",
+						"name": "Harbour print",
+						"description": "A print of the harbour",
+						"qty": "1",
+						"inventory": "12",
+						"unit_cost": {
+							"amount": "45.00",
+							"code": "CAD"
+						},
+						"tax1": 58728,
+						"tax2": null,
+						"vis_state": 0,
+						"updated": "2026-08-03 15:00:00",
+						"sku": "PRINT"
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 1
+			}
+		}
+	}
+}

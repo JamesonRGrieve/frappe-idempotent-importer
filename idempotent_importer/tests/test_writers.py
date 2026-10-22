@@ -96,6 +96,8 @@ from idempotent_importer.erpnext.writers.books import (
 	JournalEntryWriter,
 	PaymentEntryWriter,
 	ProjectWriter,
+	TaxRateWriter,
+	TimesheetWriter,
 	WarehouseWriter,
 )
 from idempotent_importer.erpnext.writers.catalog import CollectionWriter, ProductWriter
@@ -1885,6 +1887,59 @@ class TestWriters(IntegrationTestCase):
 		self.assertEqual(frappe.db.get_value("Opportunity", deal, "status"), "Closed")
 		self.retire(Kind.LEAD, LeadWriter, lead_key)
 		self.assertEqual(frappe.db.get_value("Lead", name, "disabled"), 1)
+
+	def test_time_worked_and_tax_rates(self) -> None:
+		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
+		project = gid("Project", "4")
+		self.mirror(
+			Kind.PROJECT,
+			ProjectWriter,
+			project,
+			project_fields("Writer Rebrand", "Open", gid("Customer", "1")),
+		)
+		key = gid("TimeEntry", "1")
+		logged = contract.timesheet_fields(
+			contract.TimeLog(
+				"2026-09-02T15:00:00Z",
+				Decimal("1.5"),
+				"Concepts",
+				billable=True,
+				customer=gid("Customer", "1"),
+				project=project,
+			)
+		)
+		_, sheet = self.assert_lifecycle(
+			Kind.TIMESHEET, TimesheetWriter, key, logged, {**logged, "hours": Decimal(2)}
+		)
+		doc = frappe.get_doc("Timesheet", sheet)
+		self.assertEqual(
+			(
+				doc.docstatus,
+				doc.parent_project,
+				doc.customer,
+				doc.time_logs[0].hours,
+				doc.time_logs[0].is_billable,
+			),
+			(1, self.target(Kind.PROJECT, project), self.target(Kind.CUSTOMER, gid("Customer", "1")), 2.0, 1),
+			"the changed entry is the amendment, submitted",
+		)
+		self.retire(Kind.TIMESHEET, TimesheetWriter, key)
+		self.assertEqual(frappe.db.get_value("Timesheet", sheet, "docstatus"), 2)
+		tax = gid("Tax", "1")
+		_, template = self.assert_lifecycle(
+			Kind.TAX_RATE,
+			TaxRateWriter,
+			tax,
+			contract.tax_rate_fields("HST", Decimal(15), "123456789RT0001"),
+			contract.tax_rate_fields("HST", Decimal(14), "123456789RT0001"),
+		)
+		rows = frappe.get_doc("Sales Taxes and Charges Template", template).taxes
+		self.assertEqual(
+			(rows[0].charge_type, rows[0].rate, rows[0].account_head),
+			("On Net Total", 14.0, self.context.tax_account),
+		)
+		self.retire(Kind.TAX_RATE, TaxRateWriter, tax)
+		self.assertEqual(frappe.db.get_value("Sales Taxes and Charges Template", template, "disabled"), 1)
 
 	def test_departments_designations_and_employees(self) -> None:
 		department = gid("Department", "1")

@@ -19,6 +19,7 @@ from idempotent_importer.sources.dynamics_finance_operations.adapter import Fina
 from idempotent_importer.sources.dynamics_sales.adapter import DynamicsSalesAdapter
 from idempotent_importer.sources.ecwid.adapter import EcwidAdapter
 from idempotent_importer.sources.etsy.adapter import EtsyAdapter
+from idempotent_importer.sources.freshbooks.adapter import FreshBooksAdapter
 from idempotent_importer.sources.highlevel.adapter import HighLevelAdapter
 from idempotent_importer.sources.hubspot.adapter import HubSpotAdapter
 from idempotent_importer.sources.lightspeed.adapter import LightspeedAdapter
@@ -103,6 +104,7 @@ def all_adapters() -> dict[str, Adapter]:
 		PipedriveAdapter(),
 		ZohoCrmAdapter(),
 		WebflowAdapter(),
+		FreshBooksAdapter(),
 		*LISTED,
 	]
 	return {adapter.id: adapter for adapter in adapters}

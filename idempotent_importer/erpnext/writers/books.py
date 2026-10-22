@@ -6,6 +6,8 @@ Accounts, Cost Centers and Warehouses are company trees: a mirrored node goes un
 or under the company's root of its kind (an account under the root of its root type), and is named with
 the connection's abbreviation, so two connections into one company never collide. Retiring disables them.
 
+Time worked is a Timesheet on its project, a sales tax a Sales Taxes and Charges Template at its rate.
+
 Journal and Payment Entries are submitted as the source posted them (a draft stays a draft). One that
 changes at the source after it was submitted is cancelled and posted again as an amendment; retiring
 cancels it. A payment is allocated to the invoices it settles, which must be booked (submitted) first."""
@@ -23,10 +25,12 @@ from idempotent_importer.core.errors import Unsupported
 from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
-from idempotent_importer.erpnext.context import money
+from idempotent_importer.erpnext.context import money, system_datetime
 from idempotent_importer.erpnext.writers.base import DRAFT, SUBMITTED, Writer, cancel_booked, writable
 
 ACCOUNT, COST_CENTER, WAREHOUSE, PROJECT = "Account", "Cost Center", "Warehouse", "Project"
+TIMESHEET, TAX_TEMPLATE = "Timesheet", "Sales Taxes and Charges Template"
+ON_NET_TOTAL = "On Net Total"
 JOURNAL_ENTRY, PAYMENT_ENTRY = "Journal Entry", "Payment Entry"
 NAME_LENGTH = 140
 REMARK_LENGTH = 140
@@ -222,6 +226,77 @@ class PostedWriter(Writer):
 				f"{account} is in {currency}; posting in another currency is planned (card 386)"
 			)
 		return account
+
+
+class TimesheetWriter(PostedWriter):
+	"""Time worked as a Timesheet of the company's: one time log from its start for its hours, on its project
+	and for its customer and employee where the source names them, billable or not; submitted once logged.
+	Retiring cancels it."""
+
+	doctype = TIMESHEET
+	remarks_field = "note"
+
+	def fill(self, doc: Any, values: Values) -> None:
+		employee, customer, project = (
+			values.optional_string(field) for field in ("employee", "customer", "project")
+		)
+		doc.update(
+			{
+				"company": self.context.company,
+				"employee": self.dependency(Kind.EMPLOYEE, employee) if employee else None,
+				"customer": self.dependency(Kind.CUSTOMER, customer) if customer else None,
+				"parent_project": self.dependency(Kind.PROJECT, project) if project else None,
+				"note": values.optional_string("description"),
+			}
+		)
+		doc.set(
+			"time_logs",
+			[
+				{
+					"from_time": system_datetime(values.string("start")),
+					"hours": float(values.decimal("hours")),
+					"project": doc.parent_project,
+					"is_billable": int(values.flag("billable")),
+					"description": values.optional_string("description"),
+					"completed": 1,
+				}
+			],
+		)
+
+
+class TaxRateWriter(Writer):
+	"""A sales tax as a Sales Taxes and Charges Template of the company's (titled with the connection's
+	abbreviation): one row on the net total at its rate, booked to the connection's tax account, so documents
+	after the cut-over can charge it. Retiring disables it."""
+
+	def write(self, desired: Desired, link: Link | None) -> Target:
+		values = desired.values()
+		doc = self.existing(link) or frappe.new_doc(TAX_TEMPLATE)
+		number = values.optional_string("number")
+		name = values.string("name")
+		doc.update(
+			{
+				"title": self.context.suffixed(name),
+				"company": self.context.company,
+				"disabled": 0,
+			}
+		)
+		doc.set(
+			"taxes",
+			[
+				{
+					"charge_type": ON_NET_TOTAL,
+					"account_head": self.context.tax_account,
+					"description": f"{name} ({number})" if number else name,
+					"rate": float(values.decimal("rate")),
+				}
+			],
+		)
+		doc.save(ignore_permissions=True)
+		return Target(TAX_TEMPLATE, doc.name)
+
+	def retire(self, link: Link) -> None:
+		frappe.db.set_value(TAX_TEMPLATE, link.target.name, "disabled", 1)
 
 
 class JournalEntryWriter(PostedWriter):

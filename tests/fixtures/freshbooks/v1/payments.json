@@ -1,0 +1,42 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/payments/payments",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"payments": [
+					{
+						"id": 900,
+						"logid": 900,
+						"invoiceid": 600,
+						"creditid": null,
+						"amount": {
+							"amount": "103.50",
+							"code": "CAD"
+						},
+						"date": "2026-09-16",
+						"type": "Credit Card",
+						"note": "",
+						"clientid": 220399,
+						"vis_state": 0,
+						"updated": "2026-09-16 15:00:00",
+						"gateway": null,
+						"from_credit": false,
+						"overpaymentid": null,
+						"orderid": null,
+						"accounting_systemid": "Zv8pR3"
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 1
+			}
+		}
+	}
+}

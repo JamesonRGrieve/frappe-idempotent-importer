@@ -1,0 +1,41 @@
+{
+	"request": {
+		"path": "/accounting/account/Zv8pR3/taxes/taxes",
+		"query": {
+			"page": "1",
+			"per_page": "100"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"taxes": [
+					{
+						"taxid": 58728,
+						"id": 58728,
+						"name": "HST",
+						"amount": "15",
+						"number": "123456789RT0001",
+						"accounting_systemid": "Zv8pR3",
+						"updated": "2026-08-03 15:00:00",
+						"compound": false
+					},
+					{
+						"taxid": 58729,
+						"id": 58729,
+						"name": "QST",
+						"amount": "9.975",
+						"number": null,
+						"accounting_systemid": "Zv8pR3",
+						"updated": "2026-08-03 15:00:00",
+						"compound": true
+					}
+				],
+				"page": 1,
+				"pages": 1,
+				"per_page": 100,
+				"total": 2
+			}
+		}
+	}
+}

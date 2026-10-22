@@ -602,6 +602,9 @@ def catalog() -> list[Document]:
 			)
 			for name, sha256 in HIGHLEVEL_DOCUMENTS.items()
 		),
+		# FreshBooks publishes no OpenAPI document: the answers the adapter reads, transcribed by
+		# tools/freshbooks_schema.py from its API reference (www.freshbooks.com/api). Its paths are full.
+		committed("freshbooks", "api-reference", "tests/schemas/freshbooks.json", ""),
 		# Webflow's Data API v2 OpenAPI document (webflow/openapi-spec, openapi/v2.yml, MIT, the commit of
 		# 2026-09-02). Its server is /v2 on api.webflow.com.
 		SpecDocument(

@@ -71,6 +71,8 @@ class Kind(StrEnum):
 	PURCHASE_INVOICE = "purchase_invoice"
 	PAYMENT_ENTRY = "payment_entry"
 	JOURNAL_ENTRY = "journal_entry"
+	TIMESHEET = "timesheet"
+	TAX_RATE = "tax_rate"
 	# Stored value, written to the Square account it lives in (Square Gift Cards, Square Loyalty).
 	GIFT_CARD = "gift_card"
 	LOYALTY_ACCOUNT = "loyalty_account"
@@ -86,6 +88,7 @@ class Kind(StrEnum):
 SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.ACCOUNT,
 	Kind.COST_CENTER,
+	Kind.TAX_RATE,
 	Kind.WAREHOUSE,
 	Kind.ASSET,
 	Kind.COLLECTION,
@@ -104,6 +107,8 @@ SYNC_ORDER: tuple[Kind, ...] = (
 	Kind.LEAVE_APPLICATION,
 	Kind.ATTENDANCE,
 	Kind.PROJECT,
+	# Time worked on a project, for its customer.
+	Kind.TIMESHEET,
 	Kind.LEAD,
 	# An organisation lists its people, who are leads first.
 	Kind.PROSPECT,

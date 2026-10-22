@@ -98,6 +98,10 @@ payment_entry  payment_type, party_type, party, date, amount, currency, exchange
              party_account, submitted, reference, remarks, allocations ([{kind, document, amount}])
 journal_entry  number, date, remarks, submitted, lines ([{account, debit, credit, party_type, party,
              cost_center, project, against ({kind, document} | None)}]: balanced exactly)
+timesheet    start (UTC), hours, description, billable, submitted, employee, customer, project (identities |
+             None) (``timesheet_fields``): time worked, as a source logged it
+tax_rate     name, rate (percent), number (the tax's registration number | None): a sales tax the source
+             charges, as a template its documents can apply (``tax_rate_fields``)
 
 Times are UTC ``YYYY-MM-DDTHH:MM:SSZ``; money and quantities are exact Decimals."""
 
@@ -1365,6 +1369,44 @@ def journal_fields(
 			if line.debit or line.credit
 		],
 	}
+
+
+@dataclass(frozen=True)
+class TimeLog:
+	"""Time worked: when it started (UTC), how many hours, what was done, whether it is billable, and who
+	(an employee identity), for whom (a customer) and on what (a project), each None where the source keeps
+	none; ``submitted`` once the source logged it (a running timer is a draft)."""
+
+	start: str
+	hours: Decimal
+	description: str | None = None
+	billable: bool = False
+	submitted: bool = True
+	employee: str | None = None
+	customer: str | None = None
+	project: str | None = None
+
+
+def timesheet_fields(log: TimeLog) -> Fields:
+	if log.hours <= 0:
+		raise Unsupported(f"{decimal_text(log.hours)} hours of time can't be booked")
+	return {
+		"start": checked_time(log.start, "the time's start"),
+		"hours": log.hours,
+		"description": log.description,
+		"billable": log.billable,
+		"submitted": log.submitted,
+		"employee": log.employee,
+		"customer": log.customer,
+		"project": log.project,
+	}
+
+
+def tax_rate_fields(name: str, rate: Decimal, number: str | None = None) -> Fields:
+	"""A sales tax as a template: its name, its rate (percent) and its registration number."""
+	if rate < 0:
+		raise Unsupported(f"a tax at {decimal_text(rate)}%")
+	return {"name": name, "rate": rate, "number": number}
 
 
 def project_fields(

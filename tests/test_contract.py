@@ -633,6 +633,21 @@ class TestBooks:
 		with pytest.raises(ValueError, match="opportunity status"):
 			opportunity_fields(replace(opportunity, status="Won"))
 
+	def test_time_worked_and_tax_rates(self) -> None:
+		log = contract.TimeLog("2026-09-02T15:00:00Z", Decimal("0.5"), "Call", project="gid://x/c/Project/1")
+		assert contract.timesheet_fields(log)["hours"] == Decimal("0.5")
+		with pytest.raises(Unsupported, match="hours of time"):
+			contract.timesheet_fields(replace(log, hours=Decimal(0)))
+		with pytest.raises(ValueError, match="UTC time"):
+			contract.timesheet_fields(replace(log, start="2026-09-02"))
+		assert contract.tax_rate_fields("HST", Decimal(15)) == {
+			"name": "HST",
+			"rate": Decimal(15),
+			"number": None,
+		}
+		with pytest.raises(Unsupported, match="a tax at"):
+			contract.tax_rate_fields("Odd", Decimal(-1))
+
 	def test_pipeline_stages_and_the_fields_users_add(self) -> None:
 		deal = Opportunity(Kind.PROSPECT, "gid://x/c/Company/1", "Fit-out", "Open", "2026-02-01")
 		plain = opportunity_fields(deal)

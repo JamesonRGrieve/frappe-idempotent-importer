@@ -454,6 +454,16 @@ BUSINESSES = (
 			"api_account": "580e63e98c9a982ac9b8b741",
 		},
 	),
+	Business(
+		"FB",
+		"Books F",
+		"freshbooks-f",
+		"FreshBooks",
+		"freshbooks",
+		"freshbooks-fake",
+		"https://my.freshbooks.com",
+		{**OAUTH_CREDENTIALS, "api_account": "Zv8pR3|240340|046cc001-0002-e93e-1db1-1186b2983879"},
+	),
 )
 
 
@@ -859,6 +869,7 @@ def main() -> None:
 		"assert_pipedrive": assert_pipedrive,
 		"assert_zoho_crm": assert_zoho_crm,
 		"assert_webflow": assert_webflow,
+		"assert_freshbooks": assert_freshbooks,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3195,6 +3206,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		"e2e-oauth-access-token",
 		{},
 	),
+	"freshbooks-f": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		OAUTH_ROTATED_REFRESH_TOKEN,
+		{},
+	),
 }
 
 
@@ -4195,6 +4213,58 @@ def assert_webflow(state: str) -> None:
 		),
 		0,
 		"the journal's template page",
+	)
+
+
+@check
+def assert_freshbooks(state: str) -> None:
+	"""The FreshBooks studio of state ``state`` (tools/freshbooks_fixtures.py): its chart, tax template, items
+	and service, clients, vendor, project and time, estimate, invoices, credit note, bill, payments, manual
+	journal, and an expense and other income as the ledger posted them (v2: a new price, an invoice sent and
+	paid, a new time entry, a client deleted). A compound tax isn't kept (planned)."""
+	changed = state == "v2"
+	connection = "freshbooks-f"
+	records = [
+		Booked("account", "Account", "0f321fa9-78db-41ce-8c5f-11605718e5fb", "root_type", "Asset"),
+		Booked("tax_rate", "Tax", "58728"),
+		Booked("product", "Service", "4054453"),
+		Booked("customer", "Client", "220399", "customer_type", "Company"),
+		Booked("customer", "Client", "220400", "disabled", 1, retired=changed),
+		Booked("supplier", "Vendor", "1563", "supplier_name", "Paper Mill"),
+		Booked("project", "Project", "779597", "status", "Open"),
+		Booked("timesheet", "TimeEntry", "5095", "total_hours", 1.5),
+		Booked("draft_order", "Estimate", "500", "grand_total", amount("310.5")),
+		Booked("sales_invoice", "Invoice", "600", "grand_total", amount("103.5")),
+		Booked("sales_invoice", "Invoice", "601", "docstatus", 1 if changed else 0),
+		Booked("sales_invoice", "CreditNote", "31131", "grand_total", amount(-25)),
+		Booked("purchase_invoice", "Bill", "1141", "grand_total", amount(1725)),
+		Booked("payment_entry", "Payment", "900", "paid_amount", amount("103.5")),
+		Booked("payment_entry", "BillPayment", "1490", "paid_amount", amount(1725)),
+		Booked(
+			"journal_entry",
+			"JournalEntry",
+			"005f5c22-8166-47e9-926d-098fe523f929",
+			"total_debit",
+			amount(100),
+		),
+		Booked("journal_entry", "Expense", "77", "total_debit", amount("56.5")),
+		Booked("journal_entry", "OtherIncome", "88", "total_debit", amount(200)),
+	]
+	if changed:
+		records += [
+			Booked("timesheet", "TimeEntry", "5096", "total_hours", 0.5),
+			Booked("payment_entry", "Payment", "901", "paid_amount", amount("172.5")),
+		]
+	assert_booked(connection, records)
+	prints = target(connection, "product", "Item", "201225")
+	expect(item_price(connection, prints), amount(50 if changed else 45), "the print's price")
+	expect(
+		frappe.db.count(
+			"Importer Link",
+			{"connection": connection, "gid": f"gid://freshbooks/{connection}/Tax/58729", "retired": 0},
+		),
+		0,
+		"a compound tax, planned",
 	)
 
 

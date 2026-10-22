@@ -1,0 +1,52 @@
+{
+	"request": {
+		"path": "/accounting/businesses/046cc001-0002-e93e-1db1-1186b2983879/journal_entries",
+		"query": {
+			"page_number": "1",
+			"page_size": "100"
+		}
+	},
+	"response": {
+		"manualJournalEntries": [
+			{
+				"id": "005f5c22-8166-47e9-926d-098fe523f929",
+				"userEnteredDate": {
+					"year": 2026,
+					"month": 9,
+					"day": 30
+				},
+				"name": "Licence true-up",
+				"journalEntryNumber": "JE1",
+				"description": "Annual licence",
+				"details": [
+					{
+						"id": "a560a0b8-a9b5-4df1-a58e-98e33b88d682",
+						"accountId": "184ba7f5-ce2a-4435-ab67-824cbc082c47",
+						"amount": {
+							"amount": "100.000",
+							"code": "CAD"
+						},
+						"type": "TYPE_DEBIT",
+						"manualJournalEntryId": "005f5c22-8166-47e9-926d-098fe523f929"
+					},
+					{
+						"id": "406d5579-5a09-4f1a-b79b-ebf7c4529cc5",
+						"accountId": "0f321fa9-78db-41ce-8c5f-11605718e5fb",
+						"amount": {
+							"amount": "100.000",
+							"code": "CAD"
+						},
+						"type": "TYPE_CREDIT",
+						"manualJournalEntryId": "005f5c22-8166-47e9-926d-098fe523f929"
+					}
+				]
+			}
+		],
+		"page": {
+			"number": 1,
+			"size": 100,
+			"pages": 1,
+			"total": 1
+		}
+	}
+}

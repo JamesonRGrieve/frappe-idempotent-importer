@@ -1,0 +1,305 @@
+{
+	"request": {
+		"path": "/accounting/businesses/046cc001-0002-e93e-1db1-1186b2983879/reports/general_ledger",
+		"query": {
+			"start_date": "2000-01-01"
+		},
+		"query_patterns": {
+			"end_date": "\\d{4}-\\d{2}-\\d{2}"
+		}
+	},
+	"response": {
+		"response": {
+			"result": {
+				"general_ledger": {
+					"company_name": "Harbour Studio",
+					"start_date": "2000-01-01",
+					"end_date": "2026-10-21",
+					"currency_code": "CAD",
+					"locale": "en",
+					"summary_only": false,
+					"summary": {
+						"total_credit": {
+							"amount": "0.00",
+							"code": "CAD"
+						}
+					},
+					"data": [
+						{
+							"accountid": "7a6c2b9e-1d2f-4c3a-8b5e-6f7a8b9c0d1e",
+							"account_name": "Cash & Bank",
+							"account_number": "1000",
+							"debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"account_type": "asset",
+							"account_sub_type": "Cash & Bank",
+							"sub_accounts": [
+								{
+									"sub_accountid": "0f321fa9-78db-41ce-8c5f-11605718e5fb",
+									"sub_account_name": "Checking",
+									"sub_account_number": "1010",
+									"debit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"credit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"net_movement_debit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"net_movement_credit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"account_type": "asset",
+									"account_sub_type": "Checking",
+									"transactions": [
+										{
+											"entity_type": "expense",
+											"reference": "",
+											"description": "Design software",
+											"date": "2026-09-10",
+											"client_name": null,
+											"debit": null,
+											"credit": {
+												"amount": "56.50",
+												"code": "CAD"
+											},
+											"expenseid": 77,
+											"invoiceid": null,
+											"paymentid": null,
+											"incomeid": null,
+											"creditid": null,
+											"clientid": null,
+											"billid": null,
+											"bill_paymentid": null
+										},
+										{
+											"entity_type": "income",
+											"reference": "",
+											"description": "Workshop fee",
+											"date": "2026-09-10",
+											"client_name": null,
+											"debit": {
+												"amount": "200.00",
+												"code": "CAD"
+											},
+											"credit": null,
+											"expenseid": null,
+											"invoiceid": null,
+											"paymentid": null,
+											"incomeid": 88,
+											"creditid": null,
+											"clientid": null,
+											"billid": null,
+											"bill_paymentid": null
+										},
+										{
+											"entity_type": "invoice",
+											"reference": "",
+											"description": "Invoice 0000007",
+											"date": "2026-09-10",
+											"client_name": null,
+											"debit": {
+												"amount": "103.50",
+												"code": "CAD"
+											},
+											"credit": null,
+											"expenseid": null,
+											"invoiceid": 600,
+											"paymentid": null,
+											"incomeid": null,
+											"creditid": null,
+											"clientid": 220399,
+											"billid": null,
+											"bill_paymentid": null
+										}
+									]
+								}
+							]
+						},
+						{
+							"accountid": "8b7d3cae-2e3f-4d4b-9c6f-7a8b9c0d1e2f",
+							"account_name": "Office Expenses",
+							"account_number": "6000",
+							"debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"account_type": "expense",
+							"account_sub_type": "Office Expenses",
+							"sub_accounts": [
+								{
+									"sub_accountid": "184ba7f5-ce2a-4435-ab67-824cbc082c47",
+									"sub_account_name": "Software",
+									"sub_account_number": "6010",
+									"debit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"credit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"net_movement_debit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"net_movement_credit": {
+										"amount": "0.00",
+										"code": "CAD"
+									},
+									"account_type": "expense",
+									"account_sub_type": "Software",
+									"transactions": [
+										{
+											"entity_type": "expense",
+											"reference": "",
+											"description": "Design software",
+											"date": "2026-09-10",
+											"client_name": null,
+											"debit": {
+												"amount": "50.00",
+												"code": "CAD"
+											},
+											"credit": null,
+											"expenseid": 77,
+											"invoiceid": null,
+											"paymentid": null,
+											"incomeid": null,
+											"creditid": null,
+											"clientid": null,
+											"billid": null,
+											"bill_paymentid": null
+										}
+									]
+								}
+							]
+						},
+						{
+							"accountid": "5b2e0c11-4a51-4c0e-9d2f-2b7c1f0e6a10",
+							"account_name": "Sales Taxes",
+							"account_number": "2200",
+							"debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"account_type": "liability",
+							"account_sub_type": "Sales Taxes",
+							"sub_accounts": [],
+							"transactions": [
+								{
+									"entity_type": "expense",
+									"reference": "",
+									"description": "Design software",
+									"date": "2026-09-10",
+									"client_name": null,
+									"debit": {
+										"amount": "6.50",
+										"code": "CAD"
+									},
+									"credit": null,
+									"expenseid": 77,
+									"invoiceid": null,
+									"paymentid": null,
+									"incomeid": null,
+									"creditid": null,
+									"clientid": null,
+									"billid": null,
+									"bill_paymentid": null
+								}
+							]
+						},
+						{
+							"accountid": "48c444f7-17cf-4977-a0b3-bc04c8bd0f53",
+							"account_name": "Sales",
+							"account_number": "4000",
+							"debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_debit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"net_movement_credit": {
+								"amount": "0.00",
+								"code": "CAD"
+							},
+							"account_type": "income",
+							"account_sub_type": "Sales",
+							"sub_accounts": [],
+							"transactions": [
+								{
+									"entity_type": "income",
+									"reference": "",
+									"description": "Workshop fee",
+									"date": "2026-09-10",
+									"client_name": null,
+									"debit": null,
+									"credit": {
+										"amount": "200.00",
+										"code": "CAD"
+									},
+									"expenseid": null,
+									"invoiceid": null,
+									"paymentid": null,
+									"incomeid": 88,
+									"creditid": null,
+									"clientid": null,
+									"billid": null,
+									"bill_paymentid": null
+								}
+							]
+						}
+					]
+				}
+			}
+		}
+	}
+}

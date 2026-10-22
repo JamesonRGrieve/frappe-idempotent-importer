@@ -1,0 +1,150 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/products",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"items": [
+			{
+				"product": {
+					"id": "6a10000000000000000000a1",
+					"cmsLocaleId": "653ad57de882f528b32e810e",
+					"lastPublished": "2026-09-15T15:00:00.000Z",
+					"lastUpdated": "2026-09-15T15:00:00.000Z",
+					"createdOn": "2026-08-03T15:00:00.000Z",
+					"isArchived": false,
+					"isDraft": false,
+					"fieldData": {
+						"name": "Harbour print",
+						"slug": "harbour-print",
+						"description": "A print of the harbour",
+						"shippable": true,
+						"category": [
+							"6a10000000000000000000d1"
+						],
+						"sku-properties": [
+							{
+								"id": "size",
+								"name": "Size",
+								"enum": [
+									{
+										"id": "a4",
+										"name": "A4",
+										"slug": "a4"
+									},
+									{
+										"id": "a3",
+										"name": "A3",
+										"slug": "a3"
+									}
+								]
+							}
+						],
+						"default-sku": "6a10000000000000000000b1",
+						"care-instructions": "Keep out of direct sun"
+					}
+				},
+				"skus": [
+					{
+						"id": "6a10000000000000000000b1",
+						"cmsLocaleId": "653ad57de882f528b32e810e",
+						"lastPublished": "2026-09-15T15:00:00.000Z",
+						"lastUpdated": "2026-09-15T15:00:00.000Z",
+						"createdOn": "2026-08-03T15:00:00.000Z",
+						"fieldData": {
+							"name": "Harbour print A4",
+							"slug": "harbour-print-a4",
+							"price": {
+								"value": 4500,
+								"unit": "CAD",
+								"currency": "CAD"
+							},
+							"sku": "PRINT-A4",
+							"main-image": "http://webflow-fake:8080/media/580e63e98c9a982ac9b8b741/harbour-print-a4.png",
+							"ec-sku-billing-method": "one-time",
+							"sku-values": {
+								"size": "a4"
+							}
+						}
+					},
+					{
+						"id": "6a10000000000000000000b2",
+						"cmsLocaleId": "653ad57de882f528b32e810e",
+						"lastPublished": "2026-09-15T15:00:00.000Z",
+						"lastUpdated": "2026-09-15T15:00:00.000Z",
+						"createdOn": "2026-08-03T15:00:00.000Z",
+						"fieldData": {
+							"name": "Harbour print A3",
+							"slug": "harbour-print-a3",
+							"price": {
+								"value": 6000,
+								"unit": "CAD",
+								"currency": "CAD"
+							},
+							"sku": "PRINT-A3",
+							"main-image": "http://webflow-fake:8080/media/580e63e98c9a982ac9b8b741/harbour-print-a3.png",
+							"ec-sku-billing-method": "one-time",
+							"sku-values": {
+								"size": "a3"
+							},
+							"compare-at-price": {
+								"value": 7500,
+								"unit": "CAD"
+							}
+						}
+					}
+				]
+			},
+			{
+				"product": {
+					"id": "6a10000000000000000000a2",
+					"cmsLocaleId": "653ad57de882f528b32e810e",
+					"lastPublished": "2026-09-15T15:00:00.000Z",
+					"lastUpdated": "2026-09-15T15:00:00.000Z",
+					"createdOn": "2026-08-03T15:00:00.000Z",
+					"isArchived": false,
+					"isDraft": false,
+					"fieldData": {
+						"name": "Studio mug",
+						"slug": "studio-mug",
+						"description": "Stoneware",
+						"shippable": true,
+						"category": [
+							"6a10000000000000000000d1"
+						],
+						"default-sku": "6a10000000000000000000b3"
+					}
+				},
+				"skus": [
+					{
+						"id": "6a10000000000000000000b3",
+						"cmsLocaleId": "653ad57de882f528b32e810e",
+						"lastPublished": "2026-09-15T15:00:00.000Z",
+						"lastUpdated": "2026-09-15T15:00:00.000Z",
+						"createdOn": "2026-08-03T15:00:00.000Z",
+						"fieldData": {
+							"name": "Studio mug",
+							"slug": "studio-mug",
+							"price": {
+								"value": 2400,
+								"unit": "CAD",
+								"currency": "CAD"
+							},
+							"sku": "MUG",
+							"main-image": "http://webflow-fake:8080/media/580e63e98c9a982ac9b8b741/studio-mug.png",
+							"ec-sku-billing-method": "one-time"
+						}
+					}
+				]
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 2
+		}
+	}
+}

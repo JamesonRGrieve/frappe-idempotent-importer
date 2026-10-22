@@ -1,0 +1,40 @@
+{
+	"request": {
+		"path": "/v2/collections/6a10000000000000000000c1",
+		"query": {}
+	},
+	"response": {
+		"id": "6a10000000000000000000c1",
+		"displayName": "Categories",
+		"singularName": "Categorie",
+		"slug": "category",
+		"createdOn": "2026-08-03T15:00:00.000Z",
+		"lastUpdated": "2026-09-15T15:00:00.000Z",
+		"fields": [
+			{
+				"id": "f1",
+				"isRequired": true,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "name",
+				"displayName": "Name"
+			},
+			{
+				"id": "f2",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "slug",
+				"displayName": "Slug"
+			},
+			{
+				"id": "f3",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "description",
+				"displayName": "Description"
+			}
+		]
+	}
+}

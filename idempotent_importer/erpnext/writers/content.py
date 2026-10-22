@@ -17,8 +17,9 @@ from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.paths import slugify
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import ConnectionContext
+from idempotent_importer.erpnext.custom_fields import CUSTOM_VALUES
 from idempotent_importer.erpnext.stores import FrappeLinkStore
-from idempotent_importer.erpnext.writers.base import Writer
+from idempotent_importer.erpnext.writers.base import Writer, custom_json
 from idempotent_importer.naming import named_after, plain_text
 
 REVIEW_TITLE_LENGTH = 140
@@ -101,6 +102,7 @@ class ArticleWriter(Writer):
 				"content_type": "HTML",
 				"content_html": self.media.localized(values.string("html"), values.strings("images")),
 				"blog_intro": plain_text(values.optional_string("intro")) or None,
+				CUSTOM_VALUES: custom_json(values),
 			}
 		)
 		self.save(doc, named_after(doc.route))

@@ -73,7 +73,7 @@ event        subject, starts_on, ends_on (YYYY-MM-DD HH:MM:SS on the source's cl
              description, participants ([{kind, party}])
 todo         description, status, date, about ({kind, party})
 
-A product, lead, prospect, opportunity, communication, event, todo, customer or supplier optionally carries
+A product, article, lead, prospect, opportunity, communication, event, todo, customer or supplier optionally carries
 ``custom`` ({label: text}): the values of the fields the source's users defined themselves, by label.
 department   name, parent (identity | None), is_group
 designation  name

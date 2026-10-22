@@ -1,0 +1,28 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/redirects",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"redirects": [
+			{
+				"id": "6a10000000000000000000h1",
+				"fromUrl": "/old-about",
+				"toUrl": "/about"
+			},
+			{
+				"id": "6a10000000000000000000h2",
+				"fromUrl": "/shop",
+				"toUrl": "https://shop.example.com/"
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 2
+		}
+	}
+}

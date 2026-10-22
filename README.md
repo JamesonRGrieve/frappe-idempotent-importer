@@ -45,6 +45,7 @@ stores can import into two businesses at once and never touch each other's recor
 | Salesforce | Built | Users, products at their standard price, accounts as prospects with their contacts and notes (customer accounts as customers), leads with their notes, opportunity types and opportunities at their stage, logged calls and emails, email messages, tasks, events, quotes and orders, and every custom field — [coverage/salesforce.md](coverage/salesforce.md) |
 | Pipedrive | Built | Users, products with their variations, persons as leads, organizations as prospects with their persons, the customers of won deals, pipelines, deals and leads at their stage, activities, notes and call logs, and every custom field — [coverage/pipedrive.md](coverage/pipedrive.md) |
 | Zoho CRM | Built | Users, products, vendors, leads, accounts as prospects with their contacts (customer accounts as customers), pipelines and deals at their stage, calls, notes, events and tasks, quotes, sales orders, invoices and purchase orders, and every custom field — [coverage/zoho_crm.md](coverage/zoho_crm.md) |
+| Webflow | Built | Assets, e-commerce categories, products with their SKUs, prices and inventory, the customers orders name, orders with payments, refunds and shipments, pages with their content, CMS collections and their items as blog posts (their own fields kept), and redirects — [coverage/webflow.md](coverage/webflow.md) |
 
 Every coverage page lists what lands where, and what has no first-party home (never approximated).
 
@@ -216,6 +217,9 @@ This is the operator's decision to confirm (see below).
    - **Zoho CRM:** register a server-based client in Zoho's API console as for Zoho Books; enter the
      organisation's CRM address in its data centre (`https://crm.zoho.eu`) as the Store URL and the client's
      ID and secret, save, then click **Connect to Zoho CRM** ([coverage/zoho_crm.md](coverage/zoho_crm.md)).
+   - **Webflow:** register a Data Client app in a Webflow workspace with the same redirect URI and the read
+     scopes in [coverage/webflow.md](coverage/webflow.md); enter the site's address as the Store URL and the
+     app's client ID and secret, save, then click **Connect to Webflow** and authorise the site.
 4. Run a **Dry Run**, then a **Full Run**, from the connection.
 
 ## Gift cards, store credit and loyalty
@@ -405,9 +409,10 @@ Each of these is the operator's call.
     Microsoft's entity reference documents; whatever else a kind needs (an order date, a product name,
     vendors' and purchase orders' entities) the operator maps for their environment.
 28. **A source's own fields are kept by label, not as ERPNext fields:** the values of the fields a CRM's
-    users defined (HubSpot properties, Salesforce and Zoho custom fields, Pipedrive's) land in a read-only
-    **Source Fields** JSON field the app adds to Item, Lead, Prospect, Opportunity, Customer, Supplier,
-    Communication, Event and ToDo, so every value is mirrored and change-tracked without one connection's
+    users defined (HubSpot properties, Salesforce and Zoho custom fields, Pipedrive's; a Webflow CMS item's
+    fields beyond its body) land in a read-only **Source Fields** JSON field the app adds to Item, Lead,
+    Prospect, Opportunity, Customer, Supplier, Communication, Event, ToDo and Blog Post, so every value is
+    mirrored and change-tracked without one connection's
     fields reshaping the site's doctypes. Promoting a field to a Custom Field of its own is the operator's
     call.
 

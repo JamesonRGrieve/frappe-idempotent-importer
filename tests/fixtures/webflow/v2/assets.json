@@ -1,0 +1,31 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/assets",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"assets": [
+			{
+				"id": "6a10000000000000000000e1",
+				"contentType": "image/png",
+				"size": 1024,
+				"siteId": "580e63e98c9a982ac9b8b741",
+				"hostedUrl": "http://webflow-fake:8080/media/580e63e98c9a982ac9b8b741/studio-hero.png",
+				"originalFileName": "studio-hero.png",
+				"displayName": "studio-hero.png",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"variants": [],
+				"altText": "The studio"
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 1
+		}
+	}
+}

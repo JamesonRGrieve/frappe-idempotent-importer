@@ -1,0 +1,480 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/orders",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"orders": [
+			{
+				"orderId": "fc7-128",
+				"status": "fulfilled",
+				"comment": "Please wrap it",
+				"orderComment": "",
+				"acceptedOn": "2026-09-14T15:00:00.000Z",
+				"fulfilledOn": "2026-09-15T15:00:00.000Z",
+				"refundedOn": null,
+				"disputedOn": null,
+				"disputeUpdatedOn": null,
+				"disputeLastStatus": null,
+				"customerPaid": {
+					"unit": "CAD",
+					"value": "10315",
+					"string": "$103.15 CAD"
+				},
+				"netAmount": {
+					"unit": "CAD",
+					"value": "10215",
+					"string": "$102.15 CAD"
+				},
+				"applicationFee": {
+					"unit": "CAD",
+					"value": "0",
+					"string": "$0.00 CAD"
+				},
+				"allAddresses": [
+					{
+						"type": "shipping",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					},
+					{
+						"type": "billing",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					}
+				],
+				"shippingAddress": {
+					"type": "shipping",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"billingAddress": {
+					"type": "billing",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"shippingProvider": "Canada Post",
+				"shippingTracking": "CP123",
+				"shippingTrackingURL": "https://www.canadapost-postescanada.ca/track/CP123",
+				"customerInfo": {
+					"fullName": "Riley River",
+					"email": "Riley@River.example"
+				},
+				"purchasedItems": [
+					{
+						"count": 2,
+						"rowTotal": {
+							"unit": "CAD",
+							"value": "9000",
+							"string": "$90.00 CAD"
+						},
+						"productId": "6a10000000000000000000a1",
+						"productName": "Harbour print",
+						"productSlug": "harbour-print",
+						"variantId": "6a10000000000000000000b1",
+						"variantName": "A4",
+						"variantSlug": "a4",
+						"variantSKU": "A4",
+						"variantPrice": {
+							"unit": "CAD",
+							"value": "4500",
+							"string": "$45.00 CAD"
+						},
+						"weight": null,
+						"width": null,
+						"height": null,
+						"length": null
+					}
+				],
+				"purchasedItemsCount": 1,
+				"stripeDetails": {
+					"paymentMethod": "pm_1",
+					"paymentIntentId": "pi_1",
+					"customerId": "cus_1",
+					"chargeId": "ch_fc7-128"
+				},
+				"stripeCard": {
+					"last4": "4242",
+					"brand": "Visa",
+					"ownerName": "Riley River",
+					"expires": {
+						"year": 2030,
+						"month": 12
+					}
+				},
+				"customData": [],
+				"metadata": {
+					"isBuyNow": false
+				},
+				"isCustomerDeleted": false,
+				"isShippingRequired": true,
+				"hasDownloads": false,
+				"paymentProcessor": "stripe",
+				"totals": {
+					"subtotal": {
+						"unit": "CAD",
+						"value": "9000",
+						"string": "$90.00 CAD"
+					},
+					"extras": [
+						{
+							"type": "discount",
+							"name": "Discount (WELCOME10)",
+							"description": "",
+							"price": {
+								"unit": "CAD",
+								"value": "-900",
+								"string": "$-9.00 CAD"
+							}
+						},
+						{
+							"type": "shipping",
+							"name": "Flat rate",
+							"description": "",
+							"price": {
+								"unit": "CAD",
+								"value": "1000",
+								"string": "$10.00 CAD"
+							}
+						},
+						{
+							"type": "tax",
+							"name": "HST",
+							"description": "",
+							"price": {
+								"unit": "CAD",
+								"value": "1215",
+								"string": "$12.15 CAD"
+							}
+						}
+					],
+					"total": {
+						"unit": "CAD",
+						"value": "10315",
+						"string": "$103.15 CAD"
+					}
+				},
+				"downloadFiles": []
+			},
+			{
+				"orderId": "fc7-129",
+				"status": "unfulfilled",
+				"comment": "",
+				"orderComment": "Gift for a client",
+				"acceptedOn": "2026-09-14T15:00:00.000Z",
+				"fulfilledOn": null,
+				"refundedOn": null,
+				"disputedOn": null,
+				"disputeUpdatedOn": null,
+				"disputeLastStatus": null,
+				"customerPaid": {
+					"unit": "CAD",
+					"value": "2530",
+					"string": "$25.30 CAD"
+				},
+				"netAmount": {
+					"unit": "CAD",
+					"value": "2430",
+					"string": "$24.30 CAD"
+				},
+				"applicationFee": {
+					"unit": "CAD",
+					"value": "0",
+					"string": "$0.00 CAD"
+				},
+				"allAddresses": [
+					{
+						"type": "shipping",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					},
+					{
+						"type": "billing",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					}
+				],
+				"shippingAddress": {
+					"type": "shipping",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"billingAddress": {
+					"type": "billing",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"shippingProvider": null,
+				"shippingTracking": null,
+				"shippingTrackingURL": null,
+				"customerInfo": {
+					"fullName": "Riley River",
+					"email": "Riley@River.example"
+				},
+				"purchasedItems": [
+					{
+						"count": 1,
+						"rowTotal": {
+							"unit": "CAD",
+							"value": "2200",
+							"string": "$22.00 CAD"
+						},
+						"productId": "6a10000000000000000000a2",
+						"productName": "Studio mug",
+						"productSlug": "studio-mug",
+						"variantId": "6a10000000000000000000b3",
+						"variantName": "Studio mug",
+						"variantSlug": "studio-mug",
+						"variantSKU": "STUDIO MUG",
+						"variantPrice": {
+							"unit": "CAD",
+							"value": "2200",
+							"string": "$22.00 CAD"
+						},
+						"weight": null,
+						"width": null,
+						"height": null,
+						"length": null
+					}
+				],
+				"purchasedItemsCount": 1,
+				"stripeDetails": {
+					"paymentMethod": "pm_1",
+					"paymentIntentId": "pi_1",
+					"customerId": "cus_1",
+					"chargeId": "ch_fc7-129"
+				},
+				"stripeCard": {
+					"last4": "4242",
+					"brand": "Visa",
+					"ownerName": "Riley River",
+					"expires": {
+						"year": 2030,
+						"month": 12
+					}
+				},
+				"customData": [],
+				"metadata": {
+					"isBuyNow": false
+				},
+				"isCustomerDeleted": false,
+				"isShippingRequired": true,
+				"hasDownloads": false,
+				"paymentProcessor": "stripe",
+				"totals": {
+					"subtotal": {
+						"unit": "CAD",
+						"value": "2200",
+						"string": "$22.00 CAD"
+					},
+					"extras": [
+						{
+							"type": "tax",
+							"name": "HST",
+							"description": "",
+							"price": {
+								"unit": "CAD",
+								"value": "330",
+								"string": "$3.30 CAD"
+							}
+						}
+					],
+					"total": {
+						"unit": "CAD",
+						"value": "2530",
+						"string": "$25.30 CAD"
+					}
+				},
+				"downloadFiles": []
+			},
+			{
+				"orderId": "fc7-130",
+				"status": "pending",
+				"comment": "",
+				"orderComment": "",
+				"acceptedOn": "2026-09-14T15:00:00.000Z",
+				"fulfilledOn": null,
+				"refundedOn": null,
+				"disputedOn": null,
+				"disputeUpdatedOn": null,
+				"disputeLastStatus": null,
+				"customerPaid": {
+					"unit": "CAD",
+					"value": "4400",
+					"string": "$44.00 CAD"
+				},
+				"netAmount": {
+					"unit": "CAD",
+					"value": "4300",
+					"string": "$43.00 CAD"
+				},
+				"applicationFee": {
+					"unit": "CAD",
+					"value": "0",
+					"string": "$0.00 CAD"
+				},
+				"allAddresses": [
+					{
+						"type": "shipping",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					},
+					{
+						"type": "billing",
+						"addressee": "Riley River",
+						"line1": "1 Harbour Rd",
+						"line2": "",
+						"city": "Halifax",
+						"state": "NS",
+						"country": "CA",
+						"postalCode": "B3H 1A1"
+					}
+				],
+				"shippingAddress": {
+					"type": "shipping",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"billingAddress": {
+					"type": "billing",
+					"addressee": "Riley River",
+					"line1": "1 Harbour Rd",
+					"line2": "",
+					"city": "Halifax",
+					"state": "NS",
+					"country": "CA",
+					"postalCode": "B3H 1A1"
+				},
+				"shippingProvider": null,
+				"shippingTracking": null,
+				"shippingTrackingURL": null,
+				"customerInfo": {
+					"fullName": "Sam Shore",
+					"email": "sam@shore.example"
+				},
+				"purchasedItems": [
+					{
+						"count": 2,
+						"rowTotal": {
+							"unit": "CAD",
+							"value": "4400",
+							"string": "$44.00 CAD"
+						},
+						"productId": "6a10000000000000000000a2",
+						"productName": "Studio mug",
+						"productSlug": "studio-mug",
+						"variantId": "6a10000000000000000000b3",
+						"variantName": "Studio mug",
+						"variantSlug": "studio-mug",
+						"variantSKU": "STUDIO MUG",
+						"variantPrice": {
+							"unit": "CAD",
+							"value": "2200",
+							"string": "$22.00 CAD"
+						},
+						"weight": null,
+						"width": null,
+						"height": null,
+						"length": null
+					}
+				],
+				"purchasedItemsCount": 1,
+				"stripeDetails": {
+					"paymentMethod": "pm_1",
+					"paymentIntentId": "pi_1",
+					"customerId": "cus_1",
+					"chargeId": "ch_fc7-130"
+				},
+				"stripeCard": {
+					"last4": "4242",
+					"brand": "Visa",
+					"ownerName": "Riley River",
+					"expires": {
+						"year": 2030,
+						"month": 12
+					}
+				},
+				"customData": [],
+				"metadata": {
+					"isBuyNow": false
+				},
+				"isCustomerDeleted": false,
+				"isShippingRequired": true,
+				"hasDownloads": false,
+				"paymentProcessor": "stripe",
+				"totals": {
+					"subtotal": {
+						"unit": "CAD",
+						"value": "4400",
+						"string": "$44.00 CAD"
+					},
+					"extras": [],
+					"total": {
+						"unit": "CAD",
+						"value": "4400",
+						"string": "$44.00 CAD"
+					}
+				},
+				"downloadFiles": []
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 3
+		}
+	}
+}

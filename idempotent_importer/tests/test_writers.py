@@ -1670,6 +1670,12 @@ class TestWriters(IntegrationTestCase):
 		self.assertEqual(
 			frappe.db.get_value("Blog Post", post, "disable_comments"), 1, "an unmapped field is kept"
 		)
+		self.mirror(Kind.ARTICLE, ArticleWriter, article, {**fields, "custom": {"Topic": "Process"}})
+		self.assertEqual(
+			frappe.db.get_value("Blog Post", post, "importer_custom_fields"),
+			'{"Topic": "Process"}',
+			"a CMS item's own fields",
+		)
 		comment = gid("Comment", "1")
 		said: Fields = {
 			"article": article,

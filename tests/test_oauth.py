@@ -125,6 +125,18 @@ def test_the_code_exchange_must_grant_a_refresh_token() -> None:
 		flow.exchange("code", "v", "https://erp/cb")
 
 
+def test_a_lasting_access_token_is_the_credential_kept_and_used_as_it_is() -> None:
+	saved = Saved()
+	lasting = replace(provider(ClientAuth.FORM, rotates=False), lasting_access_token=True)
+	transport = scripted(grant(access_token="lasting", token_type="bearer"))
+	flow = OAuthClient(lasting, OAuthApp("id", "s"), transport, "", saved)
+	assert flow.exchange("code", "v", "https://erp/cb").access_token == "lasting"
+	assert saved == ["lasting"], "the access token is what the connection keeps"
+	kept = OAuthClient(lasting, OAuthApp("id", "s"), transport, "lasting", Saved())
+	before = len(transport.requests)
+	assert kept.refresh() == "lasting" and len(transport.requests) == before, "no token request"
+
+
 def test_refusals_stop_the_run_and_trouble_pauses_it() -> None:
 	app = OAuthApp("id", "s")
 	with pytest.raises(CredentialsRejected, match="not connected"):

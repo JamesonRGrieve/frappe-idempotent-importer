@@ -4,7 +4,8 @@
 exchange, and every refresh; and the client credentials grant (RFC 6749 §4.4) of a source whose app reads as
 itself, which has no refresh token at all. A source that rotates its refresh token (a new one in every token
 response) has it handed to the connection's store (``save``) before the access token is used, since the old
-one stops working; one that keeps it (Zoho) sends none back, and the stored one is kept. The client
+one stops working; one that keeps it (Zoho) sends none back, and the stored one is kept; one whose access
+token lasts until revoked (Webflow) issues none at all, and its access token is what the connection keeps. The client
 authenticates as the provider says: HTTP Basic (RFC 6749 §2.3.1), the secret in the form (Microsoft Entra
 ID's, for Dynamics 365), a public client with PKCE (RFC 7636), or a JWT client assertion signed by the
 app's certificate key (RFC 7523 §2.2, NetSuite's machine-to-machine flow). Tokens, keys and secrets never
@@ -95,6 +96,9 @@ class OAuthProvider:
 	json_token_requests: bool = False
 	# A provider that wants the redirect URI on every refresh too (Agendrix's).
 	redirect_on_refresh: bool = False
+	# A provider whose access token lasts until it is revoked and that issues no refresh token (Webflow's): the
+	# access token an approval grants is the credential the connection keeps, and used as it is.
+	lasting_access_token: bool = False
 
 	@property
 	def pkce(self) -> bool:
@@ -272,6 +276,8 @@ class OAuthClient:
 			raise CredentialsRejected(
 				f"{self.provider.label} is not connected: use Connect on the connection."
 			)
+		if self.provider.lasting_access_token:
+			return TokenGrant(self._refresh_token)
 		form = {"grant_type": "refresh_token", "refresh_token": self._refresh_token}
 		if self.provider.redirect_on_refresh:
 			if not self._redirect_uri:
@@ -292,7 +298,7 @@ class OAuthClient:
 			self.provider.reconnect,
 			self.provider.json_token_requests,
 		)
-		refresh = document.get("refresh_token")
+		refresh = document.get("access_token" if self.provider.lasting_access_token else "refresh_token")
 		if isinstance(refresh, str) and refresh:
 			self._save(refresh)
 			self._refresh_token = refresh

@@ -1,0 +1,67 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/pages",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"pages": [
+			{
+				"id": "6a10000000000000000000f1",
+				"siteId": "580e63e98c9a982ac9b8b741",
+				"title": "About",
+				"slug": "about",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"archived": false,
+				"draft": false,
+				"canBranch": true,
+				"isBranch": false,
+				"seo": {
+					"title": "About",
+					"description": ""
+				},
+				"openGraph": {
+					"title": "About",
+					"titleCopied": true,
+					"description": "",
+					"descriptionCopied": true
+				},
+				"localeId": null,
+				"publishedPath": "/about"
+			},
+			{
+				"id": "6a10000000000000000000f2",
+				"siteId": "580e63e98c9a982ac9b8b741",
+				"title": "Journal template",
+				"slug": "detail_journal",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"archived": false,
+				"draft": false,
+				"canBranch": true,
+				"isBranch": false,
+				"seo": {
+					"title": "Journal template",
+					"description": ""
+				},
+				"openGraph": {
+					"title": "Journal template",
+					"titleCopied": true,
+					"description": "",
+					"descriptionCopied": true
+				},
+				"localeId": null,
+				"publishedPath": "/journal/item",
+				"collectionId": "6a10000000000000000000c4"
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 2
+		}
+	}
+}

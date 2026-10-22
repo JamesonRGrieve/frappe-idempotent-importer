@@ -1,0 +1,32 @@
+{
+	"request": {
+		"path": "/v2/collections/6a10000000000000000000c1/items",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"items": [
+			{
+				"id": "6a10000000000000000000d1",
+				"cmsLocaleId": "653ad57de882f528b32e810e",
+				"lastPublished": "2026-09-15T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"isArchived": false,
+				"isDraft": false,
+				"fieldData": {
+					"name": "Prints",
+					"slug": "prints",
+					"description": "Art prints"
+				}
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 1
+		}
+	}
+}

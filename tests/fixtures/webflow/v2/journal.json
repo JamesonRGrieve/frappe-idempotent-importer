@@ -1,0 +1,55 @@
+{
+	"request": {
+		"path": "/v2/collections/6a10000000000000000000c4/items",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"items": [
+			{
+				"id": "6a10000000000000000000g1",
+				"cmsLocaleId": "653ad57de882f528b32e810e",
+				"lastPublished": "2026-09-15T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"isArchived": false,
+				"isDraft": false,
+				"fieldData": {
+					"name": "Printing the harbour",
+					"slug": "printing-the-harbour",
+					"post-summary": "How the prints are made",
+					"post-body": "<p>Every print starts on the press.</p>",
+					"main-image": {
+						"fileId": "6a10000000000000000000e2",
+						"url": "http://webflow-fake:8080/media/580e63e98c9a982ac9b8b741/press.png",
+						"alt": "The press"
+					},
+					"featured": true,
+					"topic": "t1"
+				}
+			},
+			{
+				"id": "6a10000000000000000000g2",
+				"cmsLocaleId": "653ad57de882f528b32e810e",
+				"lastPublished": "2026-09-15T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"isArchived": false,
+				"isDraft": false,
+				"fieldData": {
+					"name": "Studio news",
+					"slug": "studio-news",
+					"post-body": "<p>New prints in October.</p>",
+					"topic": "t2"
+				}
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 2
+		}
+	}
+}

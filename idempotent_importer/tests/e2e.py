@@ -439,6 +439,21 @@ BUSINESSES = (
 		"https://crm.zoho.com",
 		OAUTH_CREDENTIALS,
 	),
+	Business(
+		"WF",
+		"Site W",
+		"webflow-w",
+		"Webflow",
+		"webflow",
+		"webflow-fake",
+		"http://webflow-fake:8080",
+		# Webflow's access token lasts, so it is the credential the connection keeps.
+		{
+			**OAUTH_CREDENTIALS,
+			"refresh_token": "e2e-oauth-access-token",
+			"api_account": "580e63e98c9a982ac9b8b741",
+		},
+	),
 )
 
 
@@ -843,6 +858,7 @@ def main() -> None:
 		"assert_salesforce": assert_salesforce,
 		"assert_pipedrive": assert_pipedrive,
 		"assert_zoho_crm": assert_zoho_crm,
+		"assert_webflow": assert_webflow,
 		"assert_shared_coupon_codes": assert_shared_coupon_codes,
 		"assert_lockout_safety": assert_lockout_safety,
 		"sync_now_in_background": sync_now_in_background,
@@ -3172,6 +3188,13 @@ OAUTH_CONNECTS: dict[str, OAuthConnect] = {
 		OAUTH_ROTATED_REFRESH_TOKEN,
 		{},
 	),
+	"webflow-w": OAuthConnect(
+		{"client_id": "e2e-oauth-client", "response_type": "code"},
+		"oauth_callback",
+		{},
+		"e2e-oauth-access-token",
+		{},
+	),
 }
 
 
@@ -4111,6 +4134,67 @@ def assert_zoho_crm(state: str) -> None:
 		),
 		{"Account Tier": "Gold"},
 		"the account's custom field",
+	)
+
+
+@check
+def assert_webflow(state: str) -> None:
+	"""The Webflow studio site of state ``state`` (tools/webflow_fixtures.py): its asset, category, products with
+	their SKUs, the customers its orders name, the orders with their shipment (and, v2, a refund), its page,
+	its journal and posts, and its redirects (v2: a new price, an order refunded, the page edited, a new post,
+	a redirect removed). A collection's template page isn't a page of its own."""
+	changed = state == "v2"
+	connection = "webflow-w"
+	records = [
+		Booked("collection", "Category", "6a10000000000000000000d1"),
+		Booked("customer", "Customer", "riley@river.example", "customer_name", "Riley River"),
+		Booked("order", "Order", "fc7-128", "grand_total", amount("103.15")),
+		Booked("order", "Order", "fc7-129", "grand_total", amount("25.3")),
+		Booked("order", "Order", "fc7-130", "docstatus", 0),
+		Booked("page", "Page", "6a10000000000000000000f1", "title", "About"),
+		Booked("blog", "Collection", "6a10000000000000000000c4"),
+		Booked("article", "Item", "6a10000000000000000000g1", "title", "Printing the harbour"),
+		Booked("url_redirect", "Redirect", "6a10000000000000000000h1"),
+		Booked("url_redirect", "Redirect", "6a10000000000000000000h2", retired=changed),
+	]
+	if changed:
+		records.append(Booked("article", "Item", "6a10000000000000000000g2", "title", "Studio news"))
+	assert_booked(connection, records)
+	if changed:
+		note = part(connection, "refund", "/Refund/fc7-129")
+		expect(
+			amount(frappe.db.get_value("Sales Invoice", note, "grand_total")), amount("-25.3"), "the refund"
+		)
+	mug = target(connection, "product", "Product", "6a10000000000000000000a2")
+	expect(item_price(connection, mug), amount(24 if changed else 22), "the mug's price")
+	prints = target(connection, "product", "Product", "6a10000000000000000000a1")
+	expect(frappe.db.count("Item", {"variant_of": prints}), 2, "the print's SKUs")
+	about = frappe.db.get_value(
+		"Web Page", target(connection, "page", "Page", "6a10000000000000000000f1"), "main_section_html"
+	)
+	expect("and the hills" in about, changed, "the about page's edited text")
+	expect(
+		json.loads(
+			frappe.db.get_value(
+				"Blog Post",
+				target(connection, "article", "Item", "6a10000000000000000000g1"),
+				"importer_custom_fields",
+			)
+		),
+		{"Featured": "Yes", "Topic": "Process"},
+		"the post's own fields",
+	)
+	expect(
+		frappe.db.count(
+			"Importer Link",
+			{
+				"connection": connection,
+				"gid": f"gid://webflow/{connection}/Page/6a10000000000000000000f2",
+				"retired": 0,
+			},
+		),
+		0,
+		"the journal's template page",
 	)
 
 

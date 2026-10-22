@@ -1,0 +1,42 @@
+{
+	"request": {
+		"path": "/v2/sites/580e63e98c9a982ac9b8b741/collections",
+		"query": {}
+	},
+	"response": {
+		"collections": [
+			{
+				"id": "6a10000000000000000000c1",
+				"displayName": "Categories",
+				"singularName": "Categorie",
+				"slug": "category",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z"
+			},
+			{
+				"id": "6a10000000000000000000c2",
+				"displayName": "Products",
+				"singularName": "Product",
+				"slug": "product",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z"
+			},
+			{
+				"id": "6a10000000000000000000c3",
+				"displayName": "SKUs",
+				"singularName": "SKU",
+				"slug": "sku",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z"
+			},
+			{
+				"id": "6a10000000000000000000c4",
+				"displayName": "Journal",
+				"singularName": "Journal",
+				"slug": "journal",
+				"createdOn": "2026-08-03T15:00:00.000Z",
+				"lastUpdated": "2026-09-15T15:00:00.000Z"
+			}
+		]
+	}
+}

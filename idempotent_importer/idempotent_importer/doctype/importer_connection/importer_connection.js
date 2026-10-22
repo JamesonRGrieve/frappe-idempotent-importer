@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // The sources whose owner approves the connection through OAuth 2 (core.source.OAuthSource).
-const OAUTH_SOURCES = ["Etsy", "QuickBooks Online", "Xero", "Zoho Books", "Zoho Inventory", "Acumatica", "Agendrix", "HighLevel", "HubSpot", "Salesforce", "Pipedrive", "Zoho CRM"];
+const OAUTH_SOURCES = ["Etsy", "QuickBooks Online", "Xero", "Zoho Books", "Zoho Inventory", "Acumatica", "Agendrix", "HighLevel", "HubSpot", "Salesforce", "Pipedrive", "Zoho CRM", "Webflow"];
 
 frappe.ui.form.on("Importer Connection", {
 	refresh(frm) {

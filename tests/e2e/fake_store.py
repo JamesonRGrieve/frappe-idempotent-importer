@@ -183,6 +183,12 @@ OAUTH_SOURCES: dict[str, tuple[str, str, bool, dict[str, str]]] = {
 		False,
 		{"Authorization": f"Zoho-oauthtoken {OAUTH_ACCESS_TOKEN}"},
 	),
+	"webflow-fake": (
+		"webflow",
+		"/oauth/access_token",
+		False,
+		{"Authorization": f"Bearer {OAUTH_ACCESS_TOKEN}"},
+	),
 }
 # What a source's token response names beside the tokens: HighLevel's, the sub-account it was issued for.
 GRANT_EXTRAS: dict[str, dict[str, str]] = {

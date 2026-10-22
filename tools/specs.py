@@ -147,6 +147,16 @@ ZOHO_CRM_DOCUMENTS = {
 	"related_records": "6eca5e00b4624302757c7938a99cde42191d6d5025f22f7daa7ba1f28f17625d",
 	"record": "5397f63e5beba143086bd2aec8789291b2a59474200b096bc7c5faecff12423a",
 }
+# Where Webflow's document types a field against its own response example: a collection field's
+# validations are an object of the field type's rules (its example's Option field lists its ``options``),
+# not one property literally named "additionalProperties".
+WEBFLOW_CORRECTIONS: tuple[tuple[str, Any], ...] = (
+	(
+		"/paths/~1collections~1{collection_id}/get/responses/200/content/application~1json/schema/properties/"
+		"fields/items/properties/validations",
+		{"type": "object", "nullable": True, "additionalProperties": True},
+	),
+)
 QUICKBOOKS_XSD_FILES = (
 	"IntuitRestServiceDef.xsd",
 	"Finance.xsd",
@@ -591,6 +601,18 @@ def catalog() -> list[Document]:
 				corrections=HIGHLEVEL_CORRECTIONS.get(name, ()),
 			)
 			for name, sha256 in HIGHLEVEL_DOCUMENTS.items()
+		),
+		# Webflow's Data API v2 OpenAPI document (webflow/openapi-spec, openapi/v2.yml, MIT, the commit of
+		# 2026-09-02). Its server is /v2 on api.webflow.com.
+		SpecDocument(
+			"webflow",
+			"data-api-v2",
+			"https://raw.githubusercontent.com/webflow/openapi-spec/f6db607359a412dd6aa6cd304674731d7f2dbe10/openapi/v2.yml",
+			"/v2",
+			False,
+			YAML,
+			"a765cfec420d5f9c3dc4fe5af81396594a27547a591ba6c25ac1248e64a967f7",
+			corrections=WEBFLOW_CORRECTIONS,
 		),
 		# Salesforce publishes no static OpenAPI document for its standard objects: the REST API answers the
 		# adapter reads, transcribed by tools/salesforce_schema.py from the REST API Developer Guide and the

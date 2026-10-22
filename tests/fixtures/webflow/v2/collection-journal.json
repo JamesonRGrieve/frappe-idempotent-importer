@@ -1,0 +1,84 @@
+{
+	"request": {
+		"path": "/v2/collections/6a10000000000000000000c4",
+		"query": {}
+	},
+	"response": {
+		"id": "6a10000000000000000000c4",
+		"displayName": "Journal",
+		"singularName": "Journal",
+		"slug": "journal",
+		"createdOn": "2026-08-03T15:00:00.000Z",
+		"lastUpdated": "2026-09-15T15:00:00.000Z",
+		"fields": [
+			{
+				"id": "j1",
+				"isRequired": true,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "name",
+				"displayName": "Name"
+			},
+			{
+				"id": "j2",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "slug",
+				"displayName": "Slug"
+			},
+			{
+				"id": "j3",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "PlainText",
+				"slug": "post-summary",
+				"displayName": "Post summary"
+			},
+			{
+				"id": "j4",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "RichText",
+				"slug": "post-body",
+				"displayName": "Post body"
+			},
+			{
+				"id": "j5",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "Image",
+				"slug": "main-image",
+				"displayName": "Main image"
+			},
+			{
+				"id": "j6",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "Switch",
+				"slug": "featured",
+				"displayName": "Featured"
+			},
+			{
+				"id": "j7",
+				"isRequired": false,
+				"isEditable": true,
+				"type": "Option",
+				"slug": "topic",
+				"displayName": "Topic",
+				"validations": {
+					"options": [
+						{
+							"id": "t1",
+							"name": "Process"
+						},
+						{
+							"id": "t2",
+							"name": "News"
+						}
+					]
+				}
+			}
+		]
+	}
+}

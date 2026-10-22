@@ -1,0 +1,45 @@
+{
+	"request": {
+		"path": "/v2/pages/6a10000000000000000000f1/dom",
+		"query": {
+			"offset": "0",
+			"limit": "100"
+		}
+	},
+	"response": {
+		"pageId": "6a10000000000000000000f1",
+		"branchId": null,
+		"nodes": [
+			{
+				"id": "n1",
+				"type": "text",
+				"text": {
+					"html": "<h1>About the studio</h1>",
+					"text": "About the studio"
+				}
+			},
+			{
+				"id": "n2",
+				"type": "text",
+				"text": {
+					"html": "<p>We design for the harbour and the hills.</p>",
+					"text": "We design for the harbour and the hills."
+				}
+			},
+			{
+				"id": "n3",
+				"type": "image",
+				"image": {
+					"alt": "The studio",
+					"assetId": "6a10000000000000000000e1"
+				}
+			}
+		],
+		"pagination": {
+			"limit": 100,
+			"offset": 0,
+			"total": 3
+		},
+		"lastUpdated": "2026-09-15T15:00:00.000Z"
+	}
+}

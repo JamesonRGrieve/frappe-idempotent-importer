@@ -1,0 +1,11 @@
+{
+	"request": {
+		"path": "/v2/collections/6a10000000000000000000c3/items/6a10000000000000000000b3/inventory",
+		"query": {}
+	},
+	"response": {
+		"id": "6a10000000000000000000b3",
+		"quantity": 0,
+		"inventoryType": "infinite"
+	}
+}

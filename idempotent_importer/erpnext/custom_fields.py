@@ -28,6 +28,7 @@ SOURCE_FIELD_DOCTYPES = (
 	"Communication",
 	"Event",
 	"ToDo",
+	"Blog Post",
 )
 
 

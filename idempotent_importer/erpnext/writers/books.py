@@ -26,7 +26,14 @@ from idempotent_importer.core.fields import Values
 from idempotent_importer.core.kind import Kind
 from idempotent_importer.core.sync import Link, Target
 from idempotent_importer.erpnext.context import money, system_datetime
-from idempotent_importer.erpnext.writers.base import DRAFT, SUBMITTED, Writer, cancel_booked, writable
+from idempotent_importer.erpnext.writers.base import (
+	DRAFT,
+	SUBMITTED,
+	Writer,
+	cancel_booked,
+	parties_enabled,
+	writable,
+)
 
 ACCOUNT, COST_CENTER, WAREHOUSE, PROJECT = "Account", "Cost Center", "Warehouse", "Project"
 TIMESHEET, TAX_TEMPLATE = "Timesheet", "Sales Taxes and Charges Template"
@@ -189,9 +196,10 @@ class PostedWriter(Writer):
 		values = desired.values()
 		doc = writable(self.doctype, self.existing(link))
 		self.fill(doc, values)
-		doc.save(ignore_permissions=True)
-		if values.flag("submitted"):
-			doc.submit()
+		with parties_enabled(doc):
+			doc.save(ignore_permissions=True)
+			if values.flag("submitted"):
+				doc.submit()
 		return Target(self.doctype, doc.name)
 
 	def retire(self, link: Link) -> None:

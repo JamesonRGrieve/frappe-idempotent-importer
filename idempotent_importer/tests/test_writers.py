@@ -2589,6 +2589,39 @@ class TestWriters(IntegrationTestCase):
 			"the retired customer stays disabled",
 		)
 
+	def test_an_archived_partys_documents_are_still_booked(self) -> None:
+		"""A source archives a customer and keeps posting its history (Wave sends an invoice of a customer it
+		archived): the invoice and its payment are booked, and the customer stays disabled."""
+		customer = gid("Customer", "1")
+		self.mirror(Kind.CUSTOMER, CustomerWriter, customer, self.customer())
+		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())
+		name = self.target(Kind.CUSTOMER, customer)
+		self.mirror(Kind.CUSTOMER, CustomerWriter, customer, {**self.customer(), "disabled": True})
+		self.assertEqual(frappe.db.get_value("Customer", name, "disabled"), 1)
+		key = gid("Move", "OfArchived")
+		self.mirror(Kind.SALES_INVOICE, SalesInvoiceWriter, key, trade_fields(self.trade(customer)))
+		invoice = self.target(Kind.SALES_INVOICE, key)
+		self.assertEqual(frappe.db.get_value("Sales Invoice", invoice, "docstatus"), 1)
+		paid = payment_fields(
+			Payment(
+				"Receive",
+				"Customer",
+				customer,
+				"2026-06-05",
+				Decimal(10),
+				"CAD",
+				[Allocation(Kind.SALES_INVOICE, key, Decimal(10))],
+			)
+		)
+		self.assertEqual(
+			self.mirror(Kind.PAYMENT_ENTRY, PaymentEntryWriter, gid("Payment", "A"), paid), Outcome.CREATED
+		)
+		entry = self.target(Kind.PAYMENT_ENTRY, gid("Payment", "A"))
+		self.assertEqual(frappe.db.get_value("Payment Entry", entry, "docstatus"), 1)
+		self.assertEqual(
+			frappe.db.get_value("Customer", name, "disabled"), 1, "the archived customer stays disabled"
+		)
+
 	def test_a_payment_of_a_draft_invoice_is_not_booked(self) -> None:
 		self.mirror(Kind.CUSTOMER, CustomerWriter, gid("Customer", "1"), self.customer())
 		self.mirror(Kind.PRODUCT, ProductWriter, gid("Product", "1"), self.simple_product())

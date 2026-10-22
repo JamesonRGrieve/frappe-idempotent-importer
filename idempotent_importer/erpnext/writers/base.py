@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
+from contextlib import contextmanager
 from typing import Any
 
 import frappe
@@ -39,19 +41,33 @@ def parties_of(doc: Any) -> set[tuple[str, str]]:
 	return found
 
 
-def cancel_booked(doc: Any) -> None:
-	"""Cancels a booked document, even when the source retired one of its parties first (ERPNext posts no
-	reversing entry for a disabled party): each disabled party is enabled for the cancellation only."""
-	disabled = [
-		(doctype, name) for doctype, name in parties_of(doc) if frappe.db.get_value(doctype, name, "disabled")
-	]
+@contextmanager
+def parties_enabled(*docs: Any) -> Iterator[None]:
+	"""ERPNext books nothing for a disabled party (no entry, no reversal), but a source keeps the history of
+	a party it archived: each disabled party the documents post to is enabled while they are written,
+	submitted or cancelled, and disabled again after (its modified time untouched)."""
+	disabled = sorted(
+		{
+			(doctype, name)
+			for doc in docs
+			if doc is not None
+			for doctype, name in parties_of(doc)
+			if frappe.db.get_value(doctype, name, "disabled")
+		}
+	)
 	for doctype, name in disabled:
 		frappe.db.set_value(doctype, name, "disabled", 0, update_modified=False)
 	try:
-		doc.cancel()
+		yield
 	finally:
 		for doctype, name in disabled:
 			frappe.db.set_value(doctype, name, "disabled", 1, update_modified=False)
+
+
+def cancel_booked(doc: Any) -> None:
+	"""Cancels a booked document, even when the source retired one of its parties first."""
+	with parties_enabled(doc):
+		doc.cancel()
 
 
 def custom_json(values: Values) -> str | None:
@@ -76,7 +92,7 @@ def writable(doctype: str, doc: Any | None) -> Any:
 	if doc is None or doc.docstatus == CANCELLED:
 		return frappe.new_doc(doctype)
 	if doc.docstatus == SUBMITTED:
-		doc.cancel()
+		cancel_booked(doc)
 		amended = frappe.copy_doc(doc)
 		amended.docstatus = DRAFT
 		amended.amended_from = doc.name

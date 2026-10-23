@@ -233,14 +233,27 @@ class EventWriter(PartyLinked):
 				"send_reminder": 0,
 			}
 		)
-		participants = [self.party(party) for party in values.records("participants")]
+		participants = list(dict.fromkeys(self.party(party) for party in values.records("participants")))
+		self._participate(doc, participants)
+		set_custom(doc, values)
+		doc.save(ignore_permissions=True)
+		# A new Event's first participant brings in its prospect (ERPNext's after_insert hook adds it even when
+		# it is already there): the source's participants are kept once each.
+		if self._participants(doc) != participants:
+			self._participate(doc, participants)
+			doc.save(ignore_permissions=True)
+		return Target(EVENT, doc.name)
+
+	@staticmethod
+	def _participants(doc: Any) -> list[tuple[str, str]]:
+		return [(str(p.reference_doctype), str(p.reference_docname)) for p in doc.event_participants]
+
+	@staticmethod
+	def _participate(doc: Any, participants: list[tuple[str, str]]) -> None:
 		doc.set(
 			"event_participants",
 			[{"reference_doctype": doctype, "reference_docname": name} for doctype, name in participants],
 		)
-		set_custom(doc, values)
-		doc.save(ignore_permissions=True)
-		return Target(EVENT, doc.name)
 
 	def retire(self, link: Link) -> None:
 		frappe.db.set_value(EVENT, link.target.name, "status", CANCELLED)

@@ -5,7 +5,7 @@ AGPL-3.0-or-later Frappe v16 app (`idempotent_importer`): a one-way, idempotent 
 business systems into ERPNext, the ERPNext port of wp-woo-idempotent-importer. README.md is the
 user-facing contract (and its "Decisions to confirm"); `coverage/<source>.md` is the single source of
 truth for what each source mirrors and what is a gap. Python rules:
-`/home/jameson/Source/ai-prompts/python.md`.
+SOP *Stack Standards → Python*.
 
 ## Layout
 
